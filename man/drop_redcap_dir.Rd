@@ -15,7 +15,8 @@ drop_redcap_dir(
   merge_non_repeating = T,
   separate = F,
   str_trunc_length = 32000,
-  file_name
+  file_name,
+  use_csv = F
 )
 }
 \arguments{

@@ -302,7 +302,7 @@ edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_na
                     the_max <- the_max + 1
                   }
                   if(choice=="Launch Redcap Link Only"){#account for repeat? instance
-                    DB %>% link_REDCap_record(record = record,form = change_form,instance = CHANGE[j,"redcap_repeat_instance"])
+                    DB %>% link_REDCap_record(record = record,page = change_form,instance = CHANGE[j,"redcap_repeat_instance"])
                   }
                 }else{
                   OUT_sub[[field_name_to_change]] <- choice

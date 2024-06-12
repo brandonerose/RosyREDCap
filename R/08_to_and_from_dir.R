@@ -25,7 +25,8 @@ drop_redcap_dir <- function(
     merge_non_repeating = T,
     separate = F,
     str_trunc_length = 32000,
-    file_name
+    file_name,
+    use_csv = F
 ) {
   DB <- validate_DB(DB)
   root_dir <- get_dir(DB)
@@ -83,17 +84,32 @@ drop_redcap_dir <- function(
       names(link_col_list) <- DB$redcap$id_col
     }
     if(missing(file_name))file_name <- DB$short_name
-    list_to_excel(
-      list = to_save_list,
-      dir = redcap_dir,
-      link_col_list = link_col_list,
-      file_name = file_name,
-      separate = separate,
-      # header_df_list = to_save_list %>% construct_header_list(metadata = DB$redcap$metadata),
-      # key_cols_list = construct_key_col_list(DB,data_choice = "data_extract"),
-      str_trunc_length = str_trunc_length,
-      overwrite = TRUE
-    )
+    if(DB$interntals$use_csv){
+      list_to_csv(
+        list = to_save_list,
+        dir = redcap_dir,
+        link_col_list = link_col_list,
+        file_name = file_name,
+        separate = separate,
+        # header_df_list = to_save_list %>% construct_header_list(metadata = DB$redcap$metadata),
+        # key_cols_list = construct_key_col_list(DB,data_choice = "data_extract"),
+        str_trunc_length = str_trunc_length,
+        overwrite = TRUE
+      )
+    }else{
+      list_to_excel(
+        list = to_save_list,
+        dir = redcap_dir,
+        link_col_list = link_col_list,
+        file_name = file_name,
+        separate = separate,
+        # header_df_list = to_save_list %>% construct_header_list(metadata = DB$redcap$metadata),
+        # key_cols_list = construct_key_col_list(DB,data_choice = "data_extract"),
+        str_trunc_length = str_trunc_length,
+        overwrite = TRUE
+      )
+    }
+
     # if(merge_non_repeating) DB <- unmerge_non_repeating_DB(DB)
   }
   return(DB)
@@ -155,7 +171,6 @@ default_sheet_drops <- function(DB){
 }
 read_xl_to_DB_for_upload <- function(DB,file_path,drop_sheets = default_sheet_drops(DB)){
   #add data_upload check
-  file_path <-file.path(sarcoma_path,"sarcoma_NGS_survival_paper","PSDB_NGS_Paper_missing_important_brose.xlsx")
   if(!endsWith(file_path,".xlsx"))stop("File type must be '.xlsx' --> ",file_path)
   if(!file.exists(file_path))stop("Path does not exist --> ",file_path)
   data_list <- file_path %>% openxlsx::loadWorkbook() %>% wb_to_list()

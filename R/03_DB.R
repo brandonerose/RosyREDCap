@@ -21,7 +21,8 @@ blank_DB <-  function(){ # can sort this better in version 3.0.0
       merge_form_name = "merged",
       reference_state = "data_extract",
       reference_metadata = "redcap",
-      was_remapped = F
+      was_remapped = F,
+      use_csv = F
     ),
     redcap = list(
       project_id=NULL,
