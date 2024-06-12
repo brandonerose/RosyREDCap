@@ -1,3 +1,4 @@
 # RosyREDCap 1.0.0
 
-* Initial CRAN submission.
+* Pre Initial CRAN submission.
+* R Medicine conference 6/12/2024
