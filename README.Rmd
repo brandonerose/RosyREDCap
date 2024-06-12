@@ -54,7 +54,6 @@ projects <- get_projects() # get list of cached projects
 
 #load an existing project
 # DB <- load_DB(dir_path = projects$dir_path[which(projects$short_name=="PROJECT1")])
-
 ```
 
 You can set your REDCap token in two ways!
@@ -96,7 +95,6 @@ DB <- DB %>% drop_redcap_dir() #drops excel files with links to directory
 DB <- summarize_DB(DB)
 
 DB %>% save_summary() # will save summary data, look at the tabs!
-
 ```
 
 ## Explore Outputs!
@@ -108,8 +106,7 @@ DB$summary %>% add_list_to_global()
 
 DB$data_transform %>% add_list_to_global()
 
-listviewer::jsonedit(DB)
-
+listviewer::jsonedit(DB) # view object
 ```
 
 ## Future plans

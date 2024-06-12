@@ -109,7 +109,7 @@ DB$summary %>% add_list_to_global()
 
 DB$data_transform %>% add_list_to_global()
 
-listviewer::jsonedit(DB)
+listviewer::jsonedit(DB) # view object
 ```
 
 ## Future plans
