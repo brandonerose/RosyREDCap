@@ -91,7 +91,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
     ref_cols <- ref_cols[which(ref_cols%in%colnames(new))]
     data_cols <- colnames(new)[which(!colnames(new)%in%ref_cols)]
     instruments <- field_names_to_instruments(DB,data_cols)
-    if(any(instruments%in%already_used))stop("rosyredcap will not allow you to upload items from same form multiple times in one loop without refreshing.")
+    if(any(instruments%in%already_used))stop("RosyREDCap will not allow you to upload items from same form multiple times in one loop without refreshing.")
     old <- merge_instruments(instruments = instruments, DB = DB,data_choice = "data_extract",exact = T)
     drop <- data_cols %>% vec1_not_in_vec2(instruments_to_field_names(instruments=instruments,DB=DB))
     if(length(drop)>0){
@@ -177,7 +177,7 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
           DB %>% link_REDCap_record(OUT[[DB$redcap$id_col]])
           OUT[[field_name]] <- readline("What would you like it to be? ")
           print.data.frame(OUT)
-          OUT %>% rosyredcap::labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+          OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
         }
         if(choice==4){#account for repeat? instance
           DB %>% link_REDCap_record(OUT[[DB$redcap$id_col]],form,instance = OUT[["redcap_repeat_instance"]])
@@ -250,7 +250,7 @@ edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_na
               if(choice=="Manual Entry"){
                 OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
                 if(upload_individually){
-                  OUT_sub %>% rosyredcap::labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                  OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
                   message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
                   record_was_updated <- T
                 }else{
@@ -263,7 +263,7 @@ edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_na
             }else{
               OUT_sub[[field_name_to_change]] <- choice
               if(upload_individually){
-                OUT_sub %>% rosyredcap::labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
                 message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
                 record_was_updated <- T
               }else{
@@ -293,7 +293,7 @@ edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_na
                   if(choice=="Manual Entry"){
                     OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
                     if(upload_individually){
-                      OUT_sub %>% rosyredcap::labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                      OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
                       message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
                       record_was_updated <- T
                     }else{
@@ -307,7 +307,7 @@ edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_na
                 }else{
                   OUT_sub[[field_name_to_change]] <- choice
                   if(upload_individually){
-                    OUT_sub %>% rosyredcap::labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                    OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
                     message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
                     record_was_updated <- T
                   }else{
@@ -322,6 +322,6 @@ edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_na
       }
       if(record_was_updated)DB <- update_DB(DB)
     }
-    if(!upload_individually)OUT %>% rosyredcap::labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+    if(!upload_individually)OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
   }
 }

@@ -76,7 +76,7 @@ blank_DB <-  function(){ # can sort this better in version 3.0.0
       redcap_records_dashboard = NULL,
       redcap_API = NULL,
       redcap_API_playground = NULL,
-      github = "https://github.com/brandonerose/rosyredcap",
+      github = "https://github.com/brandonerose/RosyREDCap",
       thecodingdocs = "https://www.thecodingdocs.com/"
     )
   )
@@ -155,7 +155,7 @@ setup_DB <- function(short_name,dir_path,token_name,redcap_base_link,force = F,m
   #param check
   missing_dir_path <- missing(dir_path)
   if(missing_dir_path){
-    warning("If you don't supply a directory, rosyredcap will only run in R session. Package is best with a directory",immediate. = T)
+    warning("If you don't supply a directory, RosyREDCap will only run in R session. Package is best with a directory",immediate. = T)
     DB <- blank_DB()
   }
   if(!missing_dir_path){
