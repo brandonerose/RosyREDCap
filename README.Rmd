@@ -107,6 +107,8 @@ listviewer::jsonedit(DB)
 
 ```
 
+## Documentation on modifying data from Excel or Shiny is coming soon!
+
 Future versions will demonstrate more advanced features!
 
 ## Links

@@ -106,6 +106,8 @@ DB$data_transform %>% add_list_to_global()
 listviewer::jsonedit(DB)
 ```
 
+## Documentation on modifying data from Excel or Shiny is coming soon!
+
 Future versions will demonstrate more advanced features!
 
 ## Links
