@@ -1,0 +1,135 @@
+---
+title: RosyREDCap Report
+subtitle: \href{http://www.thecodingdocs.com}{\includegraphics[width=3cm]{`r system.file("rmarkdown", "TCDblack.png", package = "rosyredcap")`}} \href{https://github.com/brandonerose/rosyredcap}{\includegraphics[width=2.1cm]{`r system.file("rmarkdown", "logo.png", package = "rosyredcap")`}}
+author: Brandon Rose, MD, MPH
+date: "`r Sys.Date()`"
+geometry: margin=0.5in
+abstract: This report was generated from the rosyredcap package using R markdown. 
+header-includes: 
+  \usepackage{fancyhdr}
+  \pagestyle{fancy}
+  \setlength\headheight{1in}
+  \fancyhead[L]{\textbf{RosyREDCap Report}\\\textbf{Generated `r Sys.Date()`}\\\textbf{Page \thepage}}
+  \fancyhead[C]{\href{https://www.thecodingdocs.com}{TheCodingDocs.com}\\\href{https://github.com/brandonerose/rosyredcap}{github.com/brandonerose/rosyredcap}}
+  \fancyhead[R]{\href{http://www.thecodingdocs.com}{\includegraphics[width=2cm]{`r system.file("rmarkdown", "TCDblack.png", package = "rosyredcap")`}} \href{https://github.com/brandonerose/rosyredcap}{\includegraphics[width=1.5cm]{`r system.file("rmarkdown", "logo.png", package = "rosyredcap")`}}}
+output: 
+  pdf_document:
+    toc: yes
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage 
+
+# Project Summary
+
+## Summary Information
+
+>**Project Title:** `r DB$project_info$project_title`  
+>**Project ID:** `r DB$PID`  
+>**REDCap Created:** `r as.Date(DB$project_info$creation_time)`  
+>**Data Last Updated:** `r DB$last_data_update`  
+```{r, echo = FALSE, results = 'asis'}
+if(is_something(DB$project_info$project_notes)){
+  cat(">**Notes:** ",DB$project_info$project_notes,"  ")
+}
+```
+```{r, echo = FALSE, results = 'asis'}
+if(is_something(DB$project_info$project_pi_lastname)){
+  cat(">**Principal Investigator:** ",paste(DB$project_info$project_pi_firstname,DB$project_info$project_pi_lastname),"  ")
+}
+```
+```{r, echo = FALSE, results = 'asis'}
+if(is_something(DB$project_info$project_irb_number)){
+  cat(">**IRB Number:** ",DB$project_info$project_irb_number,"  ")
+}
+```
+```{r, echo = FALSE, results = 'asis'}
+if(is_something(DB$project_info$missing_data_codes)){
+  cat(">**Missing Codes:** ")
+  DB$project_info$missing_data_codes %>% split_choices() %>% knitr::kable()
+}
+```
+```{r, echo = FALSE, results = 'asis'}
+if(is_something(DB$arms,1)){
+  cat(">**Arms:** ",nrow(DB$arms),"  ")
+  # DB$arms %>% knitr::kable()
+}
+```
+```{r, echo = FALSE, results = 'asis'}
+if(is_something(DB$events)){
+  cat(">**Events:** ",nrow(DB$events),"  ")
+  # DB$events %>% knitr::kable()
+}
+```
+```{r, echo = FALSE, results = 'asis'}
+if(is_something(DB$all_records)){
+  cat(">**Records:** ",nrow(DB$all_records),"  ")
+  # DB$events %>% knitr::kable()
+}
+```
+```{r, echo = FALSE, results = 'asis'}
+if(is_something(DB$instruments)){
+  x<-nrow(DB$instruments)
+  if(DB$has_repeating){
+    x <- x %>%paste0(" (",DB$instruments$repeating %>% which() %>% length()," repeating)")
+  }
+  ">**Instruments:** " %>% paste0(x,"  ") %>% cat()
+}
+```
+```{r, echo = FALSE, results = 'asis'}
+if(is_something(DB$redcap$metadata)){
+  v <- DB$redcap$metadata$field_type %>% sort() %>% rle()
+  d <- data.frame(
+    values = v$values,
+    lengths = v$lengths
+  )
+  d <- d[order(d$lengths,decreasing = T),]
+  d <- d[order(d$values),]
+  vars <- ( DB$redcap$metadata$field_type!="checkbox_choice") %>% which %>% length()
+  
+  if("checkbox_choice"%in%d$values){
+    vars <- vars %>%paste0(" (",(DB$redcap$metadata$field_type!="checkbox") %>% which() %>% length()," if you count checkboxes individually)")
+  }
+  ">**Variabes:** " %>% paste0(vars,"  ") %>% cat()
+  # cat("\n\n")
+  # for(i in 1:nrow(d)){
+  #   head  <- "> "
+  #   if(d$values[i]=="checkbox_choice"){
+  #     head <- "> - "
+  #   }
+  #   cat(paste0(head,"**",d$values[i],":** ",d$lengths[i]))
+  #   cat("\n\n")
+  #   
+  # }
+}
+```
+
+## Links
+
+>**REDCap Home:** [`r DB$links$redcap_base_link`](`r   DB$links$redcap_base_link`)  
+>**REDCap Project:** [`r DB$home_link`](`r DB$home_link`)  
+>**REDCap Project API Token:** [`r DB$API_link`](`r DB$API_link`)  
+>**REDCap Project API Playground:** [`r DB$API_playground_link`](`r DB$API_playground_link`)  
+
+\newpage 
+# About rosyredcap and TheCodingDocs.com
+
+The rosyredcap package is at [github.com/brandonerose/rosyredcap](https://github.com/brandonerose/rosyredcap "rosyredcap R package").
+
+Donate if I helped you out and want more development (anything helps)! [account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation").
+
+For more R coding visit [thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com")
+
+Follow us on Twitter [twitter.com/TheCodingDocs](https://twitter.com/TheCodingDocs "TheCodingDocs Twitter")
+
+Follow me on Twitter [twitter.com/BRoseMDMPH](https://twitter.com/BRoseMDMPH "BRoseMDMPH Twitter")
+
+
+[![TheCodingDocs.com](`r system.file("rmarkdown", "TCD.png", package = "rosyredcap")`){ width=210px }](http://www.thecodingdocs.com) [![TheCodingDocs.com](`r system.file("rmarkdown", "logo.png", package = "rosyredcap")`){ width=150px }](https://github.com/brandonerose/rosyredcap)
+
+
+

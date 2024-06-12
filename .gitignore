@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+/dev/
+/data-raw/
+/rsconnect/
+.Rdata
+.httr-oauth
+.DS_Store
+.quarto

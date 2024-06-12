@@ -1,0 +1,93 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# RosyREDCap <img src="man/figures/logo.png" align="right" height="200" />
+
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
+
+Use your REDCap API token to create an updatable R list object (DB) to be used downstream for analysis, data exports, shiny apps, and even data imports! We are still in development. At this time this package is **not suited for Multi-Arm projects or massive REDCap projects**. If the functions are taking more than a minute or two you can use the internal functions of the package to build a subset. More to come in future versions!
+
+## Installation
+
+You can install the development version of RosyREDCap like so:
+
+``` r
+# install remotes package if you don't have it
+# install.packages("remotes") 
+remotes::install_github("brandonerose/RosyREDCap")
+
+```
+
+If you have any issues above download the most recent version of R at RStudtio and update all packages in RStudio. See [thecodingdocs.com/r/getting-started](https://www.thecodingdocs.com/r/getting-started "R Getting Started").
+
+## Run
+
+This is how you get REDCap turned into an R database - only for basic projects at this time
+
+```{r example, eval=FALSE}
+library("RosyREDCap")
+
+DB <- setup_DB(
+  short_name = "PROJECT1",
+  token_name = "PROJECT1_token",
+  redcap_base_link<-"https://redcap.miami.edu/",
+  dir_path = "/Users/brandonrose/R/PROJECT1/dir"
+  # ,force = T
+  )
+# DB <- load_DB(dir_path = projects$dir_path[which(projects$short_name=="PSDB")])
+DB <- update_DB(DB)
+
+projects <- get_projects() # get list of cached projects
+
+DB %>% drop_redcap_dir() #drops excel files with links to directory
+```
+
+You can set your REDCap token in two ways!
+
+```{r example2, eval=FALSE}
+Sys.setenv(PROJECT1_token = "YoUrNevErShaReToken")
+```
+
+Or add the following line to your Reviron file... PROJECT1_token = 'YoUrNevErShaReToken'
+
+```{r example3, eval=FALSE}
+usethis::edit_r_environ() #finds your file
+# Then you add --> PROJECT1_token = 'YoUrNevErShaReToken'
+# then save file and restart R
+```
+
+If it worked you will see your token when you run...
+```{r example4, eval=FALSE}
+Sys.getenv("PROJECT1_token")
+#And if your DB object is setup properly...
+view_redcap_token(DB)
+```
+
+## Links
+
+The RosyREDCap package is at [github.com/brandonerose/RosyREDCap](https://github.com/brandonerose/RosyREDCap "RosyREDCap R package")
+See instructions above. Install remotes and install RosyREDCap
+
+Donate if I helped you out and want more development (anything helps)! [account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
+
+For more R coding visit [thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com")
+
+Follow us on Twitter [twitter.com/TheCodingDocs](https://twitter.com/TheCodingDocs "TheCodingDocs Twitter")
+
+Follow me on Twitter [twitter.com/BRoseMDMPH](https://twitter.com/BRoseMDMPH "BRoseMDMPH Twitter")
+
+[![TheCodingDocs.com](man/figures/TCD.png)](http://www.thecodingdocs.com)

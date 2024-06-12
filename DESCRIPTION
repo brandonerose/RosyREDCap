@@ -1,0 +1,34 @@
+Package: RosyREDCap
+Title: RosyREDCap
+Version: 1.0.0
+Authors@R: 
+    person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"))
+Description: Use your REDCap API token to create an updatable R list
+    object (DB) to be used downstream for analysis, data exports, shiny
+    apps, and even data imports.
+License: MIT + file LICENSE
+URL: https://github.com/brandonerose/RosyREDCap
+BugReports: https://github.com/brandonerose/RosyREDCap/issues
+Imports: 
+    config (>= 0.3.2),
+    dplyr,
+    golem (>= 0.4.1),
+    hoardr,
+    httr,
+    lubridate,
+    magrittr,
+    openxlsx,
+    readxl,
+    REDCapR,
+    rio,
+    rmarkdown,
+    rosyredcap,
+    rosyutils,
+    shiny (>= 1.8.1.1),
+    skimr,
+    stringr,
+    tools,
+    utils
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
