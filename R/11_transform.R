@@ -183,7 +183,7 @@ transform_DB <- function(DB, merge_non_rep_to_reps = F, records=NULL,force = F, 
   }
   if(will_update){
     selected <- DB %>% filter_DB(records = records,data_choice = "data_extract")
-    if(!DB$remap %>% is_something()){
+    if(!DB$remap$instruments_new %>% is_something()){
       DB <- generate_default_remap(DB)
     }
     instrument_names <- DB$remap$instruments_new$instrument_name
