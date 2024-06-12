@@ -152,9 +152,10 @@ validate_DB <- function(DB,silent = T,warn_only = F){
 #' @param merge_form_name name of merged non-repeating to be used in package
 #' @return DB
 #' @export
-setup_DB <- function(short_name,dir_path,token_name,redcap_base_link,force = F,merge_form_name,validate = T){
+setup_DB <- function(short_name,dir_path,token_name,redcap_base_link,force = F,merge_form_name,validate = T,use_csv = F){
   #param check
   missing_dir_path <- missing(dir_path)
+  DB$internals$use_csv <- use_csv
   if(missing_dir_path){
     warning("If you don't supply a directory, RosyREDCap will only run in R session. Package is best with a directory",immediate. = T)
     DB <- blank_DB()

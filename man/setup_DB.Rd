@@ -11,7 +11,8 @@ setup_DB(
   redcap_base_link,
   force = F,
   merge_form_name,
-  validate = T
+  validate = T,
+  use_csv = F
 )
 }
 \arguments{

@@ -25,8 +25,7 @@ drop_redcap_dir <- function(
     merge_non_repeating = T,
     separate = F,
     str_trunc_length = 32000,
-    file_name,
-    use_csv = F
+    file_name
 ) {
   DB <- validate_DB(DB)
   root_dir <- get_dir(DB)
@@ -119,7 +118,6 @@ drop_redcap_dir <- function(
         overwrite = TRUE
       )
     }
-
     # if(merge_non_repeating) DB <- unmerge_non_repeating_DB(DB)
   }
   return(DB)
