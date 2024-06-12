@@ -212,7 +212,6 @@ edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_na
       choices2 <- c("Do Nothing","Manual Entry","Launch Redcap Link Only")
     }
     is_repeating_form <- change_form %in% DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$repeating)]
-
     # i <- 1:nrow(optional_DF) %>% sample1()
     OUT <- NULL
     # record <- records%>% sample(1)
