@@ -45,9 +45,17 @@ DB <- setup_DB(
   short_name = "PROJECT1",
   token_name = "PROJECT1_token",
   redcap_base_link<-"https://redcap.miami.edu/",
-  dir_path = "/Users/brandonrose/R/PROJECT1/dir"
-  # ,force = T
-  )
+  dir_path = getwd(), # or change to your intended file path
+  # force = T,
+  merge_form_name = "patient",
+  use_csv = F
+)
+
+projects <- get_projects() # get list of cached projects
+
+#load an existing project
+# DB <- load_DB(dir_path = projects$dir_path[which(projects$short_name=="PROJECT1")])
+
 ```
 
 You can set your REDCap token in two ways!
@@ -71,20 +79,34 @@ Sys.getenv("PROJECT1_token")
 view_redcap_token(DB)
 ```
 
-## Run
+## Run Core Functions
 
-If it worked you will see your token when you run...
+The following functions represent the core functions of the package.
 ```{r , eval=FALSE}
-# DB <- load_DB(dir_path = projects$dir_path[which(projects$short_name=="PSDB")])
-DB <- update_DB(DB)
-DB <- transform_DB(DB)
-DB <- summarize_DB(DB)
 
-projects <- get_projects() # get list of cached projects
+DB <- update_DB(DB) # update from redcap by checking log and using saved object 
+
+DB <- transform_DB(DB) # transform to most basic forms, can be modified
+
+DB <- summarize_DB(DB) #can use for subsets!
 
 DB %>% drop_redcap_dir() #drops excel files with links to directory
 ```
 
+## Explore Outputs!
+
+If it worked you will see your token when you run...
+```{r , eval=FALSE}
+
+DB$summary %>% add_list_to_global()
+
+DB$data_transform %>% add_list_to_global()
+
+listviewer::jsonedit(DB)
+
+```
+
+Future versions will demonstrate more advanced features!
 
 ## Links
 
