@@ -34,7 +34,7 @@ remotes::install_github("brandonerose/RosyREDCap")
 
 If you have any issues above download the most recent version of R at RStudtio and update all packages in RStudio. See [thecodingdocs.com/r/getting-started](https://www.thecodingdocs.com/r/getting-started "R Getting Started").
 
-## Run
+## Setup
 
 This is how you get REDCap turned into an R database - only for basic projects at this time
 
@@ -48,12 +48,6 @@ DB <- setup_DB(
   dir_path = "/Users/brandonrose/R/PROJECT1/dir"
   # ,force = T
   )
-# DB <- load_DB(dir_path = projects$dir_path[which(projects$short_name=="PSDB")])
-DB <- update_DB(DB)
-
-projects <- get_projects() # get list of cached projects
-
-DB %>% drop_redcap_dir() #drops excel files with links to directory
 ```
 
 You can set your REDCap token in two ways!
@@ -76,6 +70,21 @@ Sys.getenv("PROJECT1_token")
 #And if your DB object is setup properly...
 view_redcap_token(DB)
 ```
+
+## Run
+
+If it worked you will see your token when you run...
+```{r , eval=FALSE}
+# DB <- load_DB(dir_path = projects$dir_path[which(projects$short_name=="PSDB")])
+DB <- update_DB(DB)
+DB <- transform_DB(DB)
+DB <- summarize_DB(DB)
+
+projects <- get_projects() # get list of cached projects
+
+DB %>% drop_redcap_dir() #drops excel files with links to directory
+```
+
 
 ## Links
 

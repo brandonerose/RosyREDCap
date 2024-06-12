@@ -198,35 +198,6 @@ transform_DB <- function(DB, merge_non_rep_to_reps = F, records=NULL,force = F, 
         for(old_instrument in old_instruments){# old_instrument <- old_instruments %>%  sample (1)
           keep <- selected[[old_instrument]]
           if(!is.null(keep)){
-            # cols <- colnames(keep) %>% sapply(function(col){
-            #   out <- col
-            #   x<-DB$remap$metadata_remap$field_name_remap[which(DB$remap$metadata_remap$field_name == col)]
-            #   if(length(x)>0)out <- x
-            #   out
-            # })
-            #
-            # cols <- data.frame(
-            #   name = names(cols),
-            #   cols = cols
-            # )
-            # non_col_reps <- cols$cols %>% unique()
-            # all_cols <- cols$cols %>% unique()
-            # cols_reps <- cols$cols[which(duplicated(cols$cols))] %>% unique()
-            # non_col_reps <- non_col_reps[which(!non_col_reps%in%cols_reps)] %>% unique()
-            # keep2 <- NULL
-            # if(length(cols_reps)>0){
-            #   for(i in 1:nrow(keep)){
-            #     x <- keep[i,non_col_reps]
-            #
-            #     y <- keep[i,cols$name[which(cols$cols%in%cols_reps)]]
-            #     sets <- colnames(y)
-            #     for()
-            #     colnames(y)<- cols$cols[which(cols$cols%in%cols_reps)]
-            #     x <- x[,]
-            #     keep2 <-
-            #   }
-            # }
-            # colnames(keep) <-
             if("redcap_event_name"%in%colnames(keep)){
               keep$redcap_event_name <- keep$redcap_event_name %>% sapply(function(unique_event_name){DB$remap$event_mapping_remap$unique_event_name_remap[which(DB$remap$event_mapping_remap$unique_event_name==unique_event_name)] %>% unique()})
               # keep$event_name <- keep$event_name %>% sapply(function(event_name){DB$remap$event_mapping_remap$[which(DB$remap$event_mapping_remap$unique_event_name==unique_event_name)] %>% unique()})

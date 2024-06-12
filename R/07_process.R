@@ -398,6 +398,8 @@ merge_non_repeating_DB <- function(DB){ # need to adjust for events, currently d
   }
   DB
 }
+#' @title merge_multiple
+#' @export
 merge_multiple <- function(named_data_list,instrument_names){
   instrument_names <- instrument_names %>% as.list()
   if (length(instrument_names)==1) warning('No need to merge you only have one form that is non-repeating')
