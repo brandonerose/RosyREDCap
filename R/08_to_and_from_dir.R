@@ -1,4 +1,3 @@
-#' @import rosyutils
 #' @title Shows DB in the env
 #' @inheritParams save_DB
 #' @param records character vector of records you want dropped to your directory
@@ -125,7 +124,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
   if(DB$data_upload %>% is_something())stop("Already files in DB$data_upload, clear that first")
   DB[["data_upload"]] <- list()
   for(i in 1:nrow(df)){#not done yet
-    the_file <- readxl::read_xlsx(file.path(path,df$file_name[i]),col_types = "text") %>% rosyutils::all_character_cols() # would
+    the_file <- readxl::read_xlsx(file.path(path,df$file_name[i]),col_types = "text") %>% all_character_cols() # would
     drop_cols <- NULL
     if(drop_nonredcap_vars){
       x <- colnames(the_file)[which(!colnames(the_file)%in%c(DB$redcap$raw_structure_cols,DB$redcap$metadata$field_name))]
@@ -152,7 +151,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
   DB
 }
 default_sheet_drops <- function(DB){
-  DB$summary  %>% rosyutils:::process_df_list() %>% names()
+  DB$summary  %>% process_df_list() %>% names()
 }
 read_xl_to_DB_for_upload <- function(DB,file_path,drop_sheets = default_sheet_drops(DB)){
   #add data_upload check

@@ -1,4 +1,3 @@
-#' @import rosyutils
 cache <- NULL
 .onLoad <- function(libname, pkgname){
   x <- hoardr::hoard()
@@ -78,7 +77,7 @@ add_project <- function(DB){
     last_data_update = DB$internals$last_data_update,
     redcap_home_link = DB$links$redcap_home,
     redcap_API_playground_link =  DB$links$redcap_API_playground
-  ) %>% rosyutils::all_character_cols()
+  ) %>% all_character_cols()
   colnames(OUT) <- blank_project_cols()
   rownames(OUT) <- NULL
   OUT

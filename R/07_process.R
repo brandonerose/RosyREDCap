@@ -1,4 +1,3 @@
-#' @import rosyutils
 get_key_col_list <- function(DB){
   if(!is_something(DB$redcap$instruments))stop("Empty --> `DB$redcap$instruments`")
   out_list <- 1:nrow(DB$redcap$instruments) %>% lapply(function(i){
@@ -15,7 +14,7 @@ get_key_col_list <- function(DB){
 }
 raw_process_redcap <- function(raw,DB, labelled){
   if(nrow(raw)>0){
-    raw  <- raw %>% rosyutils::all_character_cols()
+    raw  <- raw %>% all_character_cols()
     add_ons <- c(DB$redcap$id_col,"arm_num","event_name","redcap_event_name","redcap_repeat_instrument","redcap_repeat_instance")
     if(DB$redcap$is_longitudinal){
       raw$id_temp <- 1:nrow(raw)

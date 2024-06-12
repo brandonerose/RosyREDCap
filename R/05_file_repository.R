@@ -1,4 +1,3 @@
-#' @import rosyutils
 #' @title Uploads a file to REDCap
 #' @inheritParams save_DB
 #' @param file file location on your PC

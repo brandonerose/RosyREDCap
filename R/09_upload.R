@@ -1,4 +1,3 @@
-#' @import rosyutils
 #' @title Upload to REDCap
 #' @description
 #' This will only overwrite and new data. It will not directly delete and data.
@@ -11,7 +10,7 @@
 #' @export
 upload_form_to_redcap <- function(to_be_uploaded,DB,batch_size=500){
   REDCapR::redcap_write(
-    ds_to_write = to_be_uploaded %>% rosyutils::all_character_cols(),
+    ds_to_write = to_be_uploaded %>% all_character_cols(),
     batch_size=batch_size,
     interbatch_delay=0.2,
     continue_on_error=FALSE,
@@ -99,7 +98,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
       message("Dropping field_names that aren't part of REDCap metadata: ",paste0(drop, collapse = ", "))
       old <- old[,which(!colnames(old)%in%drop)]
     }
-    old_list[[TABLE]] <- old# rosyutils::find_df_diff2(new= new , old =  old, ref_cols = ref_cols, message_pass = paste0(TABLE,": "))
+    old_list[[TABLE]] <- old# find_df_diff2(new= new , old =  old, ref_cols = ref_cols, message_pass = paste0(TABLE,": "))
     already_used <- already_used %>%append(instruments) %>% unique()
   }
   new_list <- find_df_list_diff(new_list = new_list, old_list = old_list, ref_col_list = DB$redcap$instrument_key_cols[names(new_list)],view_old = view_old, n_row_view = n_row_view)
@@ -141,7 +140,7 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
     }
     #add event?
   }
-  z<- new %>% rosyutils::find_df_diff2(old,ref_cols = cols_mandatory_structure)
+  z<- new %>% find_df_diff2(old,ref_cols = cols_mandatory_structure)
   if(!is.null(z)){
     i_of_old_name_change <- which(!colnames(old)%in% cols_mandatory_structure)
     colnames(old)[i_of_old_name_change] <- paste0(colnames(old)[i_of_old_name_change],"_old")

@@ -1,4 +1,3 @@
-#' @import rosyutils
 add_redcap_links_to_DF <- function(DF,DB){# add instance links
   if(DB$redcap$id_col%in%colnames(DF)){
     DF_structure_cols <- DB$redcap$raw_structure_cols[which(DB$redcap$raw_structure_cols%in%colnames(DF))]

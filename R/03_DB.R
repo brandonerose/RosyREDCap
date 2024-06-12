@@ -1,4 +1,3 @@
-#' @import rosyutils
 #' @title blank DB object
 #' @return blank_DB list for reference
 blank_DB <-  function(){ # can sort this better in version 3.0.0
@@ -259,9 +258,9 @@ show_DB <- function(DB,data_choice,also_metadata=T,only_dfs = T){
   if(missing(data_choice)){
     data_choice<- DB$internals$reference_state
   }
-  DB[[data_choice]] %>% rosyutils::add_list_to_global(only_dfs = only_dfs)
+  DB[[data_choice]] %>% add_list_to_global(only_dfs = only_dfs)
   if(also_metadata){
-    DB[["redcap"]] %>% rosyutils::add_list_to_global(only_dfs = only_dfs)
+    DB[["redcap"]] %>% add_list_to_global(only_dfs = only_dfs)
   }
   data_list %>% list2env(envir = .GlobalEnv)
 }

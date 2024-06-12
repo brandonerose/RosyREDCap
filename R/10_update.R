@@ -1,4 +1,3 @@
-#' @import rosyutils
 ignore_redcap_log <- function(collapse = T){
   ignores <- c(
     'export',

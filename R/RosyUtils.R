@@ -1,4 +1,4 @@
-# data =========================================================================
+# data
 #' @title find the difference between two data.frames
 #' @description
 #' This function will compare two data.frames: new and old.
@@ -344,7 +344,7 @@ find_in_df_list <- function(df_list,text,exact = F){
   }
   return(out)
 }
-# dates ========================================================================
+# dates
 #' @export
 age <- function(dob, age.day = lubridate::today(), units = "years", floor = TRUE) {
   calc.age = lubridate::interval(dob, age.day) / lubridate::duration(num = 1, units = units)
@@ -477,7 +477,7 @@ date_imputation<-function(dates_in,date_imputation){
   }
   date_out
 }
-# excel ========================================================================
+# excel
 #' @title excel_to_list
 #' @export
 excel_to_list <- function(path){
@@ -775,6 +775,8 @@ save_wb <- function(wb,dir,file_name,overwrite =TRUE){
   )
   message("Saved at -> ","'",path,"'")
 }
+#' @title save_csv
+#' @export
 save_csv <- function(df,dir,file_name,overwrite =TRUE){
   if(!dir.exists(dir))stop("dir doesn't exist")
   path <- file.path(dir,paste0(file_name,".csv"))
@@ -793,6 +795,8 @@ save_csv <- function(df,dir,file_name,overwrite =TRUE){
     message("Saved at -> ","'",path,"'")
   }
 }
+#' @title process_df_list
+#' @export
 process_df_list <- function(list){
   if(!is_df_list(list))stop("list must be ...... a list :)")
   is_a_df_with_rows <- list %>% sapply(function(IN){
@@ -835,7 +839,7 @@ default_body_style <-
     # fontColour = "black",
     fontSize = 12
   )
-# files ========================================================================
+# files
 #' @title full.file.info
 #' @param path a file path
 #' @param showWarnings logical for showing warnings
@@ -924,7 +928,7 @@ sync_dir <- function(from,to,top_level=T){
 list.files.real <- function(path){
   grep('~$', list.files(path), fixed = TRUE, value = TRUE, invert = TRUE)
 }
-# flags ========================================================================
+# flags
 #' @export
 add_df_flag <- function(DF,flag_field_name,id_field_name,ids,flag_name,read_split=" [:|:] ",write_split = " | ",remove_previous = T){
   if(any(!ids%in%DF[[id_field_name]]))stop( "Some of your record IDs are not included in the set of the current database IDs! Add them first...")
@@ -984,7 +988,7 @@ combine_two_split_vector_flags <- function(v1,v2,read_split=" [:|:] ",write_spli
     return(paste0(x,collapse = write_split))
   })
 }
-# lists ========================================================================
+# lists
 #' @title add_list_to_global
 #' @param x a named list
 #' @param only_dfs logical for only including data.frames in output
@@ -1002,7 +1006,7 @@ add_list_to_global <- function(x,only_dfs=F){
   if(only_dfs)x <- x[sapply(x,is.data.frame)]
   list2env(x,envir = .GlobalEnv)
 }
-# other ========================================================================
+# other
 #' @title sample1
 #' @export
 sample1 <- function(x){
@@ -1048,7 +1052,7 @@ clean_num<-function(num){
 size <- function(x){
   format(object.size(x),units = "auto")
 }
-# packages =====================================================================
+# packages
 #' @title combine_R_files
 #' @param source_dir a file path for your source (such as R folder)
 #' @param destination_dir a file path for your destination (such as dev folder)
@@ -1111,7 +1115,7 @@ warn_or_stop <- function(m,warn_only=F){
   if(warn_only)return(warning(m,immediate. = T))
   return(stop(m))
 }
-# utils-pipe ===================================================================
+# utils-pipe
 #' Pipe operator
 #'
 #' See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
@@ -1126,7 +1130,7 @@ warn_or_stop <- function(m,warn_only=F){
 #' @param rhs A function call using the magrittr semantics.
 #' @return The result of calling `rhs(lhs)`.
 NULL
-# validation ===================================================================
+# validation
 #' @title is_something
 #' @export
 is_something <- function(thing,row=0){
