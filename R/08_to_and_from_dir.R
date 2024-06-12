@@ -48,7 +48,7 @@ drop_redcap_dir <- function(
     if(include_metadata){
       DB$internals$last_metadata_dir_save <- DB$internals$last_metadata_update
       for (x in c("project_info","metadata","instruments","codebook")){ #,"log" #taking too long
-        if(DB$interntals$use_csv){
+        if(DB$internals$use_csv){
           list_to_csv(
             list = DB$redcap[x],
             dir = redcap_other_dir,
@@ -67,7 +67,7 @@ drop_redcap_dir <- function(
     }
     if(include_other){
       for (x in c("log","users")){ #,"log" #taking too long
-        if(DB$interntals$use_csv){
+        if(DB$internals$use_csv){
           list_to_csv(
             list = DB$redcap[x],
             dir = redcap_other_dir,
@@ -99,7 +99,7 @@ drop_redcap_dir <- function(
       names(link_col_list) <- DB$redcap$id_col
     }
     if(missing(file_name))file_name <- DB$short_name
-    if(DB$interntals$use_csv){
+    if(DB$internals$use_csv){
       list_to_csv(
         list = to_save_list,
         dir = redcap_dir,

@@ -91,6 +91,7 @@ DB <- transform_DB(DB) # transform to most basic forms, can be modified
 DB <- summarize_DB(DB) #can use for subsets!
 
 DB %>% drop_redcap_dir() #drops excel files with links to directory
+
 ```
 
 ## Explore Outputs!
