@@ -49,24 +49,40 @@ drop_redcap_dir <- function(
     if(include_metadata){
       DB$internals$last_metadata_dir_save <- DB$internals$last_metadata_update
       for (x in c("project_info","metadata","instruments","codebook")){ #,"log" #taking too long
-        list_to_excel(
-          list = DB$redcap[x],
-          dir = redcap_metadata_dir,
-          file_name = x,
-          str_trunc_length = str_trunc_length,
-          overwrite = TRUE
-        )
+        if(DB$interntals$use_csv){
+          list_to_csv(
+            list = DB$redcap[x],
+            dir = redcap_other_dir,
+            file_name = x
+          )
+        }else{
+          list_to_excel(
+            list = DB$redcap[x],
+            dir = redcap_metadata_dir,
+            file_name = x,
+            str_trunc_length = str_trunc_length,
+            overwrite = TRUE
+          )
+        }
       }
     }
     if(include_other){
       for (x in c("log","users")){ #,"log" #taking too long
-        list_to_excel(
-          list = DB$redcap[x],
-          dir = redcap_other_dir,
-          file_name = x,
-          str_trunc_length = str_trunc_length,
-          overwrite = TRUE
-        )
+        if(DB$interntals$use_csv){
+          list_to_csv(
+            list = DB$redcap[x],
+            dir = redcap_other_dir,
+            file_name = x
+          )
+        }else{
+          list_to_excel(
+            list = DB$redcap[x],
+            dir = redcap_other_dir,
+            file_name = x,
+            str_trunc_length = str_trunc_length,
+            overwrite = TRUE
+          )
+        }
       }
     }
   }
@@ -88,13 +104,7 @@ drop_redcap_dir <- function(
       list_to_csv(
         list = to_save_list,
         dir = redcap_dir,
-        link_col_list = link_col_list,
-        file_name = file_name,
-        separate = separate,
-        # header_df_list = to_save_list %>% construct_header_list(metadata = DB$redcap$metadata),
-        # key_cols_list = construct_key_col_list(DB,data_choice = "data_extract"),
-        str_trunc_length = str_trunc_length,
-        overwrite = TRUE
+        file_name = file_name
       )
     }else{
       list_to_excel(
