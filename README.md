@@ -117,13 +117,14 @@ listviewer::jsonedit(DB)
 - Future versions will demonstrate more advanced features already
   included!
 - Documentation needs to be updated
-- need to add vignettes
-- need to clean up external vs internal namespace
-- plan to document how to use excel for bulk uncoded edits
-- plan to document how to use quality control functions
-- plan to have shiny app that is more all-in-one
-- need to submit to CRAN
-- open to collaboration/feedback
+- Need to add vignettes
+- Need to clean up external vs internal namespace
+- Plan to document how to use excel for bulk uncoded edits
+- Plan to document how to use quality control functions
+- Plan to have shiny app that is more all-in-one
+- Plan to show R Markdown and automatic HTML, PDF reports
+- Need to submit to CRAN
+- Open to collaboration/feedback
 
 ## Links
 
@@ -136,6 +137,9 @@ Donate if I helped you out and want more development (anything helps)!
 
 For more R coding visit
 [thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com")
+
+For correspondence/feedback/issues, please email
+[TheCodingDocs@gmail.com](TheCodingDocs@gmail.com "TheCodingDocs@gmail.com")!
 
 Follow us on Twitter
 [twitter.com/TheCodingDocs](https://twitter.com/TheCodingDocs "TheCodingDocs Twitter")
