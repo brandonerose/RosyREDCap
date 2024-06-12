@@ -2,7 +2,7 @@
 % Please edit documentation in R/00_setup.R
 \name{get_projects}
 \alias{get_projects}
-\title{Get your REDCap projects used by rosyredcap}
+\title{Get your REDCap projects used by RosyREDCap}
 \usage{
 get_projects()
 }
@@ -10,7 +10,7 @@ get_projects()
 data.frame of projects from the cache
 }
 \description{
-Everytime a setup or update is performed rosyredcap stores the most basic information
+Everytime a setup or update is performed RosyREDCap stores the most basic information
 about that project to the cache so the user has a running log of everywhere there project information is stored,
 which can be used to find, move, edit, delete that data.
 }
