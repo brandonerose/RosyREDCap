@@ -155,7 +155,6 @@ validate_DB <- function(DB,silent = T,warn_only = F){
 setup_DB <- function(short_name,dir_path,token_name,redcap_base_link,force = F,merge_form_name,validate = T,use_csv = F){
   #param check
   missing_dir_path <- missing(dir_path)
-  DB$internals$use_csv <- use_csv
   if(missing_dir_path){
     warning("If you don't supply a directory, RosyREDCap will only run in R session. Package is best with a directory",immediate. = T)
     DB <- blank_DB()
@@ -210,6 +209,7 @@ setup_DB <- function(short_name,dir_path,token_name,redcap_base_link,force = F,m
   if(! missing(merge_form_name)){
     DB$internals$merge_form_name<- merge_form_name
   }
+  DB$internals$use_csv <- use_csv
   DB$data_extract <- DB$data_extract %>% all_character_cols_list()
   return(DB)
 }
