@@ -88,9 +88,15 @@ DB <- update_DB(DB) # update from redcap by checking log and using saved object
 
 DB <- transform_DB(DB) # transform to most basic forms, can be modified
 
+DB <- clean_DB(DB)
+
 DB <- summarize_DB(DB) #can use for subsets!
 
-DB %>% drop_redcap_dir() #drops excel files with links to directory
+DB <- DB %>% drop_redcap_dir() #drops excel files with links to directory
+
+DB <- summarize_DB(DB)
+
+DB %>% save_summary() # will save summary data, look at the tabs!
 
 ```
 
@@ -107,9 +113,17 @@ listviewer::jsonedit(DB)
 
 ```
 
-## Documentation on modifying data from Excel or Shiny is coming soon!
+## Future plans
 
-Future versions will demonstrate more advanced features!
+* Future versions will demonstrate more advanced features already included!
+* Documentation needs to be updated
+* need to add vignettes
+* need to clean up external vs internal namespace
+* plan to document how to use excel for bulk uncoded edits
+* plan to document how to use quality control functions
+* plan to have shiny app that is more all-in-one
+* need to submit to CRAN
+* open to collaboration/feedback
 
 ## Links
 
