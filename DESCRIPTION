@@ -25,6 +25,7 @@ Imports:
     REDCapR,
     rio,
     rmarkdown,
+    RosyUtils,
     shiny (>= 1.8.1.1),
     skimr,
     stringr,
