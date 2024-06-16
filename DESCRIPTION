@@ -25,14 +25,13 @@ Imports:
     REDCapR,
     rio,
     rmarkdown,
-    RosyUtils,
     shiny (>= 1.8.1.1),
     skimr,
     stringr,
     tools,
     utils
 Remotes: 
-    git::https://github.com/brandonerose/RosyUtils.git
+    github::brandonerose/RosyUtils
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
