@@ -1,3 +1,4 @@
+#' @import RosyUtils
 has_redcap_token <- function(DB,silent=T){
   DB <- validate_DB(DB)
   DB$token_name %>% validate_env_name()

@@ -1,3 +1,4 @@
+#' @import RosyUtils
 annotate_metadata <- function(DB,metadata,data_choice="data_extract",skim= T){
   metadata$field_label[which(is.na(metadata$field_label))] <- metadata$field_name[which(is.na(metadata$field_label))]
   metadata  <- unique(metadata$form_name) %>%

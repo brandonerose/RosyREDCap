@@ -1,5 +1,4 @@
-#' The application User-Interface
-#'
+#' @import RosyUtils
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
 #' @import shiny

@@ -1,3 +1,4 @@
+#' @import RosyUtils
 #' @title add_new_varriable
 #' @export
 add_new_varriable <- function(

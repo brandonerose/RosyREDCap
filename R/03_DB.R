@@ -1,3 +1,4 @@
+#' @import RosyUtils
 #' @title blank DB object
 #' @return blank_DB list for reference
 blank_DB <-  function(){ # can sort this better in version 3.0.0

@@ -1,3 +1,4 @@
+#' @import RosyUtils
 # data
 #' @title find the difference between two data.frames
 #' @description

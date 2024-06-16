@@ -1,3 +1,4 @@
+#' @import RosyUtils
 cache <- NULL
 .onLoad <- function(libname, pkgname){
   x <- hoardr::hoard()
