@@ -1,4 +1,11 @@
 #' @import RosyUtils
+#' @title choice_vector_in_redcap_form
+#' @export
+choice_vector_in_redcap_form <- function(vec){
+  if(is_something(vec))return(NA)
+  return(paste0(paste0(1:length(vec),", ",vec),collapse = " | "))
+}
+#' @import RosyUtils
 #' @title add_new_varriable
 #' @export
 add_new_varriable <- function(
@@ -22,7 +29,7 @@ add_new_varriable <- function(
     form_name = form_name,
     field_type = field_type,
     field_label = field_label,
-    select_choices_or_calculations = select_choices_or_calculations,
+    select_choices_or_calculations = choice_vector_in_redcap_form(select_choices_or_calculations),
     field_note = field_note,
     identifier = identifier,
     field_type_R = field_type_R,
