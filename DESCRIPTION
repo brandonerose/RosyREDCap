@@ -1,6 +1,6 @@
 Package: RosyREDCap
 Title: RosyREDCap
-Version: 1.0.0
+Version: 1.0.0.9000
 Authors@R: 
     person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"))
 Description: Use your REDCap API token to create an updatable R list
