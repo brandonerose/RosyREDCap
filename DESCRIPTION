@@ -1,11 +1,8 @@
 Package: RosyREDCap
-Title: RosyREDCap
+Title: RosyREDCap: a REDCap-project-agnostic R package that uses an API token to make a single, updating, standardized R list object containing all metadata and data for exports, imports, transformations, and shiny applications
 Version: 1.0.0.9000
-Authors@R: 
-    person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"))
-Description: Use your REDCap API token to create an updatable R list
-    object (DB) to be used downstream for analysis, data exports, shiny
-    apps, and even data imports.
+Authors@R: person('Brandon', 'Rose', email = 'thecodingdocs@gmail.com', role = c('cre', 'aut'))
+Description: Rosy development for your R package.
 License: MIT + file LICENSE
 URL: https://github.com/brandonerose/RosyREDCap
 BugReports: https://github.com/brandonerose/RosyREDCap/issues
