@@ -483,10 +483,10 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
     if(length(identifiers)==0)warning("You have no identifiers marked in `DB$redcap$metadata$identifier`. You can set it in REDCap Project Setup and update DB OR define your idenitifiers in this functions `identifiers` argument." ,immediate. = T)
   }
   if(drop_free_text){ # placeholder
-    # unvalidated_free_text <- DB$redcap$metadata$field_name[which(DB$redcap$metadata$field_type=="text"&is.na(DB$redcap$metadata$text_validation_type_or_show_slider_number))]
-    # identifiers <- identifiers %>% append(
-    #   DB$redcap$metadata$field_name[which(DB$redcap$metadata$field_type=="y")]
-    # ) %>% unique()
+    identifiers <- identifiers %>%
+      append(
+        DB$redcap$metadata$field_name[which(DB$redcap$metadata$field_type=="notes")]
+      ) %>% unique()
   }
   for (data_choice in c("data_transform")){
     if(is_something(DB[[data_choice]])){
