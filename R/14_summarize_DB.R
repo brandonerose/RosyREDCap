@@ -169,7 +169,7 @@ rmarkdown_DB <- function (DB,dir_other){
   )
 }
 #' @export
-save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"output"),file_name = paste0(DB$short_name,"_RosyREDCap")){
+save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"output"),file_name = paste0(DB$short_name,"_RosyREDCap"),separate = F, csv = F){
   DB <- DB %>% validate_DB()
   to_save_list <- append(DB[["data_transform"]],DB[["summary"]])
   to_save_list <- to_save_list[which(to_save_list %>% sapply(is.data.frame))]
@@ -182,15 +182,23 @@ save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"outp
     )
     names(link_col_list) <- DB$redcap$id_col
   }
-  to_save_list %>% list_to_excel(
-    dir = dir_other,
-    # separate = separate,
-    link_col_list = link_col_list,
-    file_name = file_name,
-    header_df_list = to_save_list %>% construct_header_list(),
-    key_cols_list = construct_key_col_list(DB),
-    overwrite = TRUE
-  )
+  if(csv){
+    to_save_list %>% list_to_csv(
+      dir = dir_other,
+      file_name = file_name,
+      overwrite = TRUE
+    )
+  }else{
+    to_save_list %>% list_to_excel(
+      dir = dir_other,
+      separate = separate,
+      link_col_list = link_col_list,
+      file_name = file_name,
+      header_df_list = to_save_list %>% construct_header_list(),
+      key_cols_list = construct_key_col_list(DB),
+      overwrite = TRUE
+    )
+  }
 }
 #' @export
 stack_vars <- function(DB,vars,new_name,drop_na=T){
