@@ -188,18 +188,19 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
   }
 }
 #' @export
-edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
+edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
   change_form <- field_names_to_instruments(DB,field_name_to_change)
   view_forms <- field_names_to_instruments(DB,field_names_to_view)
   # field_names_to_view <- c(field_name_to_change,field_names_to_view) %>% unique()
   # if(length(view_forms)>1)stop("only one form combinations are allowed.")
-  if(missing(records))records <- DB$data_extract[[view_forms]][[DB$redcap$id_col]] %>% unique()
+  if(missing(records)) records <- DB$data_extract[[view_forms]][[DB$redcap$id_col]] %>% unique()
   all_forms <- c(change_form,view_forms) %>% unique()
   ref_cols_change <- DB$redcap$instrument_key_cols[[change_form]]
-  ref_cols_view <- DB$redcap$instrument_key_cols[[view_forms]]
-  # if(missing(optional_DF)){
-  #   optional_DF <- DB[[data_choice]][[all_forms]][,unique(c(ref_cols,field_names_to_view))]
-  # }
+  # ref_cols_view <- DB$redcap$instrument_key_cols[[view_forms]]
+  if(missing(optional_DF)){
+    optional_DF <- DB[["data_extract"]][[change_form]][,unique(c(ref_cols_change,field_name_to_change))]
+  }
+  if(is.null(field_names_to_view)) field_names_to_view <- colnames(optional_DF)
   # if(any(!ref_cols%in%colnames(DF)))stop("DF must contain all ref_cols")
   if(length(records)>0){
     # message("fix these in REDCap --> ",paste0(out,collapse = " | "))
@@ -212,35 +213,34 @@ edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_na
       choices2 <- c("Do Nothing","Manual Entry","Launch Redcap Link Only")
     }
     is_repeating_form <- change_form %in% DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$repeating)]
-    # i <- 1:nrow(optional_DF) %>% sample1()
     OUT <- NULL
-    # record <- records%>% sample(1)
-    for (record in records){
+    for (record in records){ # record <- records%>% sample(1)
       record_was_updated <- F
-      VIEW <- filter_DB(DB, records = record, form_names = view_forms)[[1]]
-      VIEW_simp <- VIEW[,c(ref_cols_view)]
-      print(VIEW_simp)
-      VIEW <- VIEW[,c(ref_cols_view,field_names_to_view)]
+      VIEW <- optional_DF[which(optional_DF[[DB$redcap$id_col]]==record),]
+      VIEW_simp <- VIEW[,unique(c(DB$redcap$id_col,field_names_to_view))] %>% unique()
+      row.names(VIEW_simp) <- NULL
+      VIEW_simp %>%t() %>% print()
       CHANGE <- filter_DB(DB, records = record, form_names = change_form)[[1]]
-      CHANGE <- CHANGE[,c(ref_cols_view,field_name_to_change)]
-      for(i in 1:nrow(VIEW)){
-        x <- VIEW[i,] %>% as.list()
-        for (j in 1:length(x)){
-          cat(names(x)[j], ": \n\n",x[[j]], "\n\n")
+      row.names(CHANGE) <- NULL
+      CHANGE <- CHANGE[,unique(c(ref_cols_change,field_name_to_change))]
+      if(nrow(CHANGE)==0){
+        print("Nothing in CHANGE. If you choose edit it will add an instance...")
+        blank_row <- data.frame(
+          record
+        )
+        colnames(blank_row)[[1]] <- DB$redcap$id_col
+        if("redcap_repeat_instance"%in%ref_cols_change){
+          blank_row$redcap_repeat_instance <- "1"
+          blank_row$redcap_repeat_instrument <- change_form
         }
-        if(nrow(CHANGE)==0){
-          print("Nothing in CHANGE. If you choose edit it will add an instance...")
-          blank_row <- data.frame(
-            record
-          )
-          colnames(blank_row)[[1]] <- DB$redcap$id_col
-          if("redcap_repeat_instance"%in%ref_cols_change){
-            blank_row$redcap_repeat_instance <- "1"
-            blank_row$redcap_repeat_instrument <- change_form
-          }
-        }else{
-          print(CHANGE)
-        }
+        blank_row[[field_name_to_change]] <- NA
+      }else{
+        print(CHANGE)
+      }
+      for(i in 1:nrow(CHANGE)){# i <- 1:nrow(CHANGE) %>% sample1()
+        # for (j in 1:length(x)){
+        #   cat(names(x)[j], ": \n\n",x[[j]], "\n\n")
+        # }
         # old_answer <- merge(VIEW,OUT[i,],by=ref_cols,suffixes = c("","_old"))[[field_name_to_change]]
         # if(length(old_answer)>0){
         #   OUT[i,field_name_to_change] <- old_answer
@@ -252,6 +252,7 @@ edit_redcap_while_viewing <- function(DB,records, field_name_to_change, field_na
         }
         if(choice1 == 2){
           if(nrow(CHANGE)==0){
+            blank_row
           }else{
             for(j in 1:nrow(CHANGE)){
               message("Old answer (",field_name_to_change, "): ",CHANGE[j,field_name_to_change])
