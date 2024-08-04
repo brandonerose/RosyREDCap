@@ -237,28 +237,60 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
       }else{
         print(CHANGE)
       }
-      for(i in 1:nrow(CHANGE)){# i <- 1:nrow(CHANGE) %>% sample1()
-        # for (j in 1:length(x)){
-        #   cat(names(x)[j], ": \n\n",x[[j]], "\n\n")
-        # }
-        # old_answer <- merge(VIEW,OUT[i,],by=ref_cols,suffixes = c("","_old"))[[field_name_to_change]]
-        # if(length(old_answer)>0){
-        #   OUT[i,field_name_to_change] <- old_answer
-        #   message("Old answer (",field_name_to_change, "): ",old_answer)
-        # }
-        choice1 <- utils::menu(choices1,title=paste0("What would you like to do?"))
-        if(choice1 == 3){
-          DB %>% link_REDCap_record(record = record)
-        }
-        if(choice1 == 2){
-          if(nrow(CHANGE)==0){
-            blank_row
+      choice1 <- utils::menu(choices1,title=paste0("What would you like to do?"))
+      if(choice1 == 3){
+        DB %>% link_REDCap_record(record = record)
+      }
+      if(choice1 == 2){
+        if(nrow(CHANGE)==0)CHANGE <- blank_row
+        for(j in 1:nrow(CHANGE)){
+          message("Old answer (",field_name_to_change, "): ",CHANGE[j,field_name_to_change])
+          choice2 <- utils::menu(choices2,title=paste0("What would you like to do?"))
+          choice <- choices2[choice2]
+          OUT_sub <- CHANGE[j,]
+          if(choice %in% c("Manual Entry","Do Nothing","Launch Redcap Link Only")){
+            if(choice=="Do Nothing"){
+              message("Did not change anything")
+            }
+            if(choice=="Manual Entry"){
+              OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
+              if(upload_individually){
+                OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
+                record_was_updated <- T
+              }else{
+                OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+              }
+            }
+            if(choice=="Launch Redcap Link Only"){#account for repeat? instance
+              DB %>% link_REDCap_record(record = record,page = change_form,instance = CHANGE[j,"redcap_repeat_instance"])
+            }
           }else{
-            for(j in 1:nrow(CHANGE)){
-              message("Old answer (",field_name_to_change, "): ",CHANGE[j,field_name_to_change])
+            OUT_sub[[field_name_to_change]] <- choice
+            if(upload_individually){
+              OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+              message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
+              record_was_updated <- T
+            }else{
+              OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+            }
+          }
+        }
+        if(is_repeating_form){
+          choice3 <- 2
+          the_max <- 0
+          if(nrow(CHANGE)>0)the_max <- CHANGE$redcap_repeat_instance %>% as.integer() %>% max()
+          while (choice3 == 2) {
+            choice3 <- utils::menu(c("No","Yes"),title=paste0("Would you like to add an additional instance?"))
+            if(choice3 == 2){
+              OUT_sub <- data.frame(
+                record_id = record,
+                redcap_repeat_instrument = change_form,
+                redcap_repeat_instance = as.character(the_max + 1)
+              )
+              colnames(OUT_sub)[1]<-DB$redcap$id_col
               choice2 <- utils::menu(choices2,title=paste0("What would you like to do?"))
               choice <- choices2[choice2]
-              OUT_sub <- CHANGE[j,]
               if(choice %in% c("Manual Entry","Do Nothing","Launch Redcap Link Only")){
                 if(choice=="Do Nothing"){
                   message("Did not change anything")
@@ -272,6 +304,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
                   }else{
                     OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
                   }
+                  the_max <- the_max + 1
                 }
                 if(choice=="Launch Redcap Link Only"){#account for repeat? instance
                   DB %>% link_REDCap_record(record = record,page = change_form,instance = CHANGE[j,"redcap_repeat_instance"])
@@ -285,60 +318,14 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
                 }else{
                   OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
                 }
-              }
-            }
-            if(is_repeating_form){
-              choice3 <- 2
-              the_max <- 0
-              if(nrow(CHANGE)>0)the_max <- CHANGE$redcap_repeat_instance %>% as.integer() %>% max()
-              while (choice3 == 2) {
-                choice3 <- utils::menu(c("No","Yes"),title=paste0("Would you like to add an additional instance?"))
-                if(choice3 == 2){
-                  OUT_sub <- data.frame(
-                    record_id = record,
-                    redcap_repeat_instrument = change_form,
-                    redcap_repeat_instance = as.character(the_max + 1)
-                  )
-                  colnames(OUT_sub)[1]<-DB$redcap$id_col
-                  choice2 <- utils::menu(choices2,title=paste0("What would you like to do?"))
-                  choice <- choices2[choice2]
-                  if(choice %in% c("Manual Entry","Do Nothing","Launch Redcap Link Only")){
-                    if(choice=="Do Nothing"){
-                      message("Did not change anything")
-                    }
-                    if(choice=="Manual Entry"){
-                      OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
-                      if(upload_individually){
-                        OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
-                        message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
-                        record_was_updated <- T
-                      }else{
-                        OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
-                      }
-                      the_max <- the_max + 1
-                    }
-                    if(choice=="Launch Redcap Link Only"){#account for repeat? instance
-                      DB %>% link_REDCap_record(record = record,page = change_form,instance = CHANGE[j,"redcap_repeat_instance"])
-                    }
-                  }else{
-                    OUT_sub[[field_name_to_change]] <- choice
-                    if(upload_individually){
-                      OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
-                      message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
-                      record_was_updated <- T
-                    }else{
-                      OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
-                    }
-                    the_max <- the_max + 1
-                  }
-                }
+                the_max <- the_max + 1
               }
             }
           }
         }
       }
-      if(record_was_updated)DB <- update_DB(DB)
     }
-    if(!upload_individually)OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+    if(record_was_updated)DB <- update_DB(DB)
   }
+  if(!upload_individually)OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
 }
