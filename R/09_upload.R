@@ -191,14 +191,14 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
 edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
   change_form <- field_names_to_instruments(DB,field_name_to_change)
   view_forms <- field_names_to_instruments(DB,field_names_to_view)
-  # field_names_to_view <- c(field_name_to_change,field_names_to_view) %>% unique()
+  field_names_to_view <- c(field_name_to_change,field_names_to_view) %>% unique()
   # if(length(view_forms)>1)stop("only one form combinations are allowed.")
   if(missing(records)) records <- DB$data_extract[[view_forms]][[DB$redcap$id_col]] %>% unique()
   all_forms <- c(change_form,view_forms) %>% unique()
   ref_cols_change <- DB$redcap$instrument_key_cols[[change_form]]
   # ref_cols_view <- DB$redcap$instrument_key_cols[[view_forms]]
   if(missing(optional_DF)){
-    optional_DF <- DB[["data_extract"]][[change_form]][,unique(c(ref_cols_change,field_name_to_change))]
+    optional_DF <- DB[["data_extract"]][[change_form]][,unique(c(ref_cols_change,field_names_to_view))]
   }
   if(is.null(field_names_to_view)) field_names_to_view <- colnames(optional_DF)
   # if(any(!ref_cols%in%colnames(DF)))stop("DF must contain all ref_cols")
