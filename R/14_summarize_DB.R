@@ -169,7 +169,7 @@ rmarkdown_DB <- function (DB,dir_other){
   )
 }
 #' @export
-save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"output"),file_name = paste0(DB$short_name,"_RosyREDCap"),separate = F, csv = F){
+save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"output"),file_name = paste0(DB$short_name,"_RosyREDCap"),separate = F){
   DB <- DB %>% validate_DB()
   to_save_list <- append(DB[["data_transform"]],DB[["summary"]])
   to_save_list <- to_save_list[which(to_save_list %>% sapply(is.data.frame))]
@@ -182,7 +182,7 @@ save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"outp
     )
     names(link_col_list) <- DB$redcap$id_col
   }
-  if(csv){
+  if(DB$internals$use_csv){
     to_save_list %>% list_to_csv(
       dir = dir_other,
       file_name = file_name,

@@ -2,7 +2,7 @@
 remap_process <- function(DB){
   DB <- validate_DB(DB)
   if(is.data.frame(DB$redcap$metadata)){
-    metadata_remap <-   DB$remap$metadata_remap
+    metadata_remap <- DB$remap$metadata_remap
     BAD <- DB$redcap$metadata$field_name[which(!DB$redcap$metadata$field_name%in%metadata_remap$field_name)]
     if(length(BAD)>0)stop("Missing mappings: ",BAD %>% paste0(collapse = ", "))
     x<-which(!metadata_remap$field_name%in%DB$redcap$metadata$field_name)
@@ -184,7 +184,7 @@ transform_DB <- function(DB, merge_non_rep_to_reps = F, records=NULL,force = F, 
   }
   if(will_update){
     selected <- DB %>% filter_DB(records = records,data_choice = "data_extract")
-    if(!DB$remap$instruments_new %>% is_something()){
+    if(! is_something(DB$remap$instruments_new)){
       DB <- generate_default_remap(DB)
     }
     instrument_names <- DB$remap$instruments_new$instrument_name
