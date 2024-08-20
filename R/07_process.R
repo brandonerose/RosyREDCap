@@ -452,11 +452,11 @@ unmerge_non_repeating_DB <- function(DB){
 add_ID_to_DF <- function(DF,DB,ref_id){
   if(!ref_id%in%DB$redcap$metadata$field_name)stop("The ref_id not valid. Must be a REDCap raw colname")
   form <- DB$redcap$metadata$form_name[which(DB$redcap$metadata$field_name==ref_id)]
-  if(DB$internals$data_extract_merged){
-    if(form %in% DB$redcap$instruments$instrument_name[which(!DB$redcap$instruments$repeating)]){
-      form <- DB$internals$merge_form_name
-    }
-  }
+  # if(DB$internals$data_extract_merged){
+  #   if(form %in% DB$redcap$instruments$instrument_name[which(!DB$redcap$instruments$repeating)]){
+  #     form <- DB$internals$merge_form_name
+  #   }
+  # }
   id_col <- DF[[ref_id]] %>% sapply(function(ID){
     DB$data_extract[[form]][[DB$redcap$id_col]][which(DB$data_extract[[form]][[ref_id]]==ID)]
   }) %>% as.data.frame()
