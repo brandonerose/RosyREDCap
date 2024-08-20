@@ -2,9 +2,9 @@
 % Please edit documentation in R/15_link.R
 \name{link_REDCap_record}
 \alias{link_REDCap_record}
-\title{Shows DB in the env}
+\title{link_REDCap_record}
 \usage{
-link_REDCap_record(DB, record, page, instance)
+link_REDCap_record(DB, record, page, instance, text_only = F)
 }
 \arguments{
 \item{DB}{object generated using `load_DB()` or `setup_DB()`}
@@ -14,10 +14,12 @@ link_REDCap_record(DB, record, page, instance)
 \item{page}{REDCap page for the record. Must be one of `DB$redcap$instruments$instrument_name`}
 
 \item{instance}{REDCap instance if it's a repeating instrument}
+
+\item{text_only}{logical for only returning text}
 }
 \value{
 opens browser link
 }
 \description{
-Shows DB in the env
+link_REDCap_record
 }

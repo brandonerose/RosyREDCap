@@ -20,21 +20,22 @@ link_API_playground <- function(DB){
 link_REDCap_home <- function(DB){
   DB$links$redcap_base %>% utils::browseURL()
 }
-#' @title Shows DB in the env
+#' @title link_REDCap_project
 #' @inheritParams save_DB
 #' @return opens browser link
 #' @export
 link_REDCap_project <- function(DB){
   DB$links$redcap_home %>% utils::browseURL()
 }
-#' @title Shows DB in the env
+#' @title link_REDCap_record
 #' @inheritParams save_DB
 #' @param record REDCap record id or study id etc, any column names that match `DB$redcap$id_col`
 #' @param page REDCap page for the record. Must be one of `DB$redcap$instruments$instrument_name`
 #' @param instance REDCap instance if it's a repeating instrument
+#' @param text_only logical for only returning text
 #' @return opens browser link
 #' @export
-link_REDCap_record <- function(DB,record,page,instance){
+link_REDCap_record <- function(DB,record,page,instance,text_only = F){
   link <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id)
   if(!missing(record)){
     if(!record%in%DB$summary$all_records[[DB$redcap$id_col]])stop(record," is not one of the records inside DB")
@@ -52,5 +53,6 @@ link_REDCap_record <- function(DB,record,page,instance){
       link <- link %>% paste0("&instance=",instance)
     }
   }
-  link %>% utils::browseURL()
+  if(text_only)return(link)
+  utils::browseURL(link)
 }

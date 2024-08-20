@@ -2,7 +2,7 @@
 % Please edit documentation in R/15_link.R
 \name{link_REDCap_project}
 \alias{link_REDCap_project}
-\title{Shows DB in the env}
+\title{link_REDCap_project}
 \usage{
 link_REDCap_project(DB)
 }
@@ -13,5 +13,5 @@ link_REDCap_project(DB)
 opens browser link
 }
 \description{
-Shows DB in the env
+link_REDCap_project
 }
