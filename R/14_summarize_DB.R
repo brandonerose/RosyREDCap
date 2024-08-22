@@ -146,7 +146,7 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T){
   # DB$redcap$metadata$field_type[which(!DB$redcap$metadata$field_type%in%c("checkbox_choice","descriptive"))] %>% table()
   DB$summary$metadata <- DB %>%  annotate_metadata(metadata = DB$summary$metadata,data_choice = ifelse(DB$internals$was_remapped,"data_transform","data_extract"))
   #metadata/codebook =============
-  codebook <- metadata_to_codebook(DB$summary$metadata) %>% annotate_codebook(DB$summary$metadata,data_choice = "data_transform",DB = DB)
+  codebook <- metadata_to_codebook(DB$summary$metadata) %>% annotate_codebook(metadata =DB$summary$metadata,data_choice = "data_transform",DB = DB)
   if(drop_blanks) codebook <- codebook[which(codebook$n>0),]
   DB$summary$codebook <- codebook
   #cross_codebook ------

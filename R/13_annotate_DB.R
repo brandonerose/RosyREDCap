@@ -95,10 +95,14 @@ annotate_codebook <- function(codebook,metadata,data_choice="data_extract",DB){
       metadata$field_label[which(metadata$field_name==X)] %>% unique()
     })
   codebook$n <- 1:nrow(codebook) %>% lapply(function(i){
-    sum(DB[[data_choice]][[codebook$form_name[i]]][,codebook$field_name[i]]==codebook$name[i],na.rm = T)
+    DF <- DB[[data_choice]][[codebook$form_name[i]]]
+    if(nrow(DF)==0)return(0)
+    sum(DF[,codebook$field_name[i]]==codebook$name[i],na.rm = T)
   }) %>% unlist()
   codebook$n_total <- 1:nrow(codebook) %>% lapply(function(i){
-    sum(!is.na(DB[[data_choice]][[codebook$form_name[i]]][,codebook$field_name[i]]),na.rm = T)
+    DF <- DB[[data_choice]][[codebook$form_name[i]]]
+    if(nrow(DF)==0)return(0)
+    sum(!is.na(DF[,codebook$field_name[i]]),na.rm = T)
   }) %>% unlist()
   codebook$perc <-  (codebook$n/codebook$n_total) %>% round(4)
   codebook$perc_text <- codebook$perc %>% magrittr::multiply_by(100) %>% round(1) %>% paste0("%")
