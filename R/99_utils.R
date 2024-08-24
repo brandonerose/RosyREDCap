@@ -55,21 +55,6 @@ validate_web_link <- function(link) {
 count_DB_upload_cells <- function(DB){
   DB$data_upload %>% lapply(function(x){nrow(x)*ncol(x)}) %>% unlist() %>% sum()
 }
-addSlashIfNeeded <- function(input_string) {
-  if (!endsWith(input_string, "/")) {
-    output_string <- gsub("$", "/", input_string)
-  } else {
-    output_string <- input_string
-  }
-  return(output_string)
-}
-remove_html_tags <- function(text_vector) {
-  # Regular expression to match HTML tags
-  html_pattern <- "<[^>]+>"
-  # Use gsub to remove the HTML tags from each element in the vector
-  cleaned_vector <- gsub(html_pattern, "", text_vector)
-  return(cleaned_vector)
-}
 split_choices <- function(x){
   oops <- x
   x <- gsub("\n", " | ",x)  #added this to account for redcap metadata output if not a number
