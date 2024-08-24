@@ -143,16 +143,18 @@ get_redcap_metadata <- function(DB){
   DB$redcap$id_col <- DB$redcap$metadata[1,1] %>% as.character() #RISKY?
   DB$redcap$instrument_key_cols <- get_key_col_list(DB)
   DB$redcap$raw_structure_cols <- DB$redcap$instrument_key_cols %>% unlist() %>% unique()
-  instrument_names <- DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$instrument_name%in%unique(DB$redcap$metadata$form_name))]
+  instrument_names <- DB$redcap$instruments$instrument_name#[which(DB$redcap$instruments$instrument_name%in%unique(DB$redcap$metadata$form_name))]
   for (instrument_name in instrument_names){
-    row <- which(DB$redcap$metadata$form_name==instrument_name) %>% dplyr::last()
-    last_row <- nrow(DB$redcap$metadata)
     new_row <- data.frame(
       field_name = paste0(instrument_name,"_complete"),
       form_name = instrument_name,
       field_type = "radio",
       select_choices_or_calculations = "0, Incomplete | 1, Unverified | 2, Complete"
     )
+    last_row <- nrow(DB$redcap$metadata)
+    rows <- which(DB$redcap$metadata$form_name==instrument_name)
+    if(length(rows)==0)rows <- last_row
+    row <- dplyr::last(rows)
     top <- DB$redcap$metadata[1:row,]
     bottom <- NULL
     if(last_row>row){
