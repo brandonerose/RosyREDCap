@@ -203,16 +203,16 @@ get_redcap_metadata <- function(DB){
     DB$redcap$has_arms <- T
     DB$redcap$has_multiple_arms <- nrow(DB$redcap$arms)>1
     DB$redcap$has_arms_that_matter <- DB$redcap$has_multiple_arms
-    if(DB$redcap$has_arms_that_matter){
-      DB$redcap$has_arms_that_matter<- DB$redcap$arms$arm_num %>% lapply(function(arm){
-        DB$redcap$event_mapping$form[which(DB$redcap$event_mapping$arm_num==arm)]
-      }) %>% check_match() %>% magrittr::not()
-    }
     DB$redcap$event_mapping  <- get_redcap_info(DB,"formEventMapping","warn")
     DB$redcap$events <- get_redcap_info(DB,"event","warn")
     DB$redcap$events$forms <- DB$redcap$events$unique_event_name %>% sapply(function(events){
       DB$redcap$event_mapping$form[which(DB$redcap$event_mapping$unique_event_name==events)] %>% unique() %>% paste0(collapse = " | ")
     })
+    if(DB$redcap$has_arms_that_matter){
+      DB$redcap$has_arms_that_matter<- DB$redcap$arms$arm_num %>% lapply(function(arm){
+        DB$redcap$event_mapping$form[which(DB$redcap$event_mapping$arm_num==arm)]
+      }) %>% check_match() %>% magrittr::not()
+    }
     # if(is.data.frame(DB$unique_events)){
     #   DB$redcap$events <- data.frame(
     #     event_name = unique(DB$unique_events$event_name),
@@ -255,7 +255,7 @@ get_redcap_data <- function(DB,labelled=T,records=NULL){
     DB = DB,
     labelled = F,
     records = records
-  )
+  )# consider bug check that all records are included in data_list
   data_list <- raw_process_redcap(raw = raw, DB = DB, labelled = labelled)
   return(data_list)
 }
