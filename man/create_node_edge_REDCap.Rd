@@ -4,7 +4,7 @@
 \alias{create_node_edge_REDCap}
 \title{create_node_edge_REDCap}
 \usage{
-create_node_edge_REDCap(DB, include_vars = F)
+create_node_edge_REDCap(DB, include_vars = F, type = "DiagrammeR")
 }
 \arguments{
 \item{DB}{object generated using `load_DB()` or `setup_DB()`}
