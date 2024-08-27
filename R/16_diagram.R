@@ -43,7 +43,6 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         shape = "rectangle", # entity
         style = "filled",
-        color = "black",
         fillcolor = "green"
       )
     )
@@ -56,7 +55,6 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         shape = "rectangle", # entity
         style = "filled",
-        color = "orange",
         fillcolor = "orange"
       )
     )
@@ -98,7 +96,6 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         shape = "circle", # attribute
         style = "filled",
-        color = "#FF474C",
         fillcolor = "#FF474C"
       )
     )
@@ -133,7 +130,6 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
         }),
         shape = "circle",
         style = "filled",
-        color = "#FF474C",
         fillcolor = "#FF474C"
       )
     )
@@ -154,13 +150,17 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
     edge_df$id <- 1:nrow(edge_df)
   }
   node_df$fixedsize <- F
+  node_df$color.border <- "black"
   # out -----------------
   if(is_visNetwork){
     node_df$shape[which(node_df$shape=="rectangle")] <- "box"
     node_df$shape[which(node_df$shape=="circle")] <- "ellipse"
     colnames(node_df)[which(colnames(node_df)=="tooltip")] <- "title"
+    node_df$color <- node_df$fillcolor
+    node_df$color.highlight <- "gold"
   }
   if(is_DiagrammeR){
+    node_df$color <- node_df$color.border
     node_df$tooltip <-gsub("<br>","\\\n",node_df$tooltip) %>% remove_html_tags()
   }
   OUT <- list(
