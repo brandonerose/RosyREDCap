@@ -35,6 +35,9 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
       type = "instrument",
       label = instruments$instrument_name,
       # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+      tooltip = instruments$instrument_name %>% sapply(function(x){
+        paste0(x,"\n",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "\n"))
+      }),
       shape = "rectangle",
       style = "filled",
       color = "#FF474C",
@@ -68,6 +71,10 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
         type = "variable",
         label = metadata$field_name,
         # label = metadata$field_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+        tooltip = metadata$field_name %>% sapply(function(x){
+          ROW <- which(metadata$field_name==x)
+          paste0(x,"\n",paste0("Field Type: ",metadata$field_type[ROW], collapse = "\n"))
+        }),
         shape = "circle",
         style = "filled",
         color = "#FF474C",
@@ -91,11 +98,12 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
     )
     edge_df$id <- 1:nrow(edge_df)
   }
+  # out -----------------
   if(is_visNetwork){
     node_df$shape[which(node_df$shape=="rectangle")] <- "box"
     node_df$shape[which(node_df$shape=="circle")] <- "ellipse"
+    colnames(node_df)[which(colnames(node_df)=="tooltip")] <- "title"
   }
-  # out -----------------
   OUT <- list(
     node_df = node_df,
     edge_df = edge_df
