@@ -9,7 +9,6 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
   node_df <- NULL
   edge_df <- NULL
   if(DB$redcap$has_arms_that_matter){
-
   }
   #instruments-----------
   instruments <- DB$redcap$instruments
@@ -119,7 +118,6 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
     )
     edge_df$id <- 1:nrow(edge_df)
   }
-
   #variables -----------
   if(include_vars){
     metadata <- DB$redcap$metadata
