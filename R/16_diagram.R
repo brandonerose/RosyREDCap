@@ -4,7 +4,7 @@
 #' @return messages for confirmation
 #' @export
 create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
-  is_diagramR <- type =="DiagrammeR"
+  is_DiagrammeR <- type =="DiagrammeR"
   is_visNetwork <- type =="visNetwork"
   node_df <- NULL
   edge_df <- NULL
@@ -36,7 +36,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
       label = instruments$instrument_name,
       # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
       tooltip = instruments$instrument_name %>% sapply(function(x){
-        paste0(x,"\n",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "\n"))
+        paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
       }),
       shape = "rectangle",
       style = "filled",
@@ -73,7 +73,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
         # label = metadata$field_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         tooltip = metadata$field_name %>% sapply(function(x){
           ROW <- which(metadata$field_name==x)
-          paste0(x,"\n",paste0("Field Type: ",metadata$field_type[ROW], collapse = "\n"))
+          return(paste0("<p><b>",x,"</b><br>",paste0("Field Type: ",metadata$field_type[ROW],collapse = "<br>"),"</p>"))
         }),
         shape = "circle",
         style = "filled",
@@ -103,6 +103,9 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
     node_df$shape[which(node_df$shape=="rectangle")] <- "box"
     node_df$shape[which(node_df$shape=="circle")] <- "ellipse"
     colnames(node_df)[which(colnames(node_df)=="tooltip")] <- "title"
+  }
+  if(is_DiagrammeR){
+    node_df$tooltip <-gsub("<br>","\\\n",node_df$tooltip) %>% remove_html_tags()
   }
   OUT <- list(
     node_df = node_df,
@@ -172,7 +175,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
   #   decorate = NULL
   # )
 }
-#' @title REDCap_diagramR
+#' @title REDCap_diagram
 #' @inheritParams save_DB
 #' @return messages for confirmation
 #' @export

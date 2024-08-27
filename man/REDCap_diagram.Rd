@@ -2,7 +2,7 @@
 % Please edit documentation in R/16_diagram.R
 \name{REDCap_diagram}
 \alias{REDCap_diagram}
-\title{REDCap_diagramR}
+\title{REDCap_diagram}
 \usage{
 REDCap_diagram(DB, include_vars = F, type = "visNetwork", render = T)
 }
@@ -13,5 +13,5 @@ REDCap_diagram(DB, include_vars = F, type = "visNetwork", render = T)
 messages for confirmation
 }
 \description{
-REDCap_diagramR
+REDCap_diagram
 }
