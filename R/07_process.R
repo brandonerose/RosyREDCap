@@ -107,13 +107,14 @@ filter_DB <- function(DB, records,data_choice="data_extract",field_names,form_na
   }
   return(selected)
 }
-field_names_to_instruments <- function(DB,field_names){
-  instruments <- DB$redcap$metadata$form_name[
-    which(
-      DB$redcap$metadata$field_name%in%field_names&
-        !DB$redcap$metadata$field_name%in%DB$redcap$raw_structure_cols
-    )
-  ] %>% unique()
+#' @title field_names_to_instruments
+#' @inheritParams save_DB
+#' @param only_unique logical for unique
+#' @return instrument names
+#' @export
+field_names_to_instruments <- function(DB,field_names,only_unique = T){
+  instruments <- DB$redcap$metadata$form_name[match(field_names, DB$redcap$metadata$field_name)]
+  if(only_unique)instruments <- unique(instruments)
   return(instruments)
 }
 field_names_metadata <- function(DB,field_names){
