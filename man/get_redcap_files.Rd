@@ -11,7 +11,7 @@ get_redcap_files(DB, original_file_names = F, overwrite = F)
 
 \item{original_file_names}{logical for using original uploaded filenames vs system defined}
 
-\item{overwrite}{logical rewriting over the downladed files in your directory. A better alternative is deleting files you want to update.}
+\item{overwrite}{logical rewriting over the downloaded files in your directory. A better alternative is deleting files you want to update.}
 }
 \value{
 message

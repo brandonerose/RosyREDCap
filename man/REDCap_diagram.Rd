@@ -4,7 +4,14 @@
 \alias{REDCap_diagram}
 \title{REDCap_diagram}
 \usage{
-REDCap_diagram(DB, include_vars = F, type = "visNetwork", render = T)
+REDCap_diagram(
+  DB,
+  render = T,
+  include_vars = F,
+  type = "visNetwork",
+  duplicate_forms = T,
+  clean_name = T
+)
 }
 \arguments{
 \item{DB}{object generated using `load_DB()` or `setup_DB()`}

@@ -49,14 +49,13 @@ test_redcap <- function(DB){
   DB
 }
 get_redcap_info <- function(DB,content,error_action=NULL,additional_args=NULL){
-  allowed_content <- c("project","arm","event","metadata","instrument","repeatingFormsEvents","user","userRole","userRoleMapping","log","formEventMapping")
   if(!content%in%allowed_content)stop("Must use the following content... ",paste0(allowed_content,collapse = ", "))
   redcap_api_base(url=DB$links$redcap_uri,token = validate_redcap_token(DB),content = content,additional_args=additional_args) %>% process_response(error_action)
 }
 #' @title Drop redcap files to directory
 #' @inheritParams save_DB
 #' @param original_file_names logical for using original uploaded filenames vs system defined
-#' @param overwrite logical rewriting over the downladed files in your directory. A better alternative is deleting files you want to update.
+#' @param overwrite logical rewriting over the downloaded files in your directory. A better alternative is deleting files you want to update.
 #' @return message
 #' @export
 get_redcap_files <- function(DB,original_file_names = F,overwrite = F){
@@ -149,6 +148,7 @@ get_redcap_metadata <- function(DB){
       field_name = paste0(instrument_name,"_complete"),
       form_name = instrument_name,
       field_type = "radio",
+      field_label = paste0(instrument_name,"_complete")  %>% strsplit("_") %>% unlist() %>% stringr::str_to_title() %>% paste0(collapse = " "),
       select_choices_or_calculations = "0, Incomplete | 1, Unverified | 2, Complete"
     )
     last_row <- nrow(DB$redcap$metadata)
@@ -232,8 +232,8 @@ get_redcap_metadata <- function(DB){
     ] <- T
   }else{
     DB$redcap$has_arms <- F
-    DB$redcap$has_multiple_arms <- NA
-    DB$redcap$has_arms_that_matter <- NA
+    DB$redcap$has_multiple_arms <- F
+    DB$redcap$has_arms_that_matter <- F
     DB$redcap$event_mapping  <- NA
     DB$redcap$events <- NA
   }
@@ -249,6 +249,22 @@ get_redcap_metadata <- function(DB){
   DB$links$redcap_API <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/project_api.php?pid=",DB$redcap$project_id)
   DB$links$redcap_API_playground <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/playground.php?pid=",DB$redcap$project_id)
   DB
+}
+get_redcap_structure <- function(DB, parse_codes = F){
+  redcap <- NULL
+  redcap$uri <- DB$links$redcap_uri
+  redcap$version <- redcap_api_base(url = redcap$uri,token = validate_redcap_token(DB),"version") %>% httr::content(as="text") %>% as.character()
+  redcap$project_info <- get_redcap_info(DB,"project")
+  redcap$arms <- get_redcap_info(DB,"arm")
+  redcap$events <- get_redcap_info(DB,"event","warn")
+  redcap$event_mapping  <- get_redcap_info(DB,"formEventMapping","warn")
+  redcap$instruments <- get_redcap_info(DB,"instrument","warn")
+  redcap$repeating <- get_redcap_info(DB,"repeatingFormsEvents")
+  redcap$metadata <- get_redcap_info(DB,"metadata","stop")
+  if(parse_codes){
+    T
+  }
+  return(redcap)
 }
 get_redcap_data <- function(DB,labelled=T,records=NULL){
   raw <- get_raw_redcap(

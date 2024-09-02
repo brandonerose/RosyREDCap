@@ -3,32 +3,30 @@
 #' @inheritParams save_DB
 #' @return messages for confirmation
 #' @export
-create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
+create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", duplicate_forms = T, clean_name = T){
   is_DiagrammeR <- type =="DiagrammeR"
   is_visNetwork <- type =="visNetwork"
   node_df <- NULL
   edge_df <- NULL
-  if(DB$redcap$has_arms_that_matter){
-  }
-  #instruments-----------
   instruments <- DB$redcap$instruments
-  node_df <- node_df %>% dplyr::bind_rows(
-    data.frame(
-      id = NA,
-      type = "instrument",
-      label = instruments$instrument_name,
-      # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-      tooltip = instruments$instrument_name %>% sapply(function(x){
-        paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
-      }),
-      shape = "rectangle", # entity
-      style = "filled",
-      color = "#FF474C",
-      fillcolor = "#FF474C"
+  if( ! DB$redcap$is_longitudinal){
+    node_df <- node_df %>% dplyr::bind_rows(
+      data.frame(
+        id = NA,
+        type = "instrument",
+        label = instruments$instrument_name,
+        # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+        tooltip = instruments$instrument_name %>% sapply(function(x){
+          paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
+        }),
+        shape = "rectangle", # entity
+        style = "filled",
+        color = "#FF474C",
+        fillcolor = "#FF474C"
+      )
     )
-  )
-  node_df$id <- 1:nrow(node_df)
-  sub_node_df <- node_df[which(node_df$type=="instrument"),]
+    node_df$id <- 1:nrow(node_df)
+  }
   # events-----------
   if(DB$redcap$is_longitudinal){
     arms <- DB$redcap$arms
@@ -59,20 +57,69 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
       )
     )
     node_df$id <- 1:nrow(node_df)
-    sub_node_df <- node_df[which(node_df$type=="event"),]
-    edge_df <- edge_df %>% dplyr::bind_rows(
-      data.frame(
-        id = NA,
-        from = event_mapping$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$type=="event"&node_df$label==x)]}),
-        to = event_mapping$form %>% sapply(function(x){node_df$id[which(node_df$type=="instrument"&node_df$label==x)]}),
-        rel = NA,#"Belongs to",
-        style = "filled",
-        color = "#FF474C",
-        arrowhead = "none",
-        arrows = ""
+    if(duplicate_forms){
+      node_df <- node_df %>% dplyr::bind_rows(
+        data.frame(
+          id = NA,
+          type = "instrument",
+          label = event_mapping$form,
+          # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+          tooltip = event_mapping$form %>% sapply(function(x){
+            paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
+          }),
+          shape = "rectangle", # entity
+          style = "filled",
+          color = "#FF474C",
+          fillcolor = "#FF474C"
+        )
       )
-    )
-    edge_df$id <- 1:nrow(edge_df)
+      node_df$id <- 1:nrow(node_df)
+      sub_node_df <- node_df[which(node_df$type=="instrument"),]
+      if(any(sub_node_df$label != event_mapping$form))stop("event match error! check the diagram function. For now do not duplicate forms.")
+      edge_df <- edge_df %>% dplyr::bind_rows(
+        data.frame(
+          id = NA,
+          from = event_mapping$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$type=="event"&node_df$label==x)]}),
+          to = sub_node_df$id,
+          rel = NA,#"Belongs to",
+          style = "filled",
+          color = "#FF474C",
+          arrowhead = "none",
+          arrows = ""
+        )
+      )
+      edge_df$id <- 1:nrow(edge_df)
+    }else{
+      node_df <- node_df %>% dplyr::bind_rows(
+        data.frame(
+          id = NA,
+          type = "instrument",
+          label = instruments$instrument_name,
+          # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+          tooltip = instruments$instrument_name %>% sapply(function(x){
+            paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
+          }),
+          shape = "rectangle", # entity
+          style = "filled",
+          color = "#FF474C",
+          fillcolor = "#FF474C"
+        )
+      )
+      node_df$id <- 1:nrow(node_df)
+      edge_df <- edge_df %>% dplyr::bind_rows(
+        data.frame(
+          id = NA,
+          from = event_mapping$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$type=="event"&node_df$label==x)]}),
+          to = event_mapping$form %>% sapply(function(x){node_df$id[which(node_df$type=="instrument"&node_df$label==x)]}),
+          rel = NA,#"Belongs to",
+          style = "filled",
+          color = "#FF474C",
+          arrowhead = "none",
+          arrows = ""
+        )
+      )
+      edge_df$id <- 1:nrow(edge_df)
+    }
     edge_df <- edge_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
@@ -115,42 +162,77 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
     )
     edge_df$id <- 1:nrow(edge_df)
   }
-  #variables -----------
+  # variables -----------
   if(include_vars){
     metadata <- DB$redcap$metadata
-    node_df <- node_df %>% dplyr::bind_rows(
-      data.frame(
-        id = NA,
-        type = "variable",
-        label = metadata$field_name,
-        # label = metadata$field_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-        tooltip = metadata$field_name %>% sapply(function(x){
-          ROW <- which(metadata$field_name==x)
-          return(paste0("<p><b>",x,"</b><br>",paste0("Field Type: ",metadata$field_type[ROW],collapse = "<br>"),"</p>"))
-        }),
-        shape = "circle",
-        style = "filled",
-        fillcolor = "#FF474C"
+    sub_node_df <- node_df[which(node_df$type=="instrument"),]
+    x <- NULL
+    for (i in 1:nrow(sub_node_df)){#i <- 1:nrow(sub_node_df) %>% sample(1)
+      metadata_sub <- metadata$field_name[which(metadata$form_name == sub_node_df$label[i])]
+      node_id_sub <- (1:length(metadata_sub)) + max(node_df$id)
+      node_df <- node_df %>% dplyr::bind_rows(
+        data.frame(
+          id = node_id_sub,
+          type = "variable",
+          label = metadata_sub,
+          # label = metadata$field_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+          tooltip = metadata_sub %>% sapply(function(x){
+            ROW <- which(metadata$field_name==x)
+            return(paste0("<p><b>",x,"</b><br>",paste0("<b>Field Label:</b> ",metadata$field_label[ROW]),"<br>",paste0("<b>Field Type:</b> ",metadata$field_type[ROW]),"</p>"))
+          }),
+          shape = "circle",
+          style = "filled",
+          fillcolor = "#FF474C"
+        )
       )
-    )
-    node_df$id <- 1:nrow(node_df)
-    sub_node_df <- node_df[which(node_df$type=="variable"),]
-    edge_df <- edge_df %>% dplyr::bind_rows(
-      data.frame(
-        id = NA,
-        from = sub_node_df$id,
-        to = field_names_to_instruments(DB,field_names = sub_node_df$label, only_unique = F) %>% sapply(function(x){node_df$id[which(node_df$type=="instrument"&node_df$label==x)]}),
-        rel = NA,#"Belongs to",
-        style = "filled",
-        color = "#FF474C",
-        arrowhead = "none",
-        arrows = ""
+      edge_df <- edge_df %>% dplyr::bind_rows(
+        data.frame(
+          id = NA,
+          from = sub_node_df$id[i],
+          to = node_id_sub,
+          rel = NA,#"Belongs to",
+          style = "filled",
+          color = "#FF474C",
+          arrowhead = "none",
+          arrows = ""
+        )
       )
-    )
+    }
     edge_df$id <- 1:nrow(edge_df)
   }
   node_df$fixedsize <- F
   node_df$color.border <- "black"
+  # clean names -----------
+  if(clean_name){
+    types <- node_df$type %>% unique()
+    for(type in types){#type <- types %>% sample1()
+      ROWS <- which(node_df$type == type)
+      if (type == "instrument"){
+        node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
+          y <- instruments$instrument_label[instruments$instrument_name==x]
+          return(ifelse(is.na(y),x,y))
+        })
+      }
+      if (type == "arm"){
+        node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
+          y <- arms$name[arms$arm_num==x]
+          return(ifelse(is.na(y),x,y))
+        })
+      }
+      # if (type == "variable"){
+      #   node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
+      #     y <- metadata$field_label[metadata$field_name==x]
+      #     return(ifelse(is.na(y),x,y))
+      #   })
+      # }
+      if (type == "event"){
+        node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
+          y <- events$event_name[events$unique_event_name==x]
+          return(ifelse(is.na(y),x,y))
+        })
+      }
+    }
+  }
   # out -----------------
   if(is_visNetwork){
     node_df$shape[which(node_df$shape=="rectangle")] <- "box"
@@ -235,8 +317,8 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR"){
 #' @inheritParams save_DB
 #' @return messages for confirmation
 #' @export
-REDCap_diagram <- function(DB, include_vars = F,type = "visNetwork",render = T){
-  OUT <- create_node_edge_REDCap(DB,include_vars = include_vars,type = type)
+REDCap_diagram <- function(DB, render = T, include_vars = F,type = "visNetwork",duplicate_forms = T, clean_name = T){
+  OUT <- create_node_edge_REDCap(DB,include_vars = include_vars,type = type, duplicate_forms = duplicate_forms,clean_name = clean_name)
   if(type == "DiagrammeR")type <- "graph"
   graph <-
     DiagrammeR::create_graph(

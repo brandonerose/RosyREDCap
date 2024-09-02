@@ -27,6 +27,7 @@ Imports:
     rio,
     rmarkdown,
     RosyUtils,
+    rstudioapi,
     shiny (>= 1.8.1.1),
     skimr,
     stringr,
