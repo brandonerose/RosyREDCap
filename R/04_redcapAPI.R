@@ -272,7 +272,7 @@ save_redcap_structure_to_dir <- function(DB,parse_codes = F){
   redcap <- get_redcap_structure(DB,parse_codes = parse_codes)
   names(redcap)[which(names(redcap)=="events")] <- "events_in"
   NAMES <- names(REDCap_API$return_form_names)
-  NAMES <- NAMES[which(!NAMES == "events_out")]
+  NAMES <- NAMES[which(!NAMES == "events")]
   if(! parse_codes){
     NAMES <- NAMES[which(!NAMES %in% c("codebook","missing_codes"))]
   }
@@ -286,7 +286,7 @@ save_redcap_structure_to_dir <- function(DB,parse_codes = F){
     }
     redcap[[NAME]] <- DF
   }
-  redcap %>% list_to_excel(dir = file.path(DB$dir_path,"REDCap"),file_name = "REDCap_structure")
+  redcap %>% list_to_excel(dir = file.path(DB$dir_path,"REDCap"),file_name = "REDCap_structure",drop_empty = F)
 }
 upload_redcap_structure<- function(redcap){
   print("1")
