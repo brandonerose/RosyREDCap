@@ -271,7 +271,6 @@ get_redcap_structure <- function(DB, parse_codes = F){
 save_redcap_structure_to_dir <- function(DB,parse_codes = F){
   redcap <- get_redcap_structure(DB,parse_codes = parse_codes)
   for (NAME in names(redcap)){
-
   }
 }
 get_redcap_data <- function(DB,labelled=T,records=NULL){
