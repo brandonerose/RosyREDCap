@@ -49,6 +49,7 @@ test_redcap <- function(DB){
   DB
 }
 get_redcap_info <- function(DB,content,error_action=NULL,additional_args=NULL){
+  allowed_content <- REDCap_API$contents$content
   if(!content%in%allowed_content)stop("Must use the following content... ",paste0(allowed_content,collapse = ", "))
   redcap_api_base(url=DB$links$redcap_uri,token = validate_redcap_token(DB),content = content,additional_args=additional_args) %>% process_response(error_action)
 }
