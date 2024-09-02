@@ -251,6 +251,11 @@ get_redcap_metadata <- function(DB){
   DB$links$redcap_API_playground <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/playground.php?pid=",DB$redcap$project_id)
   DB
 }
+#' @title get_redcap_structure
+#' @inheritParams save_DB
+#' @param parse_codes logical for parsing choice codes and missing codes into tabs
+#' @return redcap structure list
+#' @export
 get_redcap_structure <- function(DB, parse_codes = F){
   redcap <- NULL
   # redcap$uri <- DB$links$redcap_uri
@@ -268,6 +273,10 @@ get_redcap_structure <- function(DB, parse_codes = F){
   }
   return(redcap)
 }
+#' @title save_redcap_structure_to_dir
+#' @inheritParams get_redcap_structure
+#' @return redcap structure list
+#' @export
 save_redcap_structure_to_dir <- function(DB,parse_codes = F){
   redcap <- get_redcap_structure(DB,parse_codes = parse_codes)
   names(redcap)[which(names(redcap)=="events")] <- "events_in"
@@ -288,8 +297,33 @@ save_redcap_structure_to_dir <- function(DB,parse_codes = F){
   }
   redcap %>% list_to_excel(dir = file.path(DB$dir_path,"REDCap"),file_name = "REDCap_structure",drop_empty = F)
 }
-upload_redcap_structure<- function(redcap){
-  print("1")
+#' @title load_redcap_structure_from_dir
+#' @inheritParams save_DB
+#' @param parse_codes logical for parsing choice codes and missing codes into tabs
+#' @return redcap structure list
+#' @export
+load_redcap_structure_from_dir <- function(DB, path = file.path(DB$dir_path,"REDCap","REDCap_structure.xlsx")){
+  redcap <- excel_to_list(path)
+  if("codebook"%in%names(redcap)){
+    # add to metadata
+  }
+  if("missing_data"%in%names(redcap)){
+    # add to proj info after writing to code function
+  }
+  return(redcap)
+}
+#' @title upload_redcap_structure
+#' @inheritParams save_DB
+#' @param redcap list to be uploaded
+#' @return redcap structure list
+#' @export
+upload_redcap_structure<- function(DB,redcap){
+  OK  <- names(REDCap_API$return_form_names)[which(!names(REDCap_API$return_form_names)%in%c("codebook","missing_codes"))]
+  BAD <- names(redcap)[which(!names(redcap)  %in% OK)]
+  if(length(BAD)>0) stop("Bad Names in redcap object not matching: ",BAD %>% paste0(collapse = ", "))
+  for (NAME in names(redcap)){
+    print("example of '","' being uploaded")
+  }
 }
 get_redcap_data <- function(DB,labelled=T,records=NULL){
   raw <- get_raw_redcap(
