@@ -2,7 +2,7 @@ Package: RosyREDCap
 Title: A REDCap-project-agnostic R package that uses an API token to make
     a single, updating, standardized R list object containing all metadata
     and data for exports, imports, transformations, and shiny applications
-Version: 1.0.0.9011
+Version: 1.0.0.9012
 Authors@R: 
     person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"),
            comment = c(ORCID = "0009-0009-7813-1960"))
