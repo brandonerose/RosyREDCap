@@ -263,9 +263,14 @@ get_redcap_structure <- function(DB, parse_codes = F){
   redcap$repeating <- get_redcap_info(DB,"repeatingFormsEvents")
   redcap$metadata <- get_redcap_info(DB,"metadata","stop")
   if(parse_codes){
-    T
+    redcap$codebook <- redcap$metadata %>% metadata_to_codebook()
+    redcap$missing_codes <- missing_codes2(DB)
   }
+  redcap
   return(redcap)
+}
+save_redcap_structure_to_dir <- function(DB){
+ x <- DB %>% get_redcap_structure()
 }
 get_redcap_data <- function(DB,labelled=T,records=NULL){
   raw <- get_raw_redcap(
