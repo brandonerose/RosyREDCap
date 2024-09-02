@@ -253,9 +253,9 @@ get_redcap_metadata <- function(DB){
 }
 get_redcap_structure <- function(DB, parse_codes = F){
   redcap <- NULL
-  redcap$uri <- DB$links$redcap_uri
-  redcap$version <- redcap_api_base(url = redcap$uri,token = validate_redcap_token(DB),"version") %>% httr::content(as="text") %>% as.character()
-  redcap$project_info <- get_redcap_info(DB,"project")
+  # redcap$uri <- DB$links$redcap_uri
+  # redcap$version <- redcap_api_base(url = redcap$uri,token = validate_redcap_token(DB),"version") %>% httr::content(as="text") %>% as.character()
+  # redcap$project_info <- get_redcap_info(DB,"project")
   redcap$arms <- get_redcap_info(DB,"arm")
   redcap$events <- get_redcap_info(DB,"event","warn")
   redcap$event_mapping  <- get_redcap_info(DB,"formEventMapping","warn")
@@ -266,11 +266,13 @@ get_redcap_structure <- function(DB, parse_codes = F){
     redcap$codebook <- redcap$metadata %>% metadata_to_codebook()
     redcap$missing_codes <- missing_codes2(DB)
   }
-  redcap
   return(redcap)
 }
-save_redcap_structure_to_dir <- function(DB){
- x <- DB %>% get_redcap_structure()
+save_redcap_structure_to_dir <- function(DB,parse_codes = F){
+  redcap <- get_redcap_structure(DB,parse_codes = parse_codes)
+  for (NAME in names(redcap)){
+
+  }
 }
 get_redcap_data <- function(DB,labelled=T,records=NULL){
   raw <- get_raw_redcap(
