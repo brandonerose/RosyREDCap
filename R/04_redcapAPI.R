@@ -255,7 +255,7 @@ get_redcap_structure <- function(DB, parse_codes = F){
   redcap <- NULL
   # redcap$uri <- DB$links$redcap_uri
   # redcap$version <- redcap_api_base(url = redcap$uri,token = validate_redcap_token(DB),"version") %>% httr::content(as="text") %>% as.character()
-  # redcap$project_info <- get_redcap_info(DB,"project")
+  redcap$project_info <- get_redcap_info(DB,"project")
   redcap$arms <- get_redcap_info(DB,"arm")
   redcap$events <- get_redcap_info(DB,"event","warn")
   redcap$event_mapping  <- get_redcap_info(DB,"formEventMapping","warn")
@@ -270,8 +270,26 @@ get_redcap_structure <- function(DB, parse_codes = F){
 }
 save_redcap_structure_to_dir <- function(DB,parse_codes = F){
   redcap <- get_redcap_structure(DB,parse_codes = parse_codes)
-  for (NAME in names(redcap)){
+  names(redcap)[which(names(redcap)=="events")] <- "events_in"
+  NAMES <- names(REDCap_API$return_form_names)
+  NAMES <- NAMES[which(!NAMES == "events_out")]
+  if(! parse_codes){
+    NAMES <- NAMES[which(!NAMES %in% c("codebook","missing_codes"))]
   }
+  for (NAME in NAMES){
+    x <- REDCap_API$return_form_names[[NAME]]
+    DF <- matrix(data = NA, nrow = 0,ncol = length(x)) %>% as.data.frame()
+    colnames(DF) <- x
+    DF <- all_character_cols(DF)
+    if(is_something(redcap[[NAME]])){
+      DF <- redcap[[NAME]][,which(colnames(redcap[[NAME]])%in%REDCap_API$return_form_names[[NAME]])]
+    }
+    redcap[[NAME]] <- DF
+  }
+  redcap %>% list_to_excel(dir = file.path(DB$dir_path,"REDCap"),file_name = "REDCap_structure")
+}
+upload_redcap_structure<- function(redcap){
+  print("1")
 }
 get_redcap_data <- function(DB,labelled=T,records=NULL){
   raw <- get_raw_redcap(
