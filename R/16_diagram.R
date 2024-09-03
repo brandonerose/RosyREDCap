@@ -147,6 +147,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
       )
     )
     node_df$id <- 1:nrow(node_df)
+    sub_node_df <- node_df[which(node_df$type=="instrument"),]
     edge_df <- edge_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
