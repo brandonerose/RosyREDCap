@@ -1,13 +1,26 @@
 #' @import RosyUtils
+#' @import shiny
+#' @import shinydashboard
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
 #' @import shiny
 #' @noRd
-app_ui <- function(request) {
+app_ui<- function(request) {
   tagList(
+    # Leave this function for adding external resources
     golem_add_external_resources(),
-    fluidPage(
-      h1("RosyREDCap")
+    includeCSS(system.file(package="table1", "table1_defaults_1.0/table1_defaults.css")),
+    # Your application UI logic
+    shinydashboardPlus::dashboardPage(
+      options = list(
+        sidebarExpandOnHover = F
+      ),
+      header = dbHeader(),
+      sidebar = dbSidebar(),
+      body = dbBody(),
+      controlbar = dbControlbar(),
+      footer = TCD_NF(),
+      skin = "black"
     )
   )
 }
@@ -25,10 +38,12 @@ golem_add_external_resources <- function() {
     app_sys("app/www")
   )
   tags$head(
-    favicon(),
+    favicon(ext = 'png'),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "RosyREDCap"
+      app_title = .packageName
     )
+    # Add here other external resources
+    # for example, you can add shinyalert::useShinyalert()
   )
 }

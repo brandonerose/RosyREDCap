@@ -29,6 +29,8 @@ Imports:
     RosyUtils,
     rstudioapi,
     shiny (>= 1.8.1.1),
+    shinydashboard,
+    shinydashboardPlus,
     skimr,
     stringr,
     table1,
