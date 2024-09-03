@@ -31,6 +31,7 @@ Imports:
     shiny (>= 1.8.1.1),
     skimr,
     stringr,
+    table1,
     tools,
     utils
 Remotes: 
