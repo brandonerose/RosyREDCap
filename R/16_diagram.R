@@ -139,11 +139,11 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
       data.frame(
         id = NA,
         type = "structure",
-        label = c("Not Repeating","Repeating"),
+        label = ifelse(DB$redcap$has_repeating_events,c("Not Repeating","Repeating"),"Not Repeating"),
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         shape = "circle", # attribute
         style = "filled",
-        fillcolor = "#FF474C"
+        fillcolor = "green"
       )
     )
     node_df$id <- 1:nrow(node_df)
@@ -183,7 +183,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           }),
           shape = "circle",
           style = "filled",
-          fillcolor = "#FF474C"
+          fillcolor = "yellow"
         )
       )
       edge_df <- edge_df %>% dplyr::bind_rows(
