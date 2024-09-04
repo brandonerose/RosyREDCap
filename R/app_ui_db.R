@@ -11,11 +11,11 @@ dbBody<-function(){
           box(
             title = h1("Records"),
             width = 12,
-            htmlwidgets::shinyWidgetOutput("REDCap_diagram")
+            DiagrammeR::DiagrammeROutput("REDCap_diagram")
+          )
         )
       )
     )
-  )
   )
 }
 dbHeader<-function(){

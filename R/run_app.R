@@ -8,11 +8,17 @@
 #' @export
 run_RosyREDCap <- function(
     onStart = NULL,
-    options = list(),
+    options = list(
+      launch.browser = T
+    ),
     enableBookmarking = NULL,
     uiPattern = "/",
+    dev = F,
     ...
 ) {
+  if(dev){
+    options <- options(shiny.launch.browser = .rs.invokeShinyPaneViewer)
+  }
   with_golem_options(
     app = shinyApp(
       ui = app_ui,

@@ -135,33 +135,35 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     edge_df$id <- 1:nrow(edge_df)
   }else{
     #structure ------------
-    node_df <- node_df %>% dplyr::bind_rows(
-      data.frame(
-        id = NA,
-        type = "structure",
-        label = ifelse(DB$redcap$has_repeating_events,c("Not Repeating","Repeating"),"Not Repeating"),
-        # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-        shape = "circle", # attribute
-        style = "filled",
-        fillcolor = "green"
+    if(DB$redcap$has_repeating_instruments){
+      node_df <- node_df %>% dplyr::bind_rows(
+        data.frame(
+          id = NA,
+          type = "structure",
+          label = c("Repeating","Not Repeating"),
+          # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+          shape = "circle", # attribute
+          style = "filled",
+          fillcolor = "green"
+        )
       )
-    )
-    node_df$id <- 1:nrow(node_df)
-    sub_node_df <- node_df[which(node_df$type=="instrument"),]
-    edge_df <- edge_df %>% dplyr::bind_rows(
-      data.frame(
-        id = NA,
-        from = sub_node_df$id,
-        to = ifelse(instruments$repeating[match(sub_node_df$label,instruments$instrument_name)],"Repeating","Not Repeating")%>%
-          sapply(function(x){node_df$id[which(node_df$type=="structure"&node_df$label==x)]}),
-        rel = NA,#"Belongs to",
-        style = "filled",
-        color = "#FF474C",
-        arrowhead = "none",
-        arrows = ""
+      node_df$id <- 1:nrow(node_df)
+      sub_node_df <- node_df[which(node_df$type=="instrument"),]
+      edge_df <- edge_df %>% dplyr::bind_rows(
+        data.frame(
+          id = NA,
+          from = sub_node_df$id,
+          to = ifelse(instruments$repeating[match(sub_node_df$label,instruments$instrument_name)],"Repeating","Not Repeating")%>%
+            sapply(function(x){node_df$id[which(node_df$type=="structure"&node_df$label==x)]}),
+          rel = NA,#"Belongs to",
+          style = "filled",
+          color = "#FF474C",
+          arrowhead = "none",
+          arrows = ""
+        )
       )
-    )
-    edge_df$id <- 1:nrow(edge_df)
+      edge_df$id <- 1:nrow(edge_df)
+    }
   }
   # variables -----------
   if(include_vars){

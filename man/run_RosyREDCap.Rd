@@ -6,9 +6,10 @@
 \usage{
 run_RosyREDCap(
   onStart = NULL,
-  options = list(),
+  options = list(launch.browser = T),
   enableBookmarking = NULL,
   uiPattern = "/",
+  dev = F,
   ...
 )
 }
