@@ -169,9 +169,9 @@ rmarkdown_DB <- function (DB,dir_other){
   )
 }
 #' @export
-save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"output"),file_name = paste0(DB$short_name,"_RosyREDCap"),separate = F){
+save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"output"),file_name = paste0(DB$short_name,"_RosyREDCap"),separate = F,data_choice = "data_transform"){
   DB <- DB %>% validate_DB()
-  to_save_list <- append(DB[["data_transform"]],DB[["summary"]])
+  to_save_list <- append(DB[[data_choice]],DB[["summary"]])
   to_save_list <- to_save_list[which(to_save_list %>% sapply(is.data.frame))]
   to_save_list <- to_save_list[which((to_save_list %>% sapply(nrow) %>% unlist())>0)]
   link_col_list <- list()
