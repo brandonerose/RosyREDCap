@@ -489,7 +489,7 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
         DB$redcap$metadata$field_name[which(DB$redcap$metadata$field_type=="notes")]
       ) %>% unique()
   }
-  for (data_choice in c("data_transform")){
+  for (data_choice in c("data_extract","data_transform","data_upload")){
     if(is_something(DB[[data_choice]])){
       drop_list <- Map(function(NAME, COLS) {identifiers[which(identifiers %in% COLS)]},names(DB[[data_choice]]), lapply(DB[[data_choice]], colnames))
       drop_list <- drop_list[sapply(drop_list, length) > 0]
