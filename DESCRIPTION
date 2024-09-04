@@ -16,6 +16,7 @@ Imports:
     config (>= 0.3.2),
     DiagrammeR,
     dplyr,
+    DT,
     golem (>= 0.4.1),
     hoardr,
     httr,
