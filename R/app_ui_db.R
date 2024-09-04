@@ -10,9 +10,28 @@ dbBody<-function(){
         fluidRow(
           box(
             title = h1("Records"),
+            width = 12
+          )
+        )
+      ),
+      tabItem(
+        "Metadata",
+        fluidRow(
+          box(
+            title = h1("Records"),
             width = 12,
-            visNetwork::visNetwork("REDCap_diagram_vis"),
+            visNetwork::visNetworkOutput("REDCap_diagram_vis"),
             DiagrammeR::grVizOutput("REDCap_diagram_diag")
+          )
+        )
+      ),
+      tabItem(
+        "Data",
+        fluidRow(
+          box(
+            title = h1("Data Tables"),
+            width = 12,
+            uiOutput("dt_tables_view")
           )
         )
       )
@@ -42,6 +61,26 @@ dbSidebar<-function(){
         text="Home",
         tabName = "home",
         icon =shiny::icon("home")
+      ),
+      menuItem(
+        text="Metadata",
+        tabName = "Metadata",
+        icon =shiny::icon("gear")
+      ),
+      menuItem(
+        text="Data",
+        tabName = "Data",
+        icon =shiny::icon("users")
+      ),
+      fluidRow(
+        column(
+          12,
+          actionButton("ab_random_patient_group","Random Patient From Group!"),
+          actionButton("ab_update_redcap","Update REDCap!"),
+          # verbatimTextOutput("testingtext"),
+          valueBoxOutput("vb_selected_record",width = 12),
+          actionButton("ab_random_record","Random Record!"),
+          align="center")
       )
     ),
     uiOutput("redcap_links"),

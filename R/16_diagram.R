@@ -9,6 +9,8 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   node_df <- NULL
   edge_df <- NULL
   instruments <- DB$redcap$instruments
+  fontcolor <- "black"
+  instrument_color <- "#FF474C"
   if( ! DB$redcap$is_longitudinal){
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
@@ -21,8 +23,9 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         }),
         shape = "rectangle", # entity
         style = "filled",
-        color = "#FF474C",
-        fillcolor = "#FF474C"
+        color = instrument_color,
+        fillcolor = instrument_color,
+        fontcolor = fontcolor
       )
     )
     node_df$id <- 1:nrow(node_df)
@@ -41,7 +44,8 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         shape = "rectangle", # entity
         style = "filled",
-        fillcolor = "green"
+        fillcolor = "green",
+        fontcolor = fontcolor
       )
     )
     node_df$id <- 1:nrow(node_df)
@@ -53,7 +57,8 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         shape = "rectangle", # entity
         style = "filled",
-        fillcolor = "orange"
+        fillcolor = "orange",
+        fontcolor = fontcolor
       )
     )
     node_df$id <- 1:nrow(node_df)
@@ -69,8 +74,9 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           }),
           shape = "rectangle", # entity
           style = "filled",
-          color = "#FF474C",
-          fillcolor = "#FF474C"
+          color = instrument_color,
+          fillcolor = instrument_color,
+          fontcolor = fontcolor
         )
       )
       node_df$id <- 1:nrow(node_df)
@@ -83,7 +89,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           to = sub_node_df$id,
           rel = NA,#"Belongs to",
           style = "filled",
-          color = "#FF474C",
+          color = fontcolor,
           arrowhead = "none",
           arrows = ""
         )
@@ -101,8 +107,9 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           }),
           shape = "rectangle", # entity
           style = "filled",
-          color = "#FF474C",
-          fillcolor = "#FF474C"
+          color = instrument_color,
+          fillcolor = instrument_color,
+          fontcolor = fontcolor
         )
       )
       node_df$id <- 1:nrow(node_df)
@@ -113,7 +120,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           to = event_mapping$form %>% sapply(function(x){node_df$id[which(node_df$type=="instrument"&node_df$label==x)]}),
           rel = NA,#"Belongs to",
           style = "filled",
-          color = "#FF474C",
+          color = fontcolor,
           arrowhead = "none",
           arrows = ""
         )
@@ -127,7 +134,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         to = events$arm_num %>% sapply(function(x){node_df$id[which(node_df$type=="arm"&node_df$label==x)]}),
         rel = NA,#"Belongs to",
         style = "filled",
-        color = "#FF474C",
+        color = fontcolor,
         arrowhead = "none",
         arrows = ""
       )
@@ -144,7 +151,8 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
           shape = "circle", # attribute
           style = "filled",
-          fillcolor = "green"
+          fillcolor = "green",
+          fontcolor = fontcolor
         )
       )
       node_df$id <- 1:nrow(node_df)
@@ -157,7 +165,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
             sapply(function(x){node_df$id[which(node_df$type=="structure"&node_df$label==x)]}),
           rel = NA,#"Belongs to",
           style = "filled",
-          color = "#FF474C",
+          color = fontcolor,
           arrowhead = "none",
           arrows = ""
         )
@@ -185,7 +193,8 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           }),
           shape = "circle",
           style = "filled",
-          fillcolor = "yellow"
+          fillcolor = "yellow",
+          fontcolor = fontcolor
         )
       )
       edge_df <- edge_df %>% dplyr::bind_rows(
@@ -195,7 +204,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           to = node_id_sub,
           rel = NA,#"Belongs to",
           style = "filled",
-          color = "#FF474C",
+          color = fontcolor,
           arrowhead = "none",
           arrows = ""
         )

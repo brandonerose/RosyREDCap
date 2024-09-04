@@ -91,3 +91,54 @@ all_DB_to_char_cols <- function(DB){
   DB$data_upload <-DB$data_upload %>% all_character_cols_list()
   return(DB)
 }
+add_redcap_links_table<-function(DF,DB){
+  if(nrow(DF)>0){
+    DF[[DB$redcap$id_col]] <- paste0("<a href='",paste0("https://redcap.miami.edu/redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id,"&id=",DF[[DB$redcap$id_col]],"&arm=1"),"' target='_blank'>",DF[[DB$redcap$id_col]],"</a>")
+  }
+  DF
+}
+clean_RC_col_names<-function(DF,DB){
+  colnames(DF)<-colnames(DF) %>% sapply(function(COL){
+    x<-DB$remap$metadata_new$field_label[which(DB$remap$metadata_new$field_name==COL)]
+    if(length(x)>1){
+      x<-DB$remap$metadata_new$field_label[which(DB$remap$metadata_new$field_name==COL&DB$remap$metadata_new$form_name==INS)]
+    }
+    ifelse(length(x)>0,x,COL)
+  }) %>% unlist()
+  DF
+}
+make_DT_table<-function(DF,selection="single",DB){
+  # %>% DT::formatStyle(
+  #   colnames(DF),
+  #   color = "#000"
+  # )
+  if(!is_something(DF)){
+    return(h3("No tables available to display."))
+  }
+  DF %>%
+    add_redcap_links_table(DB) %>%
+    clean_RC_col_names(DB) %>%
+    DT::datatable(
+      selection = selection,
+      editable = F,
+      rownames = F,
+      options = list(
+        columnDefs = list(list(className = 'dt-center',targets = "_all")),
+        paging = T,
+        pageLength = 50,
+        fixedColumns = TRUE,
+        ordering = TRUE,
+        scrollY = "300px",
+        scrollX = T,
+        # autoWidth = T,
+        searching = T,
+        dom = 'frtip',
+        # buttons = c('csv', 'excel',"pdf"),
+        scrollCollapse = F,
+        stateSave = F
+      ),
+      class = "cell-border",
+      filter = 'top',
+      escape =F
+    )
+}
