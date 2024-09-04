@@ -10,7 +10,8 @@ dbBody<-function(){
         fluidRow(
           box(
             title = h1("Records"),
-            width = 12
+            width = 12,
+            htmlwidgets::shinyWidgetOutput("REDCap_diagram")
         )
       )
     )
