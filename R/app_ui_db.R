@@ -11,7 +11,8 @@ dbBody<-function(){
           box(
             title = h1("Records"),
             width = 12,
-            DiagrammeR::DiagrammeROutput("REDCap_diagram")
+            visNetwork::visNetwork("REDCap_diagram_vis"),
+            DiagrammeR::grVizOutput("REDCap_diagram_diag")
           )
         )
       )

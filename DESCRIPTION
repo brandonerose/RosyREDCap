@@ -35,7 +35,8 @@ Imports:
     stringr,
     table1,
     tools,
-    utils
+    utils,
+    visNetwork
 Remotes: 
     github::brandonerose/RosyUtils
 Encoding: UTF-8
