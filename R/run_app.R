@@ -1,12 +1,12 @@
 #' @import RosyUtils
-#' @title run_app
+#' @title run_RosyREDCap
 #' @param ... arguments to pass to golem_opts.
 #' See `?golem::get_golem_options` for more details.
 #' @inheritParams shiny::shinyApp
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
 #' @export
-run_app <- function(
+run_RosyREDCap <- function(
     onStart = NULL,
     options = list(),
     enableBookmarking = NULL,
