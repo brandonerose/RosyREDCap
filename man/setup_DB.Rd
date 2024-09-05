@@ -8,7 +8,7 @@ setup_DB(
   short_name,
   dir_path,
   token_name,
-  redcap_base_link,
+  redcap_base,
   force = F,
   merge_form_name,
   validate = T,
@@ -22,7 +22,7 @@ setup_DB(
 
 \item{token_name}{character string of what the token is called when using Sys.setenv and Sys.getenv}
 
-\item{redcap_base_link}{character of the base REDCap link, ex. https://redcap.miami.edu}
+\item{redcap_base}{character of the base REDCap link, ex. https://redcap.miami.edu}
 
 \item{force}{logical for force blank load vs last save}
 

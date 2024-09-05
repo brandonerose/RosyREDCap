@@ -147,13 +147,13 @@ validate_DB <- function(DB,silent = T,warn_only = F){
 #' @param short_name character name as a shortcut
 #' @param dir_path character file path of the directory
 #' @param token_name character string of what the token is called when using Sys.setenv and Sys.getenv
-#' @param redcap_base_link character of the base REDCap link, ex. https://redcap.miami.edu
+#' @param redcap_base character of the base REDCap link, ex. https://redcap.miami.edu
 #' @param force logical for force blank load vs last save
 #' @param validate logical for validation
 #' @param merge_form_name name of merged non-repeating to be used in package
 #' @return DB
 #' @export
-setup_DB <- function(short_name,dir_path,token_name,redcap_base_link,force = F,merge_form_name,validate = T,use_csv = F){
+setup_DB <- function(short_name,dir_path,token_name,redcap_base,force = F,merge_form_name,validate = T,use_csv = F){
   #param check
   missing_dir_path <- missing(dir_path)
   if(missing_dir_path){
@@ -177,10 +177,10 @@ setup_DB <- function(short_name,dir_path,token_name,redcap_base_link,force = F,m
   ){
     if(missing(short_name))stop("`short_name` is required for DBs that haven't been validated")
     if(missing(token_name))stop("`token_name` is required for DBs that haven't been validated")
-    if(missing(redcap_base_link))stop("`redcap_base_link` is required for DBs that haven't been validated")
+    if(missing(redcap_base))stop("`redcap_base` is required for DBs that haven't been validated")
     DB$short_name <- short_name %>% validate_env_name()
     DB$token_name <- token_name %>% validate_env_name()
-    DB$links$redcap_base <-  validate_web_link(redcap_base_link)
+    DB$links$redcap_base <-  validate_web_link(redcap_base)
     DB$links$redcap_uri <- DB$links$redcap_base  %>% paste0("api/")
     if(validate)DB <- validate_DB(DB)
   }else{
@@ -198,11 +198,11 @@ setup_DB <- function(short_name,dir_path,token_name,redcap_base_link,force = F,m
         DB$token_name <- token_name %>% validate_env_name()
       }
     }
-    if(! missing(redcap_base_link)){
+    if(! missing(redcap_base)){
       if(validate){
-        if(DB$links$redcap_base != redcap_base_link)stop("The `redcap_base`, ",redcap_base_link,", you provided does not match the one the was loaded ",DB$links$redcap_base)
+        if(DB$links$redcap_base != redcap_base)stop("The `redcap_base`, ",redcap_base,", you provided does not match the one the was loaded ",DB$links$redcap_base)
       }else{
-        DB$links$redcap_base <-  validate_web_link(redcap_base_link)
+        DB$links$redcap_base <-  validate_web_link(redcap_base)
         DB$links$redcap_uri <- DB$links$redcap_base  %>% paste0("api/")
       }
     }

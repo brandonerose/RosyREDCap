@@ -10,12 +10,13 @@ dbBody<-function(){
         fluidRow(
           box(
             title = h1("Records"),
-            width = 12
-          )
+            width = 12,
+            listviewer::jsoneditOutput("values_list"),
+            listviewer::jsoneditOutput("input_list")          )
         )
       ),
       tabItem(
-        "Metadata",
+        "metadata",
         fluidRow(
           box(
             title = h1("Records"),
@@ -26,12 +27,57 @@ dbBody<-function(){
         )
       ),
       tabItem(
-        "Data",
+        "data",
         fluidRow(
           box(
             title = h1("Data Tables"),
             width = 12,
             uiOutput("dt_tables_view")
+          )
+        )
+      ),
+      #group--------
+      tabItem(
+        "group"
+        # fluidRow(
+        #   box(
+        #     title = h1("REDCap Log"),
+        #     width = 12,
+        #     DT::DTOutput("log_table_chosen")
+        #   )
+        # )
+      ),
+      #indiv--------
+      tabItem(
+        "record",
+        fluidRow(
+          box(
+            title = h1("View"),
+            width = 6,
+            uiOutput("choose_variables_to_view")
+            # uiOutput("dt_tables_view")
+          ),
+          box(
+            title = h1("Change"),
+            width = 6,
+            uiOutput("choose_variables_to_change"),
+            uiOutput("variables_to_change_dynamic_inputs"),
+            h1("Below is what will be uploaded to REDCap!"),
+            DT::DTOutput("the_uploading_table"),
+            uiOutput("add_input_instance_ui"),
+            actionButton("submit_data_values", "Submit Data")
+            # verbatimTextOutput("output_values_change"),
+            # verbatimTextOutput("input_changes")
+          )
+        )
+      ),
+      #users--------
+      tabItem(
+        "users",
+        fluidRow(
+          box(
+            title = h1("Users"),
+            width = 12
           )
         )
       )
@@ -63,19 +109,60 @@ dbSidebar<-function(){
         icon =shiny::icon("home")
       ),
       menuItem(
+        text="Data",
+        tabName = "data",
+        icon =shiny::icon("users")
+      ),
+      conditionalPanel(
+        "input.sb1 === 'data'",
+        selectInput(
+          "data_choice",
+          label = "Data Choice",
+          choices = c("data_extract","data_transform"),
+          selected = "data_extract"
+        )
+      ),
+      menuItem(
+        text="Group",
+        tabName = "group",
+        icon =shiny::icon("users")
+      ),
+      conditionalPanel(
+        "input.sb1 === 'group'",
+        uiOutput("choose_survival"),
+        shinyWidgets::awesomeCheckbox(
+          inputId = "render_missing",
+          label = "Missing in Table1",
+          value = F
+        )
+      ),
+      menuItem(
+        text="Record",
+        tabName = "record",
+        icon =shiny::icon("user-large")
+      ),
+      conditionalPanel(
+        "input.sb1 === 'record'",
+        uiOutput("choose_record"),
+        shinyWidgets::awesomeCheckbox(
+          inputId = "sidebar_choice_radio",
+          label = "Dropdown instead of radio",
+          value = F
+        )
+      ),
+      menuItem(
         text="Metadata",
-        tabName = "Metadata",
+        tabName = "metadata",
         icon =shiny::icon("gear")
       ),
       menuItem(
-        text="Data",
-        tabName = "Data",
-        icon =shiny::icon("users")
+        text="Users",
+        tabName = "users",
+        icon =shiny::icon("user-doctor")
       ),
       fluidRow(
         column(
           12,
-          actionButton("ab_random_patient_group","Random Patient From Group!"),
           actionButton("ab_update_redcap","Update REDCap!"),
           # verbatimTextOutput("testingtext"),
           valueBoxOutput("vb_selected_record",width = 12),
