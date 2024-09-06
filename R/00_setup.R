@@ -136,41 +136,41 @@ project_health_check <- function(update = F){
   if(nrow(projects)>0){
     # DROPS<- projects[which(is.na(projects$project_id)),]
     for(i in 1:nrow(projects)){#i <- 1:nrow(projects)%>%  sample1()
-      if(file.exists(projects$dir_path[i])){
-        projects$test_dir[i] <- T
+      OUT <- NULL
+      OUT <- projects[i,]
+      if(file.exists(OUT$dir_path)){
+        OUT$test_dir <- T
         DB <- tryCatch({
-          load_DB(projects$dir_path[i])
+          load_DB(OUT$dir_path)
         },error = function(e) {NULL})
-        projects$test_DB[i] <- !is.null(DB)
-        if(!projects$test_DB[i]){
+        OUT$test_DB <- !is.null(DB)
+        if(!OUT$test_DB){
           DB <- tryCatch({
             setup_DB(
-              short_name = projects$short_name[i],
-              dir_path = projects$dir_path[i],
-              token_name = projects$token_name[i],
+              short_name = OUT$short_name,
+              dir_path = OUT$dir_path,
+              token_name = OUT$token_name,
               redcap_base = "https://redcap.miami.edu/",
               force = T,
               merge_form_name = "merged"
             )
           },error = function(e) {NULL})
-          projects$test_DB[i] <- !is.null(DB)
+          OUT$test_DB <- !is.null(DB)
         }
-        if(projects$test_DB[i]){
-          projects$test_RC[i] <- redcap_token_works(DB)
-          if(projects$test_RC[i]){
+        if(OUT$test_DB){
+          OUT$test_RC <- redcap_token_works(DB)
+          if(OUT$test_RC){
             if(update)DB <- update_DB(DB)
           }
         }
-        if(projects$test_DB[i]){
-          OUT <- extract_project_details(DB = DB)
-          OUT$test_dir <- projects$test_dir[i]
-          OUT$test_DB <- projects$test_DB[i]
-          OUT$test_RC <- projects$test_RC[i]
-
-        }else{
-          OUT <- projects[i,]
+        if(OUT$test_DB){
+          OUT_DB <- extract_project_details(DB = DB)
+          OUT_DB$test_dir <- OUT$test_dir
+          OUT_DB$test_DB <- OUT$test_DB
+          OUT_DB$test_RC <- OUT$test_RC
+          OUT <- OUT_DB
         }
-        projects <- projects[which(projects$short_name!=DB$short_name),]
+        projects <- projects[which(projects$short_name!=OUT$short_name),]
         projects <- projects %>% dplyr::bind_rows(OUT)
       }
     }
