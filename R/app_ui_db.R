@@ -1,6 +1,84 @@
 #' @import RosyUtils
 #' @import shiny
 #' @import shinydashboard
+dbSidebar<-function(){
+  shinydashboardPlus::dashboardSidebar(
+    minified = F,
+    collapsed = F,
+    TCD_SBH(),
+    sidebarMenu(
+      id="sb1",
+      menuItem(
+        text="Home",
+        tabName = "home",
+        icon =shiny::icon("home")
+      ),
+      menuItem(
+        text="Data",
+        tabName = "data",
+        icon =shiny::icon("users")
+      ),
+      conditionalPanel(
+        "input.sb1 === 'data'",
+        selectInput(
+          "data_choice",
+          label = "Data Choice",
+          choices = c("data_extract","data_transform"),
+          selected = "data_extract"
+        )
+      ),
+      menuItem(
+        text="Group",
+        tabName = "group",
+        icon =shiny::icon("users")
+      ),
+      # conditionalPanel(
+      #   "input.sb1 === 'group'",
+      uiOutput("choose_survival"),
+      shinyWidgets::awesomeCheckbox(
+        inputId = "render_missing",
+        label = "Missing in Table1",
+        value = F
+        # )
+      ),
+      menuItem(
+        text="Record",
+        tabName = "record",
+        icon =shiny::icon("user-large")
+      ),
+      # conditionalPanel(
+      #   "input.sb1 === 'record'",
+      uiOutput("choose_indiv_record"),
+      shinyWidgets::awesomeCheckbox(
+        inputId = "sidebar_choice_radio",
+        label = "Dropdown instead of radio",
+        value = F
+        # )
+      ),
+      menuItem(
+        text="Metadata",
+        tabName = "metadata",
+        icon =shiny::icon("gear")
+      ),
+      menuItem(
+        text="Users",
+        tabName = "users",
+        icon =shiny::icon("user-doctor")
+      ),
+      fluidRow(
+        column(
+          12,
+          actionButton("ab_update_redcap","Update REDCap!"),
+          # verbatimTextOutput("testingtext"),
+          valueBoxOutput("vb_selected_record",width = 12),
+          actionButton("ab_random_record","Random Record!"),
+          align="center")
+      )
+    ),
+    uiOutput("redcap_links"),
+    TCD_SBF()
+  )
+}
 dbBody<-function(){
   dashboardBody(
     tabItems(
@@ -94,84 +172,6 @@ dbHeader<-function(){
         tags$img(src = "www/logo.png", width="100%")
       )
     )
-  )
-}
-dbSidebar<-function(){
-  shinydashboardPlus::dashboardSidebar(
-    minified = F,
-    collapsed = F,
-    TCD_SBH(),
-    sidebarMenu(
-      id="sb1",
-      menuItem(
-        text="Home",
-        tabName = "home",
-        icon =shiny::icon("home")
-      ),
-      menuItem(
-        text="Data",
-        tabName = "data",
-        icon =shiny::icon("users")
-      ),
-      conditionalPanel(
-        "input.sb1 === 'data'",
-        selectInput(
-          "data_choice",
-          label = "Data Choice",
-          choices = c("data_extract","data_transform"),
-          selected = "data_extract"
-        )
-      ),
-      menuItem(
-        text="Group",
-        tabName = "group",
-        icon =shiny::icon("users")
-      ),
-      conditionalPanel(
-        "input.sb1 === 'group'",
-        uiOutput("choose_survival"),
-        shinyWidgets::awesomeCheckbox(
-          inputId = "render_missing",
-          label = "Missing in Table1",
-          value = F
-        )
-      ),
-      menuItem(
-        text="Record",
-        tabName = "record",
-        icon =shiny::icon("user-large")
-      ),
-      conditionalPanel(
-        "input.sb1 === 'record'",
-        uiOutput("choose_record"),
-        shinyWidgets::awesomeCheckbox(
-          inputId = "sidebar_choice_radio",
-          label = "Dropdown instead of radio",
-          value = F
-        )
-      ),
-      menuItem(
-        text="Metadata",
-        tabName = "metadata",
-        icon =shiny::icon("gear")
-      ),
-      menuItem(
-        text="Users",
-        tabName = "users",
-        icon =shiny::icon("user-doctor")
-      ),
-      fluidRow(
-        column(
-          12,
-          actionButton("ab_update_redcap","Update REDCap!"),
-          # verbatimTextOutput("testingtext"),
-          valueBoxOutput("vb_selected_record",width = 12),
-          actionButton("ab_random_record","Random Record!"),
-          align="center")
-      )
-    ),
-    uiOutput("redcap_links"),
-    TCD_SBF()
   )
 }
 dbControlbar<-function(){
