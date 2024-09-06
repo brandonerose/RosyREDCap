@@ -19,11 +19,41 @@ app_server <- function(input, output, session) {
   values$last_clicked_tab <- NULL
   values$all_records <- NULL
   values$subset_records <- NULL
-  output$REDCap_diagram_diag <- DiagrammeR::renderGrViz({
-    DiagrammeR::grViz(DiagrammeR::generate_dot(REDCap_diagram(values$DB, type = "DiagrammeR",render = F)))
-  })
-  output$REDCap_diagram_vis <- visNetwork::renderVisNetwork({
-    REDCap_diagram(values$DB, type = "visNetwork",render = T)
+  # diagrams ----------
+  observe({
+    if(input$metadata_graph_type == "visNetwork"){
+      output$REDCap_diagram <- visNetwork::renderVisNetwork({
+        REDCap_diagram(
+          values$DB,
+          type = input$metadata_graph_type,
+          render = T,
+          include_vars = input$metadata_graph_include_vars,
+          duplicate_forms = input$metadata_graph_duplicate_forms,
+          clean_name = input$metadata_graph_clean_name
+        )
+      })
+      output$REDCap_diagram_ui <- renderUI({
+        visNetwork::visNetworkOutput("REDCap_diagram")
+      })
+    }
+    if(input$metadata_graph_type == "DiagrammeR"){
+      output$REDCap_diagram <- DiagrammeR::renderGrViz({
+        DiagrammeR::grViz(DiagrammeR::generate_dot(
+          REDCap_diagram(
+            values$DB,
+            type = input$metadata_graph_type,
+            render = F,
+            include_vars = input$metadata_graph_include_vars,
+            duplicate_forms = input$metadata_graph_duplicate_forms,
+            clean_name = input$metadata_graph_clean_name
+          )
+        )
+        )
+      })
+      output$REDCap_diagram_ui <- renderUI({
+        DiagrammeR::grVizOutput("REDCap_diagram")
+      })
+    }
   })
   #tables --------
   output$dt_tables_view <- renderUI({
@@ -198,8 +228,8 @@ app_server <- function(input, output, session) {
   })
   observeEvent(values$DB,{
     if(!is.null(values$DB)){
-      values$subset_records <- values$all_records <- values$DB$summary$all_records[[DB$redcap$id_col]]
-      updateSelectizeInput(session,"choose_indiv_record_" ,choices = values$subset_records,server = T)
+      values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
+      updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
     }
   })
   observeEvent(input$choose_indiv_record_,{
@@ -251,7 +281,7 @@ app_server <- function(input, output, session) {
     values$selected_record <- random_record
     # input$patient_table_row_last_clicked <- which(values$DB$data_transform[[values$DB$internals$merge_form_name]]$record_id==values$selected_record)
   })
-  #redcap links -----
+  # redcap links -----
   output$redcap_links <- renderUI({
     if(is_something(values$selected_record)&length(values$selected_record)>0){
       IF <- shinydashboard::menuItem(
@@ -286,7 +316,7 @@ app_server <- function(input, output, session) {
       )
     )
   })
-  #html listviewer ----------------
+  # html listviewer ----------------
   output$values_list <- listviewer::renderJsonedit({
     x<- values %>% reactiveValuesToList()
     x[["DB"]] <- NULL

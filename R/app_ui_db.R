@@ -47,19 +47,43 @@ dbSidebar<-function(){
         tabName = "record",
         icon =shiny::icon("user-large")
       ),
-      # conditionalPanel(
-      #   "input.sb1 === 'record'",
       uiOutput("choose_indiv_record"),
-      shinyWidgets::awesomeCheckbox(
-        inputId = "sidebar_choice_radio",
-        label = "Dropdown instead of radio",
-        value = F
-        # )
+      conditionalPanel(
+        "input.sb1 === 'record'",
+        shinyWidgets::awesomeCheckbox(
+          inputId = "sidebar_choice_radio",
+          label = "Dropdown instead of radio",
+          value = F
+        )
       ),
       menuItem(
         text="Metadata",
         tabName = "metadata",
         icon =shiny::icon("gear")
+      ),
+      conditionalPanel(
+        "input.sb1 === 'metadata'",
+        selectInput(
+          "metadata_graph_type",
+          label = "Graph Type",
+          choices = c("visNetwork","DiagrammeR"),
+          selected = "visNetwork"
+        ),
+        shinyWidgets::awesomeCheckbox(
+          inputId = "metadata_graph_include_vars",
+          label = "Include Variables?",
+          value = F
+        ),
+        shinyWidgets::awesomeCheckbox(
+          inputId = "metadata_graph_clean_name",
+          label = "Clean Name?",
+          value = F
+        ),
+        shinyWidgets::awesomeCheckbox(
+          inputId = "metadata_graph_duplicate_forms",
+          label = "Duplicate Forms?",
+          value = T
+        )
       ),
       menuItem(
         text="Users",
@@ -91,7 +115,8 @@ dbBody<-function(){
             title = h1("Records"),
             width = 12,
             listviewer::jsoneditOutput("values_list"),
-            listviewer::jsoneditOutput("input_list")          )
+            listviewer::jsoneditOutput("input_list")
+          )
         )
       ),
       tabItem(
@@ -100,8 +125,7 @@ dbBody<-function(){
           box(
             title = h1("Records"),
             width = 12,
-            visNetwork::visNetworkOutput("REDCap_diagram_vis"),
-            DiagrammeR::grVizOutput("REDCap_diagram_diag")
+            uiOutput("REDCap_diagram_ui")
           )
         )
       ),
