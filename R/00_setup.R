@@ -85,3 +85,38 @@ add_project <- function(DB){
   projects <- projects %>% dplyr::bind_rows(OUT)
   saveRDS(projects, file = cache$cache_path_get() %>% normalizePath() %>% file.path("projects.rds"))
 }
+project_health_check <- function(){
+  projects <- get_projects()
+  DROPS <- NULL
+  projects$test_dir <- F
+  projects$test_DB <- F
+  projects$test_RC <- F
+  if(nrow(projects)>0){
+    DROPS<- projects[which(is.na(projects$project_id)),]
+    for(i in 1:nrow(projects)){#i <- 1:nrow(projects)%>%  sample1()
+      if(file.exists(projects$dir_path[i])){
+        projects$test_dir <- T
+        DB <- tryCatch({
+          load_DB(values$projects$dir_path[i])
+        },error = function(e) {NULL})
+        projects$test_DB[i] <- !is.null(DB)
+        if(!projects$test_DB[i]){
+          DB <- tryCatch({
+            setup_DB(
+              short_name = projects$short_name[i],
+              dir_path = projects$dir_path[i],
+              token_name = projects$token_name[i],
+              redcap_base = "https://redcap.miami.edu/",
+              force = T,
+              merge_form_name = "merged"
+            )
+          },error = function(e) {NULL})
+          projects$test_DB[i] <- !is.null(DB)
+        }
+        if(projects$test_DB[i]){
+          projects$test_RC <- redcap_token_works(DB)
+        }
+      }
+    }
+  }
+}

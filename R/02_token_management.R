@@ -26,13 +26,23 @@ is_redcap_token <- function(token){
   }
   return(T)
 }
-validate_redcap_token <- function(DB,silent=T,return=T){
-  while (!has_redcap_token(DB)) {
-    set_redcap_token(DB)
+validate_redcap_token <- function(DB,silent=T,return=T,ask= T){
+  validated <- has_redcap_token(DB)
+  keep_checking <- T
+  while (!validated && keep_checking) {
+    if(ask){
+      set_redcap_token(DB)
+    }else{
+      keep_checking <- F
+    }
     message("Try going to REDCap --> '",DB$links$redcap_API,"' run `link_API_token(DB)")
   }
   if(!silent){
-    message("You have a valid token set in your session!")
+    if(validated){
+      message("You have a valid token set in your session!")
+    }else{
+      message("Token validation failed!")
+    }
   }
   if(return){
     return(Sys.getenv(DB$token_name))

@@ -6,7 +6,9 @@
 app_server <- function(input, output, session) {
   #values ------------
   values <- reactiveValues()
-  values$DB <- DB
+  values$projects <- get_projects() # get list of cached projects
+  values$project <- NULL
+  values$DB <- NULL
   values$selected_record <- NULL
   values$last_clicked_record <- NULL
   values$selected_form <- NULL
@@ -60,13 +62,13 @@ app_server <- function(input, output, session) {
     }) %>% return()
   })
   #vb -----------
-  output$vb_selected_record <- shinydashboard::renderValueBox({
-    shinydashboard::valueBox(
-      value = values$selected_record,
-      subtitle = "Selected Patient (PSN)",
-      width = 12
-    )
-  })
+  # output$vb_selected_record <- shinydashboard::renderValueBox({
+  #   shinydashboard::valueBox(
+  #     value = values$selected_record,
+  #     subtitle = "Selected Patient (PSN)",
+  #     width = 12
+  #   )
+  # })
   # observe ---------------
   observe({
     x <- "redcap"
@@ -169,6 +171,13 @@ app_server <- function(input, output, session) {
     }
   })
   # UI--------
+  output$choose_project <- renderUI({
+    selectInput(
+      inputId = "choose_project_",
+      label = "Choose Project",
+      choices = NULL
+    )
+  })
   output$choose_indiv_record <- renderUI({
     selectInput(
       inputId = "choose_indiv_record_",
@@ -176,17 +185,39 @@ app_server <- function(input, output, session) {
       choices = NULL
     )
   })
-  observeEvent(input$choose_indiv_record_,{
-    values$selected_record <- input$choose_indiv_record_
-    print("choose_indiv_record_ triggered update choose indiv")
+  observeEvent(input$choose_project_,{
+    if(!is.null(input$choose_project_)){
+      ROWS <- which(values$projects$short_name==input$choose_project_)
+      if(is_something(ROWS)){
+        values$DB <- tryCatch({
+          load_DB(values$projects$dir_path[ROWS])
+        },error = function(e) {NULL})
+      }
+      print("choose_indiv_record_ triggered update choose indiv")
+    }
   })
   observeEvent(values$DB,{
-    values$subset_records <- values$all_records <- values$DB$summary$all_records[[DB$redcap$id_col]]
-    updateSelectInput(session,"choose_indiv_record_" ,choices = values$subset_records)
+    if(!is.null(values$DB)){
+      values$subset_records <- values$all_records <- values$DB$summary$all_records[[DB$redcap$id_col]]
+      updateSelectizeInput(session,"choose_indiv_record_" ,choices = values$subset_records,server = T)
+    }
+  })
+  observeEvent(input$choose_indiv_record_,{
+    if(!is.null(input$choose_indiv_record_)){
+      values$selected_record <- input$choose_indiv_record_
+      print("choose_indiv_record_ triggered update choose indiv")
+    }
+  })
+  observe({
+    if(!is.null(values$projects)){
+      updateSelectizeInput(session,"choose_project_" ,choices = values$projects$short_name,server = T)
+    }
   })
   observeEvent(values$selected_record,{
-    updateSelectInput(session,"choose_indiv_record_" ,selected = values$selected_record)
-    print("selected_record triggered update choose indiv")
+    if(!is.null(values$selected_record)){
+      updateSelectizeInput(session,"choose_indiv_record_" ,selected = values$selected_record)
+      print("selected_record triggered update choose indiv")
+    }
     # values$variables_to_change_input_list <- NULL
     # if(is_something(values$selected_record)){
     #   if(values$selected_record %in% values$DB$summary$all_records[[values$DB$redcap$id_col]]){

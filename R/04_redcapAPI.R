@@ -32,6 +32,10 @@ process_response <- function(response,error_action){
   }
   return(all_character_cols(content))
 }
+redcap_token_works <- function(DB){
+  redcap_api_base(DB$links$redcap_uri,validate_redcap_token(DB,silent = T,ask = F),"version") %>%
+    httr::http_error() %>% magrittr::not() %>% return()
+}
 test_redcap <- function(DB){
   ERROR  <- T
   while(ERROR){

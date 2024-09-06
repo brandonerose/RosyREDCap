@@ -13,6 +13,7 @@ dbSidebar<-function(){
         tabName = "home",
         icon =shiny::icon("home")
       ),
+      uiOutput("choose_project"),
       menuItem(
         text="Data",
         tabName = "data",
@@ -34,7 +35,7 @@ dbSidebar<-function(){
       ),
       # conditionalPanel(
       #   "input.sb1 === 'group'",
-      uiOutput("choose_survival"),
+      uiOutput("choose_split"),
       shinyWidgets::awesomeCheckbox(
         inputId = "render_missing",
         label = "Missing in Table1",
