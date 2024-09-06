@@ -96,7 +96,7 @@ extract_project_details <- function(DB){
     is_longitudinal = DB$redcap$is_longitudinal,
     has_multiple_arms = DB$redcap$has_multiple_arms,
     has_repeating_instruments_or_events = DB$redcap$has_repeating_instruments_or_events,
-    n_records = DB$summary$all_records %>% nrow(),
+    n_records = ifelse(is.null(DB$summary$all_records[[DB$redcap$id_col]]),NA,DB$summary$all_records %>% nrow()),
     last_metadata_update = DB$internals$last_metadata_update,
     last_data_update = DB$internals$last_data_update,
     redcap_base = DB$links$redcap_base ,

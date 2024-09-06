@@ -153,7 +153,7 @@ validate_DB <- function(DB,silent = T,warn_only = F){
 #' @param merge_form_name name of merged non-repeating to be used in package
 #' @return DB
 #' @export
-setup_DB <- function(short_name,dir_path,token_name,redcap_base,force = F,merge_form_name,validate = T,use_csv = F){
+setup_DB <- function(short_name,dir_path,token_name,redcap_base,force = F,merge_form_name ="merged",validate = T,use_csv = F){
   #param check
   missing_dir_path <- missing(dir_path)
   if(missing_dir_path){

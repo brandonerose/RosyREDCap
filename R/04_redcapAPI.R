@@ -335,7 +335,11 @@ get_redcap_data <- function(DB,labelled=T,records=NULL){
     labelled = F,
     records = records
   )# consider bug check that all records are included in data_list
-  data_list <- raw_process_redcap(raw = raw, DB = DB, labelled = labelled)
+  if(is_something(raw)){
+    data_list <- raw_process_redcap(raw = raw, DB = DB, labelled = labelled)
+  }else{
+    data_list <- list()
+  }
   return(data_list)
 }
 get_redcap_users <- function(DB){

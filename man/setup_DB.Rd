@@ -10,7 +10,7 @@ setup_DB(
   token_name,
   redcap_base,
   force = F,
-  merge_form_name,
+  merge_form_name = "merged",
   validate = T,
   use_csv = F
 )
