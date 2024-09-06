@@ -51,12 +51,21 @@ blank_project_cols <- function(){
     "dir_path",
     "token_name",
     "project_id",
-    "redcap_version",
+    "version",
     "project_title",
+    "id_col",
+    "is_longitudinal",
+    "has_repeating_instruments_or_events",
+    "has_multiple_arms",
+    "n_records",
     "last_metadata_update",
     "last_data_update",
-    "redcap_home_link",
-    "redcap_API_playground_link"
+    "redcap_base",
+    "redcap_home",
+    "redcap_API_playground",
+    "test_dir",
+    "test_DB",
+    "test_RC"
   )
 }
 blank_projects <- function(){
@@ -64,7 +73,15 @@ blank_projects <- function(){
   colnames(x) <- blank_project_cols()
   x
 }
-add_project <- function(DB){
+save_projects_to_cache <- function(projects,silent=T){
+  projects <- projects[order(projects$short_name),]
+  saveRDS(projects, file = cache$cache_path_get() %>% normalizePath() %>% file.path("projects.rds"))
+  if(!silent){
+    message("RosyREDCap saved ",nrow(projects)," project locations to the cache...\n",paste0("   Name: ",stringr::str_pad(projects$short_name,width = max(nchar(projects$short_name))+2,side = "right"),"   Token: ",projects$token_name,collapse = "\n"))
+    message("The cache is stored in directory on your computer. It can be found with `RosyREDCap::cache_path()`, and cleared with `RosyREDCap::cache_clear()`.")
+  }
+}
+add_project <- function(DB,silent = T){
   projects <- get_projects()
   projects <- projects[which(projects$short_name!=DB$short_name),]
   OUT <- data.frame(
@@ -72,32 +89,49 @@ add_project <- function(DB){
     dir_path = DB$dir_path %>% is.null() %>% ifelse(NA,DB$dir_path),
     token_name = DB$token_name,
     project_id = DB$redcap$project_id,
-    redcap_version = DB$redcap$version,
+    version = DB$redcap$version,
     project_title = DB$redcap$project_title,
+    id_col = DB$redcap$id_col,
+    is_longitudinal = DB$redcap$is_longitudinal,
+    has_multiple_arms = DB$redcap$has_multiple_arms,
+    n_records = DB$summary$all_records %>% nrow(),
     last_metadata_update = DB$internals$last_metadata_update,
     last_data_update = DB$internals$last_data_update,
-    redcap_home_link = DB$links$redcap_home,
-    redcap_API_playground_link =  DB$links$redcap_API_playground
+    redcap_base = DB$links$redcap_base ,
+    redcap_home = DB$links$redcap_home,
+    redcap_API_playground =  DB$links$redcap_API_playground
   ) %>% all_character_cols()
-  colnames(OUT) <- blank_project_cols()
-  rownames(OUT) <- NULL
-  OUT
   projects <- projects %>% dplyr::bind_rows(OUT)
-  saveRDS(projects, file = cache$cache_path_get() %>% normalizePath() %>% file.path("projects.rds"))
+  rownames(OUT) <- NULL
+  save_projects_to_cache(projects,silent = silent)
 }
-project_health_check <- function(){
+delete_project <- function(short_name){
+  projects <- get_projects()
+  ROW <- which(projects$short_name==short_name)
+  OTHERS <- which(projects$short_name!=short_name)
+  if(!is_something(ROW))message("Nothing to delete named: ",short_name) %>% return()
+  projects <- projects[OTHERS,]
+  message("Deleted: ",short_name)
+  save_projects_to_cache(projects)
+  return(projects)
+}
+#' @title project_health_check
+#' @description
+#' Check directory, DB object, and REDCap token. Optional update.
+#' @export
+project_health_check <- function(update = F){
   projects <- get_projects()
   DROPS <- NULL
   projects$test_dir <- F
   projects$test_DB <- F
   projects$test_RC <- F
   if(nrow(projects)>0){
-    DROPS<- projects[which(is.na(projects$project_id)),]
+    # DROPS<- projects[which(is.na(projects$project_id)),]
     for(i in 1:nrow(projects)){#i <- 1:nrow(projects)%>%  sample1()
       if(file.exists(projects$dir_path[i])){
-        projects$test_dir <- T
+        projects$test_dir[i] <- T
         DB <- tryCatch({
-          load_DB(values$projects$dir_path[i])
+          load_DB(projects$dir_path[i])
         },error = function(e) {NULL})
         projects$test_DB[i] <- !is.null(DB)
         if(!projects$test_DB[i]){
@@ -114,9 +148,15 @@ project_health_check <- function(){
           projects$test_DB[i] <- !is.null(DB)
         }
         if(projects$test_DB[i]){
-          projects$test_RC <- redcap_token_works(DB)
+          projects$test_RC[i] <- redcap_token_works(DB)
+          if(projects$test_RC[i]){
+            DB <- update_DB(DB)
+            add_project(DB)
+            projects <- get_projects()
+          }
         }
       }
     }
+    save_projects_to_cache(projects,silent = F)
   }
 }
