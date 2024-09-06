@@ -128,16 +128,16 @@ delete_project <- function(short_name){
 #' Check directory, DB object, and REDCap token. Optional update.
 #' @export
 project_health_check <- function(update = F){
-  projects <- get_projects()
+  projects <- projects_old <- get_projects()
   DROPS <- NULL
-  projects$test_dir <- F
+  projects_old$test_dir <- F
   projects$test_DB <- F
   projects$test_RC <- F
   if(nrow(projects)>0){
     # DROPS<- projects[which(is.na(projects$project_id)),]
-    for(i in 1:nrow(projects)){#i <- 1:nrow(projects)%>%  sample1()
+    for(i in 1:nrow(projects_old)){#i <- 1:nrow(projects)%>%  sample1()
       OUT <- NULL
-      OUT <- projects[i,]
+      OUT <- projects_old[i,]
       if(file.exists(OUT$dir_path)){
         OUT$test_dir <- T
         DB <- tryCatch({
