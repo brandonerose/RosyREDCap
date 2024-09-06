@@ -75,15 +75,16 @@ blank_projects <- function(){
 }
 save_projects_to_cache <- function(projects,silent=T){
   projects <- projects[order(projects$short_name),]
+  projects$test_dir <- projects$test_dir %>% as.logical()
+  projects$test_DB <- projects$test_DB %>% as.logical()
+  projects$test_RC <- projects$test_RC %>% as.logical()
   saveRDS(projects, file = cache$cache_path_get() %>% normalizePath() %>% file.path("projects.rds"))
   if(!silent){
     message("RosyREDCap saved ",nrow(projects)," project locations to the cache...\n",paste0("   Name: ",stringr::str_pad(projects$short_name,width = max(nchar(projects$short_name))+2,side = "right"),"   Token: ",projects$token_name,collapse = "\n"))
     message("The cache is stored in directory on your computer. It can be found with `RosyREDCap::cache_path()`, and cleared with `RosyREDCap::cache_clear()`.")
   }
 }
-add_project <- function(DB,silent = T){
-  projects <- get_projects()
-  projects <- projects[which(projects$short_name!=DB$short_name),]
+extract_project_details <- function(DB){
   OUT <- data.frame(
     short_name = DB$short_name,
     dir_path = DB$dir_path %>% is.null() %>% ifelse(NA,DB$dir_path),
@@ -94,6 +95,7 @@ add_project <- function(DB,silent = T){
     id_col = DB$redcap$id_col,
     is_longitudinal = DB$redcap$is_longitudinal,
     has_multiple_arms = DB$redcap$has_multiple_arms,
+    has_repeating_instruments_or_events = DB$redcap$has_repeating_instruments_or_events,
     n_records = DB$summary$all_records %>% nrow(),
     last_metadata_update = DB$internals$last_metadata_update,
     last_data_update = DB$internals$last_data_update,
@@ -101,8 +103,14 @@ add_project <- function(DB,silent = T){
     redcap_home = DB$links$redcap_home,
     redcap_API_playground =  DB$links$redcap_API_playground
   ) %>% all_character_cols()
-  projects <- projects %>% dplyr::bind_rows(OUT)
   rownames(OUT) <- NULL
+  return(OUT)
+}
+add_project <- function(DB,silent = T){
+  projects <- get_projects()
+  projects <- projects[which(projects$short_name!=DB$short_name),]
+  OUT <- extract_project_details(DB = DB)
+  projects <- projects %>% dplyr::bind_rows(OUT)
   save_projects_to_cache(projects,silent = silent)
 }
 delete_project <- function(short_name){
@@ -150,11 +158,20 @@ project_health_check <- function(update = F){
         if(projects$test_DB[i]){
           projects$test_RC[i] <- redcap_token_works(DB)
           if(projects$test_RC[i]){
-            DB <- update_DB(DB)
-            add_project(DB)
-            projects <- get_projects()
+            if(update)DB <- update_DB(DB)
           }
         }
+        if(projects$test_DB[i]){
+          OUT <- extract_project_details(DB = DB)
+          OUT$test_dir <- projects$test_dir[i]
+          OUT$test_DB <- projects$test_DB[i]
+          OUT$test_RC <- projects$test_RC[i]
+
+        }else{
+          OUT <- projects[i,]
+        }
+        projects <- projects[which(projects$short_name!=DB$short_name),]
+        projects <- projects %>% dplyr::bind_rows(OUT)
       }
     }
     save_projects_to_cache(projects,silent = F)
