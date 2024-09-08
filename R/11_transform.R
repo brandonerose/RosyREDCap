@@ -76,34 +76,34 @@ remap_process <- function(DB){
     if(length(non_reps)>0){
       metadata_remap$form_name_remap[which( metadata_remap$form_name%in%non_reps)] <- DB$internals$merge_form_name
     }
-    instruments_new <- instruments_remap[,ins_new_cols] %>% unique()
-    instruments_new$former_instrument_names <- instruments_new$instrument_name_remap %>% sapply(function(instrument_name_remap){
+    instruments <- instruments_remap[,ins_new_cols] %>% unique()
+    instruments$former_instrument_names <- instruments$instrument_name_remap %>% sapply(function(instrument_name_remap){
       instruments_remap$instrument_name[which(instruments_remap$instrument_name_remap==instrument_name_remap)] %>% unique() %>% paste0(collapse = " | ")
     })
-    colnames(instruments_new)[1] <- "instrument_name"
-    metadata_new <- metadata_remap
-    metadata_new$field_name <- metadata_new$field_name_remap
-    metadata_new$field_name_remap <- NULL
-    metadata_new$form_name <- metadata_new$form_name_remap
-    metadata_new$form_name_remap <- NULL
+    colnames(instruments)[1] <- "instrument_name"
+    metadata <- metadata_remap
+    metadata$field_name <- metadata$field_name_remap
+    metadata$field_name_remap <- NULL
+    metadata$form_name <- metadata$form_name_remap
+    metadata$form_name_remap <- NULL
     keep_cols <- c(
       "field_name",
       "form_name",
       "field_type",
       "select_choices_or_calculations" # could handle choice remaps if labelled
     )
-    drop_cols <- colnames(metadata_new)[which(!colnames(metadata_new)%in%keep_cols)]
-    metadata_new <- metadata_new[,keep_cols] %>% unique()
-    if(metadata_new$field_name %>% anyDuplicated() %>% magrittr::is_greater_than(0))stop("metadata_new has duplicate field names")
+    drop_cols <- colnames(metadata)[which(!colnames(metadata)%in%keep_cols)]
+    metadata <- metadata[,keep_cols] %>% unique()
+    if(metadata$field_name %>% anyDuplicated() %>% magrittr::is_greater_than(0))stop("metadata has duplicate field names")
     for (col in drop_cols){
-      metadata_new[[col]] <- metadata_new$field_name %>% sapply(function(field_name){
+      metadata[[col]] <- metadata$field_name %>% sapply(function(field_name){
         metadata_remap[[col]][which(metadata_remap$field_name==field_name)[1]]
       })
     }
-    DB$remap$metadata_new <- DB %>% annotate_metadata(metadata = metadata_new,skim = F)
-    DB$remap$instruments_new <- instruments_new
+    DB$remap$metadata <- DB %>% annotate_metadata(metadata = metadata,skim = F)
+    DB$remap$instruments <- instruments
     DB$remap$instruments_remap <- instruments_remap
-    # if(save_file) metadata_new %>% rio::export(file = DB$dir_path %>% file.path("input","metadata_new_default.xlsx"))
+    # if(save_file) metadata %>% rio::export(file = DB$dir_path %>% file.path("input","metadata_new_default.xlsx"))
   }
   return(DB)
 }
@@ -184,10 +184,10 @@ transform_DB <- function(DB, merge_non_rep_to_reps = F, records=NULL,force = F, 
   }
   if(will_update){
     selected <- DB %>% filter_DB(records = records,data_choice = "data_extract")
-    if(! is_something(DB$remap$instruments_new)){
+    if(! is_something(DB$remap$instruments)){
       DB <- generate_default_remap(DB)
     }
-    instrument_names <- DB$remap$instruments_new$instrument_name
+    instrument_names <- DB$remap$instruments$instrument_name
     for (instrument_name in instrument_names) {# instrument_name <- instrument_names %>%  sample (1)
       # add terminal_transformation
       if(instrument_name == DB$internals$merge_form_name){
@@ -211,12 +211,12 @@ transform_DB <- function(DB, merge_non_rep_to_reps = F, records=NULL,force = F, 
     }
     if(merge_non_rep_to_reps){
       if(DB$redcap$is_longitudinal){
-        repeating_rows <- which(DB$remap$instruments_new$repeating|DB$remap$instruments_new$repeating_via_events)
+        repeating_rows <- which(DB$remap$instruments$repeating|DB$remap$instruments$repeating_via_events)
       }else{
-        repeating_rows <- which(DB$remap$instruments_new$repeating)
+        repeating_rows <- which(DB$remap$instruments$repeating)
       }
       merged <- DB$data_transform[[DB$internals$merge_form_name]]
-      for(instrument_name in DB$remap$instruments_new$instrument_name[repeating_rows]){
+      for(instrument_name in DB$remap$instruments$instrument_name[repeating_rows]){
         original_rep <- DB$data_transform[[instrument_name]]
         shared_cols <- DB$redcap$raw_structure_cols[which((DB$redcap$raw_structure_cols %in% colnames(merged))&(DB$redcap$raw_structure_cols %in% colnames(original_rep)))]
         DB$data_transform[[instrument_name]] <- merged %>% merge(original_rep,by = shared_cols)

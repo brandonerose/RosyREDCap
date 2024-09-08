@@ -9,66 +9,28 @@ dbSidebar<-function(){
     sidebarMenu(
       id="sb1",
       menuItem(
-        text="Home",
+        text="Projects",
         tabName = "home",
         icon =shiny::icon("home")
       ),
-      uiOutput("choose_project"),
+      conditionalPanel(
+        "input.sb1 === 'home'",
+        uiOutput("choose_project"),
+      ),
       menuItem(
-        text="Data",
-        tabName = "data",
-        icon =shiny::icon("users")
+        text="Project",
+        tabName = "project",
+        icon =shiny::icon("user-doctor")
       ),
       conditionalPanel(
-        "input.sb1 === 'data'",
-        selectInput(
-          "data_choice",
-          label = "Data Choice",
-          choices = c("data_extract","data_transform"),
-          selected = "data_extract"
-        )
-      ),
-      menuItem(
-        text="Group",
-        tabName = "group",
-        icon =shiny::icon("users")
-      ),
-      # conditionalPanel(
-      #   "input.sb1 === 'group'",
-      uiOutput("choose_split"),
-      shinyWidgets::awesomeCheckbox(
-        inputId = "render_missing",
-        label = "Missing in Table1",
-        value = F
-        # )
-      ),
-      menuItem(
-        text="Record",
-        tabName = "record",
-        icon =shiny::icon("user-large")
-      ),
-      uiOutput("choose_indiv_record"),
-      conditionalPanel(
-        "input.sb1 === 'record'",
-        shinyWidgets::awesomeCheckbox(
-          inputId = "sidebar_choice_radio",
-          label = "Dropdown instead of radio",
-          value = F
-        )
-      ),
-      menuItem(
-        text="Metadata",
-        tabName = "metadata",
-        icon =shiny::icon("gear")
-      ),
-      conditionalPanel(
-        "input.sb1 === 'metadata'",
+        "input.sb1 === 'project'",
         selectInput(
           "metadata_graph_type",
           label = "Graph Type",
           choices = c("visNetwork","DiagrammeR"),
-          selected = "visNetwork"
+          selected = "DiagrammeR"
         ),
+        actionButton("ab_update_redcap","Update REDCap!"),
         shinyWidgets::awesomeCheckbox(
           inputId = "metadata_graph_include_vars",
           label = "Include Variables?",
@@ -86,18 +48,52 @@ dbSidebar<-function(){
         )
       ),
       menuItem(
-        text="Users",
-        tabName = "users",
-        icon =shiny::icon("user-doctor")
+        text="Data",
+        tabName = "data",
+        icon =shiny::icon("users")
       ),
-      fluidRow(
-        column(
-          12,
-          actionButton("ab_update_redcap","Update REDCap!"),
-          # verbatimTextOutput("testingtext"),
-          valueBoxOutput("vb_selected_record",width = 12),
-          actionButton("ab_random_record","Random Record!"),
-          align="center")
+      conditionalPanel(
+        "input.sb1 === 'data'",
+        selectInput(
+          "data_choice",
+          label = "Data Choice",
+          choices = NULL,
+          selected = NULL
+        )
+      ),
+      menuItem(
+        text="Group",
+        tabName = "group",
+        icon =shiny::icon("users")
+      ),
+      conditionalPanel(
+        "input.sb1 === 'group'",
+        uiOutput("choose_split"),
+        shinyWidgets::awesomeCheckbox(
+          inputId = "render_missing",
+          label = "Missing in Table1",
+          value = F
+        ),
+        shinyWidgets::awesomeCheckbox(
+          inputId = "sidebar_choice_radio",
+          label = "Dropdown instead of radio",
+          value = F
+        )
+      ),
+      menuItem(
+        text="Record",
+        tabName = "record",
+        icon =shiny::icon("user-large")
+      ),
+      uiOutput("choose_indiv_record"),
+      conditionalPanel(
+        "input.sb1 === 'record'",
+        actionButton("ab_random_record","Random Record!")
+      ),
+      menuItem(
+        text="Backend",
+        tabName = "backend",
+        icon =shiny::icon("gear")
       )
     ),
     uiOutput("redcap_links"),
@@ -107,25 +103,51 @@ dbSidebar<-function(){
 dbBody<-function(){
   dashboardBody(
     tabItems(
-      #home--------
+      # home--------
       tabItem(
         "home",
         fluidRow(
           box(
-            title = h1("Records"),
+            title = h1("Home"),
             width = 12,
-            listviewer::jsoneditOutput("values_list"),
-            listviewer::jsoneditOutput("input_list")
+            DT::DTOutput("projects_table")
           )
         )
       ),
+      # project--------
       tabItem(
-        "metadata",
+        "project",
         fluidRow(
           box(
-            title = h1("Records"),
+            title = h1("Project"),
             width = 12,
-            uiOutput("REDCap_diagram_ui")
+            #more summary stuff
+            uiOutput("REDCap_diagram_ui"),
+          ),
+          box(
+            title = h1("Instruments"),
+            width = 12,
+            DT::DTOutput("instruments_table")
+          ),
+          box(
+            title = h1("Metadata"),
+            width = 12,
+            DT::DTOutput("metadata_table")
+          ),
+          box(
+            title = h1("Codebook"),
+            width = 12,
+            DT::DTOutput("codebook_table")
+          ),
+          box(
+            title = h1("Users"),
+            width = 12,
+            DT::DTOutput("user_table")
+          ),
+          box(
+            title = h1("Log"),
+            width = 12,
+            DT::DTOutput("log_table")
           )
         )
       ),
@@ -139,7 +161,7 @@ dbBody<-function(){
           )
         )
       ),
-      #group--------
+      # group--------
       tabItem(
         "group"
         # fluidRow(
@@ -150,7 +172,7 @@ dbBody<-function(){
         #   )
         # )
       ),
-      #indiv--------
+      # record--------
       tabItem(
         "record",
         fluidRow(
@@ -174,13 +196,17 @@ dbBody<-function(){
           )
         )
       ),
-      #users--------
+      # backend ---------
       tabItem(
-        "users",
+        "backend",
         fluidRow(
-          box(
-            title = h1("Users"),
-            width = 12
+          fluidRow(
+            box(
+              title = h1("Backend"),
+              width = 12,
+              listviewer::jsoneditOutput("values_list"),
+              listviewer::jsoneditOutput("input_list")
+            )
           )
         )
       )

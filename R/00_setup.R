@@ -35,15 +35,16 @@ cache_projects_exists <-  function(){
 #' @return data.frame of projects from the cache
 #' @export
 get_projects <- function(){
-  if(cache_projects_exists()){
+  does_exist <- cache_projects_exists()
+  is_ok <- F
+  if(does_exist){
     projects <- cache_path() %>% file.path("projects.rds") %>% readRDS()
-    return(projects)
-  }else{
-    "You have no projects cached. Try `add_project`" %>% message()
-    return(
-      blank_projects()
-    )
+    if( ! does_exist) message("You have no projects cached. Try `setup_DB()`")
+    is_ok <- all(colnames(blank_projects() %in% colnames(projects)))
+    if( ! is_ok)cache_clear()
   }
+  if(!does_exist||!is_ok) return(blank_projects())
+  return(projects)
 }
 blank_project_cols <- function(){
   c(

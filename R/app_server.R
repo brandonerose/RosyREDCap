@@ -4,7 +4,7 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  #values ------------
+  # values ------------
   values <- reactiveValues()
   values$projects <- get_projects() # get list of cached projects
   values$project <- NULL
@@ -19,6 +19,37 @@ app_server <- function(input, output, session) {
   values$last_clicked_tab <- NULL
   values$all_records <- NULL
   values$subset_records <- NULL
+  values$user_adds_project <- NULL
+  # user input project -------
+  observeEvent(input$user_adds_project_modal, {
+    # display a modal dialog with a header, textinput and action buttons
+    showModal(modalDialog(
+      tags$h2('Please enter your Project Information'),
+      textInput('user_adds_project_short_name', 'Short Name'),
+      textInput('user_adds_project_api_token', 'API token'),
+      textInput('user_adds_project_redcap_base',"Institutional REDCap Link", placeholder = "https://redcap.miami.edu/"),
+      textInput('user_adds_project_merged_form_name',"Merged Form Name", placeholder = "merged"),
+      #dir
+      footer=tagList(
+        actionButton('user_adds_project_submit', 'Submit'),
+        modalButton('user_adds_project_cancel')
+      )
+    ))
+  })
+  # only store the information if the user clicks submit
+  observeEvent(input$user_adds_project_submit, {
+    removeModal()
+    # values$user_adds_project_short_name <- input$name
+    # l$state <- input$state
+  })
+  # setup_DB(
+  #   short_name = OUT$short_name,
+  #   dir_path = OUT$dir_path,
+  #   token_name = OUT$token_name,
+  #   redcap_base = "https://redcap.miami.edu/",
+  #   force = T,
+  #   merge_form_name = "merged"
+  # )
   # diagrams ----------
   observe({
     if(input$metadata_graph_type == "visNetwork"){
@@ -55,7 +86,7 @@ app_server <- function(input, output, session) {
       })
     }
   })
-  #tables --------
+  # tables --------
   output$dt_tables_view <- renderUI({
     if (length(values$DB[[input$data_choice]]) == 0) {
       # If the list is empty, show a message
@@ -82,16 +113,35 @@ app_server <- function(input, output, session) {
       )
     }
   })
-  # Render each DT table
+  # simple tables ---------
+  output$projects_table <- DT::renderDT({
+    values$projects %>% make_DT_table()
+  })
+  output$instruments_table <- DT::renderDT({
+    values$DB$redcap$instruments %>% make_DT_table()
+  })
+  output$metadata_table <- DT::renderDT({
+    values$DB$redcap$metadata %>% make_DT_table()
+  })
+  output$codebook_table <- DT::renderDT({
+    values$DB$redcap$codebook %>% make_DT_table()
+  })
+  output$user_table <- DT::renderDT({
+    values$DB$redcap$users %>% make_DT_table()
+  })
+  output$log_table <- DT::renderDT({
+    values$DB$redcap$log %>% make_DT_table()
+  })
+  # Render each DT table ------
   observe({
     if(!is_something(values$DB[[input$data_choice]]))return(h3("No tables available to display."))
     lapply(names(values$DB[[input$data_choice]]), function(TABLE) {
       table_data <- values$DB[[input$data_choice]][[TABLE]]
       table_id <- paste0("table___home__", TABLE)
-      output[[table_id]] <- DT::renderDT({table_data %>% make_DT_table(DB = values$DB)})
+      output[[table_id]] <- DT::renderDT({table_data %>% clean_RC_df_for_DT(values$DB, data_choice = input$data_choice) %>% make_DT_table()})
     }) %>% return()
   })
-  #vb -----------
+  # vb -----------
   # output$vb_selected_record <- shinydashboard::renderValueBox({
   #   shinydashboard::valueBox(
   #     value = values$selected_record,
@@ -101,17 +151,17 @@ app_server <- function(input, output, session) {
   # })
   # observe ---------------
   observe({
-    x <- "redcap"
-    y <- "instruments"
-    a <- "instrument_label"
-    if(input$data_choice == "data_transform") {
-      x <- "remap"
-      y <- "instruments_new"
-      a <- "instrument_name"
+    redcap_remap <- "redcap"
+    instrument_name <- "instrument_label"
+    if(is_something(values$DB$data_transform)){
+      if(input$data_choice == "data_transform"){
+        redcap_remap <- "remap"
+        instrument_name <- "instrument_name"
+      }
     }
-    z <- values$DB[[x]][[y]]
+    z <- values$DB[[redcap_remap]][["instruments"]]
     all_forms <- names(values$DB[[input$data_choice]])
-    values$selected_form <- z$instrument_name[which(z[[a]] == input$tabs)]
+    values$selected_form <- z$instrument_name[which(z[[instrument_name]] == input$tabs)]
     values$active_table_id <- paste0("table___home__", values$selected_form)
     message("Changed Tabs: ", input$tabs)
     # Track previous tab and reset `last_clicked_record` when switching tabs
@@ -155,17 +205,17 @@ app_server <- function(input, output, session) {
     }
   })
   observe({
-    x <- "redcap"
-    y <- "instruments"
-    a <- "instrument_label"
-    if(input$data_choice == "data_transform") {
-      x <- "remap"
-      y <- "instruments_new"
-      a <- "instrument_name"
+    redcap_remap <- "redcap"
+    instrument_name <- "instrument_label"
+    if(is_something(values$DB$data_transform)){
+      if(input$data_choice == "data_transform"){
+        redcap_remap <- "remap"
+        instrument_name <- "instrument_name"
+      }
     }
-    z <- values$DB[[x]][[y]]
+    z <- values$DB[[redcap_remap]][["instruments"]]
     all_forms <- names(values$DB[[input$data_choice]])
-    values$selected_form <- z$instrument_name[which(z[[a]] == input$tabs)]
+    values$selected_form <- z$instrument_name[which(z[[instrument_name]] == input$tabs)]
     values$active_table_id <- paste0("table___home__", values$selected_form)
     # Track previous tab and reset `last_clicked_record` when switching tabs
     if(is_something(values$selected_form)) {
@@ -227,8 +277,20 @@ app_server <- function(input, output, session) {
     }
   })
   observeEvent(values$DB,{
+    message("Event triggered! Too much")
     if(!is.null(values$DB)){
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
+      updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
+      data_choices <- c("data_extract","data_transform","data_upload") %>%
+        sapply(function(data_choice){
+          if(is_something(values$DB[[data_choice]]))return(data_choice)
+        }) %>% unlist() %>% as.character()
+      updateSelectInput(
+        session,
+        "data_choice" ,
+        selected = values$DB$internals$reference_state,
+        choices = data_choices
+      )
       updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
     }
   })

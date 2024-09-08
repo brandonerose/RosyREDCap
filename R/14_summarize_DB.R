@@ -222,14 +222,14 @@ stack_vars <- function(DB,vars,new_name,drop_na=T){
 get_default_data_choice <- function(DB){ifelse(!DB$internals$was_remapped,"data_extract","data_transform")}
 get_default_metadata <- function(DB){
   if(DB$internals$was_remapped){
-    return(DB$remap$metadata_new)
+    return(DB$remap$metadata)
   }else{
     return(DB$redcap$metadata)
   }
 }
 get_default_instruments <- function(DB){
   if(DB$internals$was_remapped){
-    return(DB$remap$instruments_new)
+    return(DB$remap$instruments)
   }else{
     return(DB$redcap$metadata)
   }

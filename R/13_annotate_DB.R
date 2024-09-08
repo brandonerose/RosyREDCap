@@ -171,7 +171,7 @@ clean_DB <- function(DB,drop_blanks=T,drop_unknowns=T){
     if(data_choice=="data_extract"){
       metadata <-  DB %>% annotate_metadata(metadata = DB$redcap$metadata, skim = F)
     }else{
-      metadata <-  DB %>% annotate_metadata(metadata = DB$remap$metadata_new, skim = F)
+      metadata <-  DB %>% annotate_metadata(metadata = DB$remap$metadata, skim = F)
     }
     for(FORM in names(DB[[data_choice]])){
       DB[[data_choice]][[FORM]] <- DB[[data_choice]][[FORM]] %>% clean_DF(metadata=metadata,drop_blanks= drop_blanks,drop_unknowns=drop_unknowns)

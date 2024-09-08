@@ -55,9 +55,9 @@ blank_DB <-  function(){ # can sort this better in version 3.0.0
     quality_checks = NULL,
     remap = list(
       metadata_remap=NULL,
-      metadata_new=NULL,
+      metadata=NULL,
       instruments_remap=NULL,
-      instruments_new=NULL,
+      instruments=NULL,
       arms_map=NULL,
       arms_new=NULL,
       events_remap=NULL,

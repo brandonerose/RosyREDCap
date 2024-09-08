@@ -38,18 +38,18 @@ add_new_varriable <- function(
     field_label_short = field_label
   )
   # metadata <- DB$
-  DB$remap$metadata_new <-  DB$remap$metadata_new[which(DB$remap$metadata_new$field_name!=field_name),]
+  DB$remap$metadata <-  DB$remap$metadata[which(DB$remap$metadata$field_name!=field_name),]
   if(!missing(insert_after)){
-    i<-which(DB$remap$metadata_new$field_name == insert_after)
+    i<-which(DB$remap$metadata$field_name == insert_after)
     if(length(i)==1){
-      top <- DB$remap$metadata_new[1:i,]
-      bottom <- DB$remap$metadata_new[(i+1):nrow(DB$remap$metadata_new),]
-      DB$remap$metadata_new <- dplyr::bind_rows(top,metadata_new_var) %>% dplyr::bind_rows(bottom)
+      top <- DB$remap$metadata[1:i,]
+      bottom <- DB$remap$metadata[(i+1):nrow(DB$remap$metadata),]
+      DB$remap$metadata <- dplyr::bind_rows(top,metadata_new_var) %>% dplyr::bind_rows(bottom)
     }else{
       stop("insert_after error")
     }
   }else{
-    DB$remap$metadata_new <-  DB$remap$metadata_new %>% dplyr::bind_rows(metadata_new_var)
+    DB$remap$metadata <-  DB$remap$metadata %>% dplyr::bind_rows(metadata_new_var)
   }
   message("added '",field_name,"' column")
   is_missing_data_col <- missing(data_col)

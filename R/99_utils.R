@@ -97,48 +97,58 @@ add_redcap_links_table<-function(DF,DB){
   }
   DF
 }
-clean_RC_col_names<-function(DF,DB){
+clean_RC_col_names <- function(DF, DB, data_choice){
+  if(missing(data_choice))data_choice <- DB$internals$reference_state
+  if(data_choice == "data_extract"){
+    redcap_remap <- "redcap"
+  }
+  if(data_choice == "data_transform"){
+    redcap_remap <- "remap"
+  }
   colnames(DF)<-colnames(DF) %>% sapply(function(COL){
-    x<-DB$remap$metadata_new$field_label[which(DB$remap$metadata_new$field_name==COL)]
+    x<-DB[[redcap_remap]][["metadata"]]$field_label[which(DB[[redcap_remap]][["metadata"]]$field_name==COL)]
     if(length(x)>1){
-      x<-DB$remap$metadata_new$field_label[which(DB$remap$metadata_new$field_name==COL&DB$remap$metadata_new$form_name==INS)]
+      x<-DB[[redcap_remap]][["metadata"]]$field_label[which(DB[[redcap_remap]][["metadata"]]$field_name==COL&DB[[redcap_remap]][["metadata"]]$form_name==INS)]
     }
     ifelse(length(x)>0,x,COL)
-  }) %>% unlist()
+  }) %>% unlist() %>% return()
   DF
 }
-make_DT_table<-function(DF,selection="single",DB){
+clean_RC_df_for_DT <- function(DF, DB, data_choice){
+  if(missing(data_choice))data_choice <- DB$internals$reference_state
+  DF %>%
+    add_redcap_links_table(DB) %>%
+    clean_RC_col_names(DB,data_choice = data_choice) %>% return()
+}
+make_DT_table<-function(DF,selection="single"){
   # %>% DT::formatStyle(
   #   colnames(DF),
   #   color = "#000"
   # )
   if(!is_something(DF)){
-    return(h3("No tables available to display."))
+    return(h3("No data available to display."))
   }
-  DF %>%
-    add_redcap_links_table(DB) %>%
-    clean_RC_col_names(DB) %>%
-    DT::datatable(
-      selection = selection,
-      editable = F,
-      rownames = F,
-      options = list(
-        columnDefs = list(list(className = 'dt-center',targets = "_all")),
-        paging = T,
-        pageLength = 50,
-        fixedColumns = TRUE,
-        ordering = TRUE,
-        scrollY = "300px",
-        scrollX = T,
-        # autoWidth = T,
-        searching = T,
-        dom = 'frtip',
-        # buttons = c('csv', 'excel',"pdf"),
-        scrollCollapse = F,
-        stateSave = F
-      ),
-      class = "cell-border",
-      filter = 'top',
-      escape =F
-    )
+  DF %>% DT::datatable(
+    selection = selection,
+    editable = F,
+    rownames = F,
+    options = list(
+      columnDefs = list(list(className = 'dt-center',targets = "_all")),
+      paging = T,
+      pageLength = 50,
+      fixedColumns = TRUE,
+      ordering = TRUE,
+      scrollY = "300px",
+      scrollX = T,
+      # autoWidth = T,
+      searching = T,
+      dom = 'frtip',
+      # buttons = c('csv', 'excel',"pdf"),
+      scrollCollapse = F,
+      stateSave = F
+    ),
+    class = "cell-border",
+    filter = 'top',
+    escape =F
+  )
 }
