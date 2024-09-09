@@ -110,7 +110,8 @@ dbBody<-function(){
           box(
             title = h1("Home"),
             width = 12,
-            DT::DTOutput("projects_table")
+            DT::DTOutput("projects_table"),
+            uiOutput("html_test")
           )
         )
       ),

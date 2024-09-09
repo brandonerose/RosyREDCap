@@ -141,6 +141,14 @@ app_server <- function(input, output, session) {
       output[[table_id]] <- DT::renderDT({table_data %>% clean_RC_df_for_DT(values$DB, data_choice = input$data_choice) %>% make_DT_table()})
     }) %>% return()
   })
+  # html ---------------
+  output$html_test <- renderUI({
+    tags$iframe(
+      class = "pubchem-widget",
+      src=paste0("https://pubchem.ncbi.nlm.nih.gov/compound/2244#section=2D-Structure&embed=true"),
+      style="width: 450px; max-width: 100%; height: 650px;"
+    )
+  })
   # vb -----------
   # output$vb_selected_record <- shinydashboard::renderValueBox({
   #   shinydashboard::valueBox(
