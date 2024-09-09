@@ -13,10 +13,10 @@ run_RosyREDCap <- function(
     ),
     enableBookmarking = NULL,
     uiPattern = "/",
-    dev = F,
     ...
 ) {
-  if(dev){
+  if(golem::app_dev()){
+    library("rstudioapi")
     options <- options(shiny.launch.browser = .rs.invokeShinyPaneViewer)
   }
   with_golem_options(
