@@ -58,14 +58,11 @@ app_server <- function(input, output, session) {
         REDCap_diagram(
           values$DB,
           type = input$metadata_graph_type,
-          render = T,
+          render = F,
           include_vars = input$metadata_graph_include_vars,
           duplicate_forms = input$metadata_graph_duplicate_forms,
           clean_name = input$metadata_graph_clean_name
-        )
-      })
-      output$REDCap_diagram_ui <- renderUI({
-        visNetwork::visNetworkOutput("REDCap_diagram")
+        ) %>% return()
       })
     }
     if(input$metadata_graph_type == "DiagrammeR"){
@@ -82,10 +79,17 @@ app_server <- function(input, output, session) {
         )
         )
       })
-      output$REDCap_diagram_ui <- renderUI({
-        DiagrammeR::grVizOutput("REDCap_diagram")
-      })
     }
+  })
+  observe({
+    output$REDCap_diagram_ui <- renderUI({
+      if(input$metadata_graph_type == "visNetwork"){
+        visNetwork::visNetworkOutput("REDCap_diagram") %>% return()
+      }
+      if(input$metadata_graph_type == "DiagrammeR"){
+        DiagrammeR::grVizOutput("REDCap_diagram") %>% return()
+      }
+    })
   })
   # tables --------
   output$dt_tables_view <- renderUI({
