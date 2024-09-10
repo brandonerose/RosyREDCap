@@ -83,7 +83,7 @@ remap_process <- function(DB){
     instruments$instrument_label <- instruments$instrument_name_remap %>% sapply(function(instrument_name_remap){
       x <- which(instruments_remap$instrument_name==instrument_name_remap)
       if(length(x)==0)return(stringr::str_to_title(instrument_name_remap))
-      instruments_remap$inst %>% rument_label[x] %>% unique() %>% paste0(collapse = " | ") %>% return()
+      instruments_remap$instrument_label[x] %>% unique() %>% paste0(collapse = " | ") %>% return()
     })
     colnames(instruments)[1] <- "instrument_name"
     metadata <- metadata_remap
