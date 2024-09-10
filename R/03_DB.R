@@ -59,11 +59,11 @@ blank_DB <-  function(){ # can sort this better in version 3.0.0
       instruments_remap=NULL,
       instruments=NULL,
       arms_map=NULL,
-      arms_new=NULL,
+      arms=NULL,
       events_remap=NULL,
-      events_new=NULL,
+      events=NULL,
       event_mapping_remap=NULL,
-      event_mapping_new=NULL
+      event_mapping=NULL
     ),
     data_extract = NULL,
     data_transform = NULL,

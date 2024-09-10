@@ -27,23 +27,23 @@ remap_process <- function(DB){
           if(length(x)>1)stop("unique_event_names cannot match multiple unique_event_name_remaps: ",unique_event_name)
           return(x)
         })
-        events_new <- events_remap[,c("unique_event_name_remap","event_name")] %>% unique()
-        colnames(events_new)[1] <- "unique_event_name"
-        event_mapping_new <- event_mapping_remap[,c("unique_event_name_remap","event_name","form")] %>% unique()
-        event_mapping_new$form <- event_mapping_new$form %>% sapply(function(instrument_name){
+        events <- events_remap[,c("unique_event_name_remap","event_name")] %>% unique()
+        colnames(events)[1] <- "unique_event_name"
+        event_mapping <- event_mapping_remap[,c("unique_event_name_remap","event_name","form")] %>% unique()
+        event_mapping$form <- event_mapping$form %>% sapply(function(instrument_name){
           x<-metadata_remap$form_name_remap[which(metadata_remap$form_name==instrument_name)] %>% unique()
           if(length(x)>1)stop("instrument_names cannot match multiple instrument_name_remaps: ",instrument_name)
           return(x)
         })
-        event_mapping_new <- event_mapping_new %>% unique()
-        colnames(event_mapping_new)[1] <- "unique_event_name"
-        events_new$former_unique_event_names <- events_new$unique_event_name %>% sapply(function(unique_event_name){
+        event_mapping <- event_mapping %>% unique()
+        colnames(event_mapping)[1] <- "unique_event_name"
+        events$former_unique_event_names <- events$unique_event_name %>% sapply(function(unique_event_name){
           events_remap$unique_event_name[which(events_remap$unique_event_name_remap==unique_event_name)] %>% unique() %>% paste0(collapse = " | ")
         })
-        event_mapping_new$former_unique_event_names <- event_mapping_new$unique_event_name %>% sapply(function(unique_event_name){
+        event_mapping$former_unique_event_names <- event_mapping$unique_event_name %>% sapply(function(unique_event_name){
           event_mapping_remap$unique_event_name[which(event_mapping_remap$unique_event_name_remap==unique_event_name)] %>% unique() %>% paste0(collapse = " | ")
         })
-        x<- event_mapping_new[which(event_mapping_new$form%in%instruments_remap$instrument_name_remap),]
+        x<- event_mapping[which(event_mapping$form%in%instruments_remap$instrument_name_remap),]
         instruments_remap$repeating_via_events[
           which(
             instruments_remap$instrument_name_remap %>% sapply(function(instrument_name_remap){
@@ -51,7 +51,7 @@ remap_process <- function(DB){
               if(DB$internals$merge_form_name==instrument_name_remap){
                 F
               }else{
-                anyDuplicated(event_mapping_new$form[which(event_mapping_new$form==instrument_name_remap)])>0
+                anyDuplicated(event_mapping$form[which(event_mapping$form==instrument_name_remap)])>0
               }
             })
           )
@@ -64,8 +64,8 @@ remap_process <- function(DB){
           )
         ] <- T
       }
-      DB$remap$events_new <- events_new
-      DB$remap$event_mapping_new <- event_mapping_new
+      DB$remap$events <- events
+      DB$remap$event_mapping <- event_mapping
     }
     non_reps <- DB$redcap$instruments$instrument_name[which(!DB$redcap$instruments$repeating)]
     ins_new_cols <- c("instrument_name_remap","repeating")
@@ -79,6 +79,11 @@ remap_process <- function(DB){
     instruments <- instruments_remap[,ins_new_cols] %>% unique()
     instruments$former_instrument_names <- instruments$instrument_name_remap %>% sapply(function(instrument_name_remap){
       instruments_remap$instrument_name[which(instruments_remap$instrument_name_remap==instrument_name_remap)] %>% unique() %>% paste0(collapse = " | ")
+    })
+    instruments$instrument_label <- instruments$instrument_name_remap %>% sapply(function(instrument_name_remap){
+      x <- which(instruments_remap$instrument_name==instrument_name_remap)
+      if(length(x)==0)return(stringr::str_to_title(instrument_name_remap))
+      instruments_remap$inst %>% rument_label[x] %>% unique() %>% paste0(collapse = " | ") %>% return()
     })
     colnames(instruments)[1] <- "instrument_name"
     metadata <- metadata_remap

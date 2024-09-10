@@ -61,7 +61,7 @@ summarize_records_from_log <- function(DB,records){
   }
   #records -------------
   # all_records <- unique(log$record)
-  summary_records <- DB$summary$all_records
+  summary_records <-
   record_groups <- log %>% split(log$record)
   summary_records <- summary_records[which(summary_records[[DB$redcap$id_col]]%in%names(record_groups)),,drop = FALSE]
   # users_log_rows <- users %>% lapply(function(user){which(log$username==user)})
@@ -86,25 +86,26 @@ summarize_records_from_log <- function(DB,records){
 #' @param records character vector of records to be summarized
 #' @param drop_blanks optional logical for dropping blanks
 #' @export
-summarize_DB <- function(DB,records = NULL,drop_blanks = T){
+summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$internals$reference_state){
   #project --------
   # DB$summary$users <- DB$redcap$users
-  df_names0 <- df_names1 <- df_names2 <- c("metadata","instruments","event_mapping","events","arms")
-  data_choice <- "data_extract"
-  if(DB$internals$was_remapped){
-    df_names2 <- c(paste0(df_names1,"_new"),paste0(df_names1,"_remap"))
-    df_names1 <- c(df_names1,paste0(df_names1,"_remap"))
-    data_choice <- "data_transform"
+  df_names <- c("metadata","instruments","event_mapping","events","arms")
+  redcap_remap <- "redcap"
+  if(data_choice == "data_transform"){
+    df_names <- c(df_names,paste0(df_names,"_remap"))
+    redcap_remap <- "remap"
   }
-  if(!is.null(records)) DB[[data_choice]] <- DB %>% filter_DB(records = records,data_choice = data_choice)
-  for(i in 1:length(df_names1)){
-    x <- DB[[DB$internals$reference_metadata]][[df_names2[i]]]
-    if(!is.null(x)) DB$summary[[df_names1[i]]] <- x
+  for(i in 1:length(df_names)){
+    x <- DB[[redcap_remap]][[df_names[i]]]
+    if(!is.null(x)) DB$summary[[df_names[i]]] <- x
   }
   #records belong to arms 1 to 1 ----------
+  DB$summary$data_choice <- data_choice
   DB$summary$all_records_n <- 0
   if(!is.null(DB$summary$all_records)){
+    original_data <- DB[[data_choice]]
     if(!is.null(records)){
+      DB[[data_choice]] <- DB %>% filter_DB(records = records,data_choice = data_choice)
       DB$summary$selected_records <- DB$summary$all_records[which( DB$summary$all_records[[DB$redcap$id_col]]%in% records),]
       DB$summary$selected_records_n <- DB$summary$selected_records %>% nrow()
     }
@@ -113,7 +114,7 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T){
   }
   DB$summary$user_log_sum <- summarize_users_from_log(DB, records = records)
   #arms----------------
-  DB$summary$arms_n <- 0
+  DB$summary$arms_n <- NA
   if(is.data.frame(DB$redcap$arms)){
     DB$summary$arms_n <- DB$redcap$arms %>% nrow()
     id_pairs <- DB$redcap$instruments$instrument_name %>%  lapply(function(IN){DB$data_extract[[IN]][,c(DB$redcap$id_col,"arm_num")]}) %>% dplyr::bind_rows() %>% unique()
@@ -123,7 +124,7 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T){
   }
   #events belong to arms many to 1 ----------------
   # DB$summary$events_n <- DB$redcap$events %>% nrow()
-  DB$summary$events_n <- 0
+  DB$summary$events_n <- NA
   if(is.data.frame(DB$redcap$events)){
     DB$summary$events_n <- DB$redcap$events %>% nrow()
     DB$summary$event_names_n <- DB$redcap$events$event_name %>% unique() %>% length()
@@ -144,12 +145,13 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T){
   DB$summary$metadata_n <- 0
   DB$summary$metadata_n <- DB$redcap$metadata[which(!DB$redcap$metadata$field_type%in%c("checkbox_choice","descriptive")),] %>% nrow()
   # DB$redcap$metadata$field_type[which(!DB$redcap$metadata$field_type%in%c("checkbox_choice","descriptive"))] %>% table()
-  DB$summary$metadata <- DB %>%  annotate_metadata(metadata = DB$summary$metadata,data_choice = ifelse(DB$internals$was_remapped,"data_transform","data_extract"))
+  DB$summary$metadata <- DB %>%  annotate_metadata(metadata = DB$summary$metadata, data_choice = data_choice)
   #metadata/codebook =============
-  codebook <- metadata_to_codebook(DB$summary$metadata) %>% annotate_codebook(metadata =DB$summary$metadata,data_choice = "data_transform",DB = DB)
+  codebook <- metadata_to_codebook(DB$summary$metadata) %>% annotate_codebook(metadata =DB$summary$metadata,data_choice = data_choice,DB = DB)
   if(drop_blanks) codebook <- codebook[which(codebook$n>0),]
   DB$summary$codebook <- codebook
   #cross_codebook ------
+  DB[[data_choice]] <- original_data
   return(DB)
 }
 #' @export

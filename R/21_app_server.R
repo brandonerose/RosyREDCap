@@ -144,7 +144,11 @@ app_server <- function(input, output, session) {
     lapply(names(values$DB[[input$data_choice]]), function(TABLE) {
       table_data <- values$DB[[input$data_choice]][[TABLE]]
       table_id <- paste0("table___home__", TABLE)
-      output[[table_id]] <- DT::renderDT({table_data %>% clean_RC_df_for_DT(values$DB, data_choice = input$data_choice) %>% make_DT_table()})
+      output[[table_id]] <- DT::renderDT({
+        table_data %>%
+          clean_RC_df_for_DT(values$DB, data_choice = input$data_choice) %>%
+          make_DT_table()
+      })
     }) %>% return()
   })
   # html ---------------

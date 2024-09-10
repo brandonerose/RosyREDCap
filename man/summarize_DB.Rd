@@ -4,7 +4,12 @@
 \alias{summarize_DB}
 \title{Summarize DB}
 \usage{
-summarize_DB(DB, records = NULL, drop_blanks = T)
+summarize_DB(
+  DB,
+  records = NULL,
+  drop_blanks = T,
+  data_choice = DB$internals$reference_state
+)
 }
 \arguments{
 \item{DB}{object generated using `load_DB()` or `setup_DB()`}
