@@ -64,7 +64,6 @@ app_server <- function(input, output, session) {
           clean_name = input$metadata_graph_clean_name
         )
       })
-      print(input$metadata_graph_type)
     }
     if(input$metadata_graph_type == "DiagrammeR"){
       output$REDCap_diagram <- DiagrammeR::renderGrViz({
@@ -86,10 +85,10 @@ app_server <- function(input, output, session) {
   observe({
     output$REDCap_diagram_ui <- renderUI({
       if(input$metadata_graph_type == "visNetwork"){
-        visNetwork::visNetworkOutput("REDCap_diagram") %>% return()
+        visNetwork::visNetworkOutput("REDCap_diagram")
       }
       if(input$metadata_graph_type == "DiagrammeR"){
-        DiagrammeR::grVizOutput("REDCap_diagram") %>% return()
+        DiagrammeR::grVizOutput("REDCap_diagram")
       }
     })
   })
