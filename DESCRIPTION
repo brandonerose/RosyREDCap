@@ -20,7 +20,6 @@ Imports:
     golem (>= 0.4.1),
     hoardr,
     httr,
-    listviewer,
     lubridate,
     magrittr,
     openxlsx,

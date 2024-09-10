@@ -1,4 +1,5 @@
-#' @import RosyUtils
+#' The application server-side
+#'
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
 #' @import shiny
@@ -386,16 +387,8 @@ app_server <- function(input, output, session) {
       )
     )
   })
-  # html listviewer ----------------
-  output$values_list <- listviewer::renderJsonedit({
-    x<- values %>% reactiveValuesToList()
-    x[["DB"]] <- NULL
-    x %>% listviewer::jsonedit() %>% return()
-  })
-  output$input_list <- listviewer::renderJsonedit({
-    input %>% reactiveValuesToList() %>% listviewer::jsonedit()
-  })
-  # output$output_list <- renderPrint({
-  #   names(output$ns)  # Print the structure of the output object
-  # })
+  if(golem::app_dev()){
+    mod_list_server("input_list",values = input)
+    mod_list_server("values_list",values = values)
+  }
 }
