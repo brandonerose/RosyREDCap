@@ -347,7 +347,7 @@ app_server <- function(input, output, session) {
   })
   # ab----------
   observeEvent(input$ab_random_record,{
-    random_record <- values$DB$summary$all_records[[DB$redcap$id_col]][1:10] %>% sample(1)
+    random_record <- values$DB$summary$all_records[[values$DB$redcap$id_col]][1:10] %>% sample(1)
     message("Random Record: ", random_record)
     values$selected_record <- random_record
     # input$patient_table_row_last_clicked <- which(values$DB$data_transform[[values$DB$internals$merge_form_name]]$record_id==values$selected_record)
