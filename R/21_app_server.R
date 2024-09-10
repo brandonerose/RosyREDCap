@@ -54,15 +54,20 @@ app_server <- function(input, output, session) {
   # diagrams ----------
   observe({
     if(input$metadata_graph_type == "visNetwork"){
+      # output$REDCap_diagram <- visNetwork::renderVisNetwork({
+      #   REDCap_diagram(
+      #     values$DB,
+      #     type = input$metadata_graph_type,
+      #     render = F,
+      #     include_vars = input$metadata_graph_include_vars,
+      #     duplicate_forms = input$metadata_graph_duplicate_forms,
+      #     clean_name = input$metadata_graph_clean_name
+      #   )
+      # })
       output$REDCap_diagram <- visNetwork::renderVisNetwork({
-        REDCap_diagram(
-          values$DB,
-          type = input$metadata_graph_type,
-          render = F,
-          include_vars = input$metadata_graph_include_vars,
-          duplicate_forms = input$metadata_graph_duplicate_forms,
-          clean_name = input$metadata_graph_clean_name
-        ) %>% return()
+        nodes <- data.frame(id = 1:3, label = c("A", "B", "C"))
+        edges <- data.frame(from = c(1, 1, 2), to = c(2, 3, 3))
+        visNetwork::visNetwork(nodes, edges)
       })
     }
     if(input$metadata_graph_type == "DiagrammeR"){
