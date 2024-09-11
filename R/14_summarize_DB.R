@@ -61,7 +61,7 @@ summarize_records_from_log <- function(DB,records){
   }
   #records -------------
   # all_records <- unique(log$record)
-  summary_records <-
+  summary_records <- DB$summary$all_records
   record_groups <- log %>% split(log$record)
   summary_records <- summary_records[which(summary_records[[DB$redcap$id_col]]%in%names(record_groups)),,drop = FALSE]
   # users_log_rows <- users %>% lapply(function(user){which(log$username==user)})
