@@ -166,13 +166,10 @@ annotate_codebook <- function(codebook,metadata,data_choice="data_extract",DB){
 #' @param drop_unknowns logical for dropping missing codes
 #' @return DB object cleaned for table or plots
 #' @export
-clean_DB <- function(DB,drop_blanks=T,drop_unknowns=T){
+clean_DB <- function(DB,drop_blanks=F,drop_unknowns=F){
   for (data_choice in c("data_extract","data_transform")) {
-    if(data_choice=="data_extract"){
-      metadata <-  DB %>% annotate_metadata(metadata = DB$redcap$metadata, skim = F)
-    }else{
-      metadata <-  DB %>% annotate_metadata(metadata = DB$remap$metadata, skim = F)
-    }
+    redcap_remap <- ifelse(data_choice=="data_extract","redcap","remap")
+    metadata <-  DB %>% annotate_metadata(metadata = DB[[redcap_remap]]$metadata, skim = F)
     for(FORM in names(DB[[data_choice]])){
       DB[[data_choice]][[FORM]] <- DB[[data_choice]][[FORM]] %>% clean_DF(metadata=metadata,drop_blanks= drop_blanks,drop_unknowns=drop_unknowns)
     }

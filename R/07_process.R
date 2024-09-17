@@ -117,13 +117,16 @@ field_names_to_instruments <- function(DB,field_names,only_unique = T){
   if(only_unique)instruments <- unique(instruments)
   return(instruments)
 }
-field_names_metadata <- function(DB,field_names){
+field_names_metadata <- function(DB,field_names,col_names){
   # if(!deparse(substitute(FORM))%in%DB$redcap$instruments$instrument_name)stop("To avoid potential issues the form name should match one of the instrument names" )
   BAD <- field_names[which(!field_names%in%c(DB$redcap$metadata$field_name,DB$redcap$raw_structure_cols,"arm_num","event_name"))]
   if(length(BAD)>0)stop("All column names in your form must match items in your metadata, `DB$redcap$metadata$field_name`... ", paste0(BAD, collapse = ", "))
   # metadata <- DB$redcap$metadata[which(DB$redcap$metadata$form_name%in%instruments),]
   metadata <- DB$redcap$metadata[which(DB$redcap$metadata$field_name%in%field_names),]
   # metadata <- metadata[which(metadata$field_name%in%field_names),]
+  if( ! missing(col_names)){
+    if(is_something(col_names))metadata <- metadata[[col_names]]
+  }
   return(metadata)
 }
 filter_metadata_from_form <- function(FORM,DB){
