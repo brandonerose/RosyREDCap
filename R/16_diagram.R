@@ -18,10 +18,10 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         type = "instrument",
         label = instruments$instrument_name,
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-        tooltip = instruments$instrument_name %>% sapply(function(x){
+        title = instruments$instrument_name %>% sapply(function(x){
           paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
         }),
-        shape = "rectangle", # entity
+        shape = "box", # entity
         style = "filled",
         color = instrument_color,
         fillcolor = instrument_color,
@@ -42,7 +42,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         type = "arm",
         label = arms$arm_num,
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-        shape = "rectangle", # entity
+        shape = "box", # entity
         style = "filled",
         fillcolor = "green",
         fontcolor = fontcolor
@@ -55,7 +55,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         type = "event",
         label = events$unique_event_name,
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-        shape = "rectangle", # entity
+        shape = "box", # entity
         style = "filled",
         fillcolor = "orange",
         fontcolor = fontcolor
@@ -69,10 +69,10 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           type = "instrument",
           label = event_mapping$form,
           # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-          tooltip = event_mapping$form %>% sapply(function(x){
+          title = event_mapping$form %>% sapply(function(x){
             paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
           }),
-          shape = "rectangle", # entity
+          shape = "box", # entity
           style = "filled",
           color = instrument_color,
           fillcolor = instrument_color,
@@ -102,10 +102,10 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           type = "instrument",
           label = instruments$instrument_name,
           # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-          tooltip = instruments$instrument_name %>% sapply(function(x){
+          title = instruments$instrument_name %>% sapply(function(x){
             paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
           }),
-          shape = "rectangle", # entity
+          shape = "box", # entity
           style = "filled",
           color = instrument_color,
           fillcolor = instrument_color,
@@ -187,11 +187,11 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           type = "variable",
           label = metadata_sub,
           # label = metadata$field_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-          tooltip = metadata_sub %>% sapply(function(x){
+          title = metadata_sub %>% sapply(function(x){
             ROW <- which(metadata$field_name==x)
             return(paste0("<p><b>",x,"</b><br>",paste0("<b>Field Label:</b> ",metadata$field_label[ROW]),"<br>",paste0("<b>Field Type:</b> ",metadata$field_type[ROW]),"</p>"))
           }),
-          shape = "circle",
+          shape = "ellipse",
           style = "filled",
           fillcolor = "yellow",
           fontcolor = fontcolor
@@ -246,14 +246,19 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     }
   }
   # out -----------------
-  if(is_visNetwork){
-    node_df$shape[which(node_df$shape=="rectangle")] <- "box"
-    node_df$shape[which(node_df$shape=="circle")] <- "ellipse"
-    colnames(node_df)[which(colnames(node_df)=="tooltip")] <- "title"
-    node_df$color <- node_df$fillcolor
-    node_df$color.highlight <- "gold"
-  }
+  # if(is_visNetwork){
+  #   node_df$shape[which(node_df$shape=="rectangle")] <- "box"
+  #   node_df$shape[which(node_df$shape=="ellipse")] <- "ellipse"
+  #   colnames(node_df)[which(colnames(node_df)=="tooltip")] <- "title"
+  #   node_df$color <- node_df$fillcolor
+  #   node_df$color.highlight <- "gold"
+  # }
   if(is_DiagrammeR){
+    node_df$shape[which(node_df$shape=="box")] <- "rectangle"
+    node_df$shape[which(node_df$shape=="ellipse")] <- "circle"
+    colnames(node_df)[which(colnames(node_df)=="title")] <- "tooltip"
+    # node_df$color <- node_df$fillcolor
+    # node_df$color.highlight <- "gold"
     node_df$color <- node_df$color.border
     node_df$tooltip <-gsub("<br>","\\\n",node_df$tooltip) %>% remove_html_tags()
     colnames(edge_df)[which(colnames(edge_df)=="width")] <- "penwidth"
@@ -263,68 +268,72 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     edge_df = edge_df
   )
   return(OUT)
-  # node_aes(
-  #   shape = NULL,
-  #   style = NULL,
-  #   penwidth = NULL,
-  #   color = NULL,
-  #   fillcolor = NULL,
-  #   image = NULL,
-  #   fontname = NULL,
-  #   fontsize = NULL,
-  #   fontcolor = NULL,
-  #   peripheries = NULL,
-  #   height = NULL,
-  #   width = NULL,
-  #   x = NULL,
-  #   y = NULL,
-  #   group = NULL,
-  #   tooltip = NULL,
-  #   xlabel = NULL,
-  #   URL = NULL,
-  #   sides = NULL,
-  #   orientation = NULL,
-  #   skew = NULL,
-  #   distortion = NULL,
-  #   gradientangle = NULL,
-  #   fixedsize = NULL,
-  #   labelloc = NULL,
-  #   margin = NULL
-  # )
-  # edge_aes(
-  #   style = NULL,
-  #   penwidth = NULL,
-  #   color = NULL,
-  #   arrowsize = NULL,
-  #   arrowhead = NULL,
-  #   arrowtail = NULL,
-  #   fontname = NULL,
-  #   fontsize = NULL,
-  #   fontcolor = NULL,
-  #   len = NULL,
-  #   tooltip = NULL,
-  #   URL = NULL,
-  #   label = NULL,
-  #   labelfontname = NULL,
-  #   labelfontsize = NULL,
-  #   labelfontcolor = NULL,
-  #   labeltooltip = NULL,
-  #   labelURL = NULL,
-  #   edgetooltip = NULL,
-  #   edgeURL = NULL,
-  #   dir = NULL,
-  #   headtooltip = NULL,
-  #   headURL = NULL,
-  #   headclip = NULL,
-  #   headlabel = NULL,
-  #   headport = NULL,
-  #   tailtooltip = NULL,
-  #   tailURL = NULL,
-  #   tailclip = NULL,
-  #   taillabel = NULL,
-  #   tailport = NULL,
-  #   decorate = NULL
-  # )
+}
+node_aes_names_DiagrammR <- function(){
+  list(
+    shape = NULL,
+    style = NULL,
+    penwidth = NULL,
+    color = NULL,
+    fillcolor = NULL,
+    image = NULL,
+    fontname = NULL,
+    fontsize = NULL,
+    fontcolor = NULL,
+    peripheries = NULL,
+    height = NULL,
+    width = NULL,
+    x = NULL,
+    y = NULL,
+    group = NULL,
+    tooltip = NULL,
+    xlabel = NULL,
+    URL = NULL,
+    sides = NULL,
+    orientation = NULL,
+    skew = NULL,
+    distortion = NULL,
+    gradientangle = NULL,
+    fixedsize = NULL,
+    labelloc = NULL,
+    margin = NULL
+  ) %>% names()
+}
+edge_aes_names_DiagrammR <- function(){
+  list(
+    style = NULL,
+    penwidth = NULL,
+    color = NULL,
+    arrowsize = NULL,
+    arrowhead = NULL,
+    arrowtail = NULL,
+    fontname = NULL,
+    fontsize = NULL,
+    fontcolor = NULL,
+    len = NULL,
+    tooltip = NULL,
+    URL = NULL,
+    label = NULL,
+    labelfontname = NULL,
+    labelfontsize = NULL,
+    labelfontcolor = NULL,
+    labeltooltip = NULL,
+    labelURL = NULL,
+    edgetooltip = NULL,
+    edgeURL = NULL,
+    dir = NULL,
+    headtooltip = NULL,
+    headURL = NULL,
+    headclip = NULL,
+    headlabel = NULL,
+    headport = NULL,
+    tailtooltip = NULL,
+    tailURL = NULL,
+    tailclip = NULL,
+    taillabel = NULL,
+    tailport = NULL,
+    decorate = NULL
+  )
 }
 #' @title REDCap_diagram
 #' @inheritParams save_DB
