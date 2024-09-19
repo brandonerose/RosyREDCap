@@ -20,38 +20,6 @@ add_redcap_links_to_DF <- function(DF,DB){# add instance links
   }
   return(DF)
 }
-validate_env_name <- function(env_name) {
-  # Check if the name is empty
-  if(is.null(env_name)) stop("env_name is NULL")
-  if (nchar(env_name) == 0) {
-    stop("Short name cannot be empty.")
-  }
-  # Check if the name starts with a number
-  if (grepl("^\\d", env_name)) {
-    stop("Short name cannot start with a number.")
-  }
-  # Check if the name contains any invalid characters
-  if (grepl("[^A-Za-z0-9_]", env_name)) {
-    stop("Short name can only contain letters, numbers, and underscores.")
-  }
-  return(env_name)
-}
-validate_web_link <- function(link) {
-  if(is.null(link)) stop("link is NULL")
-  # Check if the link starts with "https://" or "http://"
-  if (!grepl("^https?://", link)) {
-    stop("Invalid web link. It must start with 'http://' or 'https://'.")
-  }
-  # Remove trailing slash if present
-  link <- gsub("/$", "", link)
-  # Check if the link ends with one of the specified web endings
-  if (!grepl("\\.(edu|com|org|net|gov|io|xyz|info|co|uk)$", link)) {
-    stop("Invalid web link. It must end with a valid web ending (.edu, .com, etc.).")
-  }
-  # Add a trailing slash
-  link <- paste0(link, "/")
-  return(link)
-}
 count_DB_upload_cells <- function(DB){
   DB$data_upload %>% lapply(function(x){nrow(x)*ncol(x)}) %>% unlist() %>% sum()
 }
@@ -119,36 +87,4 @@ clean_RC_df_for_DT <- function(DF, DB, data_choice){
   DF %>%
     add_redcap_links_table(DB) %>%
     clean_RC_col_names(DB,data_choice = data_choice) %>% return()
-}
-make_DT_table<-function(DF,selection="single"){
-  # %>% DT::formatStyle(
-  #   colnames(DF),
-  #   color = "#000"
-  # )
-  if(!is_something(DF)){
-    return(h3("No data available to display."))
-  }
-  DF %>% DT::datatable(
-    selection = selection,
-    editable = F,
-    rownames = F,
-    options = list(
-      columnDefs = list(list(className = 'dt-center',targets = "_all")),
-      paging = T,
-      pageLength = 50,
-      fixedColumns = TRUE,
-      ordering = TRUE,
-      scrollY = "300px",
-      scrollX = T,
-      # autoWidth = T,
-      searching = T,
-      dom = 'frtip',
-      # buttons = c('csv', 'excel',"pdf"),
-      scrollCollapse = F,
-      stateSave = F
-    ),
-    class = "cell-border",
-    filter = 'top',
-    escape =F
-  )
 }
