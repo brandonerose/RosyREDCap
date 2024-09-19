@@ -204,7 +204,7 @@ app_ui<- function(request) {
         )
       ),
       controlbar = dbControlbar(),
-      footer = RosyUtils:::TCD_NF(),
+      footer = TCD_NF(),
       skin = "black"
     )
   )

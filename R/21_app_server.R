@@ -337,7 +337,7 @@ app_server <- function(input, output, session) {
     #         records = values$selected_record,
     #         data_choice = "data_extract",
     #         form_names = RosyREDCap:::field_names_to_instruments(values$DB,field_names = values$selected_variable)
-    #       ) %>% RosyUtils:::process_df_list()
+    #       ) %>% process_df_list()
     #     if(!is_something(values$variables_to_change_input_list)){
     #       values$variables_to_change_input_list <- NULL
     #       # return(h3("No Items available to display."))
