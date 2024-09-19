@@ -1,4 +1,6 @@
 #' @import RosyUtils
+#' @import RosyDB
+#' @import RosyApp
 remap_process <- function(DB){
   DB <- validate_DB(DB)
   if(is.data.frame(DB$redcap$metadata)){

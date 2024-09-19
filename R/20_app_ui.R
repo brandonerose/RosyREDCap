@@ -1,4 +1,6 @@
 #' @import RosyUtils
+#' @import RosyDB
+#' @import RosyApp
 #' @import shiny
 #' @import shinydashboard
 #' @param request Internal parameter for `{shiny}`.

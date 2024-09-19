@@ -1,4 +1,6 @@
 #' @import RosyUtils
+#' @import RosyDB
+#' @import RosyApp
 #' @title choice_vector_in_redcap_form
 #' @export
 choice_vector_in_redcap_form <- function(vec){

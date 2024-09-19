@@ -1,4 +1,6 @@
 #' @import RosyUtils
+#' @import RosyDB
+#' @import RosyApp
 upload_file_to_redcap <- function(DB,file,record, field,repeat_instance = NULL,event = NULL){
   # DB <- validate_DB(DB)
   file <- normalizePath(file)

@@ -1,4 +1,6 @@
 #' @import RosyUtils
+#' @import RosyDB
+#' @import RosyApp
 sum_records <- function(DB,data_choice = "data_extract"){
   records <- NULL
   if(DB[[data_choice]] %>% is_something()){

@@ -1,4 +1,6 @@
 #' @import RosyUtils
+#' @import RosyDB
+#' @import RosyApp
 get_key_col_list <- function(DB){
   if(!is_something(DB$redcap$instruments))stop("Empty --> `DB$redcap$instruments`")
   out_list <- 1:nrow(DB$redcap$instruments) %>% lapply(function(i){
