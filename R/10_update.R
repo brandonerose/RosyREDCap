@@ -190,18 +190,3 @@ remove_records_from_list <- function(data_list,records,silent=F){
   if(!silent)message("Removed: ",paste0(records,collapse = ", "))
   return(data_list)
 }
-#' @title Run Quality Checks
-#' @inheritParams save_DB
-#' @export
-run_quality_checks <- function(DB){
-  DB <- validate_DB(DB)
-  if(is_something(DB$quality_checks)){
-    for (qual_check in names(DB$quality_checks)){
-      the_function <- DB$quality_checks[[qual_check]]
-      if(is.function(the_function)){
-        DB <- the_function(DB)
-      }
-    }
-  }
-  return(DB)
-}

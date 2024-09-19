@@ -58,11 +58,3 @@ link_REDCap_record <- function(DB,record,page,instance,text_only = F){
   if(text_only)return(link)
   utils::browseURL(link)
 }
-#' @title nav_to_dir
-#' @inheritParams save_DB
-#' @return opens browser link
-#' @export
-nav_to_dir <- function(DB){
-  rstudioapi::filesPaneNavigate(DB$dir_path)
-  utils::browseURL(DB$dir_path)
-}
