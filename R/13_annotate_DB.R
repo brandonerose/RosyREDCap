@@ -143,13 +143,11 @@ annotate_codebook <- function(codebook,metadata,data_choice="data_extract",DB){
 #   rownames(all_combinations) <- NULL
 #   i <- 1:nrow(all_combinations) %>% sample1()
 #   all_combinations$n <- 1:nrow(all_combinations) %>% lapply(function(i){
-#     OUT <- NA
-#     FORM1 <- all_combinations$form_name1
-#     FORM1 <- all_combinations$
-#     FORM1 <- all_combinations$form_name1
-#     FORM1 <- all_combinations$form_name1
-#     FORM1 <- all_combinations$form_name1
-#     FORM1 <- DB[[data_choice]][[all_combinations$form_name1[i]]][,]==codebook$name[i],na.rm = T)
+#     x<-DB[[data_choice]][[all_combinations$form_name1[i]]]
+#     x<-DB[[data_choice]][[all_combinations$form_name1[i]]]
+#     x[which(x[[all_combinations[i]]])]
+#
+#     ==codebook$name[i],na.rm = T)
 #   }) %>% unlist()
 #   codebook$n_total <- 1:nrow(codebook) %>% lapply(function(i){
 #     sum(!is.na(DB[[data_choice]][[codebook$form_name[i]]][,codebook$field_name[i]]),na.rm = T)
