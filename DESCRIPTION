@@ -40,6 +40,8 @@ Imports:
     utils,
     visNetwork
 Remotes: 
+    github::brandonerose/RosyApp,
+    github::brandonerose/RosyDB,
     github::brandonerose/RosyUtils
 Encoding: UTF-8
 LazyData: true
