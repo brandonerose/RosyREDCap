@@ -18,7 +18,6 @@ Imports:
     dplyr,
     DT,
     golem (>= 0.4.1),
-    hoardr,
     httr,
     lubridate,
     magrittr,
