@@ -7,7 +7,6 @@
 filter_DB(
   DB,
   records,
-  data_choice = "data",
   field_names,
   form_names,
   add_filter_var,
@@ -17,8 +16,6 @@ filter_DB(
 }
 \arguments{
 \item{records}{character vector of the IDs you want to filter the DB by}
-
-\item{data_choice}{character vector of the IDs you want to filter the DB by}
 
 \item{field_names}{character vector of field_names to be included}
 

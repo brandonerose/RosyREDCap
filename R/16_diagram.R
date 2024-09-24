@@ -187,10 +187,10 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           id = node_id_sub,
           type = "variable",
           label = metadata_sub,
-          # label = metadata$field_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+          # label = DB$metadata$fields$field_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
           title = metadata_sub %>% sapply(function(x){
             ROW <- which(metadata$field_name==x)
-            return(paste0("<p><b>",x,"</b><br>",paste0("<b>Field Label:</b> ",metadata$field_label[ROW]),"<br>",paste0("<b>Field Type:</b> ",metadata$field_type[ROW]),"</p>"))
+            return(paste0("<p><b>",x,"</b><br>",paste0("<b>Field Label:</b> ",DB$metadata$fields$field_label[ROW]),"<br>",paste0("<b>Field Type:</b> ",metadata$field_type[ROW]),"</p>"))
           }),
           shape = "ellipse",
           style = "filled",
@@ -234,7 +234,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
       }
       # if (type == "variable"){
       #   node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
-      #     y <- metadata$field_label[metadata$field_name==x]
+      #     y <- DB$metadata$fields$field_label[metadata$field_name==x]
       #     return(ifelse(is.na(y),x,y))
       #   })
       # }

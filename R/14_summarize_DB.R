@@ -1,7 +1,7 @@
 #' @import RosyUtils
 #' @import RosyDB
 #' @import RosyApp
-sum_records <- function(DB,data_choice = "data"){
+sum_records <- function(DB){
   records <- NULL
   if(DB$data %>% is_something()){
     cols <- DB$redcap$id_col
@@ -139,7 +139,7 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$int
   DB$summary$instruments_n <- 0
   if(is.data.frame(DB$summary$instruments)){ # can add expected later
     DB$summary$instruments_n <- DB$summary$instruments %>% nrow()
-    DB$summary$instruments <- DB  %>% annotate_instruments(DB$summary$instruments)
+    DB$summary$instruments <- DB  %>% annotate_forms(DB$summary$instruments)
   }
   #fields belong to instruments/forms 1 to 1 ----------------
   DB$summary$metadata_n <- 0
@@ -147,7 +147,7 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$int
   # DB$metadata$fields$field_type[which(!DB$metadata$fields$field_type%in%c("checkbox_choice","descriptive"))] %>% table()
   DB$summary$metadata <- DB %>%  annotate_metadata(metadata = DB$summary$metadata, data_choice = data_choice)
   #metadata/codebook =============
-  codebook <- metadata_to_codebook(DB$summary$metadata) %>% annotate_codebook(metadata =DB$summary$metadata,data_choice = data_choice,DB = DB)
+  codebook <- fields_to_choices(DB$summary$metadata) %>% annotate_codebook(metadata =DB$summary$metadata,data_choice = data_choice,DB = DB)
   if(drop_blanks) codebook <- codebook[which(codebook$n>0),]
   DB$summary$codebook <- codebook
   #cross_codebook ------
@@ -221,23 +221,15 @@ stack_vars <- function(DB,vars,new_name,drop_na=T){
   }
   return(the_stack)
 }
-get_default_data_choice <- function(DB){ifelse(!DB$internals$was_remapped,"data","data_transform")}
-get_default_metadata <- function(DB){
-  if(DB$internals$was_remapped){
-    return(DB$remap$metadata)
-  }else{
-    return(DB$metadata$fields)
-  }
+get_default_fields <- function(DB){
+  if(DB$internals$was_remapped)return(DB$metadata$fields$field_name)
+  return(DB$metadata$fields$field_name)
 }
-get_default_instruments <- function(DB){
-  if(DB$internals$was_remapped){
-    return(DB$remap$instruments)
-  }else{
-    return(DB$metadata$fields)
-  }
+get_default_forms <- function(DB){
+  if(DB$internals$was_remapped)return(DB$metadata$forms$instrument_name)
+  return(DB$metadata$forms_remap$instrument_name)
 }
 #' @export
-get_all_field_names <- function(DB,data_choice){
-  if(missing(data_choice))data_choice <- get_default_data_choice(DB)
+get_all_field_names <- function(DB){
   return(DB$data %>% sapply(colnames) %>% unlist() %>% unique())
 }

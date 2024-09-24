@@ -143,7 +143,7 @@ app_server <- function(input, output, session) {
       table_id <- paste0("table___home__", TABLE)
       output[[table_id]] <- DT::renderDT({
         table_data %>%
-          clean_RC_df_for_DT(values$DB, data_choice = "data") %>%
+          clean_RC_df_for_DT(values$DB) %>%
           make_DT_table()
       })
     }) %>% return()

@@ -33,7 +33,6 @@ Imports:
     shinydashboard,
     shinydashboardPlus,
     shinyWidgets,
-    skimr,
     stringr,
     tools,
     utils,

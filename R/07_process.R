@@ -68,7 +68,6 @@ raw_process_redcap <- function(raw,DB, labelled){
 }
 #' @title Select REDCap records from DB
 #' @param records character vector of the IDs you want to filter the DB by
-#' @param data_choice character vector of the IDs you want to filter the DB by
 #' @param field_names character vector of field_names to be included
 #' @param form_names character vector of form_names to be included
 #' @param add_filter_var character string of extra variable name to be filtered by if present in a data.frame
@@ -76,11 +75,11 @@ raw_process_redcap <- function(raw,DB, labelled){
 #' @param warn_only logical for warn_only or stop
 #' @return DB object that has been filtered to only include the specified records
 #' @export
-filter_DB <- function(DB, records,data_choice="data",field_names,form_names,add_filter_var,add_filter_vals,warn_only = F){#, ignore_incomplete=F, ignore_unverified = F
+filter_DB <- function(DB, records,field_names,form_names,add_filter_var,add_filter_vals,warn_only = F){#, ignore_incomplete=F, ignore_unverified = F
   if(missing(records)) records <- DB$summary$all_records[[DB$redcap$id_col]]
   if(is.null(records)) records <- DB$summary$all_records[[DB$redcap$id_col]]
   if(missing(field_names)){
-    field_names <- DB %>% get_all_field_names(data_choice = data_choice)
+    field_names <- DB %>% get_all_field_names()
   }
   if(missing(form_names))form_names <- names(DB$data)
   if (length(records)==0)stop("Must supply records")
@@ -345,7 +344,7 @@ missing_codes2 <- function(DB){
     return(NA)
   }
 }
-merge_instruments <- function(instruments,DB,data_choice = "data", exact = T){
+merge_instruments <- function(instruments,DB, exact = T){
   DB <- validate_RosyREDCap(DB)
   old_list <- DB$data
   old <- list()
@@ -378,26 +377,18 @@ merge_instruments <- function(instruments,DB,data_choice = "data", exact = T){
 #' @export
 merge_non_repeating_DB <- function(DB){ # need to adjust for events, currently destructive
   if(DB$internals$data_extract_merged)stop("Already merged!")
-  data_choice <- "data"
   all_instrument_names <- DB$metadata$forms$instrument_name
   keep_instruments <- NULL
   instrument_names <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating)]
   if(DB$redcap$is_longitudinal){
     instrument_names <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating&!DB$metadata$forms$repeating_via_events)]
     keep_instruments <- all_instrument_names[which(!all_instrument_names%in% instrument_names)]
-    data_choice <- "data_transform"
   }
   DB$data[[DB$internals$merge_form_name]] <- merge_multiple(DB$data,instrument_names)
-  if(data_choice=="data") {
-    for(instrument_name in instrument_names){
-      DB[["data"]][[instrument_name]] <- NULL
-    }
-    DB$internals$data_extract_merged <- T
-  }else{
-    for(keep in keep_instruments){
-      DB[["data_transform"]][[keep]] <- DB[["data"]][[keep]]
-    }
+  for(instrument_name in instrument_names){
+    DB[["data"]][[instrument_name]] <- NULL
   }
+  DB$internals$data_extract_merged <- T
   DB
 }
 #' @title merge_multiple
@@ -486,7 +477,7 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
         DB$metadata$fields$field_name[which(DB$metadata$fields$field_type=="notes")]
       ) %>% unique()
   }
-  for (data_choice in c("data","data_transform","data_update")){
+  for (data_choice in c("data","data_update")){
     if(is_something(DB$data)){
       drop_list <- Map(function(NAME, COLS) {identifiers[which(identifiers %in% COLS)]},names(DB$data), lapply(DB$data, colnames))
       drop_list <- drop_list[sapply(drop_list, length) > 0]
@@ -501,7 +492,7 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
   }
   return(DB)
 }
-construct_header_list <- function(df_list,md_elements = c("form_name","field_type","field_label"),metadata = get_default_metadata(DB)){
+construct_header_list <- function(df_list,md_elements = c("form_name","field_type","field_label"),metadata = get_default_fields(DB)){
   if(anyDuplicated(metadata$field_name)>0)stop("dup names not allowed in metadata")
   df_col_list <- df_list %>% lapply(colnames)
   header_df_list <- df_col_list %>% lapply(function(field_names){
@@ -519,8 +510,8 @@ construct_header_list <- function(df_list,md_elements = c("form_name","field_typ
   })
   return(header_df_list)
 }
-construct_key_col_list <- function(DB,data_choice=get_default_data_choice(DB)){
-  metadata <- get_default_metadata(DB)
+construct_key_col_list <- function(DB){
+  metadata <- get_default_fields(DB)
   df_list <- DB$data
   df_col_list <- df_list %>% lapply(colnames)
   forms <- names(df_list)
