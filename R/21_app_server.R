@@ -295,24 +295,24 @@ app_server <- function(input, output, session) {
       print("choose_indiv_record_ triggered update choose indiv")
     }
   })
-  observeEvent(values$DB,{
-    message("Event triggered! Too much")
-    if(!is.null(values$DB)){
-      values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
-      updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
-      data_choices <- c("data","data_upload") %>%
-        sapply(function(data_choice){
-          if(is_something(values$DB$data))return(data_choice)
-        }) %>% unlist() %>% as.character()
-      updateSelectInput(
-        session,
-        "data_choice" ,
-        selected = values$DB$internals$reference_state,
-        choices = data_choices
-      )
-      updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
-    }
-  })
+  # observeEvent(values$DB,{
+  #   message("Event triggered! Too much")
+  #   if(!is.null(values$DB)){
+  #     values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
+  #     updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
+  #     data_choices <- c("data","data_upload") %>%
+  #       sapply(function(data_choice){
+  #         if(is_something(values$DB$data))return(data_choice)
+  #       }) %>% unlist() %>% as.character()
+  #     updateSelectInput(
+  #       session,
+  #       "data_choice" ,
+  #       selected = values$DB$internals$reference_state,
+  #       choices = data_choices
+  #     )
+  #     updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
+  #   }
+  # })
   observeEvent(input$choose_indiv_record_,{
     if(!is.null(input$choose_indiv_record_)){
       values$selected_record <- input$choose_indiv_record_

@@ -63,15 +63,15 @@ app_ui<- function(request) {
           tabName = "data",
           icon =shiny::icon("users")
         ),
-        conditionalPanel(
-          "input.sb1 === 'data'",
-          selectInput(
-            "data_choice",
-            label = "Data Choice",
-            choices = NULL,
-            selected = NULL
-          )
-        ),
+        # conditionalPanel(
+        #   "input.sb1 === 'data'",
+        #   selectInput(
+        #     "data_choice",
+        #     label = "Data Choice",
+        #     choices = NULL,
+        #     selected = NULL
+        #   )
+        # ),
         menuItem(
           text="Group",
           tabName = "group",
