@@ -21,7 +21,7 @@ annotate_metadata <- function(DB,metadata,data_choice="data",skim= T){
     skimmed <- NULL
     for (form in unique(metadata$form_name)){
       COLS <- metadata$field_name[which(metadata$form_name==form)]
-      CHECK_THIS <- DB[[data_choice]][[form]]
+      CHECK_THIS <- DB$data[[form]]
       COLS <- COLS[which(COLS %in% colnames(CHECK_THIS))]
       skimmed <- skimmed %>% dplyr::bind_rows(CHECK_THIS[,COLS] %>% skimr::skim())
     }
@@ -77,12 +77,12 @@ annotate_codebook <- function(codebook,metadata,data_choice="data",DB){
   codebook$form_name <- 1:nrow(codebook) %>% lapply(function(i){
     form_name <- codebook$form_name[i]
     field_name <- codebook$field_name[i]
-    if(!form_name %in% names(DB[[data_choice]])){
-      if(DB$internals$merge_form_name %in% names(DB[[data_choice]])){
-        if(field_name%in%colnames(DB[[data_choice]]$merged))return(DB$internals$merge_form_name)
+    if(!form_name %in% names(DB$data)){
+      if(DB$internals$merge_form_name %in% names(DB$data)){
+        if(field_name%in%colnames(DB$data$merged))return(DB$internals$merge_form_name)
       }
-      for(other in names(DB[[data_choice]])[which(!names(DB[[data_choice]])%in%DB$metadata$forms$instrument_name)]){
-        if(field_name%in%colnames(DB[[data_choice]][[other]]))return(other)
+      for(other in names(DB$data)[which(!names(DB$data)%in%DB$metadata$forms$instrument_name)]){
+        if(field_name%in%colnames(DB$data[[other]]))return(other)
       }
     }
     return(form_name)
@@ -97,12 +97,12 @@ annotate_codebook <- function(codebook,metadata,data_choice="data",DB){
       metadata$field_label[which(metadata$field_name==X)] %>% unique()
     })
   codebook$n <- 1:nrow(codebook) %>% lapply(function(i){
-    DF <- DB[[data_choice]][[codebook$form_name[i]]]
+    DF <- DB$data[[codebook$form_name[i]]]
     if(nrow(DF)==0)return(0)
     sum(DF[,codebook$field_name[i]]==codebook$name[i],na.rm = T)
   }) %>% unlist()
   codebook$n_total <- 1:nrow(codebook) %>% lapply(function(i){
-    DF <- DB[[data_choice]][[codebook$form_name[i]]]
+    DF <- DB$data[[codebook$form_name[i]]]
     if(nrow(DF)==0)return(0)
     sum(!is.na(DF[,codebook$field_name[i]]),na.rm = T)
   }) %>% unlist()
@@ -145,14 +145,14 @@ annotate_codebook <- function(codebook,metadata,data_choice="data",DB){
 #   rownames(all_combinations) <- NULL
 #   i <- 1:nrow(all_combinations) %>% sample1()
 #   all_combinations$n <- 1:nrow(all_combinations) %>% lapply(function(i){
-#     x<-DB[[data_choice]][[all_combinations$form_name1[i]]]
-#     x<-DB[[data_choice]][[all_combinations$form_name1[i]]]
+#     x<-DB$data[[all_combinations$form_name1[i]]]
+#     x<-DB$data[[all_combinations$form_name1[i]]]
 #     x[which(x[[all_combinations[i]]])]
 #
 #     ==codebook$name[i],na.rm = T)
 #   }) %>% unlist()
 #   codebook$n_total <- 1:nrow(codebook) %>% lapply(function(i){
-#     sum(!is.na(DB[[data_choice]][[codebook$form_name[i]]][,codebook$field_name[i]]),na.rm = T)
+#     sum(!is.na(DB$data[[codebook$form_name[i]]][,codebook$field_name[i]]),na.rm = T)
 #   }) %>% unlist()
 #   codebook$perc <-  (codebook$n/codebook$n_total) %>% round(4)
 #   codebook$perc_text <- codebook$perc %>% magrittr::multiply_by(100) %>% round(1) %>% paste0("%")
@@ -170,8 +170,8 @@ clean_DB <- function(DB,drop_blanks=F,drop_unknowns=F){
   for (data_choice in c("data","data_transform")) {
     redcap_remap <- ifelse(data_choice=="data","redcap","remap")
     metadata <-  DB %>% annotate_metadata(metadata = DB[[redcap_remap]]$metadata, skim = F)
-    for(FORM in names(DB[[data_choice]])){
-      DB[[data_choice]][[FORM]] <- DB[[data_choice]][[FORM]] %>% clean_DF(metadata=metadata,drop_blanks= drop_blanks,drop_unknowns=drop_unknowns)
+    for(FORM in names(DB$data)){
+      DB$data[[FORM]] <- DB$data[[FORM]] %>% clean_DF(metadata=metadata,drop_blanks= drop_blanks,drop_unknowns=drop_unknowns)
     }
   }
   return(DB)

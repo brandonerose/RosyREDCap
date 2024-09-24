@@ -95,7 +95,7 @@ app_server <- function(input, output, session) {
   })
   # tables --------
   output$dt_tables_view <- renderUI({
-    if (length(values$DB[[input$data_choice]]) == 0) {
+    if (length(values$DB$data) == 0) {
       # If the list is empty, show a message
       return(h3("No tables available to display."))
     } else {
@@ -103,8 +103,8 @@ app_server <- function(input, output, session) {
         id = "tabs",
         do.call(tabsetPanel, c(
           id = "tabs",
-          lapply(seq_along(values$DB[[input$data_choice]]), function(i) {
-            table_name_raw <- names(values$DB[[input$data_choice]])[i]
+          lapply(seq_along(values$DB$data), function(i) {
+            table_name_raw <- names(values$DB$data)[i]
             if(input$data_choice == "data_transform"){
               table_name <- table_name_raw
             }else{
@@ -141,9 +141,9 @@ app_server <- function(input, output, session) {
   })
   # Render each DT table ------
   observe({
-    if(!is_something(values$DB[[input$data_choice]]))return(h3("No tables available to display."))
-    lapply(names(values$DB[[input$data_choice]]), function(TABLE) {
-      table_data <- values$DB[[input$data_choice]][[TABLE]]
+    if(!is_something(values$DB$data))return(h3("No tables available to display."))
+    lapply(names(values$DB$data), function(TABLE) {
+      table_data <- values$DB$data[[TABLE]]
       table_id <- paste0("table___home__", TABLE)
       output[[table_id]] <- DT::renderDT({
         table_data %>%
@@ -179,7 +179,7 @@ app_server <- function(input, output, session) {
       }
     }
     z <- values$DB[[redcap_remap]][["instruments"]]
-    all_forms <- names(values$DB[[input$data_choice]])
+    all_forms <- names(values$DB$data)
     values$selected_form <- z$instrument_name[which(z[[instrument_name]] == input$tabs)]
     values$active_table_id <- paste0("table___home__", values$selected_form)
     message("Changed Tabs: ", input$tabs)
@@ -191,7 +191,7 @@ app_server <- function(input, output, session) {
       ROW_LC <- input[[paste0(values$active_table_id, "_row_last_clicked")]]
       isolate({
         if(is_something(ROW_LC)) {
-          clicked_record <- values$DB[[input$data_choice]][[values$selected_form]][[values$DB$redcap$id_col]][[ROW_LC]]
+          clicked_record <- values$DB$data[[values$selected_form]][[values$DB$redcap$id_col]][[ROW_LC]]
           overwrite <- TRUE
           message("selected_record: ", values$selected_record)
           message("clicked_record: ", clicked_record)
@@ -233,7 +233,7 @@ app_server <- function(input, output, session) {
       }
     }
     z <- values$DB[[redcap_remap]][["instruments"]]
-    all_forms <- names(values$DB[[input$data_choice]])
+    all_forms <- names(values$DB$data)
     values$selected_form <- z$instrument_name[which(z[[instrument_name]] == input$tabs)]
     values$active_table_id <- paste0("table___home__", values$selected_form)
     # Track previous tab and reset `last_clicked_record` when switching tabs
@@ -246,7 +246,7 @@ app_server <- function(input, output, session) {
             values$last_clicked_record <- values$selected_record
             for(form in all_forms) {
               if(!is.null(input[[paste0("table___home__", form, "_state")]])){
-                ROWS <- which(values$DB[[input$data_choice]][[form]][[values$DB$redcap$id_col]] == values$selected_record)
+                ROWS <- which(values$DB$data[[form]][[values$DB$redcap$id_col]] == values$selected_record)
                 PREVIOUS <- input[[paste0(values$active_table_id, "_rows_selected")]]
                 run_it <- T
                 # if(!is.null(PREVIOUS)){
@@ -302,7 +302,7 @@ app_server <- function(input, output, session) {
       updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
       data_choices <- c("data","data_transform","data_upload") %>%
         sapply(function(data_choice){
-          if(is_something(values$DB[[data_choice]]))return(data_choice)
+          if(is_something(values$DB$data))return(data_choice)
         }) %>% unlist() %>% as.character()
       updateSelectInput(
         session,

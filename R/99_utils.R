@@ -44,7 +44,7 @@ split_choices <- function(x){
   x
 }
 husk_of_instrument <- function (DB,data_choice="data",FORM,field_names) {
-  DF <- DB[[data_choice]][[FORM]]
+  DF <- DB$data[[FORM]]
   cols<- colnames(DF)[which(colnames(DF)%in%DB$redcap$raw_structure_cols)]
   DF2 <- NULL
   for(col in cols){

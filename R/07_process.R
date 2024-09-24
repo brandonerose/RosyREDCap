@@ -83,7 +83,7 @@ filter_DB <- function(DB, records,data_choice="data",field_names,form_names,add_
   if(missing(field_names)){
     field_names <- DB %>% get_all_field_names(data_choice = data_choice)
   }
-  if(missing(form_names))form_names <- names(DB[[data_choice]])
+  if(missing(form_names))form_names <- names(DB$data)
   if (length(records)==0)stop("Must supply records")
   selected <- list()
   BAD  <- records[which(!records%in%DB$summary$all_records[[DB$redcap$id_col]])]
@@ -94,7 +94,7 @@ filter_DB <- function(DB, records,data_choice="data",field_names,form_names,add_
   }
   run_add_filter <- !missing(add_filter_var)&&!missing(add_filter_vals)
   for(FORM in form_names){
-    OUT <- DB[[data_choice]][[FORM]][which(DB[[data_choice]][[FORM]][[DB$redcap$id_col]]%in%GOOD),]
+    OUT <- DB$data[[FORM]][which(DB$data[[FORM]][[DB$redcap$id_col]]%in%GOOD),]
     cols <- colnames(OUT)[which(colnames(OUT)%in%field_names)]
     if(length(cols)>0){
       if(run_add_filter){
@@ -351,7 +351,7 @@ missing_codes2 <- function(DB){
 }
 merge_instruments <- function(instruments,DB,data_choice = "data", exact = T){
   DB <- validate_RosyREDCap(DB)
-  old_list <- DB[[data_choice]]
+  old_list <- DB$data
   old <- list()
   if(!is_something(old_list)){
     message("old_list is empty")
@@ -392,7 +392,7 @@ merge_non_repeating_DB <- function(DB){ # need to adjust for events, currently d
     keep_instruments <- all_instrument_names[which(!all_instrument_names%in% instrument_names)]
     data_choice <- "data_transform"
   }
-  DB[[data_choice]][[DB$internals$merge_form_name]] <- merge_multiple(DB$data,instrument_names)
+  DB$data[[DB$internals$merge_form_name]] <- merge_multiple(DB$data,instrument_names)
   if(data_choice=="data") {
     for(instrument_name in instrument_names){
       DB[["data"]][[instrument_name]] <- NULL
@@ -495,13 +495,13 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
       ) %>% unique()
   }
   for (data_choice in c("data","data_transform","data_upload")){
-    if(is_something(DB[[data_choice]])){
-      drop_list <- Map(function(NAME, COLS) {identifiers[which(identifiers %in% COLS)]},names(DB[[data_choice]]), lapply(DB[[data_choice]], colnames))
+    if(is_something(DB$data)){
+      drop_list <- Map(function(NAME, COLS) {identifiers[which(identifiers %in% COLS)]},names(DB$data), lapply(DB$data, colnames))
       drop_list <- drop_list[sapply(drop_list, length) > 0]
       if(length(drop_list)==0)message("Nothing to deidentify from --> ",identifiers %>% paste0(collapse = ", "))
       for (FORM in names(drop_list)) {
         for(DROP in drop_list[[FORM]]){
-          DB[[data_choice]][[FORM]][[DROP]] <- NULL
+          DB$data[[FORM]][[DROP]] <- NULL
           message("Dropped '",DROP,"' from '",data_choice,"' --> '", FORM,"'")
         }
       }
@@ -529,7 +529,7 @@ construct_header_list <- function(df_list,md_elements = c("form_name","field_typ
 }
 construct_key_col_list <- function(DB,data_choice=get_default_data_choice(DB)){
   metadata <- get_default_metadata(DB)
-  df_list <- DB[[data_choice]]
+  df_list <- DB$data
   df_col_list <- df_list %>% lapply(colnames)
   forms <- names(df_list)
   key_cols_list <- forms %>% lapply(function(form){

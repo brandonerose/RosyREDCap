@@ -3,7 +3,7 @@
 #' @import RosyApp
 sum_records <- function(DB,data_choice = "data"){
   records <- NULL
-  if(DB[[data_choice]] %>% is_something()){
+  if(DB$data %>% is_something()){
     cols <- DB$redcap$id_col
     if(is.data.frame(DB$metadata$arms)){
       if(nrow(DB$metadata$arms)>1){
@@ -12,12 +12,12 @@ sum_records <- function(DB,data_choice = "data"){
     }
     if(length(cols)==1){
       records <- data.frame(
-        records =  names(DB[[data_choice]]) %>% lapply(function(IN){DB[[data_choice]][[IN]][,cols]}) %>% unlist() %>% unique()
+        records =  names(DB$data) %>% lapply(function(IN){DB$data[[IN]][,cols]}) %>% unlist() %>% unique()
       )
       colnames(records) <- cols
     }
     if(length(cols) == 2){
-      records <- names(DB[[data_choice]]) %>% lapply(function(IN){DB[[data_choice]][[IN]][,cols]}) %>% dplyr::bind_rows() %>% unique()
+      records <- names(DB$data) %>% lapply(function(IN){DB$data[[IN]][,cols]}) %>% dplyr::bind_rows() %>% unique()
       # records <- records[order(as.integer(records[[DB$redcap$id_col]])),]
     }
     rownames(records) <- NULL
@@ -105,9 +105,9 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$int
   DB$summary$data_choice <- data_choice
   DB$summary$all_records_n <- 0
   if(!is.null(DB$summary$all_records)){
-    original_data <- DB[[data_choice]]
+    original_data <- DB$data
     if(!is.null(records)){
-      DB[[data_choice]] <- DB %>% filter_DB(records = records,data_choice = data_choice)
+      DB$data <- DB %>% filter_DB(records = records,data_choice = data_choice)
       DB$summary$selected_records <- DB$summary$all_records[which( DB$summary$all_records[[DB$redcap$id_col]]%in% records),]
       DB$summary$selected_records_n <- DB$summary$selected_records %>% nrow()
     }
@@ -153,7 +153,7 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$int
   if(drop_blanks) codebook <- codebook[which(codebook$n>0),]
   DB$summary$codebook <- codebook
   #cross_codebook ------
-  DB[[data_choice]] <- original_data
+  DB$data <- original_data
   return(DB)
 }
 #' @export
@@ -175,7 +175,7 @@ rmarkdown_DB <- function (DB,dir_other){
 #' @export
 save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"output"),file_name = paste0(DB$short_name,"_RosyREDCap"),separate = F,data_choice = "data_transform"){
   DB <- DB %>% validate_RosyREDCap()
-  to_save_list <- append(DB[[data_choice]],DB[["summary"]])
+  to_save_list <- append(DB$data,DB[["summary"]])
   to_save_list <- to_save_list[which(to_save_list %>% sapply(is.data.frame))]
   to_save_list <- to_save_list[which((to_save_list %>% sapply(nrow) %>% unlist())>0)]
   link_col_list <- list()
@@ -241,5 +241,5 @@ get_default_instruments <- function(DB){
 #' @export
 get_all_field_names <- function(DB,data_choice){
   if(missing(data_choice))data_choice <- get_default_data_choice(DB)
-  return(DB[[data_choice]] %>% sapply(colnames) %>% unlist() %>% unique())
+  return(DB$data %>% sapply(colnames) %>% unlist() %>% unique())
 }
