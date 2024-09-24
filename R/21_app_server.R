@@ -286,10 +286,9 @@ app_server <- function(input, output, session) {
   })
   observeEvent(input$choose_project_,{
     if(!is.null(input$choose_project_)){
-      ROWS <- which(values$projects$short_name==input$choose_project_)
-      if(is_something(ROWS)){
+      if(is_something(input$choose_project_)){
         values$DB <- tryCatch({
-          load_RosyREDCap(values$projects$dir_path[ROWS])
+          load_RosyREDCap(short_name=input$choose_project_)
         },error = function(e) {NULL})
       }
       print("choose_project_ triggered")
