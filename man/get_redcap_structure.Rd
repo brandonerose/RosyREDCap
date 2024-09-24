@@ -7,8 +7,6 @@
 get_redcap_structure(DB, parse_codes = F)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{parse_codes}{logical for parsing choice codes and missing codes into tabs}
 }
 \value{

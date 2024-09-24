@@ -6,9 +6,6 @@
 \usage{
 unmerge_non_repeating_DB(DB)
 }
-\arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-}
 \value{
 DB object that has merged all non repeating forms
 }

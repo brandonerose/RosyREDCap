@@ -6,9 +6,6 @@
 \usage{
 check_redcap_files(DB)
 }
-\arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-}
 \value{
 data.frame of files
 }

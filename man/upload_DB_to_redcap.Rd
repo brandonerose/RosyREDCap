@@ -13,8 +13,6 @@ upload_DB_to_redcap(
 )
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{batch_size}{numeric of how big the REDCap batch upload is. Default 500.}
 
 \item{ask}{logical for if you want to preview uploads first}

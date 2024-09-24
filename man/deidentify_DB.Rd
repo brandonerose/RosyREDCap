@@ -7,9 +7,7 @@
 deidentify_DB(DB, identifiers, drop_free_text = F)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
-\item{identifiers}{optional character vector of column names that should be excluded from DB. Otherwise `DB$redcap$metadata$identifier =="y` will be used.}
+\item{identifiers}{optional character vector of column names that should be excluded from DB. Otherwise `DB$REDCap$metadata$identifier =="y` will be used.}
 }
 \value{
 DB object that has deidentified forms

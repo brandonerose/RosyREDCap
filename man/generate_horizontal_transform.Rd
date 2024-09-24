@@ -7,8 +7,6 @@
 generate_horizontal_transform(DB, records)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{records}{character vector of records to be summarized}
 }
 \description{

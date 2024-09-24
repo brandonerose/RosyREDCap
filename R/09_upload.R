@@ -17,7 +17,7 @@ upload_form_to_redcap <- function(to_be_uploaded,DB,batch_size=500){
     batch_size=batch_size,
     interbatch_delay=0.2,
     continue_on_error=FALSE,
-    redcap_uri = DB$links$redcap_uri,
+    REDCap_URI = DB$links$REDCap_URI,
     token = validate_redcap_token(DB),
     overwrite_with_blanks=TRUE
   )
@@ -36,7 +36,7 @@ upload_form_to_redcap <- function(to_be_uploaded,DB,batch_size=500){
 #' @export
 upload_DB_to_redcap <- function(DB,batch_size = 500, ask = T, view_old = T, n_row_view = 20){
   warning("This function is not ready for primetime yet! Use at your own risk!",immediate. = T)
-  DB <- validate_DB(DB)
+  DB <- validate_RosyREDCap(DB)
   # if(ask){
   #   if(count_DB_upload_cells(DB)>5000){
   #     choice  <- utils::menu(choices = c("YES - Move forward with larger upload","NO - I want to stop and double check what I'm about to upload"),title = "This is a large upload. Do you want to proceed?")
@@ -83,19 +83,19 @@ upload_DB_to_redcap <- function(DB,batch_size = 500, ask = T, view_old = T, n_ro
 #' @return upload_list
 #' @export
 find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
-  DB <- validate_DB(DB)
+  DB <- validate_RosyREDCap(DB)
   new_list <- DB$data_upload
   old_list <- list()
-  if(any(!names(new_list)%in%DB$redcap$instruments$instrument_name))warning("All upload names should ideally match the DB instrument names, `DB$redcap$instruments$instrument_name`",immediate. = T)
+  if(any(!names(new_list)%in%DB$REDCap$instruments$instrument_name))warning("All upload names should ideally match the DB instrument names, `DB$REDCap$instruments$instrument_name`",immediate. = T)
   already_used <- NULL
   for(TABLE in names(new_list)){#TABLE <- names(new_list) %>% sample(1)
     new <-  new_list[[TABLE]]
-    ref_cols <- DB$redcap$raw_structure_cols
+    ref_cols <- DB$REDCap$raw_structure_cols
     ref_cols <- ref_cols[which(ref_cols%in%colnames(new))]
     data_cols <- colnames(new)[which(!colnames(new)%in%ref_cols)]
     instruments <- field_names_to_instruments(DB,data_cols)
     if(any(instruments%in%already_used))stop("RosyREDCap will not allow you to upload items from same form multiple times in one loop without refreshing.")
-    old <- merge_instruments(instruments = instruments, DB = DB,data_choice = "data_extract",exact = T)
+    old <- merge_instruments(instruments = instruments, DB = DB,data_choice = "data",exact = T)
     drop <- data_cols %>% vec1_not_in_vec2(instruments_to_field_names(instruments=instruments,DB=DB))
     if(length(drop)>0){
       message("Dropping field_names that aren't part of REDCap metadata: ",paste0(drop, collapse = ", "))
@@ -104,7 +104,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
     old_list[[TABLE]] <- old# find_df_diff2(new= new , old =  old, ref_cols = ref_cols, message_pass = paste0(TABLE,": "))
     already_used <- already_used %>%append(instruments) %>% unique()
   }
-  new_list <- find_df_list_diff(new_list = new_list, old_list = old_list, ref_col_list = DB$redcap$instrument_key_cols[names(new_list)],view_old = view_old, n_row_view = n_row_view)
+  new_list <- find_df_list_diff(new_list = new_list, old_list = old_list, ref_col_list = DB$REDCap$instrument_key_cols[names(new_list)],view_old = view_old, n_row_view = n_row_view)
   if(is_something(new_list)){
     DB$data_upload <- new_list
     return(DB)
@@ -116,28 +116,28 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
 #' @export
 check_field <- function(DB,DF, field_name,autofill_new=T){
   form <- field_names_to_instruments(DB,field_name)
-  records <- DF[[DB$redcap$id_col]] %>% unique()
-  BAD<-records[which(!records%in%DB$summary$all_records[[DB$redcap$id_col]])]
+  records <- DF[[DB$REDCap$id_col]] %>% unique()
+  BAD<-records[which(!records%in%DB$summary$all_records[[DB$REDCap$id_col]])]
   if(length(BAD)>0)stop("Records not included in DB: ",records %>% paste0(collapse = ", "))
-  # is_repeating <- form%in% DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$repeating)]
-  cols_mandatory_structure <- DB$redcap$instrument_key_cols[[form]]
+  # is_repeating <- form%in% DB$REDCap$instruments$instrument_name[which(DB$REDCap$instruments$repeating)]
+  cols_mandatory_structure <- DB$REDCap$instrument_key_cols[[form]]
   cols_mandatory <- c(cols_mandatory_structure,field_name)
-  old <- DB$data_extract[[form]][,cols_mandatory]
-  old <- old[which(old[[DB$redcap$id_col]]%in% records),]
+  old <- DB$data[[form]][,cols_mandatory]
+  old <- old[which(old[[DB$REDCap$id_col]]%in% records),]
   new <- DF
   missing_structure_cols<-cols_mandatory[which(!cols_mandatory%in%colnames(new))]
   cols <- cols_mandatory[which(cols_mandatory %in% colnames(new))]
   new <- new[,cols]
-  included_records <- records[which(records %in% old[[DB$redcap$id_col]])]
+  included_records <- records[which(records %in% old[[DB$REDCap$id_col]])]
   if(length(missing_structure_cols)>0){
     included_records_many_rows <- included_records[which(included_records %>% sapply(function(ID){
-      length(which(old[[DB$redcap$id_col]]==ID))>1
+      length(which(old[[DB$REDCap$id_col]]==ID))>1
     }))]
     if(length(included_records_many_rows)>0)stop("DF is missing structural columns (",missing_structure_cols %>% paste0(collapse = ", "),") and has ",form," rows with multiple entries... remove them or add the intended columns: ",included_records_many_rows %>% paste0(collapse = ", "))
     if("redcap_repeat_instrument"%in%missing_structure_cols)new$redcap_repeat_instrument<- form
     if("redcap_repeat_instance"%in%missing_structure_cols){
-      new$redcap_repeat_instance<- new[[DB$redcap$id_col]] %>% sapply(function(ID){
-        if(ID %in% included_records)return(old$redcap_repeat_instance[which(old[[DB$redcap$id_col]]==ID)])
+      new$redcap_repeat_instance<- new[[DB$REDCap$id_col]] %>% sapply(function(ID){
+        if(ID %in% included_records)return(old$redcap_repeat_instance[which(old[[DB$REDCap$id_col]]==ID)])
         return("1")
       })
     }
@@ -177,13 +177,13 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
           message("Did not change anything")
         }
         if(choice==3){
-          DB %>% link_REDCap_record(OUT[[DB$redcap$id_col]])
+          DB %>% link_REDCap_record(OUT[[DB$REDCap$id_col]])
           OUT[[field_name]] <- readline("What would you like it to be? ")
           print.data.frame(OUT)
           OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
         }
         if(choice==4){#account for repeat? instance
-          DB %>% link_REDCap_record(OUT[[DB$redcap$id_col]],form,instance = OUT[["redcap_repeat_instance"]])
+          DB %>% link_REDCap_record(OUT[[DB$REDCap$id_col]],form,instance = OUT[["redcap_repeat_instance"]])
         }
       }
     }
@@ -195,31 +195,31 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
   view_forms <- field_names_to_instruments(DB,field_names_to_view)
   field_names_to_view <- c(field_name_to_change,field_names_to_view) %>% unique()
   # if(length(view_forms)>1)stop("only one form combinations are allowed.")
-  if(missing(records)) records <- DB$data_extract[[view_forms]][[DB$redcap$id_col]] %>% unique()
+  if(missing(records)) records <- DB$data[[view_forms]][[DB$REDCap$id_col]] %>% unique()
   all_forms <- c(change_form,view_forms) %>% unique()
-  ref_cols_change <- DB$redcap$instrument_key_cols[[change_form]]
-  # ref_cols_view <- DB$redcap$instrument_key_cols[[view_forms]]
+  ref_cols_change <- DB$REDCap$instrument_key_cols[[change_form]]
+  # ref_cols_view <- DB$REDCap$instrument_key_cols[[view_forms]]
   if(missing(optional_DF)){
-    optional_DF <- DB[["data_extract"]][[change_form]][,unique(c(ref_cols_change,field_names_to_view))]
+    optional_DF <- DB[["data"]][[change_form]][,unique(c(ref_cols_change,field_names_to_view))]
   }
   if(is.null(field_names_to_view)) field_names_to_view <- colnames(optional_DF)
   # if(any(!ref_cols%in%colnames(DF)))stop("DF must contain all ref_cols")
   if(length(records)>0){
     # message("fix these in REDCap --> ",paste0(out,collapse = " | "))
-    rows_of_choices <- which(DB$redcap$codebook$field_name==field_name_to_change)
+    rows_of_choices <- which(DB$REDCap$codebook$field_name==field_name_to_change)
     has_choices <- length(rows_of_choices)>0
     choices1 <- c("Do Nothing", "Edit","Launch Redcap Link Only")
     if(has_choices){
-      choices2 <- c("Do Nothing",DB$redcap$codebook$name[rows_of_choices],"Launch Redcap Link Only")
+      choices2 <- c("Do Nothing",DB$REDCap$codebook$name[rows_of_choices],"Launch Redcap Link Only")
     }else{
       choices2 <- c("Do Nothing","Manual Entry","Launch Redcap Link Only")
     }
-    is_repeating_form <- change_form %in% DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$repeating)]
+    is_repeating_form <- change_form %in% DB$REDCap$instruments$instrument_name[which(DB$REDCap$instruments$repeating)]
     OUT <- NULL
     for (record in records){ # record <- records%>% sample(1)
       record_was_updated <- F
-      VIEW <- optional_DF[which(optional_DF[[DB$redcap$id_col]]==record),]
-      VIEW_simp <- VIEW[,unique(c(DB$redcap$id_col,field_names_to_view))] %>% unique()
+      VIEW <- optional_DF[which(optional_DF[[DB$REDCap$id_col]]==record),]
+      VIEW_simp <- VIEW[,unique(c(DB$REDCap$id_col,field_names_to_view))] %>% unique()
       row.names(VIEW_simp) <- NULL
       VIEW_simp %>%t() %>% print()
       CHANGE <- filter_DB(DB, records = record, form_names = change_form)[[1]]
@@ -230,7 +230,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
         blank_row <- data.frame(
           record
         )
-        colnames(blank_row)[[1]] <- DB$redcap$id_col
+        colnames(blank_row)[[1]] <- DB$REDCap$id_col
         if("redcap_repeat_instance"%in%ref_cols_change){
           blank_row$redcap_repeat_instance <- "1"
           blank_row$redcap_repeat_instrument <- change_form
@@ -290,7 +290,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
                 redcap_repeat_instrument = change_form,
                 redcap_repeat_instance = as.character(the_max + 1)
               )
-              colnames(OUT_sub)[1]<-DB$redcap$id_col
+              colnames(OUT_sub)[1]<-DB$REDCap$id_col
               choice2 <- utils::menu(choices2,title=paste0("What would you like to do?"))
               choice <- choices2[choice2]
               if(choice %in% c("Manual Entry","Do Nothing","Launch Redcap Link Only")){

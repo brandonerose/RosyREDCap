@@ -35,13 +35,13 @@ process_response <- function(response,error_action){
   return(all_character_cols(content))
 }
 redcap_token_works <- function(DB){
-  redcap_api_base(DB$links$redcap_uri,validate_redcap_token(DB,silent = T,ask = F),"version") %>%
+  redcap_api_base(DB$links$REDCap_URI,validate_redcap_token(DB,silent = T,ask = F),"version") %>%
     httr::http_error() %>% magrittr::not() %>% return()
 }
 test_redcap <- function(DB){
   ERROR  <- T
   while(ERROR){
-    version <- redcap_api_base(DB$links$redcap_uri,validate_redcap_token(DB),"version")
+    version <- redcap_api_base(DB$links$REDCap_URI,validate_redcap_token(DB),"version")
     ERROR  <- version %>% httr::http_error()
     if(ERROR){
       warning('Your REDCap API token check failed. Invalid token or API privileges. Contact Admin! Consider rerunnning `setup_DB()`',immediate. = T)
@@ -51,13 +51,13 @@ test_redcap <- function(DB){
     }
   }
   message("Connected to REDCap!")
-  DB$redcap$version <- version %>% httr::content(as="text") %>% as.character()
+  DB$REDCap$version <- version %>% httr::content(as="text") %>% as.character()
   DB
 }
 get_redcap_info <- function(DB,content,error_action=NULL,additional_args=NULL){
   allowed_content <- REDCap_API$contents$content
   if(!content%in%allowed_content)stop("Must use the following content... ",paste0(allowed_content,collapse = ", "))
-  redcap_api_base(url=DB$links$redcap_uri,token = validate_redcap_token(DB),content = content,additional_args=additional_args) %>% process_response(error_action)
+  redcap_api_base(url=DB$links$REDCap_URI,token = validate_redcap_token(DB),content = content,additional_args=additional_args) %>% process_response(error_action)
 }
 #' @title Drop redcap files to directory
 #' @inheritParams save_DB
@@ -66,20 +66,20 @@ get_redcap_info <- function(DB,content,error_action=NULL,additional_args=NULL){
 #' @return message
 #' @export
 get_redcap_files <- function(DB,original_file_names = F,overwrite = F){
-  file_rows <- which(DB$redcap$metadata$field_type=="file")
+  file_rows <- which(DB$REDCap$metadata$field_type=="file")
   out_dir <- file.path(DB$dir_path,"REDCap","files")
   if(length(file_rows)>0){
     dir.create(out_dir,showWarnings = F)
-    for(field_name in DB$redcap$metadata$field_name[file_rows]){
+    for(field_name in DB$REDCap$metadata$field_name[file_rows]){
       out_dir_folder <- file.path(out_dir,field_name)
       dir.create(out_dir_folder,showWarnings = F)
-      form_name <- DB$redcap$metadata$form_name[which(DB$redcap$metadata$field_name == field_name)]
-      is_repeating <- DB$redcap$instruments$repeating[which(DB$redcap$instruments$instrument_name==form_name)]
-      form <- DB$data_extract[[form_name]]
+      form_name <- DB$REDCap$metadata$form_name[which(DB$REDCap$metadata$field_name == field_name)]
+      is_repeating <- DB$REDCap$instruments$repeating[which(DB$REDCap$instruments$instrument_name==form_name)]
+      form <- DB$data[[form_name]]
       rows_to_save <- which(!is.na(form[[field_name]]))
       for(i in rows_to_save){
         file_name  <- form[[field_name]][i]
-        record_id <- form[[DB$redcap$id_col]][i]
+        record_id <- form[[DB$REDCap$id_col]][i]
         repeat_instrument = form[["redcap_repeat_instrument"]][i]
         repeat_instance = form[["redcap_repeat_instance"]][i]
         redcap_event_name = form[["redcap_event_name"]][i]
@@ -92,10 +92,10 @@ get_redcap_files <- function(DB,original_file_names = F,overwrite = F){
         file_name <- ifelse(original_file_names,file_name,paste0(form_name,"_",field_name,"_",ifelse(is_repeating,"inst_",""),repeat_instance,"ID_",record_id,".",tools::file_ext(file_name)))
         if(!file.exists(file.path(out_dir_folder,file_name))||overwrite){
           REDCapR::redcap_download_file_oneshot(
-            redcap_uri = DB$links$redcap_uri,
+            REDCap_URI = DB$links$REDCap_URI,
             token = validate_redcap_token(DB),
             field = field_name,
-            record = form[[DB$redcap$id_col]][i],
+            record = form[[DB$REDCap$id_col]][i],
             directory = out_dir_folder,
             file_name = file_name,
             event = redcap_event_name,
@@ -113,43 +113,43 @@ get_redcap_files <- function(DB,original_file_names = F,overwrite = F){
 get_redcap_metadata <- function(DB){
   DB$internals$last_metadata_update <- Sys.time()
   # info ----------
-  DB$redcap$project_info <- get_redcap_info(DB,"project")
-  DB$redcap$project_title <-  DB$redcap$project_info$project_title
-  DB$redcap$project_id <- DB$redcap$project_info$project_id
-  DB$redcap$is_longitudinal <- DB$redcap$project_info$is_longitudinal == "1"
-  DB$redcap$missing_codes <- missing_codes2(DB)
+  DB$REDCap$project_info <- get_redcap_info(DB,"project")
+  DB$REDCap$project_title <-  DB$REDCap$project_info$project_title
+  DB$REDCap$project_id <- DB$REDCap$project_info$project_id
+  DB$REDCap$is_longitudinal <- DB$REDCap$project_info$is_longitudinal == "1"
+  DB$REDCap$missing_codes <- missing_codes2(DB)
   # instruments --------
-  DB$redcap$instruments <- get_redcap_info(DB,"instrument","warn")
-  DB$redcap$instruments$repeating <- F
-  DB$redcap$has_repeating_instruments <- F
-  DB$redcap$has_repeating_events <- F
-  DB$redcap$has_repeating_instruments_or_events <- DB$redcap$project_info$has_repeating_instruments_or_events=="1"
-  # if(DB$redcap$project_info$has_repeating_instruments_or_events=="1")
+  DB$REDCap$instruments <- get_redcap_info(DB,"instrument","warn")
+  DB$REDCap$instruments$repeating <- F
+  DB$REDCap$has_repeating_instruments <- F
+  DB$REDCap$has_repeating_events <- F
+  DB$REDCap$has_repeating_instruments_or_events <- DB$REDCap$project_info$has_repeating_instruments_or_events=="1"
+  # if(DB$REDCap$project_info$has_repeating_instruments_or_events=="1")
   repeating <- get_redcap_info(DB,"repeatingFormsEvents")
   if(is.data.frame(repeating)){
-    DB$redcap$instruments$repeating <- DB$redcap$instruments$instrument_name%in%repeating$form_name
-    #   DB$redcap$metadata <- DB$redcap$metadata %>%dplyr::bind_rows(
+    DB$REDCap$instruments$repeating <- DB$REDCap$instruments$instrument_name%in%repeating$form_name
+    #   DB$REDCap$metadata <- DB$REDCap$metadata %>%dplyr::bind_rows(
     #     data.frame(
-    #       field_name="redcap_repeat_instance",form_name=DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$repeating)] ,field_label="REDCap Repeat Instance",field_type="text",select_choices_or_calculations=NA
+    #       field_name="redcap_repeat_instance",form_name=DB$REDCap$instruments$instrument_name[which(DB$REDCap$instruments$repeating)] ,field_label="REDCap Repeat Instance",field_type="text",select_choices_or_calculations=NA
     #     )
     #   ) %>% unique()
-    #   DB$redcap$metadata <- DB$redcap$metadata %>%dplyr::bind_rows(
+    #   DB$REDCap$metadata <- DB$REDCap$metadata %>%dplyr::bind_rows(
     #     data.frame(
-    #       field_name="redcap_repeat_instrument",form_name=DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$repeating)] ,field_label="REDCap Repeat Instrument",field_type="text",select_choices_or_calculations=NA
+    #       field_name="redcap_repeat_instrument",form_name=DB$REDCap$instruments$instrument_name[which(DB$REDCap$instruments$repeating)] ,field_label="REDCap Repeat Instrument",field_type="text",select_choices_or_calculations=NA
     #     )
     #   ) %>% unique()
   }
-  if(any(DB$redcap$instruments$repeating)){
-    DB$redcap$has_repeating_instruments <- T
+  if(any(DB$REDCap$instruments$repeating)){
+    DB$REDCap$has_repeating_instruments <- T
   }
   # metadata ----------
-  DB$redcap$metadata <- get_redcap_info(DB,"metadata","stop")
-  DB$redcap$metadata$section_header <- DB$redcap$metadata$section_header %>% remove_html_tags()
-  DB$redcap$metadata$field_label <- DB$redcap$metadata$field_label %>% remove_html_tags()
-  DB$redcap$id_col <- DB$redcap$metadata[1,1] %>% as.character() #RISKY?
-  DB$redcap$instrument_key_cols <- get_key_col_list(DB)
-  DB$redcap$raw_structure_cols <- DB$redcap$instrument_key_cols %>% unlist() %>% unique()
-  instrument_names <- DB$redcap$instruments$instrument_name#[which(DB$redcap$instruments$instrument_name%in%unique(DB$redcap$metadata$form_name))]
+  DB$REDCap$metadata <- get_redcap_info(DB,"metadata","stop")
+  DB$REDCap$metadata$section_header <- DB$REDCap$metadata$section_header %>% remove_html_tags()
+  DB$REDCap$metadata$field_label <- DB$REDCap$metadata$field_label %>% remove_html_tags()
+  DB$REDCap$id_col <- DB$REDCap$metadata[1,1] %>% as.character() #RISKY?
+  DB$REDCap$instrument_key_cols <- get_key_col_list(DB)
+  DB$REDCap$raw_structure_cols <- DB$REDCap$instrument_key_cols %>% unlist() %>% unique()
+  instrument_names <- DB$REDCap$instruments$instrument_name#[which(DB$REDCap$instruments$instrument_name%in%unique(DB$REDCap$metadata$form_name))]
   for (instrument_name in instrument_names){
     new_row <- data.frame(
       field_name = paste0(instrument_name,"_complete"),
@@ -158,41 +158,41 @@ get_redcap_metadata <- function(DB){
       field_label = paste0(instrument_name,"_complete")  %>% strsplit("_") %>% unlist() %>% stringr::str_to_title() %>% paste0(collapse = " "),
       select_choices_or_calculations = "0, Incomplete | 1, Unverified | 2, Complete"
     )
-    last_row <- nrow(DB$redcap$metadata)
-    rows <- which(DB$redcap$metadata$form_name==instrument_name)
+    last_row <- nrow(DB$REDCap$metadata)
+    rows <- which(DB$REDCap$metadata$form_name==instrument_name)
     if(length(rows)==0)rows <- last_row
     row <- dplyr::last(rows)
-    top <- DB$redcap$metadata[1:row,]
+    top <- DB$REDCap$metadata[1:row,]
     bottom <- NULL
     if(last_row>row){
-      bottom <- DB$redcap$metadata[(row+1):last_row,]
+      bottom <- DB$REDCap$metadata[(row+1):last_row,]
     }
-    DB$redcap$metadata <- top %>%
+    DB$REDCap$metadata <- top %>%
       dplyr::bind_rows(
         new_row
       ) %>%  dplyr::bind_rows(
         bottom
       )
   }
-  if(any(DB$redcap$metadata$field_type=="checkbox")){
-    for(field_name in DB$redcap$metadata$field_name[which(DB$redcap$metadata$field_type=="checkbox")]){
-      x <- DB$redcap$metadata$select_choices_or_calculations[which(DB$redcap$metadata$field_name==field_name)] %>% split_choices()
+  if(any(DB$REDCap$metadata$field_type=="checkbox")){
+    for(field_name in DB$REDCap$metadata$field_name[which(DB$REDCap$metadata$field_type=="checkbox")]){
+      x <- DB$REDCap$metadata$select_choices_or_calculations[which(DB$REDCap$metadata$field_name==field_name)] %>% split_choices()
       new_rows <- data.frame(
         field_name=paste0(field_name,"___",x$code),
-        form_name=DB$redcap$metadata$form_name[which(DB$redcap$metadata$field_name==field_name)]  ,
+        form_name=DB$REDCap$metadata$form_name[which(DB$REDCap$metadata$field_name==field_name)]  ,
         field_label=x$name,
-        # field_label_full=paste0(DB$redcap$metadata$field_label[which(DB$redcap$metadata$field_name==field_name)]," - ",x$name),
+        # field_label_full=paste0(DB$REDCap$metadata$field_label[which(DB$REDCap$metadata$field_name==field_name)]," - ",x$name),
         field_type="checkbox_choice",
         select_choices_or_calculations=c("0, Unchecked | 1, Checked")
       )
-      row <- which(DB$redcap$metadata$field_name==field_name)
-      last_row <- nrow(DB$redcap$metadata)
-      top <- DB$redcap$metadata[1:row,]
+      row <- which(DB$REDCap$metadata$field_name==field_name)
+      last_row <- nrow(DB$REDCap$metadata)
+      top <- DB$REDCap$metadata[1:row,]
       bottom <- NULL
       if(last_row>row){
-        bottom <- DB$redcap$metadata[(row+1):last_row,]
+        bottom <- DB$REDCap$metadata[(row+1):last_row,]
       }
-      DB$redcap$metadata <- top %>%
+      DB$REDCap$metadata <- top %>%
         dplyr::bind_rows(
           new_rows
         ) %>%  dplyr::bind_rows(
@@ -200,61 +200,61 @@ get_redcap_metadata <- function(DB){
         )
     }
   }
-  if(any(DB$redcap$metadata$field_type=="yesno")){
-    DB$redcap$metadata$select_choices_or_calculations[which(DB$redcap$metadata$field_type=="yesno")] <- c("0, No | 1, Yes")
+  if(any(DB$REDCap$metadata$field_type=="yesno")){
+    DB$REDCap$metadata$select_choices_or_calculations[which(DB$REDCap$metadata$field_type=="yesno")] <- c("0, No | 1, Yes")
   }
   # is longitudinal ------
-  if(DB$redcap$is_longitudinal){
-    DB$redcap$raw_structure_cols <- c(DB$redcap$raw_structure_cols,"arm_num","event_name") %>% unique()
-    DB$redcap$arms <- get_redcap_info(DB,"arm")
-    DB$redcap$has_arms <- T
-    DB$redcap$has_multiple_arms <- nrow(DB$redcap$arms)>1
-    DB$redcap$has_arms_that_matter <- DB$redcap$has_multiple_arms
-    DB$redcap$event_mapping  <- get_redcap_info(DB,"formEventMapping","warn")
-    DB$redcap$events <- get_redcap_info(DB,"event","warn")
-    DB$redcap$events$forms <- DB$redcap$events$unique_event_name %>% sapply(function(events){
-      DB$redcap$event_mapping$form[which(DB$redcap$event_mapping$unique_event_name==events)] %>% unique() %>% paste0(collapse = " | ")
+  if(DB$REDCap$is_longitudinal){
+    DB$REDCap$raw_structure_cols <- c(DB$REDCap$raw_structure_cols,"arm_num","event_name") %>% unique()
+    DB$REDCap$arms <- get_redcap_info(DB,"arm")
+    DB$REDCap$has_arms <- T
+    DB$REDCap$has_multiple_arms <- nrow(DB$REDCap$arms)>1
+    DB$REDCap$has_arms_that_matter <- DB$REDCap$has_multiple_arms
+    DB$REDCap$event_mapping  <- get_redcap_info(DB,"formEventMapping","warn")
+    DB$REDCap$events <- get_redcap_info(DB,"event","warn")
+    DB$REDCap$events$forms <- DB$REDCap$events$unique_event_name %>% sapply(function(events){
+      DB$REDCap$event_mapping$form[which(DB$REDCap$event_mapping$unique_event_name==events)] %>% unique() %>% paste0(collapse = " | ")
     })
-    if(DB$redcap$has_arms_that_matter){
-      DB$redcap$has_arms_that_matter<- DB$redcap$arms$arm_num %>% lapply(function(arm){
-        DB$redcap$event_mapping$form[which(DB$redcap$event_mapping$arm_num==arm)]
+    if(DB$REDCap$has_arms_that_matter){
+      DB$REDCap$has_arms_that_matter<- DB$REDCap$arms$arm_num %>% lapply(function(arm){
+        DB$REDCap$event_mapping$form[which(DB$REDCap$event_mapping$arm_num==arm)]
       }) %>% check_match() %>% magrittr::not()
     }
     # if(is.data.frame(DB$unique_events)){
-    #   DB$redcap$events <- data.frame(
+    #   DB$REDCap$events <- data.frame(
     #     event_name = unique(DB$unique_events$event_name),
     #     arms = unique(DB$unique_events$event_name) %>% sapply(function(event_name){
     #       DB$unique_events$arm_num[which(DB$unique_events$event_name==event_name)] %>% unique() %>% paste0(collapse = " | ")
     #     })
     #   )
     # }
-    DB$redcap$instruments$repeating_via_events <- F
-    DB$redcap$instruments$repeating_via_events[
+    DB$REDCap$instruments$repeating_via_events <- F
+    DB$REDCap$instruments$repeating_via_events[
       which(
-        DB$redcap$instruments$instrument_name %>% sapply(function(instrument_name){
-          # instrument_name <- DB$redcap$instruments$instrument_name %>% sample(1)
-          anyDuplicated(DB$redcap$event_mapping$arm_num[which(DB$redcap$event_mapping$form==instrument_name)])>0
+        DB$REDCap$instruments$instrument_name %>% sapply(function(instrument_name){
+          # instrument_name <- DB$REDCap$instruments$instrument_name %>% sample(1)
+          anyDuplicated(DB$REDCap$event_mapping$arm_num[which(DB$REDCap$event_mapping$form==instrument_name)])>0
         })
       )
     ] <- T
   }else{
-    DB$redcap$has_arms <- F
-    DB$redcap$has_multiple_arms <- F
-    DB$redcap$has_arms_that_matter <- F
-    DB$redcap$event_mapping  <- NA
-    DB$redcap$events <- NA
+    DB$REDCap$has_arms <- F
+    DB$REDCap$has_multiple_arms <- F
+    DB$REDCap$has_arms_that_matter <- F
+    DB$REDCap$event_mapping  <- NA
+    DB$REDCap$events <- NA
   }
   # other-------
-  DB$redcap$users <- get_redcap_users(DB)
-  DB$redcap$codebook <- metadata_to_codebook(DB$redcap$metadata)
-  DB$redcap$log <- check_redcap_log(DB,last = 2,units = "mins")
-  DB$redcap$users$current_user <- DB$redcap$users$username==DB$redcap$log$username[which(DB$redcap$log$details=="Export REDCap version (API)") %>% dplyr::first()]
-  DB$links$redcap_home <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/index.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_record_home <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_record_subpage <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/index.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_records_dashboard <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_status_dashboard.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_API <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/project_api.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_API_playground <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/playground.php?pid=",DB$redcap$project_id)
+  DB$REDCap$users <- get_redcap_users(DB)
+  DB$REDCap$codebook <- metadata_to_codebook(DB$REDCap$metadata)
+  DB$REDCap$log <- check_redcap_log(DB,last = 2,units = "mins")
+  DB$REDCap$users$current_user <- DB$REDCap$users$username==DB$REDCap$log$username[which(DB$REDCap$log$details=="Export REDCap version (API)") %>% dplyr::first()]
+  DB$links$redcap_home <- paste0(DB$links$REDCap_base,"redcap_v",DB$REDCap$version,"/index.php?pid=",DB$REDCap$project_id)
+  DB$links$redcap_record_home <- paste0(DB$links$REDCap_base,"redcap_v",DB$REDCap$version,"/DataEntry/record_home.php?pid=",DB$REDCap$project_id)
+  DB$links$redcap_record_subpage <- paste0(DB$links$REDCap_base,"redcap_v",DB$REDCap$version,"/DataEntry/index.php?pid=",DB$REDCap$project_id)
+  DB$links$redcap_records_dashboard <- paste0(DB$links$REDCap_base,"redcap_v",DB$REDCap$version,"/DataEntry/record_status_dashboard.php?pid=",DB$REDCap$project_id)
+  DB$links$redcap_API <- paste0(DB$links$REDCap_base,"redcap_v",DB$REDCap$version,"/API/project_api.php?pid=",DB$REDCap$project_id)
+  DB$links$redcap_API_playground <- paste0(DB$links$REDCap_base,"redcap_v",DB$REDCap$version,"/API/playground.php?pid=",DB$REDCap$project_id)
   DB
 }
 #' @title get_redcap_structure
@@ -264,7 +264,7 @@ get_redcap_metadata <- function(DB){
 #' @export
 get_redcap_structure <- function(DB, parse_codes = F){
   redcap <- NULL
-  # redcap$uri <- DB$links$redcap_uri
+  # redcap$uri <- DB$links$REDCap_URI
   # redcap$version <- redcap_api_base(url = redcap$uri,token = validate_redcap_token(DB),"version") %>% httr::content(as="text") %>% as.character()
   redcap$project_info <- get_redcap_info(DB,"project")
   redcap$arms <- get_redcap_info(DB,"arm")
@@ -387,16 +387,16 @@ check_redcap_log <- function(DB,last=24,user = "",units="hours",begin_time="",cl
 #' @export
 get_raw_redcap <- function(DB,labelled=T,records=NULL){
   if(missing(records)) records <- NULL
-  raw <- REDCapR::redcap_read(redcap_uri=DB$links$redcap_uri, token=validate_redcap_token(DB),batch_size = 2000, interbatch_delay = 0.1,records = records, raw_or_label = ifelse(labelled,"label","raw"))$data %>% all_character_cols()
+  raw <- REDCapR::redcap_read(REDCap_URI=DB$links$REDCap_URI, token=validate_redcap_token(DB),batch_size = 2000, interbatch_delay = 0.1,records = records, raw_or_label = ifelse(labelled,"label","raw"))$data %>% all_character_cols()
   return(raw)
 }
 #' @export
 delete_redcap_records <- function(DB, records){
-  BAD<-records[which(!records%in%DB$summary$all_records[[DB$redcap$id_col]])]
+  BAD<-records[which(!records%in%DB$summary$all_records[[DB$REDCap$id_col]])]
   if(length(BAD)>0)stop("Records not included in DB: ",records %>% paste0(collapse = ", "))
   for (record in records){
     httr::POST(
-      url = DB$links$redcap_uri,
+      url = DB$links$REDCap_URI,
       body = list(
         "token"=validate_redcap_token(DB),
         content='record',

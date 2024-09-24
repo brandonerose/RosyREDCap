@@ -13,9 +13,6 @@ REDCap_diagram(
   clean_name = T
 )
 }
-\arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-}
 \value{
 messages for confirmation
 }

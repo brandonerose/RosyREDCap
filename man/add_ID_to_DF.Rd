@@ -9,8 +9,6 @@ add_ID_to_DF(DF, DB, ref_id)
 \arguments{
 \item{DF}{dataframe}
 
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{ref_id}{column name that matches a REDCap variable name that could be an ALT id such as MRN}
 }
 \value{

@@ -8,8 +8,6 @@ labelled_to_raw_form(FORM, DB)
 }
 \arguments{
 \item{FORM}{data.frame of labelled REDCap to be converted to raw REDCap (for uploads)}
-
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
 }
 \value{
 DB object that has been filtered to only include the specified records

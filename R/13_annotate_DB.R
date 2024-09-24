@@ -1,7 +1,7 @@
 #' @import RosyUtils
 #' @import RosyDB
 #' @import RosyApp
-annotate_metadata <- function(DB,metadata,data_choice="data_extract",skim= T){
+annotate_metadata <- function(DB,metadata,data_choice="data",skim= T){
   metadata$field_label[which(is.na(metadata$field_label))] <- metadata$field_name[which(is.na(metadata$field_label))]
   metadata  <- unique(metadata$form_name) %>%
     lapply(function(IN){
@@ -13,7 +13,7 @@ annotate_metadata <- function(DB,metadata,data_choice="data_extract",skim= T){
   metadata$field_type_R[which(metadata$text_validation_type_or_show_slider_number == "date_mdy")] <- "date"
   metadata$field_type_R[which(metadata$text_validation_type_or_show_slider_number == "date_ymd")] <- "date"
   metadata$field_type_R[which(metadata$text_validation_type_or_show_slider_number == "datetime_dmy")] <- "datetime"
-  metadata$in_original_redcap <- metadata$field_name %in% DB$redcap$metadata$field_name
+  metadata$in_original_redcap <- metadata$field_name %in% DB$REDCap$metadata$field_name
   if(!"units" %in% colnames(metadata))metadata$units <- NA
   if(!"field_label_short" %in% colnames(metadata)) metadata$field_label_short <- metadata$field_label
   # if(!"field_label_short" %in% colnames(metadata))metadata$ <- metadata$field_label
@@ -66,7 +66,7 @@ annotate_instruments <- function(DB,instruments){
   }
   return(instruments)
 }
-annotate_codebook <- function(codebook,metadata,data_choice="data_extract",DB){
+annotate_codebook <- function(codebook,metadata,data_choice="data",DB){
   codebook <- unique(metadata$field_name) %>%
     lapply(function(IN){
       codebook[which(codebook$field_name==IN),]
@@ -81,7 +81,7 @@ annotate_codebook <- function(codebook,metadata,data_choice="data_extract",DB){
       if(DB$internals$merge_form_name %in% names(DB[[data_choice]])){
         if(field_name%in%colnames(DB[[data_choice]]$merged))return(DB$internals$merge_form_name)
       }
-      for(other in names(DB[[data_choice]])[which(!names(DB[[data_choice]])%in%DB$redcap$instruments$instrument_name)]){
+      for(other in names(DB[[data_choice]])[which(!names(DB[[data_choice]])%in%DB$REDCap$instruments$instrument_name)]){
         if(field_name%in%colnames(DB[[data_choice]][[other]]))return(other)
       }
     }
@@ -167,8 +167,8 @@ annotate_codebook <- function(codebook,metadata,data_choice="data_extract",DB){
 #' @return DB object cleaned for table or plots
 #' @export
 clean_DB <- function(DB,drop_blanks=F,drop_unknowns=F){
-  for (data_choice in c("data_extract","data_transform")) {
-    redcap_remap <- ifelse(data_choice=="data_extract","redcap","remap")
+  for (data_choice in c("data","data_transform")) {
+    redcap_remap <- ifelse(data_choice=="data","redcap","remap")
     metadata <-  DB %>% annotate_metadata(metadata = DB[[redcap_remap]]$metadata, skim = F)
     for(FORM in names(DB[[data_choice]])){
       DB[[data_choice]][[FORM]] <- DB[[data_choice]][[FORM]] %>% clean_DF(metadata=metadata,drop_blanks= drop_blanks,drop_unknowns=drop_unknowns)

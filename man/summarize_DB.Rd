@@ -12,8 +12,6 @@ summarize_DB(
 )
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{records}{character vector of records to be summarized}
 
 \item{drop_blanks}{optional logical for dropping blanks}

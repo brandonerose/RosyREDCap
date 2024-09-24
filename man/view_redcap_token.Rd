@@ -6,9 +6,6 @@
 \usage{
 view_redcap_token(DB)
 }
-\arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-}
 \value{
 REDCap API token currently stored in the session
 }

@@ -2,7 +2,7 @@
 #' @import RosyDB
 #' @import RosyApp
 upload_file_to_redcap <- function(DB,file,record, field,repeat_instance = NULL,event = NULL){
-  # DB <- validate_DB(DB)
+  # DB <- validate_RosyREDCap(DB)
   file <- normalizePath(file)
   if(!file.exists(file)) stop("File does not exist! --> ",file)
   body <- list(
@@ -21,7 +21,7 @@ upload_file_to_redcap <- function(DB,file,record, field,repeat_instance = NULL,e
     body$repeat_instance <- repeat_instance
   }
   response <- httr::POST(
-    url = DB$links$redcap_uri,
+    url = DB$links$REDCap_URI,
     body = body,
     encode = "multipart"
   )
@@ -29,7 +29,7 @@ upload_file_to_redcap <- function(DB,file,record, field,repeat_instance = NULL,e
   message("File uploaded! --> ",file)
 }
 delete_file_from_redcap <- function(DB,record, field,repeat_instance = NULL, event = NULL){
-  # DB <- validate_DB(DB)
+  # DB <- validate_RosyREDCap(DB)
   body <- list(
     "token"=validate_redcap_token(DB),
     action='delete',
@@ -45,7 +45,7 @@ delete_file_from_redcap <- function(DB,record, field,repeat_instance = NULL, eve
     body$repeat_instance <- repeat_instance
   }
   response <- httr::POST(
-    url = DB$links$redcap_uri,
+    url = DB$links$REDCap_URI,
     body = body
   )
   if(httr::http_error(response))stop("File Delete failed")

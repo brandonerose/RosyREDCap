@@ -10,10 +10,10 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   is_visNetwork <- type =="visNetwork"
   node_df <- NULL
   edge_df <- NULL
-  instruments <- DB$redcap$instruments
+  instruments <- DB$REDCap$instruments
   fontcolor <- "black"
   instrument_color <- "#FF474C"
-  if( ! DB$redcap$is_longitudinal){
+  if( ! DB$REDCap$is_longitudinal){
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
@@ -33,11 +33,11 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     node_df$id <- 1:nrow(node_df)
   }
   # events-----------
-  if(DB$redcap$is_longitudinal){
-    arms <- DB$redcap$arms
+  if(DB$REDCap$is_longitudinal){
+    arms <- DB$REDCap$arms
     # arms$name <- arms$arm_num %>% paste0(". ",arms$name)
-    events <- DB$redcap$events
-    event_mapping <- DB$redcap$event_mapping
+    events <- DB$REDCap$events
+    event_mapping <- DB$REDCap$event_mapping
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
@@ -144,7 +144,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     edge_df$id <- 1:nrow(edge_df)
   }else{
     #structure ------------
-    if(DB$redcap$has_repeating_instruments){
+    if(DB$REDCap$has_repeating_instruments){
       node_df <- node_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
@@ -177,7 +177,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   }
   # variables -----------
   if(include_vars){
-    metadata <- DB$redcap$metadata
+    metadata <- DB$REDCap$metadata
     sub_node_df <- node_df[which(node_df$type=="instrument"),]
     x <- NULL
     for (i in 1:nrow(sub_node_df)){#i <- 1:nrow(sub_node_df) %>% sample(1)
@@ -286,7 +286,7 @@ REDCap_diagram <- function(DB, render = T, include_vars = F,type = "visNetwork",
   rendered_graph <-
     DiagrammeR::render_graph(
       graph,
-      title = DB$redcap$project_info$project_title,
+      title = DB$REDCap$project_info$project_title,
       output = type,
       layout = "nicely"
     )

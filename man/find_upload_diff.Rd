@@ -7,8 +7,6 @@
 find_upload_diff(DB, view_old = F, n_row_view = 20)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{compare}{what data_choice to be compare}
 
 \item{to}{what data_choice to be compared to}

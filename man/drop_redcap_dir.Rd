@@ -19,8 +19,6 @@ drop_redcap_dir(
 )
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{records}{character vector of records you want dropped to your directory}
 
 \item{smart}{logical for whether to only save when data is new}

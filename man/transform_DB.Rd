@@ -13,8 +13,6 @@ transform_DB(
 )
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{merge_non_rep_to_reps}{logical for merging non-repeating to every repeating instrument}
 
 \item{records}{character vector of records to be included in transform}

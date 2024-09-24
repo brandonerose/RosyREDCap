@@ -7,8 +7,6 @@
 upload_file_to_redcap_fileRepository(DB, file)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{file}{file location on your PC}
 }
 \value{

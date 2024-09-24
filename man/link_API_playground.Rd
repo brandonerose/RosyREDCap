@@ -6,9 +6,6 @@
 \usage{
 link_API_playground(DB)
 }
-\arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-}
 \value{
 messages for confirmation
 }

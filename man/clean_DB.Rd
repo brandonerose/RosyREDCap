@@ -7,8 +7,6 @@
 clean_DB(DB, drop_blanks = F, drop_unknowns = F)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{drop_blanks}{logical for dropping n=0 choices}
 
 \item{drop_unknowns}{logical for dropping missing codes}

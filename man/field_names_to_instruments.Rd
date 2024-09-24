@@ -7,8 +7,6 @@
 field_names_to_instruments(DB, field_names, only_unique = T)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{only_unique}{logical for unique}
 }
 \value{

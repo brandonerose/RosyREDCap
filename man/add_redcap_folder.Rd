@@ -7,8 +7,6 @@
 add_redcap_folder(DB, name)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{name}{folder name}
 }
 \value{

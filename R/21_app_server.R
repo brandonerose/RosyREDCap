@@ -48,7 +48,7 @@ app_server <- function(input, output, session) {
   #   short_name = OUT$short_name,
   #   dir_path = OUT$dir_path,
   #   token_name = OUT$token_name,
-  #   redcap_base = "https://redcap.miami.edu/",
+  #   REDCap_base = "https://redcap.miami.edu/",
   #   force = T,
   #   merge_form_name = "merged"
   # )
@@ -108,7 +108,7 @@ app_server <- function(input, output, session) {
             if(input$data_choice == "data_transform"){
               table_name <- table_name_raw
             }else{
-              table_name <- values$DB$redcap$instruments$instrument_label[which(values$DB$redcap$instruments$instrument_name==table_name_raw)]
+              table_name <- values$DB$REDCap$instruments$instrument_label[which(values$DB$REDCap$instruments$instrument_name==table_name_raw)]
             }
             table_id <- paste0("table___home__", table_name_raw)
             tabPanel(
@@ -125,19 +125,19 @@ app_server <- function(input, output, session) {
     values$projects %>% make_DT_table()
   })
   output$instruments_table <- DT::renderDT({
-    values$DB$redcap$instruments %>% make_DT_table()
+    values$DB$REDCap$instruments %>% make_DT_table()
   })
   output$metadata_table <- DT::renderDT({
-    values$DB$redcap$metadata %>% make_DT_table()
+    values$DB$REDCap$metadata %>% make_DT_table()
   })
   output$codebook_table <- DT::renderDT({
-    values$DB$redcap$codebook %>% make_DT_table()
+    values$DB$REDCap$codebook %>% make_DT_table()
   })
   output$user_table <- DT::renderDT({
-    values$DB$redcap$users %>% make_DT_table()
+    values$DB$REDCap$users %>% make_DT_table()
   })
   output$log_table <- DT::renderDT({
-    values$DB$redcap$log %>% make_DT_table()
+    values$DB$REDCap$log %>% make_DT_table()
   })
   # Render each DT table ------
   observe({
@@ -191,7 +191,7 @@ app_server <- function(input, output, session) {
       ROW_LC <- input[[paste0(values$active_table_id, "_row_last_clicked")]]
       isolate({
         if(is_something(ROW_LC)) {
-          clicked_record <- values$DB[[input$data_choice]][[values$selected_form]][[values$DB$redcap$id_col]][[ROW_LC]]
+          clicked_record <- values$DB[[input$data_choice]][[values$selected_form]][[values$DB$REDCap$id_col]][[ROW_LC]]
           overwrite <- TRUE
           message("selected_record: ", values$selected_record)
           message("clicked_record: ", clicked_record)
@@ -246,7 +246,7 @@ app_server <- function(input, output, session) {
             values$last_clicked_record <- values$selected_record
             for(form in all_forms) {
               if(!is.null(input[[paste0("table___home__", form, "_state")]])){
-                ROWS <- which(values$DB[[input$data_choice]][[form]][[values$DB$redcap$id_col]] == values$selected_record)
+                ROWS <- which(values$DB[[input$data_choice]][[form]][[values$DB$REDCap$id_col]] == values$selected_record)
                 PREVIOUS <- input[[paste0(values$active_table_id, "_rows_selected")]]
                 run_it <- T
                 # if(!is.null(PREVIOUS)){
@@ -298,9 +298,9 @@ app_server <- function(input, output, session) {
   observeEvent(values$DB,{
     message("Event triggered! Too much")
     if(!is.null(values$DB)){
-      values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
+      values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$REDCap$id_col]]
       updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
-      data_choices <- c("data_extract","data_transform","data_upload") %>%
+      data_choices <- c("data","data_transform","data_upload") %>%
         sapply(function(data_choice){
           if(is_something(values$DB[[data_choice]]))return(data_choice)
         }) %>% unlist() %>% as.character()
@@ -331,11 +331,11 @@ app_server <- function(input, output, session) {
     }
     # values$variables_to_change_input_list <- NULL
     # if(is_something(values$selected_record)){
-    #   if(values$selected_record %in% values$DB$summary$all_records[[values$DB$redcap$id_col]]){
+    #   if(values$selected_record %in% values$DB$summary$all_records[[values$DB$REDCap$id_col]]){
     #     values$variables_to_change_input_list <- values$DB %>%
     #       filter_DB(
     #         records = values$selected_record,
-    #         data_choice = "data_extract",
+    #         data_choice = "data",
     #         form_names = RosyREDCap:::field_names_to_instruments(values$DB,field_names = values$selected_variable)
     #       ) %>% process_df_list()
     #     if(!is_something(values$variables_to_change_input_list)){
@@ -357,7 +357,7 @@ app_server <- function(input, output, session) {
   })
   # ab----------
   observeEvent(input$ab_random_record,{
-    random_record <- values$DB$summary$all_records[[values$DB$redcap$id_col]][1:10] %>% sample(1)
+    random_record <- values$DB$summary$all_records[[values$DB$REDCap$id_col]][1:10] %>% sample(1)
     message("Random Record: ", random_record)
     values$selected_record <- random_record
     # input$patient_table_row_last_clicked <- which(values$DB$data_transform[[values$DB$internals$merge_form_name]]$record_id==values$selected_record)
@@ -368,7 +368,7 @@ app_server <- function(input, output, session) {
       IF <- shinydashboard::menuItem(
         text=paste0("REDCap Record (",values$selected_record,")"),
         icon = shiny::icon("file-lines"),
-        href=paste0(values$DB$links$redcap_base,"redcap_v",values$DB$redcap$version,"/DataEntry/record_home.php?pid=",values$DB$redcap$project_id,"&arm=1&id=",values$selected_record)
+        href=paste0(values$DB$links$REDCap_base,"redcap_v",values$DB$REDCap$version,"/DataEntry/record_home.php?pid=",values$DB$REDCap$project_id,"&arm=1&id=",values$selected_record)
       )
     }else{
       IF <- NULL

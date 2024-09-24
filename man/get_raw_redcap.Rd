@@ -7,8 +7,6 @@
 get_raw_redcap(DB, labelled = T, records = NULL)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{labelled}{T/F for clean vs raw labels}
 
 \item{records}{optional records}

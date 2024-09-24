@@ -15,8 +15,6 @@ check_redcap_log(
 )
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{last}{numeric paired with units. Default is 24.}
 
 \item{user}{optional user filter.}

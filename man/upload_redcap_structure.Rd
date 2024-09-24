@@ -7,8 +7,6 @@
 upload_redcap_structure(DB, redcap)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{redcap}{list to be uploaded}
 }
 \value{

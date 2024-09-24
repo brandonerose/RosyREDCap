@@ -10,8 +10,6 @@ load_redcap_structure_from_dir(
 )
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{parse_codes}{logical for parsing choice codes and missing codes into tabs}
 }
 \value{

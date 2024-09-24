@@ -11,8 +11,6 @@ generate_default_remap(
 )
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{save_file}{logical for whether or not to save sample default remap file to input folder of directory}
 
 \item{merge_non_repeating}{logical for whether or not to merge non-repeating instruments}

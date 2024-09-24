@@ -24,7 +24,7 @@ add_new_varriable <- function(
     insert_after,
     data_col
 ) {
-  DB <-validate_DB(DB)
+  DB <-validate_RosyREDCap(DB)
   if(!DB$data_transform %>% is_something())stop("Must have transformed data to add new vars.")
   metadata_new_var <- data.frame(
     field_name = field_name,

@@ -13,9 +13,7 @@ read_redcap_dir(
 )
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
-\item{allow_all}{logical TF for allowing DB$data_extract names that are not also instrument names}
+\item{allow_all}{logical TF for allowing DB$data names that are not also instrument names}
 
 \item{drop_nonredcap_vars}{logical TF for dropping non-redcap variable names}
 

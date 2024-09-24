@@ -7,8 +7,6 @@
 delete_redcap_file(DB, doc_id)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{doc_id}{from the file list `check_redcap_files(DB)`}
 }
 \value{

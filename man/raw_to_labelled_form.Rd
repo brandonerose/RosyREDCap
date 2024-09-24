@@ -8,8 +8,6 @@ raw_to_labelled_form(FORM, DB)
 }
 \arguments{
 \item{FORM}{data.frame of raw REDCap to be converted to labelled REDCap}
-
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
 }
 \value{
 DB object

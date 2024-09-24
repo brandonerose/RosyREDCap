@@ -30,7 +30,7 @@ drop_redcap_dir <- function(
     str_trunc_length = 32000,
     file_name
 ) {
-  DB <- validate_DB(DB)
+  DB <- validate_RosyREDCap(DB)
   root_dir <- get_dir(DB)
   output_dir <- file.path(root_dir,"output")
   redcap_dir <- file.path(root_dir,"REDCap")
@@ -53,13 +53,13 @@ drop_redcap_dir <- function(
       for (x in c("project_info","metadata","instruments","codebook")){ #,"log" #taking too long
         if(DB$internals$use_csv){
           list_to_csv(
-            list = DB$redcap[x],
+            list = DB$REDCap[x],
             dir = redcap_other_dir,
             file_name = x
           )
         }else{
           list_to_excel(
-            list = DB$redcap[x],
+            list = DB$REDCap[x],
             dir = redcap_metadata_dir,
             file_name = x,
             str_trunc_length = str_trunc_length,
@@ -72,13 +72,13 @@ drop_redcap_dir <- function(
       for (x in c("log","users")){ #,"log" #taking too long
         if(DB$internals$use_csv){
           list_to_csv(
-            list = DB$redcap[x],
+            list = DB$REDCap[x],
             dir = redcap_other_dir,
             file_name = x
           )
         }else{
           list_to_excel(
-            list = DB$redcap[x],
+            list = DB$REDCap[x],
             dir = redcap_other_dir,
             file_name = x,
             str_trunc_length = str_trunc_length,
@@ -91,7 +91,7 @@ drop_redcap_dir <- function(
   if(due_for_save_data){
     DB$internals$last_data_dir_save <- DB$internals$last_data_update
     # if(merge_non_repeating) DB <- merge_non_repeating_DB(DB)
-    to_save_list <- DB[["data_extract"]]
+    to_save_list <- DB[["data"]]
     if(!missing(records)) to_save_list<- filter_DB(DB,records = records)
     link_col_list <- list()
     if(with_links){
@@ -99,7 +99,7 @@ drop_redcap_dir <- function(
       link_col_list <- list(
         "redcap_link"
       )
-      names(link_col_list) <- DB$redcap$id_col
+      names(link_col_list) <- DB$REDCap$id_col
     }
     if(missing(file_name))file_name <- DB$short_name
     if(DB$internals$use_csv){
@@ -115,8 +115,8 @@ drop_redcap_dir <- function(
         link_col_list = link_col_list,
         file_name = file_name,
         separate = separate,
-        # header_df_list = to_save_list %>% construct_header_list(metadata = DB$redcap$metadata),
-        # key_cols_list = construct_key_col_list(DB,data_choice = "data_extract"),
+        # header_df_list = to_save_list %>% construct_header_list(metadata = DB$REDCap$metadata),
+        # key_cols_list = construct_key_col_list(DB,data_choice = "data"),
         str_trunc_length = str_trunc_length,
         overwrite = TRUE
       )
@@ -127,14 +127,14 @@ drop_redcap_dir <- function(
 }
 #' @title Reads DB from the dropped REDCap files in dir/REDCap/upload
 #' @inheritParams save_DB
-#' @param allow_all logical TF for allowing DB$data_extract names that are not also instrument names
+#' @param allow_all logical TF for allowing DB$data names that are not also instrument names
 #' @param drop_nonredcap_vars logical TF for dropping non-redcap variable names
 #' @param drop_non_instrument_vars logical TF for dropping non-instrument variable names
 #' @param stop_or_warn character string of whether to stop, warn, or do nothing when forbidden cols are present
 #' @return messages for confirmation
 #' @export
 read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instrument_vars=T,stop_or_warn="warn"){
-  DB <- validate_DB(DB)
+  DB <- validate_RosyREDCap(DB)
   path <- file.path(get_dir(DB),"REDCap","upload")
   if(!file.exists(path))stop("No REDCap files found at path --> ",path)
   x <- list.files.real(path)
@@ -144,7 +144,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
     match = NA
   )
   df$match <- strsplit(df$file_name_no_ext,"_") %>% sapply(function(IN){IN[length(IN)]})
-  df$match[which(!df$match%in%c(DB$internals$merge_form_name,DB$redcap$instruments$instrument_name))] <- NA
+  df$match[which(!df$match%in%c(DB$internals$merge_form_name,DB$REDCap$instruments$instrument_name))] <- NA
   if(!allow_all){
     df <- df[which(!is.na(df$match)),]
   }
@@ -154,15 +154,15 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
     the_file <- readxl::read_xlsx(file.path(path,df$file_name[i]),col_types = "text") %>% all_character_cols() # would
     drop_cols <- NULL
     if(drop_nonredcap_vars){
-      x <- colnames(the_file)[which(!colnames(the_file)%in%c(DB$redcap$raw_structure_cols,DB$redcap$metadata$field_name))]
+      x <- colnames(the_file)[which(!colnames(the_file)%in%c(DB$REDCap$raw_structure_cols,DB$REDCap$metadata$field_name))]
       drop_cols<-drop_cols %>%
         append(x) %>%
         unique()
     }
     if(drop_non_instrument_vars){
       form <- df$match[i]
-      if(form == DB$internals$merge_form_name)form <- DB$redcap$instruments$instrument_name[which(!DB$redcap$instruments$repeating)]
-      x<-colnames(the_file)[which(!colnames(the_file)%in%c(DB$redcap$raw_structure_cols,DB$redcap$metadata$field_name[which(DB$redcap$metadata$form_name%in%form)]))]
+      if(form == DB$internals$merge_form_name)form <- DB$REDCap$instruments$instrument_name[which(!DB$REDCap$instruments$repeating)]
+      x<-colnames(the_file)[which(!colnames(the_file)%in%c(DB$REDCap$raw_structure_cols,DB$REDCap$metadata$field_name[which(DB$REDCap$metadata$form_name%in%form)]))]
       drop_cols<-drop_cols %>%
         append(x) %>%
         unique()

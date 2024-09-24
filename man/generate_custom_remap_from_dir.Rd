@@ -6,9 +6,6 @@
 \usage{
 generate_custom_remap_from_dir(DB)
 }
-\arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-}
 \value{
 DB object that has DB$remap populated from input folder
 }

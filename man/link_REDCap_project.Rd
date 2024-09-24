@@ -6,9 +6,6 @@
 \usage{
 link_REDCap_project(DB)
 }
-\arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-}
 \value{
 opens browser link
 }

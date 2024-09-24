@@ -7,11 +7,11 @@
 #' @return messages for confirmation
 #' @export
 upload_file_to_redcap_fileRepository <- function(DB,file){
-  DB <- validate_DB(DB)
+  DB <- validate_RosyREDCap(DB)
   file <- normalizePath(file)
   if(!file.exists(file)) stop("File does not exist! --> ",file)
   response <- httr::POST(
-    url = DB$redcap_uri,
+    url = DB$REDCap_URI,
     body = list(
       "token"=validate_redcap_token(DB),
       action='import',
@@ -29,9 +29,9 @@ upload_file_to_redcap_fileRepository <- function(DB,file){
 #' @return data.frame of files
 #' @export
 check_redcap_files <- function(DB){
-  DB <- validate_DB(DB)
+  DB <- validate_RosyREDCap(DB)
   response <- httr::POST(
-    url = DB$redcap_uri,
+    url = DB$REDCap_URI,
     body = list(
       "token"=validate_redcap_token(DB),
       content='fileRepository',
@@ -52,9 +52,9 @@ check_redcap_files <- function(DB){
 #' @return messages for confirmation
 #' @export
 add_redcap_folder <- function(DB,name){
-  DB <- validate_DB(DB)
+  DB <- validate_RosyREDCap(DB)
   response <- httr::POST(
-    url = DB$redcap_uri,
+    url = DB$REDCap_URI,
     body = list(
       "token"=validate_redcap_token(DB),
       content='fileRepository',
@@ -77,7 +77,7 @@ add_redcap_folder <- function(DB,name){
 #' @export
 delete_redcap_file <- function(DB,doc_id){
   response <- httr::POST(
-    url = DB$redcap_uri,
+    url = DB$REDCap_URI,
     body = list(
       "token"=validate_redcap_token(DB),
       content='fileRepository',
