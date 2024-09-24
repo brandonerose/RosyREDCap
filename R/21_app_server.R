@@ -292,7 +292,7 @@ app_server <- function(input, output, session) {
           load_RosyREDCap(values$projects$dir_path[ROWS])
         },error = function(e) {NULL})
       }
-      print("choose_indiv_record_ triggered update choose indiv")
+      print("choose_project_ triggered")
     }
   })
   observeEvent(values$DB,{
