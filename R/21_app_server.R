@@ -105,11 +105,7 @@ app_server <- function(input, output, session) {
           id = "tabs",
           lapply(seq_along(values$DB$data), function(i) {
             table_name_raw <- names(values$DB$data)[i]
-            if(input$data_choice == "data_transform"){
-              table_name <- table_name_raw
-            }else{
-              table_name <- values$DB$metadata$forms$instrument_label[which(values$DB$metadata$forms$instrument_name==table_name_raw)]
-            }
+            table_name <- values$DB$metadata$forms$instrument_label[which(values$DB$metadata$forms$instrument_name==table_name_raw)]
             table_id <- paste0("table___home__", table_name_raw)
             tabPanel(
               title = table_name,
