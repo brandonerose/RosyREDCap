@@ -34,7 +34,7 @@ blank_RosyREDCap <- function(){
   DB$links$github <- "https://github.com/brandonerose/RosyREDCap"
   new_link_names <- c(
     "REDCap_base",
-    "REDCap_URI",
+    "redcap_uri",
     "REDCap_home",
     "REDCap_record_home",
     "REDCap_record_subpage",
@@ -92,14 +92,14 @@ setup_RosyREDCap <- function (
   DB$data <- DB$data %>% all_character_cols_list()
   if (force || is.null(DB$internals$last_metadata_update) ||
       is.null(DB$REDCap$project_info) || is.null(DB$short_name) |
-      is.null(DB$REDCap$token_name) || is.null(DB$links$REDCap_URI) |
+      is.null(DB$REDCap$token_name) || is.null(DB$links$redcap_uri) |
       is.null(DB$REDCap$project_title) || is.null(DB$REDCap$project_id)) {
     if (missing(short_name)) stop("`short_name` is required for DBs that haven't been validated")
     if (missing(token_name)) stop("`token_name` is required for DBs that haven't been validated")
     if (missing(REDCap_base))  stop("`REDCap_base` is required for DBs that haven't been validated")
     DB$REDCap$token_name <- token_name %>% validate_env_name()
     DB$links$REDCap_base <- validate_web_link(REDCap_base)
-    DB$links$REDCap_URI <- DB$links$REDCap_base %>% paste0("api/")
+    DB$links$redcap_uri <- DB$links$REDCap_base %>% paste0("api/")
     if (validate)DB <- validate_RosyREDCap(DB)
   } else {
     if (!missing(token_name)) {
@@ -118,7 +118,7 @@ setup_RosyREDCap <- function (
                DB$links$REDCap_base)
       } else {
         DB$links$REDCap_base <- validate_web_link(REDCap_base)
-        DB$links$REDCap_URI <- DB$links$REDCap_base %>% paste0("api/")
+        DB$links$redcap_uri <- DB$links$REDCap_base %>% paste0("api/")
       }
     }
   }

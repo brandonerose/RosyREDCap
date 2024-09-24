@@ -35,13 +35,13 @@ process_response <- function(response,error_action){
   return(all_character_cols(content))
 }
 redcap_token_works <- function(DB){
-  redcap_api_base(DB$links$REDCap_URI,validate_redcap_token(DB,silent = T,ask = F),"version") %>%
+  redcap_api_base(DB$links$redcap_uri,validate_redcap_token(DB,silent = T,ask = F),"version") %>%
     httr::http_error() %>% magrittr::not() %>% return()
 }
 test_REDCap <- function(DB){
   ERROR  <- T
   while(ERROR){
-    version <- redcap_api_base(DB$links$REDCap_URI,validate_redcap_token(DB),"version")
+    version <- redcap_api_base(DB$links$redcap_uri,validate_redcap_token(DB),"version")
     ERROR  <- version %>% httr::http_error()
     if(ERROR){
       warning('Your REDCap API token check failed. Invalid token or API privileges. Contact Admin! Consider rerunnning `setup_DB()`',immediate. = T)
@@ -57,7 +57,7 @@ test_REDCap <- function(DB){
 get_REDCap_info <- function(DB,content,error_action=NULL,additional_args=NULL){
   allowed_content <- REDCap_API$contents$content
   if(!content%in%allowed_content)stop("Must use the following content... ",paste0(allowed_content,collapse = ", "))
-  redcap_api_base(url=DB$links$REDCap_URI,token = validate_redcap_token(DB),content = content,additional_args=additional_args) %>% process_response(error_action)
+  redcap_api_base(url=DB$links$redcap_uri,token = validate_redcap_token(DB),content = content,additional_args=additional_args) %>% process_response(error_action)
 }
 #' @title Drop redcap files to directory
 #' @inheritParams save_DB
@@ -92,7 +92,7 @@ get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
         file_name <- ifelse(original_file_names,file_name,paste0(form_name,"_",field_name,"_",ifelse(is_repeating,"inst_",""),repeat_instance,"ID_",record_id,".",tools::file_ext(file_name)))
         if(!file.exists(file.path(out_dir_folder,file_name))||overwrite){
           REDCapR::redcap_download_file_oneshot(
-            REDCap_URI = DB$links$REDCap_URI,
+            redcap_uri = DB$links$redcap_uri,
             token = validate_redcap_token(DB),
             field = field_name,
             record = form[[DB$REDCap$id_col]][i],
@@ -264,7 +264,7 @@ get_REDCap_metadata <- function(DB){
 #' @export
 get_REDCap_structure <- function(DB, parse_codes = F){
   redcap <- NULL
-  # redcap$uri <- DB$links$REDCap_URI
+  # redcap$uri <- DB$links$redcap_uri
   # redcap$version <- redcap_api_base(url = redcap$uri,token = validate_redcap_token(DB),"version") %>% httr::content(as="text") %>% as.character()
   redcap$project_info <- get_REDCap_info(DB,"project")
   redcap$arms <- get_REDCap_info(DB,"arm")
@@ -387,7 +387,7 @@ check_redcap_log <- function(DB,last=24,user = "",units="hours",begin_time="",cl
 #' @export
 get_raw_redcap <- function(DB,labelled=T,records=NULL){
   if(missing(records)) records <- NULL
-  raw <- REDCapR::redcap_read(REDCap_URI=DB$links$REDCap_URI, token=validate_redcap_token(DB),batch_size = 2000, interbatch_delay = 0.1,records = records, raw_or_label = ifelse(labelled,"label","raw"))$data %>% all_character_cols()
+  raw <- REDCapR::redcap_read(redcap_uri=DB$links$redcap_uri, token=validate_redcap_token(DB),batch_size = 2000, interbatch_delay = 0.1,records = records, raw_or_label = ifelse(labelled,"label","raw"))$data %>% all_character_cols()
   return(raw)
 }
 #' @export
@@ -396,7 +396,7 @@ delete_redcap_records <- function(DB, records){
   if(length(BAD)>0)stop("Records not included in DB: ",records %>% paste0(collapse = ", "))
   for (record in records){
     httr::POST(
-      url = DB$links$REDCap_URI,
+      url = DB$links$redcap_uri,
       body = list(
         "token"=validate_redcap_token(DB),
         content='record',

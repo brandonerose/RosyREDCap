@@ -21,7 +21,7 @@ upload_file_to_redcap <- function(DB,file,record, field,repeat_instance = NULL,e
     body$repeat_instance <- repeat_instance
   }
   response <- httr::POST(
-    url = DB$links$REDCap_URI,
+    url = DB$links$redcap_uri,
     body = body,
     encode = "multipart"
   )
@@ -45,7 +45,7 @@ delete_file_from_redcap <- function(DB,record, field,repeat_instance = NULL, eve
     body$repeat_instance <- repeat_instance
   }
   response <- httr::POST(
-    url = DB$links$REDCap_URI,
+    url = DB$links$redcap_uri,
     body = body
   )
   if(httr::http_error(response))stop("File Delete failed")

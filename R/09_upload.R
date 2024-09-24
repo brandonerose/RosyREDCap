@@ -17,7 +17,7 @@ upload_form_to_redcap <- function(to_be_uploaded,DB,batch_size=500){
     batch_size=batch_size,
     interbatch_delay=0.2,
     continue_on_error=FALSE,
-    REDCap_URI = DB$links$REDCap_URI,
+    redcap_uri = DB$links$redcap_uri,
     token = validate_redcap_token(DB),
     overwrite_with_blanks=TRUE
   )
