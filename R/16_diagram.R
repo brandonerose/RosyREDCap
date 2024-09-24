@@ -13,7 +13,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   instruments <- DB$metadata$forms
   fontcolor <- "black"
   instrument_color <- "#FF474C"
-  if( ! DB$REDCap$is_longitudinal){
+  if( ! DB$redcap$is_longitudinal){
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
@@ -33,7 +33,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     node_df$id <- 1:nrow(node_df)
   }
   # events-----------
-  if(DB$REDCap$is_longitudinal){
+  if(DB$redcap$is_longitudinal){
     arms <- DB$metadata$arms
     # arms$name <- arms$arm_num %>% paste0(". ",arms$name)
     events <- DB$metadata$events
@@ -144,7 +144,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     edge_df$id <- 1:nrow(edge_df)
   }else{
     #structure ------------
-    if(DB$REDCap$has_repeating_instruments){
+    if(DB$redcap$has_repeating_instruments){
       node_df <- node_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
@@ -286,7 +286,7 @@ REDCap_diagram <- function(DB, render = T, include_vars = F,type = "visNetwork",
   rendered_graph <-
     DiagrammeR::render_graph(
       graph,
-      title = DB$REDCap$project_info$project_title,
+      title = DB$redcap$project_info$project_title,
       output = type,
       layout = "nicely"
     )

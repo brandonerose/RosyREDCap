@@ -4,10 +4,10 @@
 sum_records <- function(DB,data_choice = "data"){
   records <- NULL
   if(DB[[data_choice]] %>% is_something()){
-    cols <- DB$REDCap$id_col
+    cols <- DB$redcap$id_col
     if(is.data.frame(DB$metadata$arms)){
       if(nrow(DB$metadata$arms)>1){
-        cols <- DB$REDCap$id_col %>% append("arm_num")
+        cols <- DB$redcap$id_col %>% append("arm_num")
       }
     }
     if(length(cols)==1){
@@ -18,15 +18,15 @@ sum_records <- function(DB,data_choice = "data"){
     }
     if(length(cols) == 2){
       records <- names(DB[[data_choice]]) %>% lapply(function(IN){DB[[data_choice]][[IN]][,cols]}) %>% dplyr::bind_rows() %>% unique()
-      # records <- records[order(as.integer(records[[DB$REDCap$id_col]])),]
+      # records <- records[order(as.integer(records[[DB$redcap$id_col]])),]
     }
     rownames(records) <- NULL
-    if(records[[DB$REDCap$id_col]]%>% duplicated() %>% any())stop("duplicate ",DB$REDCap$id_col, " in sum_records() function")
+    if(records[[DB$redcap$id_col]]%>% duplicated() %>% any())stop("duplicate ",DB$redcap$id_col, " in sum_records() function")
   }
   return(records)
 }
 summarize_users_from_log <- function(DB,records){
-  log <- DB$REDCap$log
+  log <- DB$redcap$log
   log <- log[which(!is.na(log$username)),]
   log <- log[which(!is.na(log$record)),]
   if(!missing(records)){
@@ -34,7 +34,7 @@ summarize_users_from_log <- function(DB,records){
       log <- log[which(log$record%in%records),]
     }
   }
-  summary_users <- DB$REDCap$users %>% dplyr::select(c("username","role_label","email" ,"firstname","lastname"))
+  summary_users <- DB$redcap$users %>% dplyr::select(c("username","role_label","email" ,"firstname","lastname"))
   user_groups <- log %>% split(log$username)
   summary_users <- summary_users[which(summary_users$username%in%names(user_groups)),]
   user_groups <- user_groups[drop_nas(match(summary_users$username, names(user_groups)))]
@@ -53,7 +53,7 @@ summarize_users_from_log <- function(DB,records){
   return(summary_users)
 }
 summarize_records_from_log <- function(DB,records){
-  log <- DB$REDCap$log
+  log <- DB$redcap$log
   log <- log[which(!is.na(log$username)),]
   log <- log[which(!is.na(log$record)),]
   if(!missing(records)){
@@ -65,10 +65,10 @@ summarize_records_from_log <- function(DB,records){
   # all_records <- unique(log$record)
   summary_records <- DB$summary$all_records
   record_groups <- log %>% split(log$record)
-  summary_records <- summary_records[which(summary_records[[DB$REDCap$id_col]]%in%names(record_groups)),,drop = FALSE]
+  summary_records <- summary_records[which(summary_records[[DB$redcap$id_col]]%in%names(record_groups)),,drop = FALSE]
   # users_log_rows <- users %>% lapply(function(user){which(log$username==user)})
   # records_log_rows <- records %>% lapply(function(record){which(log$record==record)})
-  record_groups <- record_groups[match(summary_records[[DB$REDCap$id_col]], names(record_groups))]
+  record_groups <- record_groups[match(summary_records[[DB$redcap$id_col]], names(record_groups))]
   summary_records$last_timestamp <- record_groups %>% sapply(function(group) {
     group$timestamp[[1]]
   })
@@ -90,7 +90,7 @@ summarize_records_from_log <- function(DB,records){
 #' @export
 summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$internals$reference_state){
   #project --------
-  # DB$summary$users <- DB$REDCap$users
+  # DB$summary$users <- DB$redcap$users
   df_names <- c("metadata","instruments","event_mapping","events","arms")
   redcap_remap <- "redcap"
   if(data_choice == "data_transform"){
@@ -108,7 +108,7 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$int
     original_data <- DB[[data_choice]]
     if(!is.null(records)){
       DB[[data_choice]] <- DB %>% filter_DB(records = records,data_choice = data_choice)
-      DB$summary$selected_records <- DB$summary$all_records[which( DB$summary$all_records[[DB$REDCap$id_col]]%in% records),]
+      DB$summary$selected_records <- DB$summary$all_records[which( DB$summary$all_records[[DB$redcap$id_col]]%in% records),]
       DB$summary$selected_records_n <- DB$summary$selected_records %>% nrow()
     }
     DB$summary$all_records_n <- DB$summary$all_records %>% nrow()
@@ -119,7 +119,7 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$int
   DB$summary$arms_n <- NA
   if(is.data.frame(DB$metadata$arms)){
     DB$summary$arms_n <- DB$metadata$arms %>% nrow()
-    id_pairs <- DB$metadata$forms$instrument_name %>%  lapply(function(IN){DB$data[[IN]][,c(DB$REDCap$id_col,"arm_num")]}) %>% dplyr::bind_rows() %>% unique()
+    id_pairs <- DB$metadata$forms$instrument_name %>%  lapply(function(IN){DB$data[[IN]][,c(DB$redcap$id_col,"arm_num")]}) %>% dplyr::bind_rows() %>% unique()
     DB$metadata$arms$arm_records_n <- DB$metadata$arms$arm_num %>% sapply(function(arm){
       which(id_pairs$arm_num==arm)%>% length()
     })
@@ -184,7 +184,7 @@ save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"outp
     link_col_list <- list(
       "redcap_link"
     )
-    names(link_col_list) <- DB$REDCap$id_col
+    names(link_col_list) <- DB$redcap$id_col
   }
   if(DB$internals$use_csv){
     to_save_list %>% list_to_csv(

@@ -7,7 +7,7 @@
 link_REDCap_record(DB, record, page, instance, text_only = F)
 }
 \arguments{
-\item{record}{REDCap record id or study id etc, any column names that match `DB$REDCap$id_col`}
+\item{record}{REDCap record id or study id etc, any column names that match `DB$redcap$id_col`}
 
 \item{page}{REDCap page for the record. Must be one of `DB$metadata$forms$instrument_name`}
 

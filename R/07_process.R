@@ -4,8 +4,8 @@
 get_key_col_list <- function(DB){
   if(!is_something(DB$metadata$forms))stop("Empty --> `DB$metadata$forms`")
   out_list <- 1:nrow(DB$metadata$forms) %>% lapply(function(i){
-    out <- DB$REDCap$id_col
-    if(DB$REDCap$is_longitudinal)out <- append(out,"redcap_event_name")
+    out <- DB$redcap$id_col
+    if(DB$redcap$is_longitudinal)out <- append(out,"redcap_event_name")
     if(DB$metadata$forms$repeating[i]){
       out <- append(out,"redcap_repeat_instrument")
       out <- append(out,"redcap_repeat_instance")
@@ -18,8 +18,8 @@ get_key_col_list <- function(DB){
 raw_process_redcap <- function(raw,DB, labelled){
   if(nrow(raw)>0){
     raw  <- raw %>% all_character_cols()
-    add_ons <- c(DB$REDCap$id_col,"arm_num","event_name","redcap_event_name","redcap_repeat_instrument","redcap_repeat_instance")
-    if(DB$REDCap$is_longitudinal){
+    add_ons <- c(DB$redcap$id_col,"arm_num","event_name","redcap_event_name","redcap_repeat_instrument","redcap_repeat_instance")
+    if(DB$redcap$is_longitudinal){
       raw$id_temp <- 1:nrow(raw)
       raw <-  merge(raw,DB$metadata$events[,c("arm_num","event_name","unique_event_name")],by.x="redcap_event_name",by.y="unique_event_name",sort = F)
       add_ons  <- add_ons[which(add_ons%in%colnames(raw))]
@@ -28,7 +28,7 @@ raw_process_redcap <- function(raw,DB, labelled){
       raw$id_temp <- NULL
     }
     add_ons  <- add_ons[which(add_ons%in%colnames(raw))]
-    if(any(!DB$REDCap$raw_structure_cols %in% colnames(raw)))stop("raw is missing one of the following... and that's weird: ", DB$REDCap$raw_structure_cols %>% paste0(collapse = ", "))
+    if(any(!DB$redcap$raw_structure_cols %in% colnames(raw)))stop("raw is missing one of the following... and that's weird: ", DB$redcap$raw_structure_cols %>% paste0(collapse = ", "))
     instrument_names <- DB$metadata$forms$instrument_name[which(DB$metadata$forms$instrument_name%in%unique(DB$metadata$fields$form_name))]
     data_list <- list()
     # instrument_name <- instrument_names %>% sample1()
@@ -37,7 +37,7 @@ raw_process_redcap <- function(raw,DB, labelled){
       #instrument_name <-  DB$metadata$forms$instrument_name %>% sample(1)
       is_repeating_instrument <- instrument_name%in%DB$metadata$forms$instrument_name[which(DB$metadata$forms$repeating)]
       rows  <- 1:nrow(raw)
-      if(!DB$REDCap$is_longitudinal){
+      if(!DB$redcap$is_longitudinal){
         if("redcap_repeat_instrument"%in%colnames(raw)){
           if(is_repeating_instrument){
             rows <- which(raw$redcap_repeat_instrument==instrument_name)
@@ -47,7 +47,7 @@ raw_process_redcap <- function(raw,DB, labelled){
           }
         }
       }
-      if(DB$REDCap$is_longitudinal){
+      if(DB$redcap$is_longitudinal){
         events_ins <- DB$metadata$event_mapping$unique_event_name[which(DB$metadata$event_mapping$form==instrument_name)] %>% unique()
         rows <- which(raw$redcap_event_name%in%events_ins)
       }
@@ -78,23 +78,23 @@ raw_process_redcap <- function(raw,DB, labelled){
 #' @return DB object that has been filtered to only include the specified records
 #' @export
 filter_DB <- function(DB, records,data_choice="data",field_names,form_names,add_filter_var,add_filter_vals,warn_only = F){#, ignore_incomplete=F, ignore_unverified = F
-  if(missing(records)) records <- DB$summary$all_records[[DB$REDCap$id_col]]
-  if(is.null(records)) records <- DB$summary$all_records[[DB$REDCap$id_col]]
+  if(missing(records)) records <- DB$summary$all_records[[DB$redcap$id_col]]
+  if(is.null(records)) records <- DB$summary$all_records[[DB$redcap$id_col]]
   if(missing(field_names)){
     field_names <- DB %>% get_all_field_names(data_choice = data_choice)
   }
   if(missing(form_names))form_names <- names(DB[[data_choice]])
   if (length(records)==0)stop("Must supply records")
   selected <- list()
-  BAD  <- records[which(!records%in%DB$summary$all_records[[DB$REDCap$id_col]])]
-  GOOD  <- records[which(records%in%DB$summary$all_records[[DB$REDCap$id_col]])]
+  BAD  <- records[which(!records%in%DB$summary$all_records[[DB$redcap$id_col]])]
+  GOOD  <- records[which(records%in%DB$summary$all_records[[DB$redcap$id_col]])]
   if(length(BAD)>0){
     m <- paste0("Following records are not found in DB: ", BAD %>% paste0(collapse = ", "))
     warn_or_stop(m,warn_only = warn_only)
   }
   run_add_filter <- !missing(add_filter_var)&&!missing(add_filter_vals)
   for(FORM in form_names){
-    OUT <- DB[[data_choice]][[FORM]][which(DB[[data_choice]][[FORM]][[DB$REDCap$id_col]]%in%GOOD),]
+    OUT <- DB[[data_choice]][[FORM]][which(DB[[data_choice]][[FORM]][[DB$redcap$id_col]]%in%GOOD),]
     cols <- colnames(OUT)[which(colnames(OUT)%in%field_names)]
     if(length(cols)>0){
       if(run_add_filter){
@@ -103,7 +103,7 @@ filter_DB <- function(DB, records,data_choice="data",field_names,form_names,add_
         }
       }
       # if(nrow(OUT)>0){
-      selected[[FORM]] <- OUT[,colnames(OUT)[which(colnames(OUT)%in%c(DB$REDCap$raw_structure_cols,field_names))]]
+      selected[[FORM]] <- OUT[,colnames(OUT)[which(colnames(OUT)%in%c(DB$redcap$raw_structure_cols,field_names))]]
       # }
     }
   }
@@ -121,7 +121,7 @@ field_names_to_instruments <- function(DB,field_names,only_unique = T){
 }
 field_names_metadata <- function(DB,field_names,col_names){
   # if(!deparse(substitute(FORM))%in%DB$metadata$forms$instrument_name)stop("To avoid potential issues the form name should match one of the instrument names" )
-  BAD <- field_names[which(!field_names%in%c(DB$metadata$fields$field_name,DB$REDCap$raw_structure_cols,"arm_num","event_name"))]
+  BAD <- field_names[which(!field_names%in%c(DB$metadata$fields$field_name,DB$redcap$raw_structure_cols,"arm_num","event_name"))]
   if(length(BAD)>0)stop("All column names in your form must match items in your metadata, `DB$metadata$fields$field_name`... ", paste0(BAD, collapse = ", "))
   # metadata <- DB$metadata$fields[which(DB$metadata$fields$form_name%in%instruments),]
   metadata <- DB$metadata$fields[which(DB$metadata$fields$field_name%in%field_names),]
@@ -335,11 +335,11 @@ all_missing_codes <- function(){
   )
 }
 missing_codes2 <- function(DB){
-  included <- "missing_data_codes"%in%colnames(DB$REDCap$project_info)
+  included <- "missing_data_codes"%in%colnames(DB$redcap$project_info)
   if(included){
-    is_na  <- is.na(DB$REDCap$project_info$missing_data_codes)
+    is_na  <- is.na(DB$redcap$project_info$missing_data_codes)
     if(!is_na){
-      return(DB$REDCap$project_info$missing_data_codes %>% split_choices())
+      return(DB$redcap$project_info$missing_data_codes %>% split_choices())
     }
     if(is_na){
       return(NA)
@@ -387,7 +387,7 @@ merge_non_repeating_DB <- function(DB){ # need to adjust for events, currently d
   all_instrument_names <- DB$metadata$forms$instrument_name
   keep_instruments <- NULL
   instrument_names <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating)]
-  if(DB$REDCap$is_longitudinal){
+  if(DB$redcap$is_longitudinal){
     instrument_names <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating&!DB$metadata$forms$repeating_via_events)]
     keep_instruments <- all_instrument_names[which(!all_instrument_names%in% instrument_names)]
     data_choice <- "data_transform"
@@ -440,7 +440,7 @@ unmerge_non_repeating_DB <- function(DB){
   merged <- DB$data[[DB$internals$merge_form_name]]
   while (length(instrument_names)>0) {
     instrument_name  <- instrument_names[[1]]
-    DB$data[[instrument_name]] <- merged[,unique(c(DB$REDCap$id_col,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==instrument_name&DB$metadata$fields$field_name%in%colnames(merged))]))]
+    DB$data[[instrument_name]] <- merged[,unique(c(DB$redcap$id_col,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==instrument_name&DB$metadata$fields$field_name%in%colnames(merged))]))]
     instrument_names[[1]] <- NULL
   }
   DB$data[[DB$internals$merge_form_name]] <- NULL
@@ -464,9 +464,9 @@ add_ID_to_DF <- function(DF,DB,ref_id){
   #   }
   # }
   id_col <- DF[[ref_id]] %>% sapply(function(ID){
-    DB$data[[form]][[DB$REDCap$id_col]][which(DB$data[[form]][[ref_id]]==ID)]
+    DB$data[[form]][[DB$redcap$id_col]][which(DB$data[[form]][[ref_id]]==ID)]
   }) %>% as.data.frame()
-  colnames(id_col) <- DB$REDCap$id_col
+  colnames(id_col) <- DB$redcap$id_col
   DF <- cbind(id_col,DF)
   DF
 }
@@ -482,7 +482,7 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
     identifiers <- identifiers %>% unique()
     bad_identifiers <- identifiers[which(!identifiers%in%DB$metadata$fields$field_name)]
     if(length(bad_identifiers)>0)stop("You have an identifier that is not included in the set of `DB$metadata$fields$field_name` --> ",bad_identifiers %>% paste0(collapse = ", "))
-    if(DB$REDCap$id_col%in%identifiers)stop("Your REDCap ID, ",DB$REDCap$id_col,", should not be deidentified.") #If you want to pass a new set of random IDs to make this data use `scramble_ID_DB(DB)`.")
+    if(DB$redcap$id_col%in%identifiers)stop("Your REDCap ID, ",DB$redcap$id_col,", should not be deidentified.") #If you want to pass a new set of random IDs to make this data use `scramble_ID_DB(DB)`.")
   }
   if(missing_identifiers){
     identifiers <-  DB$metadata$fields$field_name[which(DB$metadata$fields$identifier=="y")]
@@ -533,7 +533,7 @@ construct_key_col_list <- function(DB,data_choice=get_default_data_choice(DB)){
   df_col_list <- df_list %>% lapply(colnames)
   forms <- names(df_list)
   key_cols_list <- forms %>% lapply(function(form){
-    df_col_list[[form]][which(df_col_list[[form]]%in%DB$REDCap$raw_structure_cols)]
+    df_col_list[[form]][which(df_col_list[[form]]%in%DB$redcap$raw_structure_cols)]
   })
   names(key_cols_list)<- forms
   return(key_cols_list)

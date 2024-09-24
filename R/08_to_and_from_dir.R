@@ -53,13 +53,13 @@ drop_redcap_dir <- function(
       for (x in c("project_info","metadata","instruments","codebook")){ #,"log" #taking too long
         if(DB$internals$use_csv){
           list_to_csv(
-            list = DB$REDCap[x],
+            list = DB$redcap[x],
             dir = redcap_other_dir,
             file_name = x
           )
         }else{
           list_to_excel(
-            list = DB$REDCap[x],
+            list = DB$redcap[x],
             dir = redcap_metadata_dir,
             file_name = x,
             str_trunc_length = str_trunc_length,
@@ -72,13 +72,13 @@ drop_redcap_dir <- function(
       for (x in c("log","users")){ #,"log" #taking too long
         if(DB$internals$use_csv){
           list_to_csv(
-            list = DB$REDCap[x],
+            list = DB$redcap[x],
             dir = redcap_other_dir,
             file_name = x
           )
         }else{
           list_to_excel(
-            list = DB$REDCap[x],
+            list = DB$redcap[x],
             dir = redcap_other_dir,
             file_name = x,
             str_trunc_length = str_trunc_length,
@@ -99,7 +99,7 @@ drop_redcap_dir <- function(
       link_col_list <- list(
         "redcap_link"
       )
-      names(link_col_list) <- DB$REDCap$id_col
+      names(link_col_list) <- DB$redcap$id_col
     }
     if(missing(file_name))file_name <- DB$short_name
     if(DB$internals$use_csv){
@@ -154,7 +154,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
     the_file <- readxl::read_xlsx(file.path(path,df$file_name[i]),col_types = "text") %>% all_character_cols() # would
     drop_cols <- NULL
     if(drop_nonredcap_vars){
-      x <- colnames(the_file)[which(!colnames(the_file)%in%c(DB$REDCap$raw_structure_cols,DB$metadata$fields$field_name))]
+      x <- colnames(the_file)[which(!colnames(the_file)%in%c(DB$redcap$raw_structure_cols,DB$metadata$fields$field_name))]
       drop_cols<-drop_cols %>%
         append(x) %>%
         unique()
@@ -162,7 +162,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
     if(drop_non_instrument_vars){
       form <- df$match[i]
       if(form == DB$internals$merge_form_name)form <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating)]
-      x<-colnames(the_file)[which(!colnames(the_file)%in%c(DB$REDCap$raw_structure_cols,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name%in%form)]))]
+      x<-colnames(the_file)[which(!colnames(the_file)%in%c(DB$redcap$raw_structure_cols,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name%in%form)]))]
       drop_cols<-drop_cols %>%
         append(x) %>%
         unique()

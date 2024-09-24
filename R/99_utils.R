@@ -1,10 +1,10 @@
 #' @import RosyUtils
 add_redcap_links_to_DF <- function(DF,DB){# add instance links
-  if(DB$REDCap$id_col%in%colnames(DF)){
-    DF_structure_cols <- DB$REDCap$raw_structure_cols[which(DB$REDCap$raw_structure_cols%in%colnames(DF))]
-    DF_structure_cols <- DB$REDCap$raw_structure_cols[which(DB$REDCap$raw_structure_cols%in%colnames(DF)&DB$REDCap$raw_structure_cols!=DB$REDCap$id_col)]
+  if(DB$redcap$id_col%in%colnames(DF)){
+    DF_structure_cols <- DB$redcap$raw_structure_cols[which(DB$redcap$raw_structure_cols%in%colnames(DF))]
+    DF_structure_cols <- DB$redcap$raw_structure_cols[which(DB$redcap$raw_structure_cols%in%colnames(DF)&DB$redcap$raw_structure_cols!=DB$redcap$id_col)]
     link_head <- DB$links$redcap_record_home
-    link_tail <- "&id=" %>% paste0(DF[[DB$REDCap$id_col]])
+    link_tail <- "&id=" %>% paste0(DF[[DB$redcap$id_col]])
     if("redcap_repeat_instrument"%in%DF_structure_cols){
       link_head <- DB$links$redcap_record_subpage
       link_tail <- link_tail %>% paste0("&page=",DF[["redcap_repeat_instrument"]])
@@ -45,7 +45,7 @@ split_choices <- function(x){
 }
 husk_of_instrument <- function (DB,data_choice="data",FORM,field_names) {
   DF <- DB[[data_choice]][[FORM]]
-  cols<- colnames(DF)[which(colnames(DF)%in%DB$REDCap$raw_structure_cols)]
+  cols<- colnames(DF)[which(colnames(DF)%in%DB$redcap$raw_structure_cols)]
   DF2 <- NULL
   for(col in cols){
     DF2[[col]] <- DF[[col]]
@@ -61,7 +61,7 @@ all_DB_to_char_cols <- function(DB){
 }
 add_redcap_links_table<-function(DF,DB){
   if(nrow(DF)>0){
-    DF[[DB$REDCap$id_col]] <- paste0("<a href='",paste0("https://redcap.miami.edu/redcap_v",DB$REDCap$version,"/DataEntry/record_home.php?pid=",DB$REDCap$project_id,"&id=",DF[[DB$REDCap$id_col]],"&arm=1"),"' target='_blank'>",DF[[DB$REDCap$id_col]],"</a>")
+    DF[[DB$redcap$id_col]] <- paste0("<a href='",paste0("https://redcap.miami.edu/redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id,"&id=",DF[[DB$redcap$id_col]],"&arm=1"),"' target='_blank'>",DF[[DB$redcap$id_col]],"</a>")
   }
   DF
 }

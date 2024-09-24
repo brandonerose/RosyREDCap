@@ -31,16 +31,16 @@ link_REDCap_project <- function(DB){
 }
 #' @title link_REDCap_record
 #' @inheritParams save_DB
-#' @param record REDCap record id or study id etc, any column names that match `DB$REDCap$id_col`
+#' @param record REDCap record id or study id etc, any column names that match `DB$redcap$id_col`
 #' @param page REDCap page for the record. Must be one of `DB$metadata$forms$instrument_name`
 #' @param instance REDCap instance if it's a repeating instrument
 #' @param text_only logical for only returning text
 #' @return opens browser link
 #' @export
 link_REDCap_record <- function(DB,record,page,instance,text_only = F){
-  link <- paste0(DB$links$REDCap_base,"redcap_v",DB$REDCap$version,"/DataEntry/record_home.php?pid=",DB$REDCap$project_id)
+  link <- paste0(DB$links$REDCap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id)
   if(!missing(record)){
-    if(!record%in%DB$summary$all_records[[DB$REDCap$id_col]])stop(record," is not one of the records inside DB")
+    if(!record%in%DB$summary$all_records[[DB$redcap$id_col]])stop(record," is not one of the records inside DB")
     if("arm_num"%in%colnames(DB$summary$all_records)){
       link <- link %>% paste0("&arm=", DB$summary$all_records$arm_num[which(DB$summary$all_records$participant_id==record)])
     }
