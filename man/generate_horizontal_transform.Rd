@@ -6,9 +6,6 @@
 \usage{
 generate_horizontal_transform(DB, records)
 }
-\arguments{
-\item{records}{character vector of records to be summarized}
-}
 \description{
 Horizontal Transform
 }

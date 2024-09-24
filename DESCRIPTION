@@ -25,7 +25,6 @@ Imports:
     readxl,
     REDCapR,
     rio,
-    rmarkdown,
     RosyApp,
     RosyDB,
     RosyUtils,
