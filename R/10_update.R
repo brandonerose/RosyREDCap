@@ -31,7 +31,7 @@ log_details_that_trigger_refresh <- function(){
   )
 }
 #' @title Shows DB in the env
-#' @param DB DB from load_DB or setup_DB
+#' @param DB DB from load_RosyREDCap or setup_DB
 #' @param force logical for force a fresh update
 #' @param day_of_log numbers of days to be checked in the log
 #' @param labelled logical for whether or not to return raw or labelled REDCap. Default is TRUE.

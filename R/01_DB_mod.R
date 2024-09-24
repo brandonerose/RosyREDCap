@@ -51,6 +51,16 @@ validate_RosyREDCap <- function(DB,silent = T,warn_only = F){
   DB <- RosyDB:::validate_DB(DB,silent = silent,warn_only = warn_only,allowed_names = names(blank_RosyREDCap()))
   return(DB)
 }
+load_RosyREDCap <- function(short_name,validate = T){
+  projects <- get_projects()
+  if(nrow(projects)==0)return(blank_RosyREDCap())
+  if(!short_name%in%projects$short_name)return(blank_RosyREDCap())
+  DB_path <- file.path(DB$dir_path,"R_objects",paste0(short_name,".rdata"))
+  if(!file.exists(DB_path))return(blank_RosyREDCap())
+  readRDS(file=DB_path) %>%
+    validate_RosyREDCap(silent = F, warn_only = !validate) %>%
+    return()
+}
 #' @title Setup for DB including token
 #' @param short_name character name as a shortcut
 #' @param dir_path character file path of the directory
@@ -73,7 +83,7 @@ setup_RosyREDCap <- function (
     DB <- blank_RosyREDCap()
   }
   if( ! missing_dir_path){
-    DB <- load_DB(dir_path,validate = validate)
+    DB <- load_RosyREDCap(dir_path,validate = validate)
     DB$dir_path <-RosyDB:::set_dir(dir_path)
   }
   DB$short_name <- validate_env_name(short_name)

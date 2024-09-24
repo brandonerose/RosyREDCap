@@ -289,7 +289,7 @@ app_server <- function(input, output, session) {
       ROWS <- which(values$projects$short_name==input$choose_project_)
       if(is_something(ROWS)){
         values$DB <- tryCatch({
-          load_DB(values$projects$dir_path[ROWS])
+          load_RosyREDCap(values$projects$dir_path[ROWS])
         },error = function(e) {NULL})
       }
       print("choose_indiv_record_ triggered update choose indiv")

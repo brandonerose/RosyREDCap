@@ -15,7 +15,7 @@ update_DB(
 )
 }
 \arguments{
-\item{DB}{DB from load_DB or setup_DB}
+\item{DB}{DB from load_RosyREDCap or setup_DB}
 
 \item{force}{logical for force a fresh update}
 
