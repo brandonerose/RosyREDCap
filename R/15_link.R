@@ -32,7 +32,7 @@ link_REDCap_project <- function(DB){
 #' @title link_REDCap_record
 #' @inheritParams save_DB
 #' @param record REDCap record id or study id etc, any column names that match `DB$REDCap$id_col`
-#' @param page REDCap page for the record. Must be one of `DB$REDCap$instruments$instrument_name`
+#' @param page REDCap page for the record. Must be one of `DB$metadata$forms$instrument_name`
 #' @param instance REDCap instance if it's a repeating instrument
 #' @param text_only logical for only returning text
 #' @return opens browser link
@@ -48,10 +48,10 @@ link_REDCap_record <- function(DB,record,page,instance,text_only = F){
   }
   if(!missing(page)){
     link <- gsub("record_home","index",link)
-    if(!page%in%DB$REDCap$instruments$instrument_name)stop(page," has to be one of the instrument names: ",paste0(DB$REDCap$instruments$instrument_name,collapse = ", "))
+    if(!page%in%DB$metadata$forms$instrument_name)stop(page," has to be one of the instrument names: ",paste0(DB$metadata$forms$instrument_name,collapse = ", "))
     link <- link %>% paste0("&page=",page)
     if(!missing(instance)){
-      if(!page%in%DB$REDCap$instruments$instrument_name[which(DB$REDCap$instruments$repeating)])stop("If you provide an instance, it has to be one of the repeating instrument names: ",paste0(DB$REDCap$instruments$instrument_name[which(DB$REDCap$instruments$repeating)],collapse = ", "))
+      if(!page%in%DB$metadata$forms$instrument_name[which(DB$metadata$forms$repeating)])stop("If you provide an instance, it has to be one of the repeating instrument names: ",paste0(DB$metadata$forms$instrument_name[which(DB$metadata$forms$repeating)],collapse = ", "))
       link <- link %>% paste0("&instance=",instance)
     }
   }

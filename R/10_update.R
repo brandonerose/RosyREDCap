@@ -60,7 +60,7 @@ update_DB <- function(
       }
     }
   }
-  DB <- test_redcap(DB)
+  DB <- test_REDCap(DB)
   # DB$internals$last_metadata_update <- Sys.time()-lubridate::days(1)
   # DB$internals$last_data_update <- Sys.time()-lubridate::days(1)
   if(!force){ # check log interim
@@ -108,11 +108,10 @@ update_DB <- function(
   }
   if(force){
     DB$data <- list()
-    DB$data_transform <- list()
     DB$data_upload <- list()
     DB$summary <- list()
-    DB <- DB %>% get_redcap_metadata()
-    DB$data <- DB %>% get_redcap_data(labelled = labelled)
+    DB <- DB %>% get_REDCap_metadata()
+    DB$data <- DB %>% get_REDCap_data(labelled = labelled)
     DB$internals$data_extract_labelled <- labelled
     log <- DB$REDCap$log # in case there is a log already
     if(entire_log){
@@ -140,7 +139,7 @@ update_DB <- function(
         IDs <- IDs[which(!IDs%in%deleted_records)]
         DB$data <- remove_records_from_list(data_list = DB$data,records = deleted_records,silent = T)
       }
-      data_list <- DB %>% get_redcap_data(labelled = labelled,records = IDs)
+      data_list <- DB %>% get_REDCap_data(labelled = labelled,records = IDs)
       missing_from_summary <- IDs[which(!IDs%in%DB$summary$all_records[[DB$REDCap$id_col]])]
       if(length(missing_from_summary)>0){
         x <- data.frame(
@@ -165,7 +164,7 @@ update_DB <- function(
     }
   }
   if(get_files){#test now
-    get_redcap_files(DB,original_file_names=original_file_names)
+    get_REDCap_files(DB,original_file_names=original_file_names)
   }
   if(was_updated){
     if(!is.null(DB$dir_path)) {

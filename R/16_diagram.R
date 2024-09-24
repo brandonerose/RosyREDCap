@@ -10,7 +10,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   is_visNetwork <- type =="visNetwork"
   node_df <- NULL
   edge_df <- NULL
-  instruments <- DB$REDCap$instruments
+  instruments <- DB$metadata$forms
   fontcolor <- "black"
   instrument_color <- "#FF474C"
   if( ! DB$REDCap$is_longitudinal){
@@ -34,10 +34,10 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   }
   # events-----------
   if(DB$REDCap$is_longitudinal){
-    arms <- DB$REDCap$arms
+    arms <- DB$metadata$arms
     # arms$name <- arms$arm_num %>% paste0(". ",arms$name)
-    events <- DB$REDCap$events
-    event_mapping <- DB$REDCap$event_mapping
+    events <- DB$metadata$events
+    event_mapping <- DB$metadata$event_mapping
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
@@ -177,7 +177,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   }
   # variables -----------
   if(include_vars){
-    metadata <- DB$REDCap$metadata
+    metadata <- DB$metadata$fields
     sub_node_df <- node_df[which(node_df$type=="instrument"),]
     x <- NULL
     for (i in 1:nrow(sub_node_df)){#i <- 1:nrow(sub_node_df) %>% sample(1)

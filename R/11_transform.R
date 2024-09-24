@@ -3,15 +3,15 @@
 #' @import RosyApp
 remap_process <- function(DB){
   DB <- validate_RosyREDCap(DB)
-  if(is.data.frame(DB$REDCap$metadata)){
+  if(is.data.frame(DB$metadata$fields)){
     metadata_remap <- DB$remap$metadata_remap
-    BAD <- DB$REDCap$metadata$field_name[which(!DB$REDCap$metadata$field_name%in%metadata_remap$field_name)]
+    BAD <- DB$metadata$fields$field_name[which(!DB$metadata$fields$field_name%in%metadata_remap$field_name)]
     if(length(BAD)>0)stop("Missing mappings: ",BAD %>% paste0(collapse = ", "))
-    x<-which(!metadata_remap$field_name%in%DB$REDCap$metadata$field_name)
+    x<-which(!metadata_remap$field_name%in%DB$metadata$fields$field_name)
     if(length(x)>0)stop("remap missing variable: ",paste0(x, collapse = ", "))
-    x<- 1:nrow(metadata_remap) %>% sapply(function(i){DB$REDCap$metadata$select_choices_or_calculations[which(DB$REDCap$metadata$field_name==metadata_remap$field_name[i])]!=metadata_remap$select_choices_or_calculations[i]}) %>% which()
+    x<- 1:nrow(metadata_remap) %>% sapply(function(i){DB$metadata$fields$select_choices_or_calculations[which(DB$metadata$fields$field_name==metadata_remap$field_name[i])]!=metadata_remap$select_choices_or_calculations[i]}) %>% which()
     if(length(x)>0)stop("remap with differing choices: ",paste0(x, collapse = ", "))
-    instruments_remap <- DB$REDCap$instruments
+    instruments_remap <- DB$metadata$forms
     instruments_remap$instrument_name_remap <- instruments_remap$instrument_name %>% sapply(function(instrument_name){
       x<-metadata_remap$form_name_remap[which(metadata_remap$form_name==instrument_name)] %>% unique()
       if(length(x)>1)stop("instrument_names cannot match multiple instrument_name_remaps: ",instrument_name)
@@ -21,9 +21,9 @@ remap_process <- function(DB){
       if(DB$REDCap$has_arms_that_matter){
         #can add remapping of arms but not smart if they matter
       }else{
-        # DB$REDCap$events->x
+        # DB$metadata$events->x
         event_mapping_remap <- DB$remap$event_mapping_remap
-        events_remap <- DB$REDCap$events
+        events_remap <- DB$metadata$events
         events_remap$unique_event_name_remap <- events_remap$unique_event_name %>% sapply(function(unique_event_name){
           x<-event_mapping_remap$unique_event_name_remap[which(event_mapping_remap$unique_event_name==unique_event_name)] %>% unique()
           if(length(x)>1)stop("unique_event_names cannot match multiple unique_event_name_remaps: ",unique_event_name)
@@ -49,7 +49,7 @@ remap_process <- function(DB){
         instruments_remap$repeating_via_events[
           which(
             instruments_remap$instrument_name_remap %>% sapply(function(instrument_name_remap){
-              # instrument_name <- DB$REDCap$instruments$instrument_name %>% sample(1)
+              # instrument_name <- DB$metadata$forms$instrument_name %>% sample(1)
               if(DB$internals$merge_form_name==instrument_name_remap){
                 F
               }else{
@@ -69,10 +69,10 @@ remap_process <- function(DB){
       DB$remap$events <- events
       DB$remap$event_mapping <- event_mapping
     }
-    non_reps <- DB$REDCap$instruments$instrument_name[which(!DB$REDCap$instruments$repeating)]
+    non_reps <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating)]
     ins_new_cols <- c("instrument_name_remap","repeating")
     if(DB$REDCap$is_longitudinal){
-      non_reps <- DB$REDCap$instruments$instrument_name[which(!DB$REDCap$instruments$repeating&!DB$REDCap$instruments$repeating_via_events)]
+      non_reps <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating&!DB$metadata$forms$repeating_via_events)]
       ins_new_cols <- c("instrument_name_remap","repeating","repeating_via_events")
     }
     if(length(non_reps)>0){
@@ -121,14 +121,14 @@ remap_process <- function(DB){
 #' @export
 generate_default_remap <- function(DB,save_file=!is.null(DB$dir_path),merge_non_repeating = T){
   DB <- validate_RosyREDCap(DB)
-  if(is.data.frame(DB$REDCap$metadata)){
-    metadata_remap <-   DB$REDCap$metadata
+  if(is.data.frame(DB$metadata$fields)){
+    metadata_remap <-   DB$metadata$fields
     metadata_remap$field_name_remap <- metadata_remap$field_name
     metadata_remap$form_name_remap <- metadata_remap$form_name
     if(merge_non_repeating){
-      rows <- which(metadata_remap$form_name%in%DB$REDCap$instruments$instrument_name[which(!(DB$REDCap$instruments$repeating))])
+      rows <- which(metadata_remap$form_name%in%DB$metadata$forms$instrument_name[which(!(DB$metadata$forms$repeating))])
       if(DB$REDCap$is_longitudinal){
-        rows <- which(metadata_remap$form_name%in%DB$REDCap$instruments$instrument_name[which(!(DB$REDCap$instruments$repeating|DB$REDCap$instruments$repeating_via_events))])
+        rows <- which(metadata_remap$form_name%in%DB$metadata$forms$instrument_name[which(!(DB$metadata$forms$repeating|DB$metadata$forms$repeating_via_events))])
       }
       metadata_remap$form_name_remap[rows] <- DB$internals$merge_form_name
     }
@@ -136,9 +136,9 @@ generate_default_remap <- function(DB,save_file=!is.null(DB$dir_path),merge_non_
       if(DB$REDCap$has_arms_that_matter){
         #can add remapping of arms but not smart if they matter
       }else{
-        # DB$REDCap$events->x
-        event_mapping_remap <- DB$REDCap$event_mapping
-        event_mapping_remap <- merge(event_mapping_remap, DB$REDCap$events[,c("event_name","unique_event_name")], by="unique_event_name")
+        # DB$metadata$events->x
+        event_mapping_remap <- DB$metadata$event_mapping
+        event_mapping_remap <- merge(event_mapping_remap, DB$metadata$events[,c("event_name","unique_event_name")], by="unique_event_name")
         event_mapping_remap$unique_event_name_remap <- tolower(gsub(" ","_",event_mapping_remap$event_name))
         event_mapping_remap$form_remap <-  event_mapping_remap$form %>% sapply(function(instrument_name){
           x<-metadata_remap$form_name_remap[which(metadata_remap$form_name==instrument_name)] %>% unique()
@@ -298,9 +298,9 @@ extract_instrument_from_merged <- function(DB,instrument_name){
   if(nrow(merged)>0){
     add_ons <- c(DB$REDCap$id_col,"arm_num","event_name","redcap_event_name","redcap_repeat_instrument","redcap_repeat_instance")
     add_ons  <- add_ons[which(add_ons%in%colnames(merged))]
-    if(!instrument_name%in%DB$REDCap$instruments$instrument_name)stop("instrument_name must be included in set of DB$REDCap$instruments$instrument_name")
-    #instrument_name <-  DB$REDCap$instruments$instrument_name %>% sample(1)
-    is_repeating_instrument <- instrument_name%in%DB$REDCap$instruments$instrument_name[which(DB$REDCap$instruments$repeating)]
+    if(!instrument_name%in%DB$metadata$forms$instrument_name)stop("instrument_name must be included in set of DB$metadata$forms$instrument_name")
+    #instrument_name <-  DB$metadata$forms$instrument_name %>% sample(1)
+    is_repeating_instrument <- instrument_name%in%DB$metadata$forms$instrument_name[which(DB$metadata$forms$repeating)]
     rows  <- 1:nrow(merged)
     if(is_repeating_instrument){
       # rows <- which(merged$redcap_repeat_instrument==instrument_name)
@@ -320,13 +320,13 @@ extract_instrument_from_merged <- function(DB,instrument_name){
     #   }
     # }
     # if(DB$REDCap$is_longitudinal){
-    #   events_ins <- DB$REDCap$event_mapping$unique_event_name[which(DB$REDCap$event_mapping$form==instrument_name)] %>% unique()
+    #   events_ins <- DB$metadata$event_mapping$unique_event_name[which(DB$metadata$event_mapping$form==instrument_name)] %>% unique()
     #   rows <- which(merged$redcap_event_name%in%events_ins)
     # }
     # if(!is_repeating_instrument){
     #   add_ons <- add_ons[which(!add_ons%in%c("redcap_repeat_instrument","redcap_repeat_instance"))]
     # }
-    cols <- unique(c(add_ons,DB$REDCap$metadata$field_name[which(DB$REDCap$metadata$form_name==instrument_name&DB$REDCap$metadata$field_name%in%colnames(merged))]))
+    cols <- unique(c(add_ons,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==instrument_name&DB$metadata$fields$field_name%in%colnames(merged))]))
     return(merged[rows,cols])
   }
 }

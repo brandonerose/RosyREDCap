@@ -115,7 +115,7 @@ drop_redcap_dir <- function(
         link_col_list = link_col_list,
         file_name = file_name,
         separate = separate,
-        # header_df_list = to_save_list %>% construct_header_list(metadata = DB$REDCap$metadata),
+        # header_df_list = to_save_list %>% construct_header_list(metadata = DB$metadata$fields),
         # key_cols_list = construct_key_col_list(DB,data_choice = "data"),
         str_trunc_length = str_trunc_length,
         overwrite = TRUE
@@ -144,7 +144,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
     match = NA
   )
   df$match <- strsplit(df$file_name_no_ext,"_") %>% sapply(function(IN){IN[length(IN)]})
-  df$match[which(!df$match%in%c(DB$internals$merge_form_name,DB$REDCap$instruments$instrument_name))] <- NA
+  df$match[which(!df$match%in%c(DB$internals$merge_form_name,DB$metadata$forms$instrument_name))] <- NA
   if(!allow_all){
     df <- df[which(!is.na(df$match)),]
   }
@@ -154,15 +154,15 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
     the_file <- readxl::read_xlsx(file.path(path,df$file_name[i]),col_types = "text") %>% all_character_cols() # would
     drop_cols <- NULL
     if(drop_nonredcap_vars){
-      x <- colnames(the_file)[which(!colnames(the_file)%in%c(DB$REDCap$raw_structure_cols,DB$REDCap$metadata$field_name))]
+      x <- colnames(the_file)[which(!colnames(the_file)%in%c(DB$REDCap$raw_structure_cols,DB$metadata$fields$field_name))]
       drop_cols<-drop_cols %>%
         append(x) %>%
         unique()
     }
     if(drop_non_instrument_vars){
       form <- df$match[i]
-      if(form == DB$internals$merge_form_name)form <- DB$REDCap$instruments$instrument_name[which(!DB$REDCap$instruments$repeating)]
-      x<-colnames(the_file)[which(!colnames(the_file)%in%c(DB$REDCap$raw_structure_cols,DB$REDCap$metadata$field_name[which(DB$REDCap$metadata$form_name%in%form)]))]
+      if(form == DB$internals$merge_form_name)form <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating)]
+      x<-colnames(the_file)[which(!colnames(the_file)%in%c(DB$REDCap$raw_structure_cols,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name%in%form)]))]
       drop_cols<-drop_cols %>%
         append(x) %>%
         unique()

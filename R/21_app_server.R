@@ -108,7 +108,7 @@ app_server <- function(input, output, session) {
             if(input$data_choice == "data_transform"){
               table_name <- table_name_raw
             }else{
-              table_name <- values$DB$REDCap$instruments$instrument_label[which(values$DB$REDCap$instruments$instrument_name==table_name_raw)]
+              table_name <- values$DB$metadata$forms$instrument_label[which(values$DB$metadata$forms$instrument_name==table_name_raw)]
             }
             table_id <- paste0("table___home__", table_name_raw)
             tabPanel(
@@ -125,13 +125,13 @@ app_server <- function(input, output, session) {
     values$projects %>% make_DT_table()
   })
   output$instruments_table <- DT::renderDT({
-    values$DB$REDCap$instruments %>% make_DT_table()
+    values$DB$metadata$forms %>% make_DT_table()
   })
   output$metadata_table <- DT::renderDT({
-    values$DB$REDCap$metadata %>% make_DT_table()
+    values$DB$metadata$fields %>% make_DT_table()
   })
   output$codebook_table <- DT::renderDT({
-    values$DB$REDCap$codebook %>% make_DT_table()
+    values$DB$metadata$choices %>% make_DT_table()
   })
   output$user_table <- DT::renderDT({
     values$DB$REDCap$users %>% make_DT_table()

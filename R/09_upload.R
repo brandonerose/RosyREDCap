@@ -86,7 +86,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
   DB <- validate_RosyREDCap(DB)
   new_list <- DB$data_upload
   old_list <- list()
-  if(any(!names(new_list)%in%DB$REDCap$instruments$instrument_name))warning("All upload names should ideally match the DB instrument names, `DB$REDCap$instruments$instrument_name`",immediate. = T)
+  if(any(!names(new_list)%in%DB$metadata$forms$instrument_name))warning("All upload names should ideally match the DB instrument names, `DB$metadata$forms$instrument_name`",immediate. = T)
   already_used <- NULL
   for(TABLE in names(new_list)){#TABLE <- names(new_list) %>% sample(1)
     new <-  new_list[[TABLE]]
@@ -104,7 +104,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
     old_list[[TABLE]] <- old# find_df_diff2(new= new , old =  old, ref_cols = ref_cols, message_pass = paste0(TABLE,": "))
     already_used <- already_used %>%append(instruments) %>% unique()
   }
-  new_list <- find_df_list_diff(new_list = new_list, old_list = old_list, ref_col_list = DB$REDCap$instrument_key_cols[names(new_list)],view_old = view_old, n_row_view = n_row_view)
+  new_list <- find_df_list_diff(new_list = new_list, old_list = old_list, ref_col_list = DB$metadata$form_key_cols[names(new_list)],view_old = view_old, n_row_view = n_row_view)
   if(is_something(new_list)){
     DB$data_upload <- new_list
     return(DB)
@@ -119,8 +119,8 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
   records <- DF[[DB$REDCap$id_col]] %>% unique()
   BAD<-records[which(!records%in%DB$summary$all_records[[DB$REDCap$id_col]])]
   if(length(BAD)>0)stop("Records not included in DB: ",records %>% paste0(collapse = ", "))
-  # is_repeating <- form%in% DB$REDCap$instruments$instrument_name[which(DB$REDCap$instruments$repeating)]
-  cols_mandatory_structure <- DB$REDCap$instrument_key_cols[[form]]
+  # is_repeating <- form%in% DB$metadata$forms$instrument_name[which(DB$metadata$forms$repeating)]
+  cols_mandatory_structure <- DB$metadata$form_key_cols[[form]]
   cols_mandatory <- c(cols_mandatory_structure,field_name)
   old <- DB$data[[form]][,cols_mandatory]
   old <- old[which(old[[DB$REDCap$id_col]]%in% records),]
@@ -197,8 +197,8 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
   # if(length(view_forms)>1)stop("only one form combinations are allowed.")
   if(missing(records)) records <- DB$data[[view_forms]][[DB$REDCap$id_col]] %>% unique()
   all_forms <- c(change_form,view_forms) %>% unique()
-  ref_cols_change <- DB$REDCap$instrument_key_cols[[change_form]]
-  # ref_cols_view <- DB$REDCap$instrument_key_cols[[view_forms]]
+  ref_cols_change <- DB$metadata$form_key_cols[[change_form]]
+  # ref_cols_view <- DB$metadata$form_key_cols[[view_forms]]
   if(missing(optional_DF)){
     optional_DF <- DB[["data"]][[change_form]][,unique(c(ref_cols_change,field_names_to_view))]
   }
@@ -206,15 +206,15 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
   # if(any(!ref_cols%in%colnames(DF)))stop("DF must contain all ref_cols")
   if(length(records)>0){
     # message("fix these in REDCap --> ",paste0(out,collapse = " | "))
-    rows_of_choices <- which(DB$REDCap$codebook$field_name==field_name_to_change)
+    rows_of_choices <- which(DB$metadata$choices$field_name==field_name_to_change)
     has_choices <- length(rows_of_choices)>0
     choices1 <- c("Do Nothing", "Edit","Launch Redcap Link Only")
     if(has_choices){
-      choices2 <- c("Do Nothing",DB$REDCap$codebook$name[rows_of_choices],"Launch Redcap Link Only")
+      choices2 <- c("Do Nothing",DB$metadata$choices$name[rows_of_choices],"Launch Redcap Link Only")
     }else{
       choices2 <- c("Do Nothing","Manual Entry","Launch Redcap Link Only")
     }
-    is_repeating_form <- change_form %in% DB$REDCap$instruments$instrument_name[which(DB$REDCap$instruments$repeating)]
+    is_repeating_form <- change_form %in% DB$metadata$forms$instrument_name[which(DB$metadata$forms$repeating)]
     OUT <- NULL
     for (record in records){ # record <- records%>% sample(1)
       record_was_updated <- F

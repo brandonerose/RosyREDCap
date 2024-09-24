@@ -13,7 +13,7 @@ annotate_metadata <- function(DB,metadata,data_choice="data",skim= T){
   metadata$field_type_R[which(metadata$text_validation_type_or_show_slider_number == "date_mdy")] <- "date"
   metadata$field_type_R[which(metadata$text_validation_type_or_show_slider_number == "date_ymd")] <- "date"
   metadata$field_type_R[which(metadata$text_validation_type_or_show_slider_number == "datetime_dmy")] <- "datetime"
-  metadata$in_original_redcap <- metadata$field_name %in% DB$REDCap$metadata$field_name
+  metadata$in_original_redcap <- metadata$field_name %in% DB$metadata$fields$field_name
   if(!"units" %in% colnames(metadata))metadata$units <- NA
   if(!"field_label_short" %in% colnames(metadata)) metadata$field_label_short <- metadata$field_label
   # if(!"field_label_short" %in% colnames(metadata))metadata$ <- metadata$field_label
@@ -81,7 +81,7 @@ annotate_codebook <- function(codebook,metadata,data_choice="data",DB){
       if(DB$internals$merge_form_name %in% names(DB[[data_choice]])){
         if(field_name%in%colnames(DB[[data_choice]]$merged))return(DB$internals$merge_form_name)
       }
-      for(other in names(DB[[data_choice]])[which(!names(DB[[data_choice]])%in%DB$REDCap$instruments$instrument_name)]){
+      for(other in names(DB[[data_choice]])[which(!names(DB[[data_choice]])%in%DB$metadata$forms$instrument_name)]){
         if(field_name%in%colnames(DB[[data_choice]][[other]]))return(other)
       }
     }

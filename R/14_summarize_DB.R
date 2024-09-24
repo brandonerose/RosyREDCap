@@ -5,8 +5,8 @@ sum_records <- function(DB,data_choice = "data"){
   records <- NULL
   if(DB[[data_choice]] %>% is_something()){
     cols <- DB$REDCap$id_col
-    if(is.data.frame(DB$REDCap$arms)){
-      if(nrow(DB$REDCap$arms)>1){
+    if(is.data.frame(DB$metadata$arms)){
+      if(nrow(DB$metadata$arms)>1){
         cols <- DB$REDCap$id_col %>% append("arm_num")
       }
     }
@@ -117,24 +117,24 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$int
   DB$summary$user_log_sum <- summarize_users_from_log(DB, records = records)
   #arms----------------
   DB$summary$arms_n <- NA
-  if(is.data.frame(DB$REDCap$arms)){
-    DB$summary$arms_n <- DB$REDCap$arms %>% nrow()
-    id_pairs <- DB$REDCap$instruments$instrument_name %>%  lapply(function(IN){DB$data[[IN]][,c(DB$REDCap$id_col,"arm_num")]}) %>% dplyr::bind_rows() %>% unique()
-    DB$REDCap$arms$arm_records_n <- DB$REDCap$arms$arm_num %>% sapply(function(arm){
+  if(is.data.frame(DB$metadata$arms)){
+    DB$summary$arms_n <- DB$metadata$arms %>% nrow()
+    id_pairs <- DB$metadata$forms$instrument_name %>%  lapply(function(IN){DB$data[[IN]][,c(DB$REDCap$id_col,"arm_num")]}) %>% dplyr::bind_rows() %>% unique()
+    DB$metadata$arms$arm_records_n <- DB$metadata$arms$arm_num %>% sapply(function(arm){
       which(id_pairs$arm_num==arm)%>% length()
     })
   }
   #events belong to arms many to 1 ----------------
-  # DB$summary$events_n <- DB$REDCap$events %>% nrow()
+  # DB$summary$events_n <- DB$metadata$events %>% nrow()
   DB$summary$events_n <- NA
-  if(is.data.frame(DB$REDCap$events)){
-    DB$summary$events_n <- DB$REDCap$events %>% nrow()
-    DB$summary$event_names_n <- DB$REDCap$events$event_name %>% unique() %>% length()
-    # 1:nrow(DB$REDCap$event_mapping) %>% lapply(function(i){
-    #   (DB$data[[DB$REDCap$event_mapping$form[i]]][['redcap_event_name']]==DB$REDCap$event_mapping$unique_event_name[i]) %>% which() %>% length()
+  if(is.data.frame(DB$metadata$events)){
+    DB$summary$events_n <- DB$metadata$events %>% nrow()
+    DB$summary$event_names_n <- DB$metadata$events$event_name %>% unique() %>% length()
+    # 1:nrow(DB$metadata$event_mapping) %>% lapply(function(i){
+    #   (DB$data[[DB$metadata$event_mapping$form[i]]][['redcap_event_name']]==DB$metadata$event_mapping$unique_event_name[i]) %>% which() %>% length()
     # })
     # for(event in ){
-    #   DB$summary[[paste0(event,"_records_n")]] <- DB$data[[]][which(DB$REDCap$arms$arm_num==arm)]
+    #   DB$summary[[paste0(event,"_records_n")]] <- DB$data[[]][which(DB$metadata$arms$arm_num==arm)]
     # }
   }
   #instruments/forms belong to events many to 1 (if no events/arms) ----------------
@@ -145,8 +145,8 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$int
   }
   #fields belong to instruments/forms 1 to 1 ----------------
   DB$summary$metadata_n <- 0
-  DB$summary$metadata_n <- DB$REDCap$metadata[which(!DB$REDCap$metadata$field_type%in%c("checkbox_choice","descriptive")),] %>% nrow()
-  # DB$REDCap$metadata$field_type[which(!DB$REDCap$metadata$field_type%in%c("checkbox_choice","descriptive"))] %>% table()
+  DB$summary$metadata_n <- DB$metadata$fields[which(!DB$metadata$fields$field_type%in%c("checkbox_choice","descriptive")),] %>% nrow()
+  # DB$metadata$fields$field_type[which(!DB$metadata$fields$field_type%in%c("checkbox_choice","descriptive"))] %>% table()
   DB$summary$metadata <- DB %>%  annotate_metadata(metadata = DB$summary$metadata, data_choice = data_choice)
   #metadata/codebook =============
   codebook <- metadata_to_codebook(DB$summary$metadata) %>% annotate_codebook(metadata =DB$summary$metadata,data_choice = data_choice,DB = DB)
@@ -207,7 +207,7 @@ save_summary <- function(DB,with_links=T,dir_other = file.path(DB$dir_path,"outp
 #' @export
 stack_vars <- function(DB,vars,new_name,drop_na=T){
   DB <- validate_RosyREDCap(DB)
-  metadata <- DB$REDCap$metadata
+  metadata <- DB$metadata$fields
   if(DB$internals$was_remapped){
     metadata <- DB$remap$metadata_remap
   }
@@ -228,14 +228,14 @@ get_default_metadata <- function(DB){
   if(DB$internals$was_remapped){
     return(DB$remap$metadata)
   }else{
-    return(DB$REDCap$metadata)
+    return(DB$metadata$fields)
   }
 }
 get_default_instruments <- function(DB){
   if(DB$internals$was_remapped){
     return(DB$remap$instruments)
   }else{
-    return(DB$REDCap$metadata)
+    return(DB$metadata$fields)
   }
 }
 #' @export
