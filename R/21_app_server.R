@@ -147,7 +147,7 @@ app_server <- function(input, output, session) {
       table_id <- paste0("table___home__", TABLE)
       output[[table_id]] <- DT::renderDT({
         table_data %>%
-          clean_RC_df_for_DT(values$DB, data_choice = input$data_choice) %>%
+          clean_RC_df_for_DT(values$DB, data_choice = "data") %>%
           make_DT_table()
       })
     }) %>% return()
@@ -300,7 +300,7 @@ app_server <- function(input, output, session) {
     if(!is.null(values$DB)){
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
       updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
-      data_choices <- c("data","data_transform","data_upload") %>%
+      data_choices <- c("data","data_upload") %>%
         sapply(function(data_choice){
           if(is_something(values$DB$data))return(data_choice)
         }) %>% unlist() %>% as.character()
