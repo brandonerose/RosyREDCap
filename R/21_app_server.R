@@ -48,7 +48,7 @@ app_server <- function(input, output, session) {
   #   short_name = OUT$short_name,
   #   dir_path = OUT$dir_path,
   #   token_name = OUT$token_name,
-  #   REDCap_base = "https://redcap.miami.edu/",
+  #   redcap_base = "https://redcap.miami.edu/",
   #   force = T,
   #   merge_form_name = "merged"
   # )
@@ -368,7 +368,7 @@ app_server <- function(input, output, session) {
       IF <- shinydashboard::menuItem(
         text=paste0("REDCap Record (",values$selected_record,")"),
         icon = shiny::icon("file-lines"),
-        href=paste0(values$DB$links$REDCap_base,"redcap_v",values$DB$redcap$version,"/DataEntry/record_home.php?pid=",values$DB$redcap$project_id,"&arm=1&id=",values$selected_record)
+        href=paste0(values$DB$links$redcap_base,"redcap_v",values$DB$redcap$version,"/DataEntry/record_home.php?pid=",values$DB$redcap$project_id,"&arm=1&id=",values$selected_record)
       )
     }else{
       IF <- NULL

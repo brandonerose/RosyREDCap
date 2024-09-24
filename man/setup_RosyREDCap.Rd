@@ -8,7 +8,7 @@ setup_RosyREDCap(
   short_name,
   dir_path,
   token_name,
-  REDCap_base,
+  redcap_base,
   force = F,
   merge_form_name = "merged",
   validate = T,
@@ -22,7 +22,7 @@ setup_RosyREDCap(
 
 \item{token_name}{character string of what the token is called when using Sys.setenv and Sys.getenv}
 
-\item{REDCap_base}{character of the base REDCap link, ex. https://redcap.miami.edu}
+\item{redcap_base}{character of the base REDCap link, ex. https://redcap.miami.edu}
 
 \item{force}{logical for force blank load vs last save}
 

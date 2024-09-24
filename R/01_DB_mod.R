@@ -24,7 +24,7 @@ blank_RosyREDCap <- function(){
     has_repeating_events = NULL
   )
   AFTER <- which(names(DB)=="dir_path")
-  NEW <- which(names(DB)=="REDCap")
+  NEW <- which(names(DB)=="redcap")
   ORDER <- 1:length(DB)
   ORDER <- ORDER[-NEW]
   AFTER <- c(1:AFTER)
@@ -33,14 +33,14 @@ blank_RosyREDCap <- function(){
   DB <- DB[c(AFTER,NEW,ORDER)]
   DB$links$github <- "https://github.com/brandonerose/RosyREDCap"
   new_link_names <- c(
-    "REDCap_base",
+    "redcap_base",
     "redcap_uri",
-    "REDCap_home",
-    "REDCap_record_home",
-    "REDCap_record_subpage",
-    "REDCap_records_dashboard",
-    "REDCap_API",
-    "REDCap_API_playground"
+    "redcap_home",
+    "redcap_record_home",
+    "redcap_record_subpage",
+    "redcap_records_dashboard",
+    "redcap_api",
+    "redcap_api_playground"
   )
   for(new_link_name in new_link_names){
     DB$links[[new_link_name]] <- NA
@@ -65,14 +65,14 @@ load_RosyREDCap <- function(short_name,validate = T){
 #' @param short_name character name as a shortcut
 #' @param dir_path character file path of the directory
 #' @param token_name character string of what the token is called when using Sys.setenv and Sys.getenv
-#' @param REDCap_base character of the base REDCap link, ex. https://redcap.miami.edu
+#' @param redcap_base character of the base REDCap link, ex. https://redcap.miami.edu
 #' @param force logical for force blank load vs last save
 #' @param validate logical for validation
 #' @param merge_form_name name of merged non-repeating to be used in package
 #' @return DB
 #' @export
 setup_RosyREDCap <- function (
-    short_name, dir_path, token_name, REDCap_base, force = F,
+    short_name, dir_path, token_name, redcap_base, force = F,
     merge_form_name = "merged", validate = T, use_csv = F
 )
 {
@@ -96,10 +96,10 @@ setup_RosyREDCap <- function (
       is.null(DB$redcap$project_title) || is.null(DB$redcap$project_id)) {
     if (missing(short_name)) stop("`short_name` is required for DBs that haven't been validated")
     if (missing(token_name)) stop("`token_name` is required for DBs that haven't been validated")
-    if (missing(REDCap_base))  stop("`REDCap_base` is required for DBs that haven't been validated")
+    if (missing(redcap_base))  stop("`redcap_base` is required for DBs that haven't been validated")
     DB$redcap$token_name <- token_name %>% validate_env_name()
-    DB$links$REDCap_base <- validate_web_link(REDCap_base)
-    DB$links$redcap_uri <- DB$links$REDCap_base %>% paste0("api/")
+    DB$links$redcap_base <- validate_web_link(redcap_base)
+    DB$links$redcap_uri <- DB$links$redcap_base %>% paste0("api/")
     if (validate)DB <- validate_RosyREDCap(DB)
   } else {
     if (!missing(token_name)) {
@@ -111,14 +111,14 @@ setup_RosyREDCap <- function (
         DB$redcap$token_name <- token_name %>% validate_env_name()
       }
     }
-    if (!missing(REDCap_base)) {
+    if (!missing(redcap_base)) {
       if (validate) {
-        if (DB$links$REDCap_base != REDCap_base)
-          stop("The `REDCap_base`, ", REDCap_base, ", you provided does not match the one the was loaded ",
-               DB$links$REDCap_base)
+        if (DB$links$redcap_base != redcap_base)
+          stop("The `redcap_base`, ", redcap_base, ", you provided does not match the one the was loaded ",
+               DB$links$redcap_base)
       } else {
-        DB$links$REDCap_base <- validate_web_link(REDCap_base)
-        DB$links$redcap_uri <- DB$links$REDCap_base %>% paste0("api/")
+        DB$links$redcap_base <- validate_web_link(redcap_base)
+        DB$links$redcap_uri <- DB$links$redcap_base %>% paste0("api/")
       }
     }
   }

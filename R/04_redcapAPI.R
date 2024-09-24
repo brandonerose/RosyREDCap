@@ -55,7 +55,7 @@ test_REDCap <- function(DB){
   DB
 }
 get_REDCap_info <- function(DB,content,error_action=NULL,additional_args=NULL){
-  allowed_content <- REDCap_API$contents$content
+  allowed_content <- redcap_api$contents$content
   if(!content%in%allowed_content)stop("Must use the following content... ",paste0(allowed_content,collapse = ", "))
   redcap_api_base(url=DB$links$redcap_uri,token = validate_redcap_token(DB),content = content,additional_args=additional_args) %>% process_response(error_action)
 }
@@ -249,12 +249,12 @@ get_REDCap_metadata <- function(DB){
   DB$metadata$choices <- metadata_to_codebook(DB$metadata$fields)
   DB$redcap$log <- check_redcap_log(DB,last = 2,units = "mins")
   DB$redcap$users$current_user <- DB$redcap$users$username==DB$redcap$log$username[which(DB$redcap$log$details=="Export REDCap version (API)") %>% dplyr::first()]
-  DB$links$redcap_home <- paste0(DB$links$REDCap_base,"redcap_v",DB$redcap$version,"/index.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_record_home <- paste0(DB$links$REDCap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_record_subpage <- paste0(DB$links$REDCap_base,"redcap_v",DB$redcap$version,"/DataEntry/index.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_records_dashboard <- paste0(DB$links$REDCap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_status_dashboard.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_API <- paste0(DB$links$REDCap_base,"redcap_v",DB$redcap$version,"/API/project_api.php?pid=",DB$redcap$project_id)
-  DB$links$redcap_API_playground <- paste0(DB$links$REDCap_base,"redcap_v",DB$redcap$version,"/API/playground.php?pid=",DB$redcap$project_id)
+  DB$links$redcap_home <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/index.php?pid=",DB$redcap$project_id)
+  DB$links$redcap_record_home <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id)
+  DB$links$redcap_record_subpage <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/index.php?pid=",DB$redcap$project_id)
+  DB$links$redcap_records_dashboard <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_status_dashboard.php?pid=",DB$redcap$project_id)
+  DB$links$redcap_API <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/project_api.php?pid=",DB$redcap$project_id)
+  DB$links$redcap_API_playground <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/playground.php?pid=",DB$redcap$project_id)
   DB
 }
 #' @title get_REDCap_structure
@@ -286,18 +286,18 @@ get_REDCap_structure <- function(DB, parse_codes = F){
 save_redcap_structure_to_dir <- function(DB,parse_codes = F){
   redcap <- get_REDCap_structure(DB,parse_codes = parse_codes)
   names(redcap)[which(names(redcap)=="events")] <- "events_in"
-  NAMES <- names(REDCap_API$return_form_names)
+  NAMES <- names(redcap_api$return_form_names)
   NAMES <- NAMES[which(!NAMES == "events")]
   if(! parse_codes){
     NAMES <- NAMES[which(!NAMES %in% c("codebook","missing_codes"))]
   }
   for (NAME in NAMES){
-    x <- REDCap_API$return_form_names[[NAME]]
+    x <- redcap_api$return_form_names[[NAME]]
     DF <- matrix(data = NA, nrow = 0,ncol = length(x)) %>% as.data.frame()
     colnames(DF) <- x
     DF <- all_character_cols(DF)
     if(is_something(redcap[[NAME]])){
-      DF <- redcap[[NAME]][,which(colnames(redcap[[NAME]])%in%REDCap_API$return_form_names[[NAME]])]
+      DF <- redcap[[NAME]][,which(colnames(redcap[[NAME]])%in%redcap_api$return_form_names[[NAME]])]
     }
     redcap[[NAME]] <- DF
   }
@@ -324,7 +324,7 @@ load_redcap_structure_from_dir <- function(DB, path = file.path(DB$dir_path,"RED
 #' @return redcap structure list
 #' @export
 upload_redcap_structure<- function(DB,redcap){
-  OK  <- names(REDCap_API$return_form_names)[which(!names(REDCap_API$return_form_names)%in%c("codebook","missing_codes"))]
+  OK  <- names(redcap_api$return_form_names)[which(!names(redcap_api$return_form_names)%in%c("codebook","missing_codes"))]
   BAD <- names(redcap)[which(!names(redcap)  %in% OK)]
   if(length(BAD)>0) stop("Bad Names in redcap object not matching: ",BAD %>% paste0(collapse = ", "))
   for (NAME in names(redcap)){

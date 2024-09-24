@@ -20,7 +20,7 @@ link_API_playground <- function(DB){
 #' @return opens browser link
 #' @export
 link_REDCap_home <- function(DB){
-  DB$links$REDCap_base %>% utils::browseURL()
+  DB$links$redcap_base %>% utils::browseURL()
 }
 #' @title link_REDCap_project
 #' @inheritParams save_DB
@@ -38,7 +38,7 @@ link_REDCap_project <- function(DB){
 #' @return opens browser link
 #' @export
 link_REDCap_record <- function(DB,record,page,instance,text_only = F){
-  link <- paste0(DB$links$REDCap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id)
+  link <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id)
   if(!missing(record)){
     if(!record%in%DB$summary$all_records[[DB$redcap$id_col]])stop(record," is not one of the records inside DB")
     if("arm_num"%in%colnames(DB$summary$all_records)){
