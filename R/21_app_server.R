@@ -167,8 +167,10 @@ app_server <- function(input, output, session) {
   # observe ---------------
   observe({
     instrument_name <- "instrument_label"
-    if(values$DB$internals$was_remapped){
-      instrument_name <- "instrument_name"
+    if(is_something(values$DB$internals$was_remapped)){
+      if(values$DB$internals$was_remapped){
+        instrument_name <- "instrument_name"
+      }
     }
     z <- values$DB$metadata$forms
     all_forms <- names(values$DB$data)
