@@ -73,8 +73,14 @@ load_RosyREDCap <- function(short_name,validate = T){
 #' @return DB
 #' @export
 setup_RosyREDCap <- function (
-    short_name, dir_path, token_name, redcap_base, force = F,
-    merge_form_name = "merged", validate = T, use_csv = F
+    short_name,
+    dir_path,
+    token_name,
+    redcap_base,
+    force = F,
+    merge_form_name = "merged",
+    validate = T,
+    use_csv = F
 )
 {
   if(missing(short_name))stop("`short_name` is required for DBs that haven't been validated")

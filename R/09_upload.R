@@ -7,7 +7,6 @@
 #' Because this is the only function that can mess up your data, use it at your own risk.
 #' Remember all changes are saved in the redcap log if there's an issue. Missing rows and columns are fine!
 #' @param to_be_uploaded data.frame in raw coded form. If you worked with clean data pass your data to `labelled_to_raw_form(FORM,DB)` first.
-#' @inheritParams save_DB
 #' @param batch_size numeric of how big the REDCap batch upload is. Default 500.
 #' @return messages
 #' @export
@@ -29,7 +28,6 @@ upload_form_to_redcap <- function(to_be_uploaded,DB,batch_size=500){
 #' This will only overwrite and new data. It will not directly delete and data.
 #' Because this is the only function that can mess up your data, use it at your own risk.
 #' Remember all changes are saved in the redcap log if there's an issue.
-#' @inheritParams save_DB
 #' @param batch_size numeric of how big the REDCap batch upload is. Default 500.
 #' @param ask logical for if you want to preview uploads first
 #' @return messages
@@ -44,16 +42,16 @@ upload_DB_to_redcap <- function(DB,batch_size = 500, ask = T, view_old = T, n_ro
   #   }
   # }
   warning("Right now this function only updates repeating instruments. It WILL NOT clear repeating instrument instances past number 1. SO, you will have to delete manually on REDCap.",immediate. = T)
-  if(!is_something(DB$data_upload))stop("`DB$data_upload` is empty")
+  if(!is_something(DB$data_update))stop("`DB$data_update` is empty")
   any_updates <- F
-  entire_list <- DB$data_upload
+  entire_list <- DB$data_update
   for(TABLE in names(entire_list)){
     to_be_uploaded <- entire_list[[TABLE]]
     if(is_something(to_be_uploaded)){
-      DB$data_upload <- list()
-      DB$data_upload[[TABLE]] <- to_be_uploaded
+      DB$data_update <- list()
+      DB$data_update[[TABLE]] <- to_be_uploaded
       DB <- find_upload_diff(DB, view_old = view_old, n_row_view = n_row_view)
-      to_be_uploaded <- DB$data_upload[[TABLE]]
+      to_be_uploaded <- DB$data_update[[TABLE]]
       if(is_something(to_be_uploaded)){
         if(DB$internals$data_extract_labelled){
           to_be_uploaded <- to_be_uploaded %>% labelled_to_raw_form(DB)
@@ -64,9 +62,9 @@ upload_DB_to_redcap <- function(DB,batch_size = 500, ask = T, view_old = T, n_ro
         }
         if(do_it==1){
           upload_form_to_redcap(to_be_uploaded=to_be_uploaded,DB=DB,batch_size=batch_size)
-          DB$data_upload[[TABLE]] <- NULL
+          DB$data_update[[TABLE]] <- NULL
           any_updates <- T
-          DB$internals$last_data_upload <- Sys.time()
+          DB$internals$last_data_update <- Sys.time()
         }
       }
     }
@@ -77,14 +75,13 @@ upload_DB_to_redcap <- function(DB,batch_size = 500, ask = T, view_old = T, n_ro
   return(DB)
 }
 #' @title Find the DB_import and DB differences
-#' @inheritParams save_DB
 #' @param compare what data_choice to be compare
 #' @param to what data_choice to be compared to
 #' @return upload_list
 #' @export
 find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
   DB <- validate_RosyREDCap(DB)
-  new_list <- DB$data_upload
+  new_list <- DB$data_update
   old_list <- list()
   if(any(!names(new_list)%in%DB$metadata$forms$instrument_name))warning("All upload names should ideally match the DB instrument names, `DB$metadata$forms$instrument_name`",immediate. = T)
   already_used <- NULL
@@ -106,11 +103,11 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
   }
   new_list <- find_df_list_diff(new_list = new_list, old_list = old_list, ref_col_list = DB$metadata$form_key_cols[names(new_list)],view_old = view_old, n_row_view = n_row_view)
   if(is_something(new_list)){
-    DB$data_upload <- new_list
+    DB$data_update <- new_list
     return(DB)
   }
   message("No upload updates!")
-  DB$data_upload <- list()
+  DB$data_update <- list()
   return(DB)
 }
 #' @export

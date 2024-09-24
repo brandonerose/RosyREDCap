@@ -2,35 +2,30 @@
 #' @import RosyDB
 #' @import RosyApp
 #' @title Link to get a new API token for your project (if you access)
-#' @inheritParams save_DB
 #' @return messages for confirmation
 #' @export
 link_API_token <-  function(DB){
   DB$links$redcap_API %>% utils::browseURL()
 }
 #' @title Link view the API playground for your project (if you access)
-#' @inheritParams save_DB
 #' @return messages for confirmation
 #' @export
 link_API_playground <- function(DB){
   DB$links$redcap_API_playground %>% utils::browseURL()
 }
 #' @title Link view the REDCap project home page
-#' @inheritParams save_DB
 #' @return opens browser link
 #' @export
 link_REDCap_home <- function(DB){
   DB$links$redcap_base %>% utils::browseURL()
 }
 #' @title link_REDCap_project
-#' @inheritParams save_DB
 #' @return opens browser link
 #' @export
 link_REDCap_project <- function(DB){
   DB$links$redcap_home %>% utils::browseURL()
 }
 #' @title link_REDCap_record
-#' @inheritParams save_DB
 #' @param record REDCap record id or study id etc, any column names that match `DB$redcap$id_col`
 #' @param page REDCap page for the record. Must be one of `DB$metadata$forms$instrument_name`
 #' @param instance REDCap instance if it's a repeating instrument

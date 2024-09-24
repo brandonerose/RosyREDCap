@@ -108,7 +108,7 @@ update_RosyREDCap <- function(
   }
   if(force){
     DB$data <- list()
-    DB$data_upload <- list()
+    DB$data_update <- list()
     DB$summary <- list()
     DB <- DB %>% get_REDCap_metadata()
     DB$data <- DB %>% get_REDCap_data(labelled = labelled)

@@ -166,15 +166,11 @@ app_server <- function(input, output, session) {
   # })
   # observe ---------------
   observe({
-    redcap_remap <- "redcap"
     instrument_name <- "instrument_label"
-    if(is_something(values$DB$data_transform)){
-      if(input$data_choice == "data_transform"){
-        redcap_remap <- "remap"
-        instrument_name <- "instrument_name"
-      }
+    if(values$DB$internals$was_remapped){
+      instrument_name <- "instrument_name"
     }
-    z <- values$DB[[redcap_remap]][["instruments"]]
+    z <- values$DB$metadata$forms
     all_forms <- names(values$DB$data)
     values$selected_form <- z$instrument_name[which(z[[instrument_name]] == input$tabs)]
     values$active_table_id <- paste0("table___home__", values$selected_form)
@@ -220,15 +216,11 @@ app_server <- function(input, output, session) {
     }
   })
   observe({
-    redcap_remap <- "redcap"
     instrument_name <- "instrument_label"
-    if(is_something(values$DB$data_transform)){
-      if(input$data_choice == "data_transform"){
-        redcap_remap <- "remap"
-        instrument_name <- "instrument_name"
-      }
+    if(values$DB$internals$was_remapped){
+      instrument_name <- "instrument_name"
     }
-    z <- values$DB[[redcap_remap]][["instruments"]]
+    z <- values$DB$metadata$forms
     all_forms <- names(values$DB$data)
     values$selected_form <- z$instrument_name[which(z[[instrument_name]] == input$tabs)]
     values$active_table_id <- paste0("table___home__", values$selected_form)
@@ -295,7 +287,7 @@ app_server <- function(input, output, session) {
     if(!is.null(values$DB)){
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
       updateSelectizeInput(session,"choose_indiv_record_" ,selected = NULL,choices = values$subset_records,server = T)
-      # data_choices <- c("data","data_upload") %>%
+      # data_choices <- c("data","data_update") %>%
       #   sapply(function(data_choice){
       #     if(is_something(values$DB$data))return(data_choice)
       #   }) %>% unlist() %>% as.character()

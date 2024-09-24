@@ -67,7 +67,6 @@ raw_process_redcap <- function(raw,DB, labelled){
   return(data_list)
 }
 #' @title Select REDCap records from DB
-#' @inheritParams save_DB
 #' @param records character vector of the IDs you want to filter the DB by
 #' @param data_choice character vector of the IDs you want to filter the DB by
 #' @param field_names character vector of field_names to be included
@@ -110,7 +109,6 @@ filter_DB <- function(DB, records,data_choice="data",field_names,form_names,add_
   return(selected)
 }
 #' @title field_names_to_instruments
-#' @inheritParams save_DB
 #' @param only_unique logical for unique
 #' @return instrument names
 #' @export
@@ -147,7 +145,6 @@ instruments_to_field_names <- function(instruments,DB){
   return(unique(field_names))
 }
 #' @title Clean to Raw REDCap forms
-#' @inheritParams save_DB
 #' @param FORM data.frame of labelled REDCap to be converted to raw REDCap (for uploads)
 #' @return DB object that has been filtered to only include the specified records
 #' @export
@@ -198,7 +195,6 @@ labelled_to_raw_form <- function(FORM,DB){
   FORM
 }
 #' @title Raw to Labelled REDCap forms
-#' @inheritParams save_DB
 #' @param FORM data.frame of raw REDCap to be converted to labelled REDCap
 #' @return DB object
 #' @export
@@ -378,7 +374,6 @@ merge_instruments <- function(instruments,DB,data_choice = "data", exact = T){
   return(old)
 }
 #' @title Merge non-repeating, not ready for multi-event projects
-#' @inheritParams save_DB
 #' @return DB object that has merged all non repeating forms
 #' @export
 merge_non_repeating_DB <- function(DB){ # need to adjust for events, currently destructive
@@ -431,7 +426,6 @@ merge_multiple <- function(named_data_list,instrument_names){
   merged
 }
 #' @title Unmerge non-repeating, not ready for multi-event projects
-#' @inheritParams save_DB
 #' @return DB object that has merged all non repeating forms
 #' @export
 unmerge_non_repeating_DB <- function(DB){
@@ -451,7 +445,6 @@ unmerge_non_repeating_DB <- function(DB){
 #' @description
 #'  add REDCap ID to any dataframe using a ref_id
 #' @param DF dataframe
-#' @inheritParams save_DB
 #' @param ref_id column name that matches a REDCap variable name that could be an ALT id such as MRN
 #' @return original dataframe with REDCap id_col added as the first column
 #' @export
@@ -471,7 +464,6 @@ add_ID_to_DF <- function(DF,DB,ref_id){
   DF
 }
 #' @title Deidentify the REDCap DB according to REDCap or your choices
-#' @inheritParams save_DB
 #' @param identifiers optional character vector of column names that should be excluded from DB. Otherwise `DB$metadata$fields$identifier =="y` will be used.
 #' @return DB object that has deidentified forms
 #' @export
@@ -494,7 +486,7 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
         DB$metadata$fields$field_name[which(DB$metadata$fields$field_type=="notes")]
       ) %>% unique()
   }
-  for (data_choice in c("data","data_transform","data_upload")){
+  for (data_choice in c("data","data_transform","data_update")){
     if(is_something(DB$data)){
       drop_list <- Map(function(NAME, COLS) {identifiers[which(identifiers %in% COLS)]},names(DB$data), lapply(DB$data, colnames))
       drop_list <- drop_list[sapply(drop_list, length) > 0]

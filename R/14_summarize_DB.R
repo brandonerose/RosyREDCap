@@ -84,7 +84,6 @@ summarize_records_from_log <- function(DB,records){
   return(summary_records)
 }
 #' @title Summarize DB
-#' @inheritParams save_DB
 #' @param records character vector of records to be summarized
 #' @param drop_blanks optional logical for dropping blanks
 #' @export
@@ -92,13 +91,12 @@ summarize_DB <- function(DB,records = NULL,drop_blanks = T, data_choice = DB$int
   #project --------
   # DB$summary$users <- DB$redcap$users
   df_names <- c("metadata","instruments","event_mapping","events","arms")
-  redcap_remap <- "redcap"
-  if(data_choice == "data_transform"){
-    df_names <- c(df_names,paste0(df_names,"_remap"))
-    redcap_remap <- "remap"
-  }
+  # if(data_choice == "data_transform"){
+  #   df_names <- c(df_names,paste0(df_names,"_remap"))
+  #   redcap_remap <- "remap"
+  # }
   for(i in 1:length(df_names)){
-    x <- DB[[redcap_remap]][[df_names[i]]]
+    x <- DB$metadata[[df_names[i]]]
     if(!is.null(x)) DB$summary[[df_names[i]]] <- x
   }
   #records belong to arms 1 to 1 ----------

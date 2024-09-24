@@ -21,7 +21,7 @@ add_redcap_links_to_DF <- function(DF,DB){# add instance links
   return(DF)
 }
 count_DB_upload_cells <- function(DB){
-  DB$data_upload %>% lapply(function(x){nrow(x)*ncol(x)}) %>% unlist() %>% sum()
+  DB$data_update %>% lapply(function(x){nrow(x)*ncol(x)}) %>% unlist() %>% sum()
 }
 split_choices <- function(x){
   oops <- x
@@ -56,7 +56,7 @@ husk_of_instrument <- function (DB,data_choice="data",FORM,field_names) {
 all_DB_to_char_cols <- function(DB){
   DB$data <-DB$data %>% all_character_cols_list()
   DB$data_transform <-DB$data_transform %>% all_character_cols_list()
-  DB$data_upload <-DB$data_upload %>% all_character_cols_list()
+  DB$data_update <-DB$data_update %>% all_character_cols_list()
   return(DB)
 }
 add_redcap_links_table<-function(DF,DB){
@@ -65,26 +65,18 @@ add_redcap_links_table<-function(DF,DB){
   }
   DF
 }
-clean_RC_col_names <- function(DF, DB, data_choice){
-  if(missing(data_choice))data_choice <- DB$internals$reference_state
-  if(data_choice == "data"){
-    redcap_remap <- "redcap"
-  }
-  if(data_choice == "data_transform"){
-    redcap_remap <- "remap"
-  }
+clean_RC_col_names <- function(DF, DB){
   colnames(DF)<-colnames(DF) %>% sapply(function(COL){
-    x<-DB[[redcap_remap]][["metadata"]]$field_label[which(DB[[redcap_remap]][["metadata"]]$field_name==COL)]
+    x<-DB$metadata$fields$field_label[which(DB$metadata$fields$field_name==COL)]
     if(length(x)>1){
-      x<-DB[[redcap_remap]][["metadata"]]$field_label[which(DB[[redcap_remap]][["metadata"]]$field_name==COL&DB[[redcap_remap]][["metadata"]]$form_name==INS)]
+      x<-DB$metadata$fields$field_label[which(DB$metadata$fields$field_name==COL&DB$metadata$fields$form_name==INS)]
     }
     ifelse(length(x)>0,x,COL)
   }) %>% unlist() %>% return()
   DF
 }
-clean_RC_df_for_DT <- function(DF, DB, data_choice){
-  if(missing(data_choice))data_choice <- DB$internals$reference_state
+clean_RC_df_for_DT <- function(DF, DB){
   DF %>%
     add_redcap_links_table(DB) %>%
-    clean_RC_col_names(DB,data_choice = data_choice) %>% return()
+    clean_RC_col_names(DB) %>% return()
 }

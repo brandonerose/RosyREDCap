@@ -161,18 +161,14 @@ annotate_codebook <- function(codebook,metadata,data_choice="data",DB){
 #' @title clean DB columns for plotting using the metadata
 #' @description
 #'  Turns choices into factors and integers to integer for table processing such as with table1 and plots
-#' @inheritParams save_DB
 #' @param drop_blanks logical for dropping n=0 choices
 #' @param drop_unknowns logical for dropping missing codes
 #' @return DB object cleaned for table or plots
 #' @export
 clean_DB <- function(DB,drop_blanks=F,drop_unknowns=F){
-  for (data_choice in c("data","data_transform")) {
-    redcap_remap <- ifelse(data_choice=="data","redcap","remap")
-    metadata <-  DB %>% annotate_metadata(metadata = DB[[redcap_remap]]$metadata, skim = F)
-    for(FORM in names(DB$data)){
-      DB$data[[FORM]] <- DB$data[[FORM]] %>% clean_DF(metadata=metadata,drop_blanks= drop_blanks,drop_unknowns=drop_unknowns)
-    }
+  metadata <-  DB %>% annotate_metadata(metadata = DB$metadata$fields, skim = F)
+  for(FORM in names(DB$data)){
+    DB$data[[FORM]] <- DB$data[[FORM]] %>% clean_DF(metadata=metadata,drop_blanks= drop_blanks,drop_unknowns=drop_unknowns)
   }
   return(DB)
 }

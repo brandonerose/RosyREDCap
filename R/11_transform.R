@@ -115,7 +115,6 @@ remap_process <- function(DB){
   return(DB)
 }
 #' @title Generate Default Re-Map
-#' @inheritParams save_DB
 #' @param save_file logical for whether or not to save sample default remap file to input folder of directory
 #' @param merge_non_repeating logical for whether or not to merge non-repeating instruments
 #' @export
@@ -157,7 +156,6 @@ generate_default_remap <- function(DB,save_file=!is.null(DB$dir_path),merge_non_
   return(DB)
 }
 #' @title Generate custom remap files from input
-#' @inheritParams save_DB
 #' @return DB object that has DB$remap populated from input folder
 #' @export
 generate_custom_remap_from_dir <- function(DB){
@@ -175,7 +173,6 @@ generate_custom_remap_from_dir <- function(DB){
   return(DB)
 }
 #' @title Transform DB
-#' @inheritParams save_DB
 #' @param records character vector of records to be included in transform
 #' @param force logical for merging forcing transoformation even if up to date
 #' @param terminal_transformation logical for whether this transformation is terminal/destructive

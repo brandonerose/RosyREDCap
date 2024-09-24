@@ -60,7 +60,6 @@ get_REDCap_info <- function(DB,content,error_action=NULL,additional_args=NULL){
   redcap_api_base(url=DB$links$redcap_uri,token = validate_redcap_token(DB),content = content,additional_args=additional_args) %>% process_response(error_action)
 }
 #' @title Drop redcap files to directory
-#' @inheritParams save_DB
 #' @param original_file_names logical for using original uploaded filenames vs system defined
 #' @param overwrite logical rewriting over the downloaded files in your directory. A better alternative is deleting files you want to update.
 #' @return message
@@ -258,7 +257,6 @@ get_REDCap_metadata <- function(DB){
   DB
 }
 #' @title get_REDCap_structure
-#' @inheritParams save_DB
 #' @param parse_codes logical for parsing choice codes and missing codes into tabs
 #' @return redcap structure list
 #' @export
@@ -304,7 +302,6 @@ save_redcap_structure_to_dir <- function(DB,parse_codes = F){
   redcap %>% list_to_excel(dir = file.path(DB$dir_path,"REDCap"),file_name = "REDCap_structure",drop_empty = F)
 }
 #' @title load_redcap_structure_from_dir
-#' @inheritParams save_DB
 #' @param parse_codes logical for parsing choice codes and missing codes into tabs
 #' @return redcap structure list
 #' @export
@@ -319,7 +316,6 @@ load_redcap_structure_from_dir <- function(DB, path = file.path(DB$dir_path,"RED
   return(redcap)
 }
 #' @title upload_redcap_structure
-#' @inheritParams save_DB
 #' @param redcap list to be uploaded
 #' @return redcap structure list
 #' @export
@@ -351,7 +347,6 @@ get_REDCap_users <- function(DB){
   return(merge(merge(userRole,userRoleMapping,by="unique_role_name"),user, by="username"))
 }
 #' @title Check the REDCap log
-#' @inheritParams save_DB
 #' @param last numeric paired with units. Default is 24.
 #' @param user optional user filter.
 #' @param units character paired with last. Options are "mins","hours","days". Default is "hours".
@@ -380,7 +375,6 @@ check_redcap_log <- function(DB,last=24,user = "",units="hours",begin_time="",cl
   log
 }
 #' @title Check the REDCap log
-#' @inheritParams save_DB
 #' @param labelled T/F for clean vs raw labels
 #' @param records optional records
 #' @return data.frame of raw_redcap

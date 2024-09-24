@@ -2,7 +2,6 @@
 #' @import RosyDB
 #' @import RosyApp
 #' @title Shows DB in the env
-#' @inheritParams save_DB
 #' @param records character vector of records you want dropped to your directory
 #' @param allow_mod logical for whether non-instrument names are allowed
 #' @param deidentify logical for deidentification
@@ -126,7 +125,6 @@ drop_redcap_dir <- function(
   return(DB)
 }
 #' @title Reads DB from the dropped REDCap files in dir/REDCap/upload
-#' @inheritParams save_DB
 #' @param allow_all logical TF for allowing DB$data names that are not also instrument names
 #' @param drop_nonredcap_vars logical TF for dropping non-redcap variable names
 #' @param drop_non_instrument_vars logical TF for dropping non-instrument variable names
@@ -148,8 +146,8 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
   if(!allow_all){
     df <- df[which(!is.na(df$match)),]
   }
-  if(DB$data_upload %>% is_something())stop("Already files in DB$data_upload, clear that first")
-  DB[["data_upload"]] <- list()
+  if(DB$data_update %>% is_something())stop("Already files in DB$data_update, clear that first")
+  DB[["data_update"]] <- list()
   for(i in 1:nrow(df)){#not done yet
     the_file <- readxl::read_xlsx(file.path(path,df$file_name[i]),col_types = "text") %>% all_character_cols() # would
     drop_cols <- NULL
@@ -173,7 +171,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
       if(stop_or_warn=="warn") warning(message1,immediate. = T)
     }
     the_file <- the_file[,which(!colnames(the_file)%in%drop_cols)]
-    DB[["data_upload"]][[df$match[i]]] <- the_file
+    DB[["data_update"]][[df$match[i]]] <- the_file
   }
   DB
 }
@@ -181,7 +179,7 @@ default_sheet_drops <- function(DB){
   DB$summary  %>% process_df_list() %>% names()
 }
 read_xl_to_DB_for_upload <- function(DB,file_path,drop_sheets = default_sheet_drops(DB)){
-  #add data_upload check
+  #add data_update check
   if(!endsWith(file_path,".xlsx"))stop("File type must be '.xlsx' --> ",file_path)
   if(!file.exists(file_path))stop("Path does not exist --> ",file_path)
   data_list <- file_path %>% openxlsx::loadWorkbook() %>% wb_to_list()
@@ -195,6 +193,6 @@ read_xl_to_DB_for_upload <- function(DB,file_path,drop_sheets = default_sheet_dr
     message("nothing to return")
     return(DB)
   }
-  DB$data_upload <- data_list
+  DB$data_update <- data_list
   return(DB)
 }

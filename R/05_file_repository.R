@@ -2,7 +2,6 @@
 #' @import RosyDB
 #' @import RosyApp
 #' @title Uploads a file to REDCap
-#' @inheritParams save_DB
 #' @param file file location on your PC
 #' @return messages for confirmation
 #' @export
@@ -25,7 +24,6 @@ upload_file_to_redcap_fileRepository <- function(DB,file){
   message("File Uploaded! --> ",file)
 }
 #' @title Checks REDCap for current files
-#' @inheritParams save_DB
 #' @return data.frame of files
 #' @export
 check_redcap_files <- function(DB){
@@ -47,7 +45,6 @@ check_redcap_files <- function(DB){
   httr::content(response)
 }
 #' @title Uploads a folder name to REDCap
-#' @inheritParams save_DB
 #' @param name folder name
 #' @return messages for confirmation
 #' @export
@@ -71,7 +68,6 @@ add_redcap_folder <- function(DB,name){
   httr::content(response)
 }
 #' @title Uploads a folder name to REDCap
-#' @inheritParams save_DB
 #' @param doc_id from the file list `check_redcap_files(DB)`
 #' @return messages for confirmation
 #' @export

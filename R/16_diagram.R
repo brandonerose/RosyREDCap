@@ -2,7 +2,6 @@
 #' @import RosyDB
 #' @import RosyApp
 #' @title create_node_edge_REDCap
-#' @inheritParams save_DB
 #' @return messages for confirmation
 #' @export
 create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", duplicate_forms = T, clean_name = T){
@@ -272,7 +271,6 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   return(OUT)
 }
 #' @title REDCap_diagram
-#' @inheritParams save_DB
 #' @return messages for confirmation
 #' @export
 REDCap_diagram <- function(DB, render = T, include_vars = F,type = "visNetwork",duplicate_forms = T, clean_name = T){
