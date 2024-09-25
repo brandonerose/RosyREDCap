@@ -329,10 +329,16 @@ app_server <- function(input, output, session) {
     message("updated selected_record choices")
   })
   observeEvent(values$last_clicked_record,{
-    message("values$last_clicked_record changed!")
     if(!is.null(values$last_clicked_record)){
       if(is_something(values$last_clicked_record)){
-        updateSelectizeInput(session,"selected_record", selected = values$last_clicked_record,choices = values$subset_records,server = T)
+        if(is.null(input$selected_record))do_it <- T
+        if(!is.null(input$selected_record)){
+          do_it <- values$last_clicked_record != input$selected_record
+        }
+        if(do_it){
+          message("values$last_clicked_record changed!")
+          updateSelectizeInput(session,"selected_record", selected = values$last_clicked_record,choices = values$subset_records,server = T)
+        }
       }
     }
   })
@@ -343,18 +349,37 @@ app_server <- function(input, output, session) {
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
     }
   })
-  # observe({
-  #   message("input$selected_record changed!")
-  #   if(!is.null(input$selected_record)){
-  #     if(is_something(values$selected_form)) {
-  #       if(is_something(input$selected_record)) {
-  #         if(!is.null(input[[paste0("table___home__", values$selected_form, "_state")]])){
-  #
-  #         }
-  #       }
-  #     }
-  #   }
-  # })
+  observe({
+    if(!is.null(input$selected_record)){
+      if(is_something(input$selected_record)) {
+        if(is_something(isolate(values$selected_form))) {
+          if(is_something(isolate(values$active_table_id))) {
+            isolate({
+              data_form <- values$DB$data[[values$selected_form]]
+              state <- paste0(values$active_table_id, "_state")
+              compare <- paste0(values$active_table_id, "_rows_selected")
+              watch <- paste0(values$active_table_id, "_row_last_clicked")
+            })
+            if(!is.null(input[[state]])){
+              if(!is.null(input[[watch]]))message("watch: ",data_form[[values$DB$redcap$id_col]][[input[[watch]]]])
+              isolate({
+                if(!is.null(input[[watch]])){
+                  message("this would trigger! ",watch, " ", compare)
+                  # if(!is.null(input[[compare]]))message("compare: ", data_form[[values$DB$redcap$id_col]][[input[[compare]]]])
+                  clicked_record <- data_form[[values$DB$redcap$id_col]][[input[[watch]]]]
+                  if(values$last_clicked_record != clicked_record){
+                    message("clicked_record: ",clicked_record)
+                    values$last_clicked_record <- clicked_record
+                  }
+                  # message("values$last_clicked_record: ",values$last_clicked_record)
+                }
+              })
+            }
+          }
+        }
+      }
+    }
+  })
   observe({
     message("input$selected_record changed!")
     if(!is.null(input$selected_record)){
@@ -371,15 +396,26 @@ app_server <- function(input, output, session) {
       values$active_table_id <- paste0("table___home__", values$selected_form)
       if(is_something(values$selected_form)) {
         if(is_something(input$selected_record)) {
-          starting_record <- input$selected_record
+          # starting_record <- input$selected_record
           # ROW_S <- input[[paste0(values$active_table_id, "_rows_selected")]]
           # ROW_LC <- input[[paste0(values$active_table_id, "_row_last_clicked")]]
           # selected_record <- ifelse(is_something(ROW_S),values$DB$data[[values$selected_form]][[values$DB$redcap$id_col]][[ROW_S]],NULL)
           # last_clicked_record <- ifelse(is_something(ROW_S),values$DB$data[[values$selected_form]][[values$DB$redcap$id_col]][[ROW_LC]],NULL)
-          message("starting_record: ",starting_record)
+          # message("starting_record: ",starting_record)
           # message("selected_record: ",selected_record)
           # message("last_clicked_record: ",last_clicked_record)
           if(!is.null(input[[paste0(values$active_table_id, "_state")]])){
+            isolate({
+              if(is.null(values$last_clicked_record))do_it <- T
+              if(!is.null(values$last_clicked_record)){
+                do_it <- values$last_clicked_record != input$selected_record
+              }
+              if(do_it){
+                values$last_clicked_record <- input$selected_record
+                message("last clicked ",values$last_clicked_record , " ", values$last_clicked_tab)
+                values$last_clicked_tab <- input$tabs
+              }
+            })
             for(form in all_forms) {
               if(!is.null(input[[paste0("table___home__", form, "_state")]])){
                 ROWS <- which(values$DB$data[[form]][[values$DB$redcap$id_col]] == input$selected_record)
@@ -387,6 +423,7 @@ app_server <- function(input, output, session) {
                 proxy <- DT::dataTableProxy(paste0("table___home__", form), deferUntilFlush = T)
                 message("triggered proxy Tabs: ", form, " Row ", ROWS)
                 DT::selectRows(proxy = proxy, selected = ROWS)
+                #add selectpage
               }
             }
           }
