@@ -26,7 +26,7 @@ app_ui<- function(request) {
         ),
         conditionalPanel(
           "input.sb1 === 'home'",
-          uiOutput("choose_project"),
+          uiOutput("choose_project_"),
         ),
         menuItem(
           text="Project",
@@ -96,7 +96,7 @@ app_ui<- function(request) {
           tabName = "record",
           icon =shiny::icon("user-large")
         ),
-        uiOutput("choose_indiv_record"),
+        uiOutput("selected_record_"),
         conditionalPanel(
           "input.sb1 === 'record'",
           actionButton("ab_random_record","Random Record!")
