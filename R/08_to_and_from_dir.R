@@ -22,7 +22,7 @@ drop_redcap_dir <- function(
     smart = T,
     include_metadata = T,
     include_other = T,
-    with_links = F,
+    with_links = T,
     forms,
     merge_non_repeating = T,
     separate = F,
@@ -49,26 +49,71 @@ drop_redcap_dir <- function(
   if(due_for_save_metadata){
     if(include_metadata){
       DB$internals$last_metadata_dir_save <- DB$internals$last_metadata_update
-      for (x in c("project_info","metadata","instruments","codebook")){ #,"log" #taking too long
-        if(DB$internals$use_csv){
-          list_to_csv(
-            list = DB$redcap[x],
-            dir = redcap_other_dir,
-            file_name = x
-          )
-        }else{
-          list_to_excel(
-            list = DB$redcap[x],
-            dir = redcap_metadata_dir,
-            file_name = x,
-            str_trunc_length = str_trunc_length,
-            overwrite = TRUE
-          )
+      names_generic <- c(
+        "forms",
+        "fields",
+        "choices",
+        "arms",
+        "events",
+        "event_mapping",
+        "missing_codes"
+      )
+      names_redcap <- c(
+        "instruments",
+        "metadata",
+        "codebook",
+        "arms",
+        "events",
+        "event_mapping",
+        "missing_codes"
+      )
+      for (i in 1:length(names_generic)){ #,"log" #taking too long
+        z<- DB$metadata[names_generic[i]]
+        if(is_something(z[[1]])){
+          tn <- names_redcap[i]
+          if(DB$internals$use_csv){
+            list_to_csv(
+              list = z,
+              dir = redcap_metadata_dir,
+              file_name = tn
+            )
+          }else{
+            list_to_excel(
+              list = z,
+              dir = redcap_metadata_dir,
+              file_name = tn,
+              str_trunc_length = str_trunc_length,
+              overwrite = TRUE
+            )
+          }
         }
       }
     }
     if(include_other){
-      for (x in c("log","users")){ #,"log" #taking too long
+      for (i in 1:length(names_generic)){ #,"log" #taking too long
+        z<- DB$metadata[names_generic[i]]
+        if(is_something(z[[1]])){
+          tn <- names_redcap[i]
+          if(DB$internals$use_csv){
+            list_to_csv(
+              list = z,
+              dir = redcap_metadata_dir,
+              file_name = tn
+            )
+          }else{
+            list_to_excel(
+              list = z,
+              dir = redcap_metadata_dir,
+              file_name = tn,
+              str_trunc_length = str_trunc_length,
+              overwrite = TRUE
+            )
+          }
+        }
+      }
+      for (x in c("project_info",
+                  #"log",
+                  "users")){ #,"log" #taking too long
         if(DB$internals$use_csv){
           list_to_csv(
             list = DB$redcap[x],

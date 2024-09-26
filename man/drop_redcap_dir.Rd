@@ -10,7 +10,7 @@ drop_redcap_dir(
   smart = T,
   include_metadata = T,
   include_other = T,
-  with_links = F,
+  with_links = T,
   forms,
   merge_non_repeating = T,
   separate = F,
