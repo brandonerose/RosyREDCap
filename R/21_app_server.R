@@ -374,7 +374,6 @@ app_server <- function(input, output, session) {
           # starting_record %>% message(" starting_record")
           # selected %>% message(" selected")
           # last_clicked %>% message(" last_clicked")
-
           # isolate({
           do_it <- F
           if(is.null(state)){
