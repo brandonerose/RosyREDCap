@@ -376,7 +376,6 @@ merge_instruments <- function(instruments,DB, exact = T){
 #' @return DB object that has merged all non repeating forms
 #' @export
 merge_non_repeating_DB <- function(DB){ # need to adjust for events, currently destructive
-  if(DB$internals$data_extract_merged)stop("Already merged!")
   all_instrument_names <- DB$metadata$forms$instrument_name
   keep_instruments <- NULL
   instrument_names <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating)]
@@ -398,7 +397,7 @@ merge_multiple <- function(named_data_list,instrument_names){
   if (length(instrument_names)==1) warning('No need to merge you only have one form that is non-repeating')
   merged <- named_data_list[[instrument_names[[1]]]]
   merged$redcap_event_name <- NULL
-  # merged$arm_num <- NULL
+  merged$arm_num <- NULL
   merged$event_name <- NULL
   merged$redcap_repeat_instrument <- NULL
   merged$redcap_repeat_instance <- NULL

@@ -127,8 +127,7 @@ update_RosyREDCap <- function(
     DB$summary$all_records$last_api_call <-
       DB$internals$last_full_update <-
       DB$internals$last_metadata_update <-
-      DB$internals$last_data_update <-
-      Sys.time()
+      DB$internals$last_data_update <- Sys.time()
     message("Full update!")
     was_updated <- T
   }else{
@@ -137,7 +136,7 @@ update_RosyREDCap <- function(
       if(length(deleted_records)>0){
         DB$summary$all_records <- DB$summary$all_records[which(!DB$summary$all_records[[DB$redcap$id_col]]%in%deleted_records),]
         IDs <- IDs[which(!IDs%in%deleted_records)]
-        DB$data <- remove_records_from_list(data_list = DB$data,records = deleted_records,silent = T)
+        DB$data <- remove_records_from_list(data_list = DB$data,id_col = DB$redcap$id_col,records = deleted_records,silent = T)
       }
       data_list <- DB %>% get_REDCap_data(labelled = labelled,records = IDs)
       missing_from_summary <- IDs[which(!IDs%in%DB$summary$all_records[[DB$redcap$id_col]])]
@@ -153,7 +152,7 @@ update_RosyREDCap <- function(
       DB$summary$all_records$last_api_call[which(DB$summary$all_records[[DB$redcap$id_col]]%in%IDs)] <-
         DB$internals$last_data_update <-
         Sys.time()
-      DB$data <- remove_records_from_list(data_list = DB$data,records = IDs,silent = T)
+      DB$data <- remove_records_from_list(data_list = DB$data,id_col = DB$redcap$id_col,records = IDs,silent = T)
       for(TABLE in names(data_list)){
         DB$data[[TABLE]] <- DB$data[[TABLE]] %>% dplyr::bind_rows(data_list[[TABLE]])
       }
@@ -172,20 +171,4 @@ update_RosyREDCap <- function(
     }
   }
   DB
-}
-remove_records_from_list <- function(data_list,records,silent=F){
-  if(!is_df_list(data_list))stop("data_list is not a list of data.frames as expected.")
-  if(length(records)==0)stop("no records supplied to remove_records_from_list, but it's used in update which depends on records.")
-  forms <- names(data_list)[
-    which(
-      names(data_list) %>%
-        sapply(function(form){
-          nrow(data_list[[form]])>0
-        })
-    )]
-  for(TABLE in forms){
-    data_list[[TABLE]] <- data_list[[TABLE]][which(!data_list[[TABLE]][[DB$redcap$id_col]]%in%records),]
-  }
-  if(!silent)message("Removed: ",paste0(records,collapse = ", "))
-  return(data_list)
 }
