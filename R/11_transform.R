@@ -227,9 +227,7 @@ transform_DB <- function(DB, merge_non_rep_to_reps = F, records=NULL,force = F, 
       }
     }
     DB$internals$last_data_transformation <- DB$internals$last_data_update
-    DB$internals$reference_state <- "data_transform"
-    DB$internals$reference_metadata <- "remap"
-    DB$internals$was_remapped <- T
+    DB$internals$is_transformed <- T
     save_DB(DB)
   }
   return(DB)

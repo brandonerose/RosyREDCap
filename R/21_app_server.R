@@ -250,8 +250,8 @@ app_server <- function(input, output, session) {
   observe({
     if(!is.null(input$selected_record)){
       instrument_name <- "instrument_label"
-      if(is_something(values$DB$internals$was_remapped)){
-        if(values$DB$internals$was_remapped){
+      if(is_something(values$DB$internals$is_transformed)){
+        if(values$DB$internals$is_transformed){
           instrument_name <- "instrument_name"
         }
       }
