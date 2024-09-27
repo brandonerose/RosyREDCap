@@ -90,7 +90,11 @@ setup_RosyREDCap <- function (
     DB <- blank_RosyREDCap()
   }
   if( ! missing_dir_path){
-    DB <- load_RosyREDCap(short_name,validate = validate)
+    if(force){
+      DB <- blank_RosyREDCap()
+    }else{
+      DB <- load_RosyREDCap(short_name,validate = validate)
+    }
     DB$dir_path <-RosyDB:::set_dir(dir_path)
   }
   DB$short_name <- validate_env_name(short_name)
