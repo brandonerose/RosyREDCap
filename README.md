@@ -56,46 +56,36 @@ RStudtio and update all packages in RStudio. See
 
 ## Setup
 
-This is how you get REDCap turned into an R database - only for basic
-projects at this time
+This is how you get REDCap turned into an R database…
 
 ``` r
 library("RosyREDCap")
 
-DB <- setup_DB(
+projects <- get_projects() # get list of cached projects
+
+DB <- setup_RosyREDCap(
   short_name = "PROJECT1",
   token_name = "PROJECT1_token",
   redcap_base_link<-"https://redcap.miami.edu/",
   dir_path = getwd(), # or change to your intended file path
   # force = T,
   merge_form_name = "patient",
-  use_csv = F
+  use_csv = FALSE # if you don't have Microsoft change to TRUE
 )
-
-projects <- get_projects() # get list of cached projects
-
-#load an existing project
-# DB <- load_DB(dir_path = projects$dir_path[which(projects$short_name=="PROJECT1")])
 ```
 
 You can set your REDCap token in two ways!
 
 ``` r
+#1. set each time in your session (not recommended in saved/shared scripts!)
 Sys.setenv(PROJECT1_token = "YoUrNevErShaReToken")
-```
 
-Or add the following line to your Reviron file… PROJECT1_token =
-‘YoUrNevErShaReToken’
-
-``` r
+#2. set to your private R sessions!
 usethis::edit_r_environ() #finds your file
 # Then you add --> PROJECT1_token = 'YoUrNevErShaReToken'
 # then save file and restart R
-```
 
-If it worked you will see your token when you run…
-
-``` r
+# If it worked you will see your token when you run...
 Sys.getenv("PROJECT1_token")
 #And if your DB object is setup properly...
 view_redcap_token(DB)
@@ -107,7 +97,7 @@ The following functions represent the core functions of the package.
 
 ``` r
 
-DB <- update_DB(DB) # update from redcap by checking log and using saved object 
+DB <- update_RpsyREDCap(DB) # update from redcap by checking log and using saved object 
 
 DB <- transform_DB(DB) # transform to most basic forms, can be modified
 
