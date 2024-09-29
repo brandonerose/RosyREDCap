@@ -72,7 +72,7 @@ update_RosyREDCap <- function(
         begin_time = as.character(strptime(DB$redcap$log$timestamp[1],format = "%Y-%m-%d %H:%M") - lubridate::days(1))
       ) %>% clean_redcap_log() %>% unique()
       if(nrow(ilog)<=nrow(DB$redcap$log)){
-        head_of_log <- DB$redcap$log %>% head(n = nrow(ilog))
+        head_of_log <- DB$redcap$log %>% utils::head(n = nrow(ilog))
       }else{
         head_of_log <- DB$redcap$log
       }
@@ -136,7 +136,7 @@ update_RosyREDCap <- function(
       if(length(deleted_records)>0){
         DB$summary$all_records <- DB$summary$all_records[which(!DB$summary$all_records[[DB$redcap$id_col]]%in%deleted_records),]
         IDs <- IDs[which(!IDs%in%deleted_records)]
-        DB$data <- remove_records_from_list(data_list = DB$data,id_col = DB$redcap$id_col,records = deleted_records,silent = T)
+        DB$data <- remove_records_from_list(DB = DB,id_col = DB$redcap$id_col,records = deleted_records,silent = T)
       }
       data_list <- DB %>% get_REDCap_data(labelled = labelled,records = IDs)
       missing_from_summary <- IDs[which(!IDs%in%DB$summary$all_records[[DB$redcap$id_col]])]
@@ -152,7 +152,7 @@ update_RosyREDCap <- function(
       DB$summary$all_records$last_api_call[which(DB$summary$all_records[[DB$redcap$id_col]]%in%IDs)] <-
         DB$internals$last_data_update <-
         Sys.time()
-      DB$data <- remove_records_from_list(data_list = DB$data,id_col = DB$redcap$id_col,records = IDs,silent = T)
+      DB$data <- remove_records_from_list(DB = DB,id_col = DB$redcap$id_col,records = IDs,silent = T)
       for(TABLE in names(data_list)){
         DB$data[[TABLE]] <- DB$data[[TABLE]] %>% dplyr::bind_rows(data_list[[TABLE]])
       }

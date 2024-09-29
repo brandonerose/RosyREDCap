@@ -20,7 +20,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         label = instruments$instrument_name,
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         title = instruments$instrument_name %>% sapply(function(x){
-          paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
+          paste0("<p><b>",x,"</b><br>",paste0(form_names_to_field_names(x,DB),collapse = "<br>"),"</p>")
         }),
         shape = "box", # entity
         style = "filled",
@@ -71,7 +71,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           label = event_mapping$form,
           # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
           title = event_mapping$form %>% sapply(function(x){
-            paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
+            paste0("<p><b>",x,"</b><br>",paste0(form_names_to_field_names(x,DB),collapse = "<br>"),"</p>")
           }),
           shape = "box", # entity
           style = "filled",
@@ -104,7 +104,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
           label = instruments$instrument_name,
           # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
           title = instruments$instrument_name %>% sapply(function(x){
-            paste0("<p><b>",x,"</b><br>",paste0(RosyREDCap:::instruments_to_field_names(x,DB),collapse = "<br>"),"</p>")
+            paste0("<p><b>",x,"</b><br>",paste0(form_names_to_field_names(x,DB),collapse = "<br>"),"</p>")
           }),
           shape = "box", # entity
           style = "filled",

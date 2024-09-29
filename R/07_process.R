@@ -107,15 +107,6 @@ filter_DB <- function(DB, records,field_names,form_names,add_filter_var,add_filt
   }
   return(selected)
 }
-#' @title field_names_to_instruments
-#' @param only_unique logical for unique
-#' @return instrument names
-#' @export
-field_names_to_instruments <- function(DB,field_names,only_unique = T){
-  instruments <- DB$metadata$fields$form_name[match(field_names, DB$metadata$fields$field_name)]
-  if(only_unique)instruments <- unique(instruments)
-  return(instruments)
-}
 field_names_metadata <- function(DB,field_names,col_names){
   # if(!deparse(substitute(FORM))%in%DB$metadata$forms$instrument_name)stop("To avoid potential issues the form name should match one of the instrument names" )
   BAD <- field_names[which(!field_names%in%c(DB$metadata$fields$field_name,DB$redcap$raw_structure_cols,"arm_num","event_name"))]
@@ -129,19 +120,12 @@ field_names_metadata <- function(DB,field_names,col_names){
   return(metadata)
 }
 filter_metadata_from_form <- function(FORM,DB){
-  instruments <- DB %>% field_names_to_instruments(field_names = colnames(FORM))
+  instruments <- DB %>% field_names_to_form_names(field_names = colnames(FORM))
   if(any(instruments%in%DB$metadata$forms$repeating))stop("All column names in your form must match only one form in your metadata, `DB$metadata$forms$instrument_name`, unless they are all non-repeating")
   metadata <- DB %>% field_names_metadata(field_names = colnames(FORM))
   metadata <- metadata[which(metadata$field_type!="descriptive"),]
   metadata$has_choices <- !is.na(metadata$select_choices_or_calculations)
   return(metadata)
-}
-instruments_to_field_names <- function(instruments,DB){
-  field_names <- NULL
-  for(instrument in instruments){
-    field_names <- field_names %>% append(DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==instrument)])
-  }
-  return(unique(field_names))
 }
 #' @title Clean to Raw REDCap forms
 #' @param FORM data.frame of labelled REDCap to be converted to raw REDCap (for uploads)
@@ -344,34 +328,6 @@ missing_codes2 <- function(DB){
     return(NA)
   }
 }
-merge_instruments <- function(instruments,DB, exact = T){
-  DB <- validate_RosyREDCap(DB)
-  old_list <- DB$data
-  old <- list()
-  if(!is_something(old_list)){
-    message("old_list is empty")
-    return(list())
-  }
-  n_instruments <- length(instruments)
-  if(n_instruments>0){
-    if(any(!instruments%in%DB$metadata$forms$instrument_name))stop("All instruments must be included in set of DB$metadata$forms$instrument_name")
-    old <- old_list[[instruments[[1]]]]
-    if(n_instruments>1){
-      # if(any(DB$metadata$forms$repeating[which(DB$metadata$forms$instrument_name%in%instruments)])){
-      #   stop("Your upload form (",TABLE,") contains field names from more than one repeating instrument! This is not allowed.")
-      # }
-      all_ref_cols <- DB$metadata$form_key_cols[instruments] %>% unlist() %>% unique()
-      for(i in 2:length(instruments)){
-        ref_cols <- DB$metadata$form_key_cols[instruments[[i]]]%>% unlist()
-        if(!exact){
-          ref_cols <- ref_cols %>% vec1_in_vec2(all_ref_cols)
-        }
-        old <- merge(old,old_list[[instruments[[i]]]],by=ref_cols)
-      }
-    }
-  }
-  return(old)
-}
 #' @title Merge non-repeating, not ready for multi-event projects
 #' @return DB object that has merged all non repeating forms
 #' @export
@@ -491,26 +447,8 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
   }
   return(DB)
 }
-construct_header_list <- function(df_list,md_elements = c("form_name","field_type","field_label"),metadata = get_default_fields(DB)){
-  if(anyDuplicated(metadata$field_name)>0)stop("dup names not allowed in metadata")
-  df_col_list <- df_list %>% lapply(colnames)
-  header_df_list <- df_col_list %>% lapply(function(field_names){
-    x<- field_names%>% lapply(function(field_name){
-      row <- which(metadata$field_name==field_name)
-      if(length(row)>0){
-        return(as.character(metadata[md_elements][row,]))
-      }else{
-        return(rep("",length(md_elements)))
-      }
-    }) %>% as.data.frame()
-    colnames(x)<-field_names
-    x<- x[which(apply(x, 1, function(row){any(row!="")})),]
-    x
-  })
-  return(header_df_list)
-}
 construct_key_col_list <- function(DB){
-  metadata <- get_default_fields(DB)
+  # fields <- DB$metadata$fields
   df_list <- DB$data
   df_col_list <- df_list %>% lapply(colnames)
   forms <- names(df_list)

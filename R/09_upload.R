@@ -90,10 +90,10 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
     ref_cols <- DB$redcap$raw_structure_cols
     ref_cols <- ref_cols[which(ref_cols%in%colnames(new))]
     data_cols <- colnames(new)[which(!colnames(new)%in%ref_cols)]
-    instruments <- field_names_to_instruments(DB,data_cols)
+    instruments <- field_names_to_form_names(DB,data_cols)
     if(any(instruments%in%already_used))stop("RosyREDCap will not allow you to upload items from same form multiple times in one loop without refreshing.")
-    old <- merge_instruments(instruments = instruments, DB = DB,data_choice = "data",exact = T)
-    drop <- data_cols %>% vec1_not_in_vec2(instruments_to_field_names(instruments=instruments,DB=DB))
+    # old <- merge_instruments(instruments = instruments, DB = DB,data_choice = "data",exact = T)
+    drop <- data_cols %>% vec1_not_in_vec2(form_names_to_field_names(instruments=instruments,DB=DB))
     if(length(drop)>0){
       message("Dropping field_names that aren't part of REDCap metadata: ",paste0(drop, collapse = ", "))
       old <- old[,which(!colnames(old)%in%drop)]
@@ -112,7 +112,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
 }
 #' @export
 check_field <- function(DB,DF, field_name,autofill_new=T){
-  form <- field_names_to_instruments(DB,field_name)
+  form <- field_names_to_form_names(DB,field_name)
   records <- DF[[DB$redcap$id_col]] %>% unique()
   BAD<-records[which(!records%in%DB$summary$all_records[[DB$redcap$id_col]])]
   if(length(BAD)>0)stop("Records not included in DB: ",records %>% paste0(collapse = ", "))
@@ -188,8 +188,8 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
 }
 #' @export
 edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
-  change_form <- field_names_to_instruments(DB,field_name_to_change)
-  view_forms <- field_names_to_instruments(DB,field_names_to_view)
+  change_form <- field_names_to_form_names(DB,field_name_to_change)
+  view_forms <- field_names_to_form_names(DB,field_names_to_view)
   field_names_to_view <- c(field_name_to_change,field_names_to_view) %>% unique()
   # if(length(view_forms)>1)stop("only one form combinations are allowed.")
   if(missing(records)) records <- DB$data[[view_forms]][[DB$redcap$id_col]] %>% unique()

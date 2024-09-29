@@ -69,7 +69,7 @@ clean_RC_col_names <- function(DF, DB){
   colnames(DF)<-colnames(DF) %>% sapply(function(COL){
     x<-DB$metadata$fields$field_label[which(DB$metadata$fields$field_name==COL)]
     if(length(x)>1){
-      x<-DB$metadata$fields$field_label[which(DB$metadata$fields$field_name==COL&DB$metadata$fields$form_name==INS)]
+      x<-x[[1]]
     }
     ifelse(length(x)>0,x,COL)
   }) %>% unlist() %>% return()
@@ -79,4 +79,21 @@ clean_RC_df_for_DT <- function(DF, DB){
   DF %>%
     add_redcap_links_table(DB) %>%
     clean_RC_col_names(DB) %>% return()
+}
+remove_records_from_list <- function(DB,records,silent=F){
+  data_list <- DB$data
+  if(!is_df_list(data_list))stop("data_list is not a list of data.frames as expected.")
+  if(length(records)==0)stop("no records supplied to remove_records_from_list, but it's used in update which depends on records.")
+  forms <- names(data_list)[
+    which(
+      names(data_list) %>%
+        sapply(function(form){
+          nrow(data_list[[form]])>0
+        })
+    )]
+  for(TABLE in forms){
+    data_list[[TABLE]] <- data_list[[TABLE]][which(!data_list[[TABLE]][[DB$redcap$id_col]]%in%records),]
+  }
+  if(!silent)message("Removed: ",paste0(records,collapse = ", "))
+  return(data_list)
 }

@@ -331,7 +331,7 @@ app_server <- function(input, output, session) {
     #       filter_DB(
     #         records = input$selected_record,
     #         data_choice = "data",
-    #         form_names = RosyREDCap:::field_names_to_instruments(values$DB,field_names = values$selected_variable)
+    #         form_names = field_names_to_form_names(values$DB,field_names = values$selected_variable)
     #       ) %>% process_df_list()
     #     if(!is_something(values$variables_to_change_input_list)){
     #       values$variables_to_change_input_list <- NULL
