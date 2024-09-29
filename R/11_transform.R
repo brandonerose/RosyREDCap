@@ -1,7 +1,6 @@
 #' @import RosyUtils
 #' @import RosyDB
 #' @import RosyApp
-
 #' @title Horizontal Transform
 #' @inheritParams summarize_DB
 #' @export
