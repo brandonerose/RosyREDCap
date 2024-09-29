@@ -16,7 +16,7 @@ add_new_varriable(
   identifier = "",
   units = NA,
   insert_after,
-  data_col
+  data_func = NULL
 )
 }
 \description{

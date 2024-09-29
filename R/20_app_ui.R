@@ -13,6 +13,14 @@ app_ui<- function(request) {
     golem_add_external_resources(
       includeCSS(system.file(package="table1", "table1_defaults_1.0/table1_defaults.css"))
     ),
+    tags$script(HTML("
+    $(document).on('keydown', function(e) {
+      var keyCode = e.keyCode || e.which;
+      if (keyCode == 13) {  // Enter key code is 13
+        $('.dataTable input').blur();  // Trigger input blur to save edit
+      }
+    });
+  ")),
     shinydashboardPlus::dashboardPage(
       options = list(
         sidebarExpandOnHover = F
@@ -59,19 +67,19 @@ app_ui<- function(request) {
           )
         ),
         menuItem(
+          text="Transformation",
+          tabName = "transformation",
+          icon =shiny::icon("gear")
+        ),
+        menuItem(
           text="Data",
           tabName = "data",
           icon =shiny::icon("users")
         ),
-        # conditionalPanel(
-        #   "input.sb1 === 'data'",
-        #   selectInput(
-        #     "data_choice",
-        #     label = "Data Choice",
-        #     choices = NULL,
-        #     selected = NULL
-        #   )
-        # ),
+        conditionalPanel(
+          "input.sb1 === 'data'",
+          uiOutput("transformation_switch_")
+        ),
         menuItem(
           text="Group",
           tabName = "group",
@@ -128,7 +136,7 @@ app_ui<- function(request) {
               title = h1("Project"),
               width = 12,
               #more summary stuff
-              uiOutput("REDCap_diagram_ui"),
+              uiOutput("REDCap_diagram_ui_test"),
             ),
             box(
               title = h1("Instruments"),
@@ -157,6 +165,7 @@ app_ui<- function(request) {
             )
           )
         ),
+        # data --------
         tabItem(
           "data",
           fluidRow(
@@ -164,6 +173,18 @@ app_ui<- function(request) {
               title = h1("Data Tables"),
               width = 12,
               uiOutput("dt_tables_view")
+            )
+          )
+        ),
+        # Transformation--------
+        tabItem(
+          "transformation",
+          fluidRow(
+            box(
+              title = h1("Forms Transformation"),
+              width = 12,
+              DT::DTOutput("forms_transformation"),
+              actionButton("ab_accept_form_transform","Accept Forms Transformation Edit!")
             )
           )
         ),

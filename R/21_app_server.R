@@ -21,6 +21,7 @@ app_server <- function(input, output, session) {
   values$all_records <- NULL
   values$subset_records <- NULL
   values$user_adds_project <- NULL
+  values$REDCap_diagram <- NULL
   # user input project -------
   observeEvent(input$user_adds_project_modal, {
     # display a modal dialog with a header, textinput and action buttons
@@ -53,44 +54,39 @@ app_server <- function(input, output, session) {
   # )
   # diagrams ----------
   observe({
-    if(input$metadata_graph_type == "visNetwork"){
-      output$REDCap_diagram <- visNetwork::renderVisNetwork({
-        REDCap_diagram(
-          values$DB,
-          type = input$metadata_graph_type,
-          render = F,
-          include_vars = input$metadata_graph_include_vars,
-          duplicate_forms = input$metadata_graph_duplicate_forms,
-          clean_name = input$metadata_graph_clean_name
-        )
-      })
-    }
-    if(input$metadata_graph_type == "DiagrammeR"){
-      output$REDCap_diagram <- DiagrammeR::renderGrViz({
-        DiagrammeR::grViz(
-          DiagrammeR::generate_dot(
-            REDCap_diagram(
-              values$DB,
-              type = input$metadata_graph_type,
-              render = F,
-              include_vars = input$metadata_graph_include_vars,
-              duplicate_forms = input$metadata_graph_duplicate_forms,
-              clean_name = input$metadata_graph_clean_name
-            )
+    output$REDCap_diagram_test_vis <- visNetwork::renderVisNetwork({
+      REDCap_diagram(
+        DB = values$DB,
+        type = "visNetwork",
+        render = T,
+        include_vars = input$metadata_graph_include_vars,
+        duplicate_forms = input$metadata_graph_duplicate_forms,
+        clean_name = input$metadata_graph_clean_name
+      )
+    })
+    output$REDCap_diagram_test_dia <- DiagrammeR::renderGrViz({
+      DiagrammeR::grViz(
+        DiagrammeR::generate_dot(
+          REDCap_diagram(
+            DB = values$DB,
+            type = "DiagrammeR",
+            render = F,
+            include_vars = input$metadata_graph_include_vars,
+            duplicate_forms = input$metadata_graph_duplicate_forms,
+            clean_name = input$metadata_graph_clean_name
           )
         )
-      })
-    }
-  })
-  observe({
-    output$REDCap_diagram_ui <- renderUI({
-      if(input$metadata_graph_type == "visNetwork"){
-        visNetwork::visNetworkOutput("REDCap_diagram")
-      }
-      if(input$metadata_graph_type == "DiagrammeR"){
-        DiagrammeR::grVizOutput("REDCap_diagram")
-      }
+      )
     })
+  })
+  output$REDCap_diagram_ui_test <- renderUI({
+    ext <- "REDCap_diagram_test_dia"
+    OUT <- DiagrammeR::grVizOutput(ext)
+    if(input$metadata_graph_type=="visNetwork"){
+      ext <- "REDCap_diagram_test_vis"
+      OUT <- visNetwork::visNetworkOutput(ext)
+    }
+    return(OUT)
   })
   # tables --------
   output$dt_tables_view <- renderUI({
@@ -114,6 +110,17 @@ app_server <- function(input, output, session) {
         ))
       )
     }
+  })
+  output$forms_transformation <- DT::renderDT({
+    cols <- which(colnames(values$editable_forms_transformation_table)%in%c("instrument_name","instrument_label","repeating","repeating_via_events"))
+    values$editable_forms_transformation_table %>% make_DT_table(editable = list(target = 'cell', disable = list(columns = cols-1)),selection = 'none')
+  })
+  observeEvent(input$forms_transformation_cell_edit, {
+    info <- input$forms_transformation_cell_edit
+    message(info$value, " edited!")
+    message(info$row, " row!")
+    message(info$col, " col!")
+    values$editable_forms_transformation_table[info$row, info$col+1] <- info$value # had to add +1 because not showing rownames
   })
   # simple tables ---------
   output$projects_table <- DT::renderDT({
@@ -173,6 +180,12 @@ app_server <- function(input, output, session) {
   # })
   # observe ---------------
   # UI--------
+  output$transformation_switch_ <- renderUI({
+    shinyWidgets::switchInput(
+      inputId = "transformation_switch",
+      label = "Transformation"
+    )
+  })
   output$choose_project_ <- renderUI({
     selectInput(
       inputId = "choose_project",
@@ -213,7 +226,6 @@ app_server <- function(input, output, session) {
     }
   })
   observe({
-    message("about to update selected_record choices")
     updateSelectizeInput(session,"selected_record",choices = values$subset_records,server = T)
     message("updated selected_record choices")
   })
@@ -223,11 +235,45 @@ app_server <- function(input, output, session) {
   #     updateSelectizeInput(session,"selected_record", selected = values$last_clicked_record,choices = values$subset_records,server = T)
   #   }
   # })
+  observeEvent(input$transformation_switch,ignoreNULL = T,ignoreInit = T,{
+    if(!is.null(values$DB)){
+      message("triggered transformation_switch ",input$transformation_switch)
+      if(!is.null(values$DB$transformation)){
+        if(input$transformation_switch !=values$DB$internals$is_transformed){
+          if(input$transformation_switch){
+            values$DB <-transform_DB(values$DB)
+          }
+          if(!input$transformation_switch){
+            values$DB <-untransform_DB(values$DB)
+          }
+        }
+      }else{
+        message("Nothing to do, no DB$transformation info! ",input$transformation_switch)
+        shinyWidgets::updateSwitchInput(
+          inputId = "transformation_switch",value = F, label = "Transformation"
+        )
+      }
+    }
+  })
   observeEvent(values$DB,{
     message("values$DB changed!")
     if(!is.null(values$DB)){
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
       updateSelectizeInput(session,"selected_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
+      if(!is.null(values$DB$transformation)){
+        values$editable_forms_transformation_table <- values$DB$transformation$forms %>% as.data.frame(stringsAsFactors = FALSE)
+      }else{
+        values$editable_forms_transformation_table <- default_forms_transformation(values$DB) %>% as.data.frame(stringsAsFactors = FALSE)
+      }
+      if(!is.null(values$DB$transformation)){
+        if(!is.null(values$DB$internals$is_transformed)){
+          if(input$transformation_switch !=values$DB$internals$is_transformed){
+            shinyWidgets::updateSwitchInput(
+              inputId = "transformation_switch",value = values$DB$internals$is_transformed, label = "Transformation"
+            )
+          }
+        }
+      }
     }
   })
   observe({
@@ -250,11 +296,6 @@ app_server <- function(input, output, session) {
   observe({
     if(!is.null(input$selected_record)){
       instrument_name <- "instrument_label"
-      if(is_something(values$DB$internals$is_transformed)){
-        if(values$DB$internals$is_transformed){
-          instrument_name <- "instrument_name"
-        }
-      }
       z <- values$DB$metadata$forms
       all_forms <- names(values$DB$data)
       values$DB$data %>% names() %>% lapply(function(form){
@@ -358,6 +399,15 @@ app_server <- function(input, output, session) {
   })
   observeEvent(input$ab_update_redcap,{
     values$DB <- values$DB %>% update_RosyREDCap()
+  })
+  observeEvent(input$ab_accept_form_transform,{
+    # values$DB$transformation$forms <- values$editable_forms_transformation_table # add check
+    if(identical(values$DB$transformation$forms,values$editable_forms_transformation_table)){
+      message("values$editable_forms_transformation_table didnt change!")
+    }else{
+      message("would have accepted values$editable_forms_transformation_table!")
+      print.table(values$editable_forms_transformation_table)
+    }
   })
   # redcap links -----
   output$redcap_links <- renderUI({
