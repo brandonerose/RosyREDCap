@@ -45,6 +45,7 @@ blank_RosyREDCap <- function(){
   for(new_link_name in new_link_names){
     DB$links[[new_link_name]] <- NA
   }
+  DB$internals$DB_type <- "redcap"
   return(DB)
 }
 validate_RosyREDCap <- function(DB,silent = T,warn_only = F){

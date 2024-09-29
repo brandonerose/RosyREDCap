@@ -11,19 +11,19 @@ is_redcap_token <- function(token){
   token2 <-  sub(pattern,"\\1", token, perl = TRUE) %>% trimws(whitespace = "[\\h\\v]")
   info_message <- paste0("You can set it each session with `Sys.setenv(YOUR_token_name='YoUrNevErShaReToKeN')...` or for higher safety run `edit_r_environ()` from the `usethis` package and add `YOUR_token_name = 'YoUrNevErShaReToKeN'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the code, `Sys.getenv('YOUR_token_name')` or `Sys.getenv(DB$redcap$token_name)` and see if it returns your token!...")
   if(is.null(token)){
-    message("The token is `NULL`, not a valid 32-character hexademical value.")
+    bullet_in_console("The token is `NULL`, not a valid 32-character hexademical value.",bullet_type = "x")
     return(F)
   }else if (is.na(token)) {
-    message("The token is `NA`, not a valid 32-character hexademical value.")
+    bullet_in_console("The token is `NA`, not a valid 32-character hexademical value.",bullet_type = "x")
     return(F)
   }else if (nchar(token) == 0L) {
-    message("`Sys.getenv(DB$redcap$token_name)` returned no token or is an empty string. ",info_message)
+    bullet_in_console(paste0("`Sys.getenv(DB$redcap$token_name)` returned no token or is an empty string. ",info_message),bullet_type = "x")
     return(F)
   }else if(token2 != token){
-    message("remove whitespace or extra lines from your token.")
+    bullet_in_console("remove whitespace or extra lines from your token.",bullet_type = "x")
     return(F)
   }else if (!grepl(pattern, token, perl = TRUE)) {
-    message("The token from `Sys.getenv(DB$redcap$token_name)` is not a valid 32-character hexademical value.",info_message)
+    bullet_in_console(paste0("The token from `Sys.getenv(DB$redcap$token_name)` is not a valid 32-character hexademical value.",info_message),bullet_type = "x")
     return(F)
   }
   return(T)

@@ -24,7 +24,6 @@ Imports:
     openxlsx,
     readxl,
     REDCapR,
-    rio,
     RosyApp,
     RosyDB,
     RosyUtils,
