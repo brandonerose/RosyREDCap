@@ -90,16 +90,16 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
     ref_cols <- DB$redcap$raw_structure_cols
     ref_cols <- ref_cols[which(ref_cols%in%colnames(new))]
     data_cols <- colnames(new)[which(!colnames(new)%in%ref_cols)]
-    instruments <- field_names_to_form_names(DB,data_cols)
-    if(any(instruments%in%already_used))stop("RosyREDCap will not allow you to upload items from same form multiple times in one loop without refreshing.")
-    # old <- merge_instruments(instruments = instruments, DB = DB,data_choice = "data",exact = T)
-    drop <- data_cols %>% vec1_not_in_vec2(form_names_to_field_names(instruments=instruments,DB=DB))
+    form_names <- field_names_to_form_names(DB,data_cols)
+    if(any(form_names%in%already_used))stop("RosyREDCap will not allow you to upload items from same form multiple times in one loop without refreshing.")
+    # old <- merge_instruments(instruments = form_names, DB = DB,data_choice = "data",exact = T)
+    drop <- data_cols %>% vec1_not_in_vec2(form_names_to_field_names(form_names=form_names,DB=DB))
     if(length(drop)>0){
       message("Dropping field_names that aren't part of REDCap metadata: ",paste0(drop, collapse = ", "))
       old <- old[,which(!colnames(old)%in%drop)]
     }
     old_list[[TABLE]] <- old# find_df_diff2(new= new , old =  old, ref_cols = ref_cols, message_pass = paste0(TABLE,": "))
-    already_used <- already_used %>%append(instruments) %>% unique()
+    already_used <- already_used %>%append(form_names) %>% unique()
   }
   new_list <- find_df_list_diff(new_list = new_list, old_list = old_list, ref_col_list = DB$metadata$form_key_cols[names(new_list)],view_old = view_old, n_row_view = n_row_view)
   if(is_something(new_list)){
