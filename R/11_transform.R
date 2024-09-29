@@ -2,7 +2,7 @@
 #' @import RosyDB
 #' @import RosyApp
 #' @title Horizontal Transform
-#' @inheritParams summarize_DB
+#' @inheritParams setup_RosyREDCap
 #' @export
 generate_horizontal_transform <- function(DB,records){
   DB <- validate_RosyREDCap(DB)

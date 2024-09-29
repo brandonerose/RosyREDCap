@@ -6,6 +6,9 @@
 \usage{
 generate_horizontal_transform(DB, records)
 }
+\arguments{
+\item{DB}{a list object slightly modified version of RosyDB and contains all metadata, data, transformations, and more}
+}
 \description{
 Horizontal Transform
 }

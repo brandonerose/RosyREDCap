@@ -29,6 +29,8 @@ setup_RosyREDCap(
 \item{merge_form_name}{name of merged non-repeating to be used in package}
 
 \item{validate}{logical for validation}
+
+\item{DB}{a list object slightly modified version of RosyDB and contains all metadata, data, transformations, and more}
 }
 \value{
 DB

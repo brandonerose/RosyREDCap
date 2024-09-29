@@ -56,7 +56,7 @@ load_RosyREDCap <- function(short_name,validate = T){
   projects <- get_projects()
   if(nrow(projects)==0)return(blank_RosyREDCap())
   if(!short_name%in%projects$short_name)return(blank_RosyREDCap())
-  dir_path <- projects$dir_path[which(short_name%in%projects$short_name)]
+  dir_path <- projects$dir_path[which(projects$short_name==short_name)]
   DB_path <- file.path(dir_path,"R_objects",paste0(short_name,".rdata"))
   if(!file.exists(DB_path))return(blank_RosyREDCap())
   readRDS(file=DB_path) %>%
@@ -64,6 +64,7 @@ load_RosyREDCap <- function(short_name,validate = T){
     return()
 }
 #' @title Setup for DB including token
+#' @param DB a list object slightly modified version of RosyDB and contains all metadata, data, transformations, and more
 #' @param short_name character name as a shortcut
 #' @param dir_path character file path of the directory
 #' @param token_name character string of what the token is called when using Sys.setenv and Sys.getenv
