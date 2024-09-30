@@ -7,9 +7,9 @@ choice_vector_in_redcap_form <- function(vec){
   if(!is_something(vec))return(NA)
   return(paste0(paste0(1:length(vec),", ",vec),collapse = " | "))
 }
-#' @title add_new_varriable
+#' @title add_edit_fields
 #' @export
-add_new_varriable <- function(
+add_edit_fields <- function(
     DB,
     field_name,
     form_name,
@@ -60,11 +60,10 @@ add_new_varriable <- function(
   top <- DB$metadata$fields[1:i,]
   bottom <- DB$metadata$fields[(i+1):nrow(DB$metadata$fields),]
   # DB$metadata$fields <- dplyr::bind_rows(top,metadata_new_var) %>% dplyr::bind_rows(bottom)
-
   if(is.null(data_func))warning("if no `data_func` is provided, the column is only added to the metadata",immediate. = T)
-  DB$transformation$new_vars[[field_name]]<-list()
-  DB$transformation$new_vars[[field_name]]$field_row <- metadata_new_var
-  DB$transformation$new_vars[[field_name]]$field_func <- data_func
+  DB$transformation$fields[[field_name]]<-list()
+  DB$transformation$fields[[field_name]]$field_row <- metadata_new_var
+  DB$transformation$fields[[field_name]]$field_func <- data_func
   message("added '",field_name,"' column")
   return(DB)
 }
