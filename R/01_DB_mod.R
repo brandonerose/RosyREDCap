@@ -142,3 +142,6 @@ setup_RosyREDCap <- function (
   DB$data <- DB$data %>% all_character_cols_list()
   return(DB)
 }
+redcap_field_types_not_in_data <- c(
+  "descriptive", "checkbox"
+)
