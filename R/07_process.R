@@ -112,20 +112,20 @@ field_names_metadata <- function(DB,field_names,col_names){
   BAD <- field_names[which(!field_names%in%c(DB$metadata$fields$field_name,DB$redcap$raw_structure_cols,"arm_num","event_name"))]
   if(length(BAD)>0)stop("All column names in your form must match items in your metadata, `DB$metadata$fields$field_name`... ", paste0(BAD, collapse = ", "))
   # metadata <- DB$metadata$fields[which(DB$metadata$fields$form_name%in%instruments),]
-  metadata <- DB$metadata$fields[which(DB$metadata$fields$field_name%in%field_names),]
+  fields <- DB$metadata$fields[which(DB$metadata$fields$field_name%in%field_names),]
   # metadata <- metadata[which(metadata$field_name%in%field_names),]
   if( ! missing(col_names)){
-    if(is_something(col_names))metadata <- metadata[[col_names]]
+    if(is_something(col_names))fields <- fields[[col_names]]
   }
-  return(metadata)
+  return(fields)
 }
-filter_metadata_from_form <- function(FORM,DB){
-  instruments <- DB %>% field_names_to_form_names(field_names = colnames(FORM))
-  if(any(instruments%in%DB$metadata$forms$repeating))stop("All column names in your form must match only one form in your metadata, `DB$metadata$forms$instrument_name`, unless they are all non-repeating")
-  metadata <- DB %>% field_names_metadata(field_names = colnames(FORM))
-  metadata <- metadata[which(metadata$field_type!="descriptive"),]
-  metadata$has_choices <- !is.na(metadata$select_choices_or_calculations)
-  return(metadata)
+filter_fields_from_form <- function(FORM,DB){
+  forms <- DB %>% field_names_to_form_names(field_names = colnames(FORM))
+  if(any(forms%in%DB$metadata$forms$repeating))stop("All column names in your form must match only one form in your metadata, `DB$metadata$forms$instrument_name`, unless they are all non-repeating")
+  fields <- DB %>% field_names_metadata(field_names = colnames(FORM))
+  fields <- fields[which(metadata$field_type!="descriptive"),]
+  fields$has_choices <- !is.na(fields$select_choices_or_calculations)
+  return(fields)
 }
 #' @title Clean to Raw REDCap forms
 #' @param FORM data.frame of labelled REDCap to be converted to raw REDCap (for uploads)
@@ -133,12 +133,12 @@ filter_metadata_from_form <- function(FORM,DB){
 #' @export
 labelled_to_raw_form <- function(FORM,DB){
   use_missing_codes <- is.data.frame(DB$metadata$missing_codes)
-  metadata <- filter_metadata_from_form(FORM = FORM,DB = DB)
-  for(i in 1:nrow(metadata)){ # i <-  1:nrow(metadata) %>% sample(1)
-    COL_NAME <- metadata$field_name[i]
-    has_choices <- metadata$has_choices[i]
+  fields <- filter_fields_from_form(FORM = FORM,DB = DB)
+  for(i in 1:nrow(fields)){ # i <-  1:nrow(fields) %>% sample(1)
+    COL_NAME <- fields$field_name[i]
+    has_choices <- fields$has_choices[i]
     if(has_choices){
-      z <- metadata$select_choices_or_calculations[i] %>% split_choices()
+      z <- fields$select_choices_or_calculations[i] %>% split_choices()
       FORM[[COL_NAME]] <- FORM[[COL_NAME]] %>% sapply(function(C){
         OUT <- NA
         if(!is.na(C)){
@@ -184,7 +184,7 @@ labelled_to_raw_form <- function(FORM,DB){
 raw_to_labelled_form <- function(FORM,DB){
   if(nrow(FORM)>0){
     use_missing_codes <- is.data.frame(DB$metadata$missing_codes)
-    metadata <- filter_metadata_from_form(FORM = FORM,DB = DB)
+    metadata <- filter_fields_from_form(FORM = FORM,DB = DB)
     for(i in 1:nrow(metadata)){ # i <-  1:nrow(metadata) %>% sample(1)
       COL_NAME <- metadata$field_name[i]
       has_choices <- metadata$has_choices[i]

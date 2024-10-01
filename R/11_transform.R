@@ -103,7 +103,7 @@ extract_instrument_from_merged <- function(DB,instrument_name){
 upload_transform_to_DB <- function(DB){
   if(is_something(DB$data_update$transform)){
     for(i in 1:length(DB$data_update$transform)){
-      DB$data_update$transform[[i]] %>% labelled_to_raw_form() %>% upload_form_to_redcap(DB)
+      DB$data_update$transform[[i]] %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
     }
     bullet_in_console("Successfully uploaded to REDCap!",bullet_type = "v")
   }else{
