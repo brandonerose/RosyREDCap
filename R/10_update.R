@@ -136,9 +136,6 @@ update_RosyREDCap <- function(
     was_updated <- T
   }else{
     if(will_update){
-      if(DB$internals$is_transformed){
-        #######
-      }
       DB$data <- DB$data %>% all_character_cols_list()
       if(length(deleted_records)>0){
         DB$summary$all_records <- DB$summary$all_records[which(!DB$summary$all_records[[DB$redcap$id_col]]%in%deleted_records),]
@@ -160,6 +157,10 @@ update_RosyREDCap <- function(
         DB$internals$last_data_update <-
         Sys.time()
       DB$data <- remove_records_from_list(DB = DB,records = IDs,silent = T)
+      if(DB$internals$is_transformed){
+        # DB2 <- stripped_DB(DB)
+        #         data_list
+      }
       if(any(!names(data_list)%in%names(DB$data)))stop("Imported data names doesn't match DB$data names. If this happens run `untransform_DB()` or `update_RosyREDCap(DB, force = T)`")
       for(TABLE in names(data_list)){
         DB$data[[TABLE]] <- DB$data[[TABLE]] %>% dplyr::bind_rows(data_list[[TABLE]])

@@ -35,7 +35,6 @@ husk_of_instrument <- function (DB,FORM,field_names) {
 }
 all_DB_to_char_cols <- function(DB){
   DB$data <-DB$data %>% all_character_cols_list()
-  DB$data_transform <-DB$data_transform %>% all_character_cols_list()
   DB$data_update <-DB$data_update %>% all_character_cols_list()
   return(DB)
 }
