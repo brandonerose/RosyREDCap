@@ -178,11 +178,11 @@ update_RosyREDCap <- function(
         if(!is.null(DB2$data_update$from_transform)){
           DB2 <- upload_transform_to_DB(DB2)
         }
-        data_list <- DB2$data %>% process_df_list(silent = T)
+        data_list <- DB2$data %>% process_df_list(silent = T) %>% all_character_cols_list()
       }
       if(any(!names(data_list)%in%names(DB$data)))stop("Imported data names doesn't match DB$data names. If this happens run `untransform_DB()` or `update_RosyREDCap(DB, force = T)`")
       for(TABLE in names(data_list)){
-        DB$data[[TABLE]] <- DB$data[[TABLE]] %>% dplyr::bind_rows(data_list[[TABLE]])
+        DB$data[[TABLE]] <- DB$data[[TABLE]] %>% all_character_cols() %>% dplyr::bind_rows(data_list[[TABLE]])
       }
       message("Updated: ",paste0(IDs,collapse = ", "))
       was_updated <- T
