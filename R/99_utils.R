@@ -23,26 +23,6 @@ add_redcap_links_to_DF <- function(DF,DB){# add instance links
 count_DB_upload_cells <- function(DB){
   DB$data_update %>% lapply(function(x){nrow(x)*ncol(x)}) %>% unlist() %>% sum()
 }
-split_choices <- function(x){
-  oops <- x
-  x <- gsub("\n", " | ",x)  #added this to account for redcap metadata output if not a number
-  x <- x %>% strsplit(" [:|:] ") %>% unlist()
-  check_length <- length(x)
-  # code <- x %>% stringr::str_extract("^[^,]+(?=, )")
-  # name <- x %>% stringr::str_extract("(?<=, ).*$")
-  result <- x %>% stringr::str_match("([^,]+), (.*)")
-  # x <- data.frame(
-  #   code=x %>% strsplit(", ") %>% sapply(`[`, 1),
-  #   name=x %>% strsplit(", ")%>% sapply(`[`, -1) %>% sapply(function(y){paste0(y,collapse = ", ")})
-  # )
-  x <- data.frame(
-    code=result[,2],
-    name=result[,3]
-  )
-  rownames(x) <- NULL
-  if(nrow(x)!=check_length)stop("split choice error: ",oops)
-  x
-}
 husk_of_instrument <- function (DB,FORM,field_names) {
   DF <- DB$data[[FORM]]
   cols<- colnames(DF)[which(colnames(DF)%in%DB$redcap$raw_structure_cols)]
