@@ -23,7 +23,7 @@ documentation, or packages.
 # install Rosyverse metapackage which has a function called `update_all()`
 remotes::install_github("brandonerose/Rosyverse")
 Rosyverse::update_all() # run update on all packages
-# Rosyverse::load_all() #load all Rosyverse packages!
+Rosyverse::load_all() #load all Rosyverse packages!
 ```
 
 If you have any issues above download the most recent version of R at
@@ -97,18 +97,21 @@ The following functions represent the core functions of the package.
 
 ``` r
 
-DB <- update_RpsyREDCap(DB) # update from redcap by checking log and using saved object 
+DB <- update_RosyREDCap(DB) # update from redcap by checking log and using saved object 
+
+DB <- add_forms_transformation_to_DB(DB,forms_tranformation = default_forms_transformation(DB))
 
 DB <- transform_DB(DB) # transform to most basic forms, can be modified
 
+DB <- drop_redcap_dir(DB)
+
+#run shiny app!
+run_RosyREDCap()
+
+# dev functions not ready for public yet
 DB <- clean_DB(DB)
-
 DB <- summarize_DB(DB) #can use for subsets!
-
-DB <- DB %>% drop_redcap_dir() #drops excel files with links to directory
-
 DB <- summarize_DB(DB)
-
 DB %>% save_summary() # will save summary data, look at the tabs!
 ```
 
@@ -118,9 +121,11 @@ If it worked you will see your token when you run…
 
 ``` r
 
-DB$summary %>% add_list_to_global()
+DB$metadata %>% add_list_to_global()
 
-DB$data_transform %>% add_list_to_global()
+DB$data %>% add_list_to_global()
+
+#DB$summary %>% add_list_to_global() #not ready for public
 
 listviewer::jsonedit(DB) # view object
 ```
