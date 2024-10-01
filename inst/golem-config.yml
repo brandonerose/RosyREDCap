@@ -1,6 +1,6 @@
 default:
   golem_name: RosyREDCap
-  golem_version: 1.0.0.9018
+  golem_version: 1.0.0.9019
   app_prod: no
 production:
   app_prod: yes
