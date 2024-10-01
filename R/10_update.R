@@ -158,8 +158,13 @@ update_RosyREDCap <- function(
         Sys.time()
       DB$data <- remove_records_from_list(DB = DB,records = IDs,silent = T)
       if(DB$internals$is_transformed){
-        # DB2 <- stripped_DB(DB)
-        #         data_list
+        DB2 <- stripped_DB(DB)
+        DB$internals$is_transformed <- F
+        DB2$metadata$forms <- DB2$transformation$original_forms
+        DB2$metadata$fields <- DB2$transformation$original_fields
+        DB2$data <- data_list
+        DB2 <- RosyDB::transform_DB(DB2)
+        data_list <- DB2$data %>% process_df_list(silent = T)
       }
       if(any(!names(data_list)%in%names(DB$data)))stop("Imported data names doesn't match DB$data names. If this happens run `untransform_DB()` or `update_RosyREDCap(DB, force = T)`")
       for(TABLE in names(data_list)){
