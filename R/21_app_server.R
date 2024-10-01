@@ -263,7 +263,7 @@ app_server <- function(input, output, session) {
       if(!is.null(values$DB$transformation)){
         values$editable_forms_transformation_table <- values$DB$transformation$forms %>% as.data.frame(stringsAsFactors = FALSE)
       }else{
-        values$editable_forms_transformation_table <- default_forms_transformation(values$DB) %>% as.data.frame(stringsAsFactors = FALSE)
+        # values$editable_forms_transformation_table <- default_forms_transformation(values$DB) %>% as.data.frame(stringsAsFactors = FALSE)
       }
       if(!is.null(values$DB$transformation)){
         if(!is.null(values$DB$internals$is_transformed)){

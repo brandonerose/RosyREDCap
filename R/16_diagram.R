@@ -262,7 +262,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     # node_df$color.highlight <- "gold"
     node_df$color <- node_df$color.border
     node_df$tooltip <-gsub("<br>","\\\n",node_df$tooltip) %>% remove_html_tags()
-    colnames(edge_df)[which(colnames(edge_df)=="width")] <- "penwidth"
+    if(is_something(edge_df))colnames(edge_df)[which(colnames(edge_df)=="width")] <- "penwidth"
   }
   OUT <- list(
     node_df = node_df,
