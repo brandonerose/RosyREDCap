@@ -90,7 +90,7 @@ get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
         }
         file_name <- ifelse(original_file_names,file_name,paste0(form_name,"_",field_name,"_",ifelse(is_repeating,"inst_",""),repeat_instance,"ID_",record_id,".",tools::file_ext(file_name)))
         if(!file.exists(file.path(out_dir_folder,file_name))||overwrite){
-          REDCapR::redcap_download_file_oneshot(
+          REDCapR::redcap_file_download_oneshot(
             redcap_uri = DB$links$redcap_uri,
             token = validate_redcap_token(DB),
             field = field_name,
