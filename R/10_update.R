@@ -164,6 +164,9 @@ update_RosyREDCap <- function(
         DB2$metadata$fields <- DB2$transformation$original_fields
         DB2$data <- data_list
         DB2 <- RosyDB::transform_DB(DB2)
+        if(!is.null(DB2$data_update$transform)){
+          DB2 <- upload_transform_to_DB(DB2)
+        }
         data_list <- DB2$data %>% process_df_list(silent = T)
       }
       if(any(!names(data_list)%in%names(DB$data)))stop("Imported data names doesn't match DB$data names. If this happens run `untransform_DB()` or `update_RosyREDCap(DB, force = T)`")
