@@ -1,6 +1,8 @@
 #' @import RosyUtils
 #' @import RosyDB
 #' @import RosyApp
+#' @title upload_file_to_redcap
+#' @export
 upload_file_to_redcap <- function(DB,file,record, field,repeat_instance = NULL,event = NULL){
   # DB <- validate_RosyREDCap(DB)
   file <- normalizePath(file)
@@ -28,6 +30,8 @@ upload_file_to_redcap <- function(DB,file,record, field,repeat_instance = NULL,e
   if(httr::http_error(response))stop("File upload failed")
   message("File uploaded! --> ",file)
 }
+#' @title delete_file_from_redcap
+#' @export
 delete_file_from_redcap <- function(DB,record, field,repeat_instance = NULL, event = NULL){
   # DB <- validate_RosyREDCap(DB)
   body <- list(
