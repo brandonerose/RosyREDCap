@@ -64,6 +64,16 @@ update_RosyREDCap <- function(
   DB <- test_REDCap(DB)
   # DB$internals$last_metadata_update <- Sys.time()-lubridate::days(1)
   # DB$internals$last_data_update <- Sys.time()-lubridate::days(1)
+  if(!is.null(DB$data_update$from_transform)){
+    do_it <- T
+    bullet_in_console("There is data in 'DB$data_update$from_transform' that has not been pushed to REDCap yet...")
+    print(DB$data_update$from_transform)
+    if(ask_about_overwrites){
+      do_it <- utils::menu(choices = c("Yes", "No and stop the function!"),title = "Would you like to push these updates now?") == 1
+    }
+    if(!do_it)stop("Stopped as requested!")
+    DB <- upload_transform_to_DB(DB)
+  }
   if(!force){ # check log interim
     if(
       is.null(DB$internals$last_metadata_update)||
@@ -165,7 +175,7 @@ update_RosyREDCap <- function(
         DB2$metadata$fields <- DB2$transformation$original_fields
         DB2$data <- data_list
         DB2 <- RosyDB::transform_DB(DB2, ask = ask_about_overwrites)
-        if(!is.null(DB2$data_update$transform)){
+        if(!is.null(DB2$data_update$from_transform)){
           DB2 <- upload_transform_to_DB(DB2)
         }
         data_list <- DB2$data %>% process_df_list(silent = T)
