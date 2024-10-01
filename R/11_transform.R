@@ -106,7 +106,9 @@ upload_transform_to_DB <- function(DB){
       DB$data_update$transform[[i]] %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
     }
     bullet_in_console("Successfully uploaded to REDCap!",bullet_type = "v")
+    DB$data_update$transform<- NULL
   }else{
     bullet_in_console("Nothing to upload!")
   }
+  return(DB)
 }

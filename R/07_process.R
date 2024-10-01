@@ -123,7 +123,7 @@ filter_fields_from_form <- function(FORM,DB){
   forms <- DB %>% field_names_to_form_names(field_names = colnames(FORM))
   if(any(forms%in%DB$metadata$forms$repeating))stop("All column names in your form must match only one form in your metadata, `DB$metadata$forms$instrument_name`, unless they are all non-repeating")
   fields <- DB %>% field_names_metadata(field_names = colnames(FORM))
-  fields <- fields[which(metadata$field_type!="descriptive"),]
+  fields <- fields[which(fields$field_type!="descriptive"),]
   fields$has_choices <- !is.na(fields$select_choices_or_calculations)
   return(fields)
 }

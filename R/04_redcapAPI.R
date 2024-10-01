@@ -254,7 +254,7 @@ get_REDCap_metadata <- function(DB){
   DB$links$redcap_records_dashboard <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_status_dashboard.php?pid=",DB$redcap$project_id)
   DB$links$redcap_API <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/project_api.php?pid=",DB$redcap$project_id)
   DB$links$redcap_API_playground <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/playground.php?pid=",DB$redcap$project_id)
-  DB
+  return(DB)
 }
 #' @title get_REDCap_structure
 #' @param parse_codes logical for parsing choice codes and missing codes into tabs
