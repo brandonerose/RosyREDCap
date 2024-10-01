@@ -160,7 +160,7 @@ update_RosyREDCap <- function(
       DB$data <- remove_records_from_list(DB = DB,records = IDs,silent = T)
       if(DB$internals$is_transformed){
         DB2 <- stripped_DB(DB)
-        DB$internals$is_transformed <- F
+        DB2$internals$is_transformed <- F
         DB2$metadata$forms <- DB2$transformation$original_forms
         DB2$metadata$fields <- DB2$transformation$original_fields
         DB2$data <- data_list
