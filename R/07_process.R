@@ -265,6 +265,7 @@ clean_redcap_log <- function(log,purge_api=T){
     log <- log[which(!startsWith(log$details,"export_format")),]
     log <- log[which(!startsWith(log$details,"Switch DAG ")),]
     log <- log[which(!startsWith(log$details,"Reorder project fields")),]
+    log <- log[which(!startsWith(log$details,"Download ")),]
   }
   log <- sort_redcap_log(log)
   return(log)

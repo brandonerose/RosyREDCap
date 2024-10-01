@@ -245,7 +245,7 @@ get_REDCap_metadata <- function(DB){
   }
   # other-------
   DB$redcap$users <- get_REDCap_users(DB)
-  DB$metadata$choices <- fields_to_choices(DB$metadata$fields)
+  DB$metadata$choices <- fields_to_choices(fields = DB$metadata$fields)
   DB$redcap$log <- check_redcap_log(DB,last = 2,units = "mins")
   DB$redcap$users$current_user <- DB$redcap$users$username==DB$redcap$log$username[which(DB$redcap$log$details=="Export REDCap version (API)") %>% dplyr::first()]
   DB$links$redcap_home <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/index.php?pid=",DB$redcap$project_id)

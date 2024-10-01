@@ -46,7 +46,7 @@ update_RosyREDCap <- function(
     labelled = T,
     get_files = F,
     original_file_names = F,
-    entire_log = T,
+    entire_log = F,
     ask_about_overwrites = T
 ) {
   IDs <- NULL
@@ -138,12 +138,14 @@ update_RosyREDCap <- function(
         DB %>% check_redcap_log(last = day_of_log,units = "days") %>% unique()
       )
     }
+    DB <- annotate_fields(DB)
+    DB <- annotate_choices(DB)
     DB$summary$all_records <- sum_records(DB)
     DB$summary$all_records$last_api_call <-
       DB$internals$last_full_update <-
       DB$internals$last_metadata_update <-
       DB$internals$last_data_update <- Sys.time()
-    message("Full update!")
+    bullet_in_console(paste0("Full ",DB$short_name," update!"),bullet_type = "v")
     was_updated <- T
   }else{
     if(will_update){
@@ -194,6 +196,8 @@ update_RosyREDCap <- function(
     get_REDCap_files(DB,original_file_names=original_file_names)
   }
   if(was_updated){
+    DB <- annotate_fields(DB)
+    DB <- annotate_choices(DB)
     if(!is.null(DB$dir_path)) {
       save_DB(DB)
     }

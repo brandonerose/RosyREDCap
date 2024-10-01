@@ -11,7 +11,7 @@ update_RosyREDCap(
   labelled = T,
   get_files = F,
   original_file_names = F,
-  entire_log = T,
+  entire_log = F,
   ask_about_overwrites = T
 )
 }
