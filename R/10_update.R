@@ -64,10 +64,10 @@ update_RosyREDCap <- function(
   DB <- test_REDCap(DB)
   # DB$internals$last_metadata_update <- Sys.time()-lubridate::days(1)
   # DB$internals$last_data_update <- Sys.time()-lubridate::days(1)
-  if(!is.null(DB$data_update$from_transform)){
+  if(!is.null(DB$transformation$data_updates)){
     do_it <- T
-    bullet_in_console("There is data in 'DB$data_update$from_transform' that has not been pushed to REDCap yet...")
-    print(DB$data_update$from_transform)
+    bullet_in_console("There is data in 'DB$transformation$data_updates' that has not been pushed to REDCap yet...")
+    print(DB$transformation$data_updates)
     if(ask_about_overwrites){
       do_it <- utils::menu(choices = c("Yes", "No and stop the function!"),title = "Would you like to push these updates now?") == 1
     }

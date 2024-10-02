@@ -101,12 +101,12 @@ extract_instrument_from_merged <- function(DB,instrument_name){
 #' @inheritParams setup_RosyREDCap
 #' @export
 upload_transform_to_DB <- function(DB){
-  if(is_something(DB$data_update$from_transform)){
-    for(i in 1:length(DB$data_update$from_transform)){
-      DB$data_update$from_transform[[i]] %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+  if(is_something(DB$transformation$data_updates)){
+    for(i in 1:length(DB$transformation$data_updates)){
+      DB$transformation$data_updates[[i]] %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
     }
     bullet_in_console("Successfully uploaded to REDCap!",bullet_type = "v")
-    DB$data_update$from_transform<- NULL
+    DB$transformation$data_updates<- NULL
   }else{
     bullet_in_console("Nothing to upload!")
   }
