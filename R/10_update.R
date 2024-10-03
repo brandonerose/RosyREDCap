@@ -138,8 +138,8 @@ update_RosyREDCap <- function(
         DB %>% check_redcap_log(last = day_of_log,units = "days") %>% unique()
       )
     }
-    DB <- annotate_fields(DB)
-    DB <- annotate_choices(DB)
+    # DB <- annotate_fields(DB)
+    # DB <- annotate_choices(DB)
     DB$summary$all_records <- sum_records(DB)
     DB$summary$all_records$last_api_call <-
       DB$internals$last_full_update <-
@@ -196,8 +196,8 @@ update_RosyREDCap <- function(
     get_REDCap_files(DB,original_file_names=original_file_names)
   }
   if(was_updated){
-    DB <- annotate_fields(DB)
-    DB <- annotate_choices(DB)
+    # DB <- annotate_fields(DB)
+    # DB <- annotate_choices(DB)
     if(!is.null(DB$dir_path)) {
       save_DB(DB)
     }
