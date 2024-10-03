@@ -113,12 +113,14 @@ rename_forms_redcap_to_default <- function(forms){
   the_names <- colnames(forms)
   the_names[which(the_names=="instrument_name")] <- "form_name"
   the_names[which(the_names=="instrument_label")] <- "form_label"
+  colnames(forms) <- the_names
   return(forms)
 }
 rename_forms_default_to_redcap <- function(forms){
   the_names <- colnames(forms)
   the_names[which(the_names=="form_name")] <- "instrument_name"
   the_names[which(the_names=="form_label")] <- "instrument_label"
+  colnames(forms) <- the_names
   return(forms)
 }
 get_REDCap_metadata <- function(DB,include_users = T){
