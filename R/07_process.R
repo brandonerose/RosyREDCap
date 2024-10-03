@@ -35,14 +35,14 @@ raw_process_redcap <- function(raw,DB, labelled){
     for(form_name in form_names){
       add_ons_x <- add_ons
       #form_name <-  DB$metadata$forms$form_name %>% sample(1)
-      is_repeating_instrument <- form_name%in%DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)]
+      is_repeating_form <- form_name%in%DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)]
       rows  <- 1:nrow(raw)
       if(!DB$redcap$is_longitudinal){
         if("redcap_repeat_instrument"%in%colnames(raw)){
-          if(is_repeating_instrument){
+          if(is_repeating_form){
             rows <- which(raw$redcap_repeat_instrument==form_name)
           }
-          if(!is_repeating_instrument){
+          if(!is_repeating_form){
             rows <- which(is.na(raw$redcap_repeat_instrument))
           }
         }
@@ -51,7 +51,7 @@ raw_process_redcap <- function(raw,DB, labelled){
         events_ins <- DB$metadata$event_mapping$unique_event_name[which(DB$metadata$event_mapping$form==form_name)] %>% unique()
         rows <- which(raw$redcap_event_name%in%events_ins)
       }
-      if(!is_repeating_instrument){
+      if(!is_repeating_form){
         add_ons_x <- add_ons_x[which(!add_ons_x%in%c("redcap_repeat_instrument","redcap_repeat_instance"))]
       }
       if(is_something(rows)){
@@ -334,11 +334,11 @@ missing_codes2 <- function(DB){
 #' @export
 merge_non_repeating_DB <- function(DB){ # need to adjust for events, currently destructive
   all_form_names <- DB$metadata$forms$form_name
-  keep_instruments <- NULL
+  keep_forms <- NULL
   form_names <- DB$metadata$forms$form_name[which(!DB$metadata$forms$repeating)]
   if(DB$redcap$is_longitudinal){
     form_names <- DB$metadata$forms$form_name[which(!DB$metadata$forms$repeating&!DB$metadata$forms$repeating_via_events)]
-    keep_instruments <- all_form_names[which(!all_form_names%in% form_names)]
+    keep_forms <- all_form_names[which(!all_form_names%in% form_names)]
   }
   DB$data[[DB$internals$merge_form_name]] <- merge_multiple(DB$data,form_names)
   for(form_name in form_names){

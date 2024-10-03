@@ -8,16 +8,16 @@ read_redcap_dir(
   DB,
   allow_all = T,
   drop_nonredcap_vars = T,
-  drop_non_instrument_vars = T,
+  drop_non_form_vars = T,
   stop_or_warn = "warn"
 )
 }
 \arguments{
-\item{allow_all}{logical TF for allowing DB$data names that are not also instrument names}
+\item{allow_all}{logical TF for allowing DB$data names that are not also form names}
 
 \item{drop_nonredcap_vars}{logical TF for dropping non-redcap variable names}
 
-\item{drop_non_instrument_vars}{logical TF for dropping non-instrument variable names}
+\item{drop_non_form_vars}{logical TF for dropping non-form variable names}
 
 \item{stop_or_warn}{character string of whether to stop, warn, or do nothing when forbidden cols are present}
 }

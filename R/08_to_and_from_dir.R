@@ -170,13 +170,13 @@ drop_redcap_dir <- function(
   return(DB)
 }
 #' @title Reads DB from the dropped REDCap files in dir/REDCap/upload
-#' @param allow_all logical TF for allowing DB$data names that are not also instrument names
+#' @param allow_all logical TF for allowing DB$data names that are not also form names
 #' @param drop_nonredcap_vars logical TF for dropping non-redcap variable names
-#' @param drop_non_instrument_vars logical TF for dropping non-instrument variable names
+#' @param drop_non_form_vars logical TF for dropping non-form variable names
 #' @param stop_or_warn character string of whether to stop, warn, or do nothing when forbidden cols are present
 #' @return messages for confirmation
 #' @export
-read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instrument_vars=T,stop_or_warn="warn"){
+read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_form_vars=T,stop_or_warn="warn"){
   DB <- validate_RosyREDCap(DB)
   path <- file.path(get_dir(DB),"REDCap","upload")
   if(!file.exists(path))stop("No REDCap files found at path --> ",path)
@@ -202,7 +202,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
         append(x) %>%
         unique()
     }
-    if(drop_non_instrument_vars){
+    if(drop_non_form_vars){
       form <- df$match[i]
       if(form == DB$internals$merge_form_name)form <- DB$metadata$forms$form_name[which(!DB$metadata$forms$repeating)]
       x<-colnames(the_file)[which(!colnames(the_file)%in%c(DB$redcap$raw_structure_cols,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name%in%form)]))]

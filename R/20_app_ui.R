@@ -141,7 +141,7 @@ app_ui<- function(request) {
             box(
               title = h1("Instruments"),
               width = 12,
-              DT::DTOutput("instruments_table")
+              DT::DTOutput("forms_table")
             ),
             box(
               title = h1("Metadata"),

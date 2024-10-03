@@ -41,7 +41,7 @@ upload_DB_to_redcap <- function(DB,batch_size = 500, ask = T, view_old = T, n_ro
   #     if(choice!=1)stop("Double check DB object prior to upload")
   #   }
   # }
-  warning("Right now this function only updates repeating instruments. It WILL NOT clear repeating instrument instances past number 1. SO, you will have to delete manually on REDCap.",immediate. = T)
+  warning("Right now this function only updates repeating forms. It WILL NOT clear repeating form instances past number 1. SO, you will have to delete manually on REDCap.",immediate. = T)
   if(!is_something(DB$data_update))stop("`DB$data_update` is empty")
   any_updates <- F
   entire_list <- DB$data_update
@@ -83,7 +83,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
   DB <- validate_RosyREDCap(DB)
   new_list <- DB$data_update
   old_list <- list()
-  if(any(!names(new_list)%in%DB$metadata$forms$form_name))warning("All upload names should ideally match the DB instrument names, `DB$metadata$forms$form_name`",immediate. = T)
+  if(any(!names(new_list)%in%DB$metadata$forms$form_name))warning("All upload names should ideally match the DB form names, `DB$metadata$forms$form_name`",immediate. = T)
   already_used <- NULL
   for(TABLE in names(new_list)){#TABLE <- names(new_list) %>% sample(1)
     new <-  new_list[[TABLE]]
@@ -92,7 +92,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
     data_cols <- colnames(new)[which(!colnames(new)%in%ref_cols)]
     form_names <- field_names_to_form_names(DB,data_cols)
     if(any(form_names%in%already_used))stop("RosyREDCap will not allow you to upload items from same form multiple times in one loop without refreshing.")
-    # old <- merge_instruments(instruments = form_names, DB = DB,data_choice = "data",exact = T)
+    # old <- merge_forms(forms = form_names, DB = DB,data_choice = "data",exact = T)
     drop <- data_cols %>% vec1_not_in_vec2(form_names_to_field_names(form_names=form_names,DB=DB))
     if(length(drop)>0){
       message("Dropping field_names that aren't part of REDCap metadata: ",paste0(drop, collapse = ", "))

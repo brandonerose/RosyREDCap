@@ -19,8 +19,8 @@ blank_RosyREDCap <- function(){
     has_arms = NULL,
     has_multiple_arms = NULL,
     has_arms_that_matter = NULL,
-    has_repeating_instruments_or_events = NULL,
-    has_repeating_instruments = NULL,
+    has_repeating_forms_or_events = NULL,
+    has_repeating_forms = NULL,
     has_repeating_events = NULL
   )
   AFTER <- which(names(DB)=="dir_path")

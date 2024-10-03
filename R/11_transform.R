@@ -57,28 +57,28 @@ generate_horizontal_transform <- function(DB,records){
   FINAL_out <-col_names2 %>%  dplyr::bind_rows(FINAL_out)
   return(FINAL_out)
 }
-extract_instrument_from_merged <- function(DB,form_name){
+extract_form_from_merged <- function(DB,form_name){
   merged <- DB$data[[DB$internals$merge_form_name]]
   if(nrow(merged)>0){
     add_ons <- c(DB$redcap$id_col,"arm_num","event_name","redcap_event_name","redcap_repeat_instrument","redcap_repeat_instance")
     add_ons  <- add_ons[which(add_ons%in%colnames(merged))]
     if(!form_name%in%DB$metadata$forms$form_name)stop("form_name must be included in set of DB$metadata$forms$form_name")
     #form_name <-  DB$metadata$forms$form_name %>% sample(1)
-    is_repeating_instrument <- form_name%in%DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)]
+    is_repeating_form <- form_name%in%DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)]
     rows  <- 1:nrow(merged)
-    if(is_repeating_instrument){
-      # rows <- which(merged$redcap_repeat_instrument==form_name)
+    if(is_repeating_form){
+      # rows <- which(merged$redcap_repeat_form==form_name)
     }
-    if(!is_repeating_instrument){
+    if(!is_repeating_form){
       rows <- which(!is.na(merged[[paste0(form_name,"_complete")]]))
     }
     #
     # if(!DB$redcap$is_longitudinal){
-    #   if("redcap_repeat_instrument"%in%colnames(merged)){
-    #     if(is_repeating_instrument){
+    #   if("redcap_repeat_form"%in%colnames(merged)){
+    #     if(is_repeating_form){
     #       rows <- which(merged$redcap_repeat_instrument==form_name)
     #     }
-    #     if(!is_repeating_instrument){
+    #     if(!is_repeating_form){
     #       rows <- which(is.na(merged$redcap_repeat_instrument))
     #     }
     #   }
@@ -87,7 +87,7 @@ extract_instrument_from_merged <- function(DB,form_name){
     #   events_ins <- DB$metadata$event_mapping$unique_event_name[which(DB$metadata$event_mapping$form==form_name)] %>% unique()
     #   rows <- which(merged$redcap_event_name%in%events_ins)
     # }
-    # if(!is_repeating_instrument){
+    # if(!is_repeating_form){
     #   add_ons <- add_ons[which(!add_ons%in%c("redcap_repeat_instrument","redcap_repeat_instance"))]
     # }
     cols <- unique(c(add_ons,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==form_name&DB$metadata$fields$field_name%in%colnames(merged))]))

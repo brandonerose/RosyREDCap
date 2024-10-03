@@ -100,7 +100,7 @@ app_server <- function(input, output, session) {
           id = "tabs",
           lapply(seq_along(values$DB$data), function(i) {
             table_name_raw <- names(values$DB$data)[i]
-            table_name <- values$DB$metadata$forms$instrument_label[which(values$DB$metadata$forms$form_name==table_name_raw)]
+            table_name <- values$DB$metadata$forms$form_label[which(values$DB$metadata$forms$form_name==table_name_raw)]
             table_id <- paste0("table___home__", table_name_raw)
             tabPanel(
               title = table_name,
@@ -112,7 +112,7 @@ app_server <- function(input, output, session) {
     }
   })
   output$forms_transformation <- DT::renderDT({
-    cols <- which(colnames(values$editable_forms_transformation_table)%in%c("form_name","instrument_label","repeating","repeating_via_events"))
+    cols <- which(colnames(values$editable_forms_transformation_table)%in%c("form_name","form_label","repeating","repeating_via_events"))
     values$editable_forms_transformation_table %>% make_DT_table(editable = list(target = 'cell', disable = list(columns = cols-1)),selection = 'none')
   })
   observeEvent(input$forms_transformation_cell_edit, {
@@ -126,7 +126,7 @@ app_server <- function(input, output, session) {
   output$projects_table <- DT::renderDT({
     values$projects %>% make_DT_table()
   })
-  output$instruments_table <- DT::renderDT({
+  output$forms_table <- DT::renderDT({
     values$DB$metadata$forms %>% make_DT_table()
   })
   output$metadata_table <- DT::renderDT({

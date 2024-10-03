@@ -133,10 +133,10 @@ get_REDCap_metadata <- function(DB,include_users = T){
   # instruments --------
   DB$metadata$forms <- get_REDCap_info(DB,"instrument","warn") %>% rename_forms_redcap_to_default()
   DB$metadata$forms$repeating <- F
-  DB$redcap$has_repeating_instruments <- F
+  DB$redcap$has_repeating_forms <- F
   DB$redcap$has_repeating_events <- F
-  DB$redcap$has_repeating_instruments_or_events <- DB$redcap$project_info$has_repeating_instruments_or_events=="1"
-  # if(DB$redcap$project_info$has_repeating_instruments_or_events=="1")
+  DB$redcap$has_repeating_forms_or_events <- DB$redcap$project_info$has_repeating_forms_or_events=="1"
+  # if(DB$redcap$project_info$has_repeating_forms_or_events=="1")
   repeating <- get_REDCap_info(DB,"repeatingFormsEvents")
   if(is.data.frame(repeating)){
     DB$metadata$forms$repeating <- DB$metadata$forms$form_name%in%repeating$form_name
@@ -152,7 +152,7 @@ get_REDCap_metadata <- function(DB,include_users = T){
     #   ) %>% unique()
   }
   if(any(DB$metadata$forms$repeating)){
-    DB$redcap$has_repeating_instruments <- T
+    DB$redcap$has_repeating_forms <- T
   }
   # metadata ----------
   DB$metadata$fields <- get_REDCap_info(DB,"metadata","stop")
@@ -283,7 +283,7 @@ get_REDCap_structure <- function(DB, parse_codes = F){
   redcap$arms <- get_REDCap_info(DB,"arm")
   redcap$events <- get_REDCap_info(DB,"event","warn")
   redcap$event_mapping  <- get_REDCap_info(DB,"formEventMapping","warn")
-  redcap$instruments <- get_REDCap_info(DB,"instrument","warn")
+  redcap$forms <- get_REDCap_info(DB,"instrument","warn")
   redcap$repeating <- get_REDCap_info(DB,"repeatingFormsEvents")
   redcap$metadata <- get_REDCap_info(DB,"metadata","stop")
   if(parse_codes){

@@ -23,7 +23,7 @@ add_redcap_links_to_DF <- function(DF,DB){# add instance links
 count_DB_upload_cells <- function(DB){
   DB$data_update %>% lapply(function(x){nrow(x)*ncol(x)}) %>% unlist() %>% sum()
 }
-husk_of_instrument <- function (DB,FORM,field_names) {
+husk_of_form <- function (DB,FORM,field_names) {
   DF <- DB$data[[FORM]]
   cols<- colnames(DF)[which(colnames(DF)%in%DB$redcap$raw_structure_cols)]
   DF2 <- NULL
