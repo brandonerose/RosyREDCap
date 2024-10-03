@@ -187,7 +187,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
     match = NA
   )
   df$match <- strsplit(df$file_name_no_ext,"_") %>% sapply(function(IN){IN[length(IN)]})
-  df$match[which(!df$match%in%c(DB$internals$merge_form_name,DB$metadata$forms$instrument_name))] <- NA
+  df$match[which(!df$match%in%c(DB$internals$merge_form_name,DB$metadata$forms$form_name))] <- NA
   if(!allow_all){
     df <- df[which(!is.na(df$match)),]
   }
@@ -204,7 +204,7 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_instru
     }
     if(drop_non_instrument_vars){
       form <- df$match[i]
-      if(form == DB$internals$merge_form_name)form <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating)]
+      if(form == DB$internals$merge_form_name)form <- DB$metadata$forms$form_name[which(!DB$metadata$forms$repeating)]
       x<-colnames(the_file)[which(!colnames(the_file)%in%c(DB$redcap$raw_structure_cols,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name%in%form)]))]
       drop_cols<-drop_cols %>%
         append(x) %>%

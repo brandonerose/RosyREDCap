@@ -12,7 +12,9 @@ update_RosyREDCap(
   get_files = F,
   original_file_names = F,
   entire_log = F,
-  ask_about_overwrites = T
+  metadata_only = F,
+  ask_about_overwrites = T,
+  save_to_dir = T
 )
 }
 \arguments{

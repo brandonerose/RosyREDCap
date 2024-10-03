@@ -83,7 +83,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
   DB <- validate_RosyREDCap(DB)
   new_list <- DB$data_update
   old_list <- list()
-  if(any(!names(new_list)%in%DB$metadata$forms$instrument_name))warning("All upload names should ideally match the DB instrument names, `DB$metadata$forms$instrument_name`",immediate. = T)
+  if(any(!names(new_list)%in%DB$metadata$forms$form_name))warning("All upload names should ideally match the DB instrument names, `DB$metadata$forms$form_name`",immediate. = T)
   already_used <- NULL
   for(TABLE in names(new_list)){#TABLE <- names(new_list) %>% sample(1)
     new <-  new_list[[TABLE]]
@@ -116,7 +116,7 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
   records <- DF[[DB$redcap$id_col]] %>% unique()
   BAD<-records[which(!records%in%DB$summary$all_records[[DB$redcap$id_col]])]
   if(length(BAD)>0)stop("Records not included in DB: ",records %>% paste0(collapse = ", "))
-  # is_repeating <- form%in% DB$metadata$forms$instrument_name[which(DB$metadata$forms$repeating)]
+  # is_repeating <- form%in% DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)]
   cols_mandatory_structure <- DB$metadata$form_key_cols[[form]]
   cols_mandatory <- c(cols_mandatory_structure,field_name)
   old <- DB$data[[form]][,cols_mandatory]
@@ -211,7 +211,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
     }else{
       choices2 <- c("Do Nothing","Manual Entry","Launch Redcap Link Only")
     }
-    is_repeating_form <- change_form %in% DB$metadata$forms$instrument_name[which(DB$metadata$forms$repeating)]
+    is_repeating_form <- change_form %in% DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)]
     OUT <- NULL
     for (record in records){ # record <- records%>% sample(1)
       record_was_updated <- F

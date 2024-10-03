@@ -4,7 +4,7 @@
 \alias{merge_multiple}
 \title{merge_multiple}
 \usage{
-merge_multiple(named_data_list, instrument_names)
+merge_multiple(named_data_list, form_names)
 }
 \description{
 merge_multiple

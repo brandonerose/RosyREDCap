@@ -47,7 +47,9 @@ update_RosyREDCap <- function(
     get_files = F,
     original_file_names = F,
     entire_log = F,
-    ask_about_overwrites = T
+    metadata_only = F,
+    ask_about_overwrites = T,
+    save_to_dir = T
 ) {
   IDs <- NULL
   will_update <- T
@@ -62,6 +64,7 @@ update_RosyREDCap <- function(
     }
   }
   DB <- test_REDCap(DB)
+  if(metadata_only)force <- T
   # DB$internals$last_metadata_update <- Sys.time()-lubridate::days(1)
   # DB$internals$last_data_update <- Sys.time()-lubridate::days(1)
   if(!is.null(DB$transformation$data_updates)){
@@ -122,31 +125,33 @@ update_RosyREDCap <- function(
     }
   }
   if(force){
-    DB$data <- list()
-    DB$data_update <- list()
-    DB$summary <- list()
-    DB <- DB %>% get_REDCap_metadata()
-    DB$data <- DB %>% get_REDCap_data(labelled = labelled)
-    DB$internals$data_extract_labelled <- labelled
-    log <- DB$redcap$log # in case there is a log already
-    if(entire_log){
-      DB$redcap$log <- log %>% dplyr::bind_rows(
-        DB %>% check_redcap_log(begin_time = DB$redcap$project_info$creation_time) %>% unique()
-      )
-    }else{
-      DB$redcap$log <- log %>% dplyr::bind_rows(
-        DB %>% check_redcap_log(last = day_of_log,units = "days") %>% unique()
-      )
+    DB <- DB %>% get_REDCap_metadata(include_users = !metadata_only)
+    if(!metadata_only){
+      DB$data <- list()
+      DB$data_update <- list()
+      DB$summary <- list()
+      DB$data <- DB %>% get_REDCap_data(labelled = labelled)
+      DB$internals$data_extract_labelled <- labelled
+      log <- DB$redcap$log # in case there is a log already
+      if(entire_log){
+        DB$redcap$log <- log %>% dplyr::bind_rows(
+          DB %>% check_redcap_log(begin_time = DB$redcap$project_info$creation_time) %>% unique()
+        )
+      }else{
+        DB$redcap$log <- log %>% dplyr::bind_rows(
+          DB %>% check_redcap_log(last = day_of_log,units = "days") %>% unique()
+        )
+      }
+      # DB <- annotate_fields(DB)
+      # DB <- annotate_choices(DB)
+      DB$summary$all_records <- sum_records(DB)
+      DB$summary$all_records$last_api_call <-
+        DB$internals$last_full_update <-
+        DB$internals$last_metadata_update <-
+        DB$internals$last_data_update <- Sys.time()
+      bullet_in_console(paste0("Full ",DB$short_name," update!"),bullet_type = "v")
+      was_updated <- T
     }
-    # DB <- annotate_fields(DB)
-    # DB <- annotate_choices(DB)
-    DB$summary$all_records <- sum_records(DB)
-    DB$summary$all_records$last_api_call <-
-      DB$internals$last_full_update <-
-      DB$internals$last_metadata_update <-
-      DB$internals$last_data_update <- Sys.time()
-    bullet_in_console(paste0("Full ",DB$short_name," update!"),bullet_type = "v")
-    was_updated <- T
   }else{
     if(will_update){
       DB$data <- DB$data %>% all_character_cols_list()
@@ -195,12 +200,8 @@ update_RosyREDCap <- function(
   if(get_files){#test now
     get_REDCap_files(DB,original_file_names=original_file_names)
   }
-  if(was_updated){
-    # DB <- annotate_fields(DB)
-    # DB <- annotate_choices(DB)
-    if(!is.null(DB$dir_path)) {
-      save_DB(DB)
-    }
+  if(was_updated&&save_to_dir&&!is.null(DB$dir_path)){
+    save_DB(DB)
   }
   DB
 }

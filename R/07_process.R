@@ -12,7 +12,7 @@ get_key_col_list <- function(DB){
     }
     return(out)
   })
-  names(out_list) <- DB$metadata$forms$instrument_name
+  names(out_list) <- DB$metadata$forms$form_name
   return(out_list)
 }
 raw_process_redcap <- function(raw,DB, labelled){
@@ -29,18 +29,18 @@ raw_process_redcap <- function(raw,DB, labelled){
     }
     add_ons  <- add_ons[which(add_ons%in%colnames(raw))]
     if(any(!DB$redcap$raw_structure_cols %in% colnames(raw)))stop("raw is missing one of the following... and that's weird: ", DB$redcap$raw_structure_cols %>% paste0(collapse = ", "))
-    instrument_names <- DB$metadata$forms$instrument_name[which(DB$metadata$forms$instrument_name%in%unique(DB$metadata$fields$form_name))]
+    form_names <- DB$metadata$forms$form_name[which(DB$metadata$forms$form_name%in%unique(DB$metadata$fields$form_name))]
     data_list <- list()
-    # instrument_name <- instrument_names %>% sample1()
-    for(instrument_name in instrument_names){
+    # form_name <- form_names %>% sample1()
+    for(form_name in form_names){
       add_ons_x <- add_ons
-      #instrument_name <-  DB$metadata$forms$instrument_name %>% sample(1)
-      is_repeating_instrument <- instrument_name%in%DB$metadata$forms$instrument_name[which(DB$metadata$forms$repeating)]
+      #form_name <-  DB$metadata$forms$form_name %>% sample(1)
+      is_repeating_instrument <- form_name%in%DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)]
       rows  <- 1:nrow(raw)
       if(!DB$redcap$is_longitudinal){
         if("redcap_repeat_instrument"%in%colnames(raw)){
           if(is_repeating_instrument){
-            rows <- which(raw$redcap_repeat_instrument==instrument_name)
+            rows <- which(raw$redcap_repeat_instrument==form_name)
           }
           if(!is_repeating_instrument){
             rows <- which(is.na(raw$redcap_repeat_instrument))
@@ -48,19 +48,19 @@ raw_process_redcap <- function(raw,DB, labelled){
         }
       }
       if(DB$redcap$is_longitudinal){
-        events_ins <- DB$metadata$event_mapping$unique_event_name[which(DB$metadata$event_mapping$form==instrument_name)] %>% unique()
+        events_ins <- DB$metadata$event_mapping$unique_event_name[which(DB$metadata$event_mapping$form==form_name)] %>% unique()
         rows <- which(raw$redcap_event_name%in%events_ins)
       }
       if(!is_repeating_instrument){
         add_ons_x <- add_ons_x[which(!add_ons_x%in%c("redcap_repeat_instrument","redcap_repeat_instance"))]
       }
       if(is_something(rows)){
-        cols <- unique(c(add_ons_x,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==instrument_name&DB$metadata$fields$field_name%in%colnames(raw))]))
+        cols <- unique(c(add_ons_x,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==form_name&DB$metadata$fields$field_name%in%colnames(raw))]))
         raw_subset <- raw[rows,cols]
         if(labelled){
           raw_subset <- raw_to_labelled_form(FORM = raw_subset, DB=DB)
         }
-        data_list[[instrument_name]] <- raw_subset
+        data_list[[form_name]] <- raw_subset
       }
     }
   }
@@ -108,7 +108,7 @@ filter_DB <- function(DB, records,field_names,form_names,add_filter_var,add_filt
   return(selected)
 }
 field_names_metadata <- function(DB,field_names,col_names){
-  # if(!deparse(substitute(FORM))%in%DB$metadata$forms$instrument_name)stop("To avoid potential issues the form name should match one of the instrument names" )
+  # if(!deparse(substitute(FORM))%in%DB$metadata$forms$form_name)stop("To avoid potential issues the form name should match one of the instrument names" )
   BAD <- field_names[which(!field_names%in%c(DB$metadata$fields$field_name,DB$redcap$raw_structure_cols,"arm_num","event_name"))]
   if(length(BAD)>0)stop("All column names in your form must match items in your metadata, `DB$metadata$fields$field_name`... ", paste0(BAD, collapse = ", "))
   # metadata <- DB$metadata$fields[which(DB$metadata$fields$form_name%in%instruments),]
@@ -121,7 +121,7 @@ field_names_metadata <- function(DB,field_names,col_names){
 }
 filter_fields_from_form <- function(FORM,DB){
   forms <- DB %>% field_names_to_form_names(field_names = colnames(FORM))
-  if(any(forms%in%DB$metadata$forms$repeating))stop("All column names in your form must match only one form in your metadata, `DB$metadata$forms$instrument_name`, unless they are all non-repeating")
+  if(any(forms%in%DB$metadata$forms$repeating))stop("All column names in your form must match only one form in your metadata, `DB$metadata$forms$form_name`, unless they are all non-repeating")
   fields <- DB %>% field_names_metadata(field_names = colnames(FORM))
   fields <- fields[which(fields$field_type!="descriptive"),]
   fields$has_choices <- !is.na(fields$select_choices_or_calculations)
@@ -333,34 +333,34 @@ missing_codes2 <- function(DB){
 #' @return DB object that has merged all non repeating forms
 #' @export
 merge_non_repeating_DB <- function(DB){ # need to adjust for events, currently destructive
-  all_instrument_names <- DB$metadata$forms$instrument_name
+  all_form_names <- DB$metadata$forms$form_name
   keep_instruments <- NULL
-  instrument_names <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating)]
+  form_names <- DB$metadata$forms$form_name[which(!DB$metadata$forms$repeating)]
   if(DB$redcap$is_longitudinal){
-    instrument_names <- DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating&!DB$metadata$forms$repeating_via_events)]
-    keep_instruments <- all_instrument_names[which(!all_instrument_names%in% instrument_names)]
+    form_names <- DB$metadata$forms$form_name[which(!DB$metadata$forms$repeating&!DB$metadata$forms$repeating_via_events)]
+    keep_instruments <- all_form_names[which(!all_form_names%in% form_names)]
   }
-  DB$data[[DB$internals$merge_form_name]] <- merge_multiple(DB$data,instrument_names)
-  for(instrument_name in instrument_names){
-    DB[["data"]][[instrument_name]] <- NULL
+  DB$data[[DB$internals$merge_form_name]] <- merge_multiple(DB$data,form_names)
+  for(form_name in form_names){
+    DB[["data"]][[form_name]] <- NULL
   }
   DB$internals$data_extract_merged <- T
   DB
 }
 #' @title merge_multiple
 #' @export
-merge_multiple <- function(named_data_list,instrument_names){
-  instrument_names <- instrument_names %>% as.list()
-  if (length(instrument_names)==1) warning('No need to merge you only have one form that is non-repeating')
-  merged <- named_data_list[[instrument_names[[1]]]]
+merge_multiple <- function(named_data_list,form_names){
+  form_names <- form_names %>% as.list()
+  if (length(form_names)==1) warning('No need to merge you only have one form that is non-repeating')
+  merged <- named_data_list[[form_names[[1]]]]
   merged$redcap_event_name <- NULL
   merged$arm_num <- NULL
   merged$event_name <- NULL
   merged$redcap_repeat_instrument <- NULL
   merged$redcap_repeat_instance <- NULL
-  instrument_names[[1]] <- NULL
-  while (length(instrument_names)>0) {
-    dfx <- named_data_list[[instrument_names[[1]]]]
+  form_names[[1]] <- NULL
+  while (length(form_names)>0) {
+    dfx <- named_data_list[[form_names[[1]]]]
     dfx$redcap_event_name <- NULL
     # dfx$arm_num <- NULL
     dfx$event_name <- NULL
@@ -368,7 +368,7 @@ merge_multiple <- function(named_data_list,instrument_names){
     dfx$redcap_repeat_instance <- NULL
     (in_common <- colnames(merged)[which(colnames(merged)%in%colnames(dfx))])
     merged <- merge(merged,dfx,by=in_common,all = T)
-    instrument_names[[1]] <- NULL
+    form_names[[1]] <- NULL
   }
   merged
 }
@@ -377,12 +377,12 @@ merge_multiple <- function(named_data_list,instrument_names){
 #' @export
 unmerge_non_repeating_DB <- function(DB){
   if(!DB$internals$data_extract_merged)stop("No DB$data named as 'merged'!")
-  instrument_names <- DB$data[[DB$internals$merge_form_name]] %>% colnames() %>% sapply(function(COL){DB$metadata$fields$form_name[which(DB$metadata$fields$field_name==COL)]}) %>% unique() %>% as.list()
+  form_names <- DB$data[[DB$internals$merge_form_name]] %>% colnames() %>% sapply(function(COL){DB$metadata$fields$form_name[which(DB$metadata$fields$field_name==COL)]}) %>% unique() %>% as.list()
   merged <- DB$data[[DB$internals$merge_form_name]]
-  while (length(instrument_names)>0) {
-    instrument_name  <- instrument_names[[1]]
-    DB$data[[instrument_name]] <- merged[,unique(c(DB$redcap$id_col,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==instrument_name&DB$metadata$fields$field_name%in%colnames(merged))]))]
-    instrument_names[[1]] <- NULL
+  while (length(form_names)>0) {
+    form_name  <- form_names[[1]]
+    DB$data[[form_name]] <- merged[,unique(c(DB$redcap$id_col,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==form_name&DB$metadata$fields$field_name%in%colnames(merged))]))]
+    form_names[[1]] <- NULL
   }
   DB$data[[DB$internals$merge_form_name]] <- NULL
   DB$internals$data_extract_merged <- F
@@ -399,7 +399,7 @@ add_ID_to_DF <- function(DF,DB,ref_id){
   if(!ref_id%in%DB$metadata$fields$field_name)stop("The ref_id not valid. Must be a REDCap raw colname")
   form <- DB$metadata$fields$form_name[which(DB$metadata$fields$field_name==ref_id)]
   # if(DB$internals$data_extract_merged){
-  #   if(form %in% DB$metadata$forms$instrument_name[which(!DB$metadata$forms$repeating)]){
+  #   if(form %in% DB$metadata$forms$form_name[which(!DB$metadata$forms$repeating)]){
   #     form <- DB$internals$merge_form_name
   #   }
   # }

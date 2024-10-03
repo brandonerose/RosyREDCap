@@ -17,9 +17,9 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
       data.frame(
         id = NA,
         type = "instrument",
-        label = instruments$instrument_name,
+        label = instruments$form_name,
         # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-        title = instruments$instrument_name %>% sapply(function(x){
+        title = instruments$form_name %>% sapply(function(x){
           paste0("<p><b>",x,"</b><br>",paste0(form_names_to_field_names(x,DB),collapse = "<br>"),"</p>")
         }),
         shape = "box", # entity
@@ -101,9 +101,9 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         data.frame(
           id = NA,
           type = "instrument",
-          label = instruments$instrument_name,
+          label = instruments$form_name,
           # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-          title = instruments$instrument_name %>% sapply(function(x){
+          title = instruments$form_name %>% sapply(function(x){
             paste0("<p><b>",x,"</b><br>",paste0(form_names_to_field_names(x,DB),collapse = "<br>"),"</p>")
           }),
           shape = "box", # entity
@@ -162,7 +162,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         data.frame(
           id = NA,
           from = sub_node_df$id,
-          to = ifelse(instruments$repeating[match(sub_node_df$label,instruments$instrument_name)],"Repeating","Not Repeating")%>%
+          to = ifelse(instruments$repeating[match(sub_node_df$label,instruments$form_name)],"Repeating","Not Repeating")%>%
             sapply(function(x){node_df$id[which(node_df$type=="structure"&node_df$label==x)]}),
           rel = NA,#"Belongs to",
           style = "filled",
@@ -222,7 +222,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
       ROWS <- which(node_df$type == type)
       if (type == "instrument"){
         node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
-          y <- instruments$instrument_label[instruments$instrument_name==x]
+          y <- instruments$instrument_label[instruments$form_name==x]
           return(ifelse(is.na(y),x,y))
         })
       }
@@ -274,6 +274,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
 #' @return messages for confirmation
 #' @export
 REDCap_diagram <- function(DB, render = T, include_vars = F,type = "visNetwork",duplicate_forms = T, clean_name = T){
+  if(is.null(DB$redcap))DB <- update_RosyREDCap(DB, metadata_only = T,save_to_dir = F)
   OUT <- create_node_edge_REDCap(DB,include_vars = include_vars,type = type, duplicate_forms = duplicate_forms,clean_name = clean_name)
   if(type == "DiagrammeR")type <- "graph"
   graph <-
