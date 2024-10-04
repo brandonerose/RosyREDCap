@@ -9,23 +9,23 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   is_visNetwork <- type =="visNetwork"
   node_df <- NULL
   edge_df <- NULL
-  instruments <- DB$metadata$forms
+  forms <- DB$metadata$forms
   fontcolor <- "black"
-  instrument_color <- "#FF474C"
+  form_color <- "#FF474C"
   if( ! DB$redcap$is_longitudinal){
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
-        type = "instrument",
-        label = instruments$form_name,
-        # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-        title = instruments$form_name %>% sapply(function(x){
+        type = "form",
+        label = forms$form_name,
+        # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+        title = forms$form_name %>% sapply(function(x){
           paste0("<p><b>",x,"</b><br>",paste0(form_names_to_field_names(x,DB),collapse = "<br>"),"</p>")
         }),
         shape = "box", # entity
         style = "filled",
-        color = instrument_color,
-        fillcolor = instrument_color,
+        color = form_color,
+        fillcolor = form_color,
         fontcolor = fontcolor
       )
     )
@@ -42,7 +42,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         id = NA,
         type = "arm",
         label = arms$arm_num,
-        # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+        # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         shape = "box", # entity
         style = "filled",
         fillcolor = "green",
@@ -55,7 +55,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         id = NA,
         type = "event",
         label = events$unique_event_name,
-        # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+        # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         shape = "box", # entity
         style = "filled",
         fillcolor = "orange",
@@ -67,21 +67,21 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
       node_df <- node_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
-          type = "instrument",
+          type = "form",
           label = event_mapping$form,
-          # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+          # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
           title = event_mapping$form %>% sapply(function(x){
             paste0("<p><b>",x,"</b><br>",paste0(form_names_to_field_names(x,DB),collapse = "<br>"),"</p>")
           }),
           shape = "box", # entity
           style = "filled",
-          color = instrument_color,
-          fillcolor = instrument_color,
+          color = form_color,
+          fillcolor = form_color,
           fontcolor = fontcolor
         )
       )
       node_df$id <- 1:nrow(node_df)
-      sub_node_df <- node_df[which(node_df$type=="instrument"),]
+      sub_node_df <- node_df[which(node_df$type=="form"),]
       if(any(sub_node_df$label != event_mapping$form))stop("event match error! check the diagram function. For now do not duplicate forms.")
       edge_df <- edge_df %>% dplyr::bind_rows(
         data.frame(
@@ -100,16 +100,16 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
       node_df <- node_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
-          type = "instrument",
-          label = instruments$form_name,
-          # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
-          title = instruments$form_name %>% sapply(function(x){
+          type = "form",
+          label = forms$form_name,
+          # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+          title = forms$form_name %>% sapply(function(x){
             paste0("<p><b>",x,"</b><br>",paste0(form_names_to_field_names(x,DB),collapse = "<br>"),"</p>")
           }),
           shape = "box", # entity
           style = "filled",
-          color = instrument_color,
-          fillcolor = instrument_color,
+          color = form_color,
+          fillcolor = form_color,
           fontcolor = fontcolor
         )
       )
@@ -118,7 +118,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         data.frame(
           id = NA,
           from = event_mapping$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$type=="event"&node_df$label==x)]}),
-          to = event_mapping$form %>% sapply(function(x){node_df$id[which(node_df$type=="instrument"&node_df$label==x)]}),
+          to = event_mapping$form %>% sapply(function(x){node_df$id[which(node_df$type=="form"&node_df$label==x)]}),
           rel = NA,#"Belongs to",
           style = "filled",
           color = fontcolor,
@@ -143,13 +143,13 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     edge_df$id <- 1:nrow(edge_df)
   }else{
     #structure ------------
-    if(DB$redcap$has_repeating_instruments){
+    if(DB$redcap$has_repeating_forms){
       node_df <- node_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
           type = "structure",
           label = c("Repeating","Not Repeating"),
-          # label = instruments$instrument_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+          # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
           shape = "circle", # attribute
           style = "filled",
           fillcolor = "green",
@@ -157,12 +157,12 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
         )
       )
       node_df$id <- 1:nrow(node_df)
-      sub_node_df <- node_df[which(node_df$type=="instrument"),]
+      sub_node_df <- node_df[which(node_df$type=="form"),]
       edge_df <- edge_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
           from = sub_node_df$id,
-          to = ifelse(instruments$repeating[match(sub_node_df$label,instruments$form_name)],"Repeating","Not Repeating")%>%
+          to = ifelse(forms$repeating[match(sub_node_df$label,forms$form_name)],"Repeating","Not Repeating")%>%
             sapply(function(x){node_df$id[which(node_df$type=="structure"&node_df$label==x)]}),
           rel = NA,#"Belongs to",
           style = "filled",
@@ -177,7 +177,7 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
   # variables -----------
   if(include_vars){
     metadata <- DB$metadata$fields
-    sub_node_df <- node_df[which(node_df$type=="instrument"),]
+    sub_node_df <- node_df[which(node_df$type=="form"),]
     x <- NULL
     for (i in 1:nrow(sub_node_df)){#i <- 1:nrow(sub_node_df) %>% sample(1)
       metadata_sub <- metadata$field_name[which(metadata$form_name == sub_node_df$label[i])]
@@ -220,9 +220,9 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     types <- node_df$type %>% unique()
     for(type in types){#type <- types %>% sample1()
       ROWS <- which(node_df$type == type)
-      if (type == "instrument"){
+      if (type == "form"){
         node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
-          y <- instruments$instrument_label[instruments$form_name==x]
+          y <- forms$form_label[forms$form_name==x]
           return(ifelse(is.na(y),x,y))
         })
       }
