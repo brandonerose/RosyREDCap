@@ -52,6 +52,8 @@ validate_RosyREDCap <- function(DB,silent = T,warn_only = F){
   DB <- RosyDB:::validate_DB(DB,silent = silent,warn_only = warn_only,allowed_names = names(blank_RosyREDCap()))
   return(DB)
 }
+#' @title load_RosyREDCap
+#' @export
 load_RosyREDCap <- function(short_name,validate = T){
   projects <- get_projects()
   if(nrow(projects)==0)return(blank_RosyREDCap())
