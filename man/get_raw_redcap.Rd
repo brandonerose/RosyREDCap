@@ -4,7 +4,7 @@
 \alias{get_raw_redcap}
 \title{Check the REDCap log}
 \usage{
-get_raw_redcap(DB, labelled = T, records = NULL)
+get_raw_redcap(DB, labelled = F, records = NULL, batch_size = 1000)
 }
 \arguments{
 \item{labelled}{T/F for clean vs raw labels}

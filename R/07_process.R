@@ -16,12 +16,21 @@ get_key_col_list <- function(DB){
   return(out_list)
 }
 raw_process_redcap <- function(raw,DB, labelled){
+  # key_cols <-DB$redcap$raw_structure_cols
+  # key_cols <- key_cols[which(!key_cols%in%c("arm_num","event_name"))]
+  # paste0(raw[[DB$redcap$id_col]],"_",raw$redcap_event_name,"_",raw$redcap_repeat_instrument,"_",raw$redcap_repeat_instance)
+  forms <- get_original_forms(DB)
+  fields <- get_original_fields(DB)
+  # arms <- DB$metadata$arms
+  events <- DB$metadata$events
+  event_mapping <- DB$metadata$event_mapping
+  data_list <- list()
   if(nrow(raw)>0){
     raw  <- raw %>% all_character_cols()
     add_ons <- c(DB$redcap$id_col,"arm_num","event_name","redcap_event_name","redcap_repeat_instrument","redcap_repeat_instance")
     if(DB$redcap$is_longitudinal){
       raw$id_temp <- 1:nrow(raw)
-      raw <-  merge(raw,DB$metadata$events[,c("arm_num","event_name","unique_event_name")],by.x="redcap_event_name",by.y="unique_event_name",sort = F)
+      raw <-  merge(raw,DB$metadata$events[,c("arm_num","event_name","unique_event_name")],by.x="redcap_event_name",by.y="unique_event_name",sort = F,all.x = T)
       add_ons  <- add_ons[which(add_ons%in%colnames(raw))]
       cols <- c(add_ons, colnames(raw)) %>% unique()
       raw <- raw[order(raw$id_temp),cols%>% sapply(function(c){which(colnames(raw)==c)}) %>% as.integer()]
@@ -29,33 +38,33 @@ raw_process_redcap <- function(raw,DB, labelled){
     }
     add_ons  <- add_ons[which(add_ons%in%colnames(raw))]
     if(any(!DB$redcap$raw_structure_cols %in% colnames(raw)))stop("raw is missing one of the following... and that's weird: ", DB$redcap$raw_structure_cols %>% paste0(collapse = ", "))
-    form_names <- DB$metadata$forms$form_name[which(DB$metadata$forms$form_name%in%unique(DB$metadata$fields$form_name))]
-    data_list <- list()
+    form_names <- forms$form_name[which(forms$form_name%in%unique(fields$form_name))]
     # form_name <- form_names %>% sample1()
+    has_repeating_forms <- DB$redcap$has_repeating_forms
     for(form_name in form_names){
       add_ons_x <- add_ons
-      #form_name <-  DB$metadata$forms$form_name %>% sample(1)
-      is_repeating_form <- form_name%in%DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)]
+      #form_name <-  forms$form_name %>% sample(1)
+      is_repeating_form <- form_name%in%forms$form_name[which(forms$repeating)]
+      is_longitudinal <- DB$redcap$is_longitudinal
       rows  <- 1:nrow(raw)
-      if(!DB$redcap$is_longitudinal){
-        if("redcap_repeat_instrument"%in%colnames(raw)){
-          if(is_repeating_form){
-            rows <- which(raw$redcap_repeat_instrument==form_name)
-          }
-          if(!is_repeating_form){
-            rows <- which(is.na(raw$redcap_repeat_instrument))
-          }
+      if(is_repeating_form){
+        if(!"redcap_repeat_instrument"%in%colnames(raw))stop("redcap_repeat_instrument not in colnames(raw)")
+        if(is_longitudinal){
+          # rows <- which(raw$redcap_repeat_instrument==form_name)
+          rows <- which(raw$redcap_repeat_instrument==form_name|raw$redcap_event_name%in%event_mapping$unique_event_name[which(!event_mapping$repeating&event_mapping$form==form_name)])
+        }else{
+          rows <- which(raw$redcap_repeat_instrument==form_name)
+        }
+      }else{
+        add_ons_x <- add_ons_x[which(!add_ons_x%in%c("redcap_repeat_instrument","redcap_repeat_instance"))]
+        if(is_longitudinal){
+          rows <- which(raw$redcap_event_name%in%unique(event_mapping$unique_event_name[which(event_mapping$form==form_name)]))
+        }else{
+          if(has_repeating_forms) rows <- which(is.na(raw$redcap_repeat_instrument))
         }
       }
-      if(DB$redcap$is_longitudinal){
-        events_ins <- DB$metadata$event_mapping$unique_event_name[which(DB$metadata$event_mapping$form==form_name)] %>% unique()
-        rows <- which(raw$redcap_event_name%in%events_ins)
-      }
-      if(!is_repeating_form){
-        add_ons_x <- add_ons_x[which(!add_ons_x%in%c("redcap_repeat_instrument","redcap_repeat_instance"))]
-      }
       if(is_something(rows)){
-        cols <- unique(c(add_ons_x,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==form_name&DB$metadata$fields$field_name%in%colnames(raw))]))
+        cols <- unique(c(add_ons_x,fields$field_name[which(fields$form_name==form_name&fields$field_name%in%colnames(raw))]))
         raw_subset <- raw[rows,cols]
         if(labelled){
           raw_subset <- raw_to_labelled_form(FORM = raw_subset, DB=DB)

@@ -137,21 +137,11 @@ get_REDCap_metadata <- function(DB,include_users = T){
   DB$metadata$forms$repeating <- F
   DB$redcap$has_repeating_forms <- F
   DB$redcap$has_repeating_events <- F
-  DB$redcap$has_repeating_forms_or_events <- DB$redcap$project_info$has_repeating_forms_or_events=="1"
-  # if(DB$redcap$project_info$has_repeating_forms_or_events=="1")
-  repeating <- get_REDCap_info(DB,"repeatingFormsEvents")
-  if(is.data.frame(repeating)){
-    DB$metadata$forms$repeating <- DB$metadata$forms$form_name%in%repeating$form_name
-    #   DB$metadata$fields <- DB$metadata$fields %>%dplyr::bind_rows(
-    #     data.frame(
-    #       field_name="redcap_repeat_instance",form_name=DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)] ,field_label="REDCap Repeat Instance",field_type="text",select_choices_or_calculations=NA
-    #     )
-    #   ) %>% unique()
-    #   DB$metadata$fields <- DB$metadata$fields %>%dplyr::bind_rows(
-    #     data.frame(
-    #       field_name="redcap_repeat_instrument",form_name=DB$metadata$forms$form_name[which(DB$metadata$forms$repeating)] ,field_label="REDCap Repeat Instrument",field_type="text",select_choices_or_calculations=NA
-    #     )
-    #   ) %>% unique()
+  DB$redcap$has_repeating_forms_or_events <- DB$redcap$project_info$has_repeating_instruments_or_events=="1"
+  # if(DB$redcap$project_info$has_repeating_instruments_or_events=="1")
+  repeatingFormsEvents <- get_REDCap_info(DB,"repeatingFormsEvents")
+  if(is.data.frame(repeatingFormsEvents)){
+    DB$metadata$forms$repeating <- DB$metadata$forms$form_name%in%repeatingFormsEvents$form_name
   }
   if(any(DB$metadata$forms$repeating)){
     DB$redcap$has_repeating_forms <- T
@@ -227,6 +217,16 @@ get_REDCap_metadata <- function(DB,include_users = T){
     DB$redcap$has_arms_that_matter <- DB$redcap$has_multiple_arms
     DB$metadata$event_mapping  <- get_REDCap_info(DB,"formEventMapping","warn")
     DB$metadata$events <- get_REDCap_info(DB,"event","warn")
+    DB$metadata$events$repeating <- F
+    DB$metadata$event_mapping$repeating <- F
+    if(is.data.frame(repeatingFormsEvents)){
+      DB$metadata$events$repeating <- DB$metadata$events$unique_event_name%in%repeatingFormsEvents$event_name[which(is.na(repeatingFormsEvents$form_name))]
+      repeatingFormsEvents_ind <- repeatingFormsEvents[which(!is.na(repeatingFormsEvents$event_name)&!is.na(repeatingFormsEvents$form_name)),]
+      if(nrow(repeatingFormsEvents_ind)>0){
+        rows_event_mapping <- 1:nrow(repeatingFormsEvents_ind) %>% sapply(function(i){ which(DB$metadata$event_mapping$unique_event_name == repeatingFormsEvents_ind$event_name[i] & DB$metadata$event_mapping$form == repeatingFormsEvents_ind$form_name[i])})
+        DB$metadata$event_mapping$repeating[rows_event_mapping] <- T
+      }
+    }
     DB$metadata$events$forms <- DB$metadata$events$unique_event_name %>% sapply(function(events){
       DB$metadata$event_mapping$form[which(DB$metadata$event_mapping$unique_event_name==events)] %>% unique() %>% paste0(collapse = " | ")
     })
@@ -247,7 +247,7 @@ get_REDCap_metadata <- function(DB,include_users = T){
     DB$metadata$forms$repeating_via_events[
       which(
         DB$metadata$forms$form_name %>% sapply(function(form_name){
-          # form_name <- DB$metadata$forms$form_name %>% sample(1)
+          # form_name <- forms$form_name %>% sample(1)
           anyDuplicated(DB$metadata$event_mapping$arm_num[which(DB$metadata$event_mapping$form==form_name)])>0
         })
       )
@@ -345,16 +345,14 @@ upload_redcap_structure<- function(DB,redcap){
   }
 }
 get_REDCap_data <- function(DB,labelled=T,records=NULL){
+  forms <- get_original_forms(DB)
+  data_list <- list()
   raw <- get_raw_redcap(
     DB = DB,
     labelled = F,
     records = records
-  )# consider bug check that all records are included in data_list
-  if(is_something(raw)){
-    data_list <- raw_process_redcap(raw = raw, DB = DB, labelled = labelled)
-  }else{
-    data_list <- list()
-  }
+  )
+  data_list <- raw %>% raw_process_redcap(DB=DB,labelled=labelled)
   return(data_list)
 }
 get_REDCap_users <- function(DB){
@@ -396,9 +394,17 @@ check_redcap_log <- function(DB,last=24,user = "",units="hours",begin_time="",cl
 #' @param records optional records
 #' @return data.frame of raw_redcap
 #' @export
-get_raw_redcap <- function(DB,labelled=T,records=NULL){
-  if(missing(records)) records <- NULL
-  raw <- REDCapR::redcap_read(redcap_uri=DB$links$redcap_uri, token=validate_redcap_token(DB),batch_size = 2000, interbatch_delay = 0.1,records = records, raw_or_label = ifelse(labelled,"label","raw"))$data %>% all_character_cols()
+get_raw_redcap <- function(DB,labelled=F,records=NULL,batch_size = 1000){
+  raw <- REDCapR::redcap_read(
+    redcap_uri = DB$links$redcap_uri,
+    token = validate_redcap_token(DB),
+    # forms = forms,
+    # events = events,
+    batch_size = batch_size,
+    interbatch_delay = 0.1,
+    records = records,
+    raw_or_label = ifelse(labelled, "label", "raw")
+  )$data %>% all_character_cols()
   return(raw)
 }
 #' @export
