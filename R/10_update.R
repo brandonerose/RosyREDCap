@@ -181,7 +181,7 @@ update_RosyREDCap <- function(
         DB2$metadata$forms <- DB2$transformation$original_forms
         DB2$metadata$fields <- DB2$transformation$original_fields
         DB2$data <- data_list
-        DB2 <- RosyDB::transform_DB(DB2, ask = ask_about_overwrites)
+        DB2 <- transform_DB(DB2, ask = ask_about_overwrites)
         if(!is.null(DB2$data_update$from_transform)){
           DB2 <- upload_transform_to_DB(DB2)
         }
