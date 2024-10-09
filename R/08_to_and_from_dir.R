@@ -180,9 +180,9 @@ read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_form_v
   DB <- validate_RosyREDCap(DB)
   path <- file.path(get_dir(DB),"REDCap","upload")
   if(!file.exists(path))stop("No REDCap files found at path --> ",path)
-  x <- list.files.real(path)
+  x <- list.files.real(path) %>% basename()
   df <- data.frame(
-    file_name = x,
+    file_name = basename(x),
     file_name_no_ext = gsub("\\.xlsx|\\.xls","",x),
     match = NA
   )
