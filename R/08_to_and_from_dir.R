@@ -136,7 +136,7 @@ drop_redcap_dir <- function(
     DB$internals$last_data_dir_save <- DB$internals$last_data_update
     # if(merge_non_repeating) DB <- merge_non_repeating_DB(DB)
     to_save_list <- DB[["data"]]
-    if(!missing(records)) to_save_list<- filter_DB(DB,records = records)
+    if(!missing(records)) to_save_list<- filter_DB(DB,records = records) %>% process_df_list()
     link_col_list <- list()
     if(with_links){
       to_save_list <-to_save_list %>% lapply(function(DF){add_redcap_links_to_DF(DF,DB)})
