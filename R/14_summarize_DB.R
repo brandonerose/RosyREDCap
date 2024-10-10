@@ -97,7 +97,7 @@ get_subset_records <-function(DB,subset_name){
     form_name <- field_names_to_form_names(DB,field_names = subset_list$filter_field)
     records <- DB$data[[form_name]][[DB$redcap$id_col]][which(DB$data[[form_name]][[subset_list$filter_field]]%in%subset_list$filter_choices)] %>% unique()
   }
-  subset_records <- DB$summary$all_records[which(DB$summary$all_records[[id_col_name]]%in% records),]
+  subset_records <- DB$summary$all_records[which(DB$summary$all_records[[DB$redcap$id_col]]%in% records),]
   return(subset_records)
 }
 subset_records_due <- function(DB,subset_name){
@@ -142,7 +142,7 @@ add_subset <- function(
       form_name <- field_names_to_form_names(DB,field_names = filter_field)
       records <- DB$data[[form_name]][[DB$redcap$id_col]][which(DB$data[[form_name]][[filter_field]]%in%filter_choices)] %>% unique()
     }
-    subset_records <- DB$summary$all_records[which(DB$summary$all_records[[id_col_name]]%in% records),]
+    subset_records <- DB$summary$all_records[which(DB$summary$all_records[[DB$redcap$id_col]]%in% records),]
     DB$summary$subsets[[subset_name]] <- list(
       subset_name = subset_name,
       filter_field = filter_field,
@@ -188,7 +188,6 @@ generate_summary_save_list <- function(
       to_save_list$fields <- DB$metadata$fields
       to_save_list$choices <- DB$metadata$choices
     }
-
     # if(DB$internals$is_transformed){
     #   to_save_list$original_forms <- DB$transformation$original_forms
     #   to_save_list$original_fields <- DB$transformation$original_fields
