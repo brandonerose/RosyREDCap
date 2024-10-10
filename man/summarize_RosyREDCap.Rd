@@ -6,17 +6,16 @@
 \usage{
 summarize_RosyREDCap(
   DB,
-  subset_name,
-  drop_blanks = T,
-  filter_field = NULL,
-  filter_choices = NULL,
-  form_names = NULL,
-  field_names = NULL,
-  warn_only = F,
   with_links = T,
-  dir_other = file.path(DB$dir_path, "output"),
-  file_name = paste0(subset_name, "_RosyREDCap"),
   deidentify = T,
+  clean = T,
+  drop_blanks = T,
+  drop_unknowns = T,
+  include_metadata = T,
+  annotate_metadata = T,
+  include_record_summary = T,
+  include_users = T,
+  include_log = T,
   separate = F
 )
 }
