@@ -16,7 +16,8 @@ summarize_RosyREDCap(
   include_record_summary = T,
   include_users = T,
   include_log = T,
-  separate = F
+  separate = F,
+  force = F
 )
 }
 \arguments{

@@ -259,7 +259,8 @@ summarize_RosyREDCap <- function(
     include_record_summary = T,
     include_users = T,
     include_log = T,
-    separate = F
+    separate = F,
+    force = F
 ){
   DB <- DB %>% validate_RosyREDCap()
   original_data <- DB$data
