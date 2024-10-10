@@ -16,6 +16,7 @@ summarize_RosyREDCap(
   with_links = T,
   dir_other = file.path(DB$dir_path, "output"),
   file_name = paste0(subset_name, "_RosyREDCap"),
+  deidentify = T,
   separate = F
 )
 }

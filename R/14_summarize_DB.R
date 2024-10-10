@@ -100,9 +100,13 @@ summarize_RosyREDCap <- function(
     with_links=T,
     dir_other = file.path(DB$dir_path,"output"),
     file_name = paste0(subset_name,"_RosyREDCap"),
+    deidentify = T,
     separate = F
 ){
   DB <- DB %>% validate_RosyREDCap()
+  if(deidentify){
+    DB <- deidentify_DB(DB)
+  }
   DB$summary$subsets[[subset_name]] <- list(
     subset_name = subset_name,
     filter_field = filter_field,
