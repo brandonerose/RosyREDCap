@@ -134,9 +134,8 @@ summarize_RosyREDCap <- function(
   to_save_list$forms <- annotate_forms(DB)
   to_save_list$fields <- annotate_fields(DB)
   to_save_list$choices <- annotate_choices(DB)
-  to_save_list$choices <- annotate_choices(DB)
-  to_save_list$choices <- annotate_choices(DB)
-
+  # to_save_list$choices <- annotate_choices(DB)
+  # to_save_list$choices <- annotate_choices(DB)
   if(DB$internals$use_csv){
     to_save_list %>% list_to_csv(
       dir = dir_other,
@@ -149,7 +148,7 @@ summarize_RosyREDCap <- function(
       separate = separate,
       link_col_list = link_col_list,
       file_name = file_name,
-      header_df_list = to_save_list %>% construct_header_list(),
+      header_df_list = to_save_list %>% construct_header_list(fields = DB$metadata$fields),
       key_cols_list = construct_key_col_list(DB),
       overwrite = TRUE
     )
