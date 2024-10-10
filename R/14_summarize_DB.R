@@ -170,7 +170,7 @@ generate_summary_save_list <- function(
     include_users = T,
     include_log = T
 ){
-  records <- sum_records(DB)
+  records <- sum_records(DB)[[1]]
   if(deidentify){
     DB <- deidentify_DB(DB)
   }
@@ -217,11 +217,14 @@ save_RosyREDCap_list <- function(
   link_col_list <- list()
   if(with_links){
     if(DB$internals$DB_type=="redcap"){
-      to_save_list <-to_save_list %>% lapply(function(DF){add_redcap_links_to_DF(DF,DB)})
-      link_col_list <- list(
-        "redcap_link"
-      )
-      names(link_col_list) <- DB$redcap$id_col
+      add_links <- which(names(to_save_list)%in%names(DB$data))
+      if(length(add_links)>0){
+        to_save_list[add_links] <- to_save_list[add_links] %>% lapply(function(DF){add_redcap_links_to_DF(DF,DB)})
+        link_col_list <- list(
+          "redcap_link"
+        )
+        names(link_col_list) <- DB$redcap$id_col
+      }
     }
   }
   if(DB$internals$use_csv){
@@ -284,7 +287,8 @@ summarize_RosyREDCap <- function(
     DB %>% save_RosyREDCap_list(
       to_save_list = to_save_list,
       separate = separate,
-      with_links = with_links)
+      with_links = with_links
+    )
     DB$internals$last_summary <- last_data_update
   }
   subset_names <- check_subsets()
@@ -319,7 +323,7 @@ summarize_RosyREDCap <- function(
         file_name = subset_list$file_name,
         separate = separate,
         with_links = with_links
-        )
+      )
     }
   }
   DB$data <- original_data
