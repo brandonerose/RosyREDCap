@@ -133,7 +133,7 @@ add_subset <- function(
     field_names = NULL,
     force = F
 ){
-  if(is.null(DB$summary$subsets[[subset_name]])|force){
+  if(is.null(DB$summary$subsets[[subset_name]])||force){
     subset_records <- NULL
     if(filter_field==DB$redcap$id_col){
       records <- unique(filter_choices)
@@ -179,9 +179,9 @@ generate_summary_save_list <- function(
   }
   to_save_list <- DB$data
   if(include_metadata){
-    if(annotate_metadata){
+    if(annotate_metadata&&is_something(DB$data)){
       to_save_list$forms <- annotate_forms(DB)
-      to_save_list$fields <- annotate_fields(DB)
+      to_save_list$fields <- RosyDB::annotate_fields(DB)
       to_save_list$choices <- annotate_choices(DB)
     }else{
       to_save_list$forms <- DB$metadata$forms
@@ -296,9 +296,12 @@ summarize_RosyREDCap <- function(
   if(is_something(subset_names)){
     for(subset_name in subset_names){
       DB$data <- original_data
-      subset_list <- DB$summary$subsets[[subset_name]]
       DB$summary$subsets[[subset_name]]$subset_records <- get_subset_records(DB=DB,subset_name = subset_name)
       DB$summary$subsets[[subset_name]]$last_save_time <- Sys.time()
+      subset_list <- DB$summary$subsets[[subset_name]]
+      if(subset_list$filter_field==DB$redcap$id_col){
+        subset_list$filter_choices <- subset_list$subset_records[[DB$redcap$id_col]]
+      }
       DB$data <- RosyDB::filter_DB(
         DB = DB,
         field_names = subset_list$field_names,
