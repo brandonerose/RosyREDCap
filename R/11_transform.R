@@ -7,7 +7,7 @@
 generate_horizontal_transform <- function(DB,records){
   DB <- validate_RosyREDCap(DB)
   if(missing(records)) records <- DB$summary$all_records[[DB$redcap$id_col]]
-  data <- filter_DB(DB,records = records)
+  data <- filter_DB(DB,filter_field = DB$redcap$id_col,filter_choices = records)
   FINAL_out <- NULL
   forms <- names(data)
   col_names <- NULL

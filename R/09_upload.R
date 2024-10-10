@@ -219,7 +219,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
       VIEW_simp <- VIEW[,unique(c(DB$redcap$id_col,field_names_to_view))] %>% unique()
       row.names(VIEW_simp) <- NULL
       VIEW_simp %>%t() %>% print()
-      CHANGE <- filter_DB(DB, records = record, form_names = change_form)[[1]]
+      CHANGE <- filter_DB(DB,filter_field = DB$redcap$id_col,filter_choices = records,form_names = change_form)[[1]]
       row.names(CHANGE) <- NULL
       CHANGE <- CHANGE[,unique(c(ref_cols_change,field_name_to_change))]
       if(nrow(CHANGE)==0){
