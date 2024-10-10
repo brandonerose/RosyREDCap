@@ -131,6 +131,7 @@ add_subset <- function(
     file_name = paste0("PSDB_",subset_name),
     form_names = NULL,
     field_names = NULL,
+    deidentify = T,
     force = F
 ){
   if(is.null(DB$summary$subsets[[subset_name]])||force){
@@ -153,6 +154,7 @@ add_subset <- function(
       dir_other = dir_other,
       file_name = file_name,
       last_save_time = NULL,
+      deidentify = deidentify,
       file_path = file.path(dir_other,paste0(file_name,".xlsx"))
     )
   }
@@ -245,8 +247,48 @@ save_RosyREDCap_list <- function(
     )
   }
 }
-#' @import RosyUtils
-#' @import RosyApp
+#' @title generate_summary_from_subset_name
+#' @export
+generate_summary_from_subset_name <- function(
+    DB,
+    subset_name,
+    clean = T,
+    drop_blanks = T,
+    drop_unknowns = T,
+    include_metadata = T,
+    annotate_metadata = T,
+    include_record_summary = T,
+    include_users = T,
+    include_log = T,
+    add_to_global = T
+    ){
+  subset_list <- DB$summary$subsets[[subset_name]]
+  if(subset_list$filter_field==DB$redcap$id_col){
+    subset_list$filter_choices <- subset_list$subset_records[[DB$redcap$id_col]]
+  }
+  DB$data <- RosyDB::filter_DB(
+    DB = DB,
+    field_names = subset_list$field_names,
+    form_names = subset_list$form_names,
+    filter_field = subset_list$filter_field,
+    filter_choices = subset_list$filter_choices
+  )
+  to_save_list <- DB %>% generate_summary_save_list(
+    deidentify = subset_list$deidentify,
+    clean = clean,
+    drop_blanks = drop_blanks,
+    drop_unknowns = drop_unknowns,
+    include_metadata = include_metadata,
+    annotate_metadata = annotate_metadata,
+    include_record_summary = include_record_summary,
+    include_users = include_users,
+    include_log = include_log
+  )
+  if(add_to_global){
+    add_list_to_global(to_save_list)
+  }
+  return(to_save_list)
+}
 #' @title summarize_RosyREDCap
 #' @param drop_blanks optional logical for dropping blanks
 #' @export
@@ -298,19 +340,9 @@ summarize_RosyREDCap <- function(
       DB$data <- original_data
       DB$summary$subsets[[subset_name]]$subset_records <- get_subset_records(DB=DB,subset_name = subset_name)
       DB$summary$subsets[[subset_name]]$last_save_time <- Sys.time()
-      subset_list <- DB$summary$subsets[[subset_name]]
-      if(subset_list$filter_field==DB$redcap$id_col){
-        subset_list$filter_choices <- subset_list$subset_records[[DB$redcap$id_col]]
-      }
-      DB$data <- RosyDB::filter_DB(
-        DB = DB,
-        field_names = subset_list$field_names,
-        form_names = subset_list$form_names,
-        filter_field = subset_list$filter_field,
-        filter_choices = subset_list$filter_choices
-      )
-      to_save_list <- DB %>% generate_summary_save_list(
-        deidentify = deidentify,
+      to_save_list <- DB %>% generate_summary_from_subset_name(
+        subset_name = subset_name,
+        deidentify = subset_list$deidentify||deidentify,
         clean = clean,
         drop_blanks = drop_blanks,
         drop_unknowns = drop_unknowns,
@@ -318,7 +350,8 @@ summarize_RosyREDCap <- function(
         annotate_metadata = annotate_metadata,
         include_record_summary = include_record_summary,
         include_users = include_users,
-        include_log = include_log
+        include_log = include_log,
+        add_to_global = F
       )
       DB %>% save_RosyREDCap_list(
         to_save_list = to_save_list,

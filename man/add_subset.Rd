@@ -13,6 +13,7 @@ add_subset(
   file_name = paste0("PSDB_", subset_name),
   form_names = NULL,
   field_names = NULL,
+  deidentify = T,
   force = F
 )
 }
