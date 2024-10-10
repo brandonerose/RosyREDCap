@@ -83,3 +83,78 @@ summarize_records_from_log <- function(DB,records){
   })
   return(summary_records)
 }
+#' @import RosyUtils
+#' @import RosyApp
+#' @title summarize_RosyREDCap
+#' @param drop_blanks optional logical for dropping blanks
+#' @export
+summarize_RosyREDCap <- function(
+    DB,
+    subset_name,
+    drop_blanks = T,
+    filter_field = NULL,
+    filter_choices = NULL,
+    form_names = NULL,
+    field_names = NULL,
+    warn_only = F,
+    with_links=T,
+    dir_other = file.path(DB$dir_path,"output"),
+    file_name = paste0(subset_name,"_RosyREDCap"),
+    separate = F
+){
+  DB <- DB %>% validate_RosyREDCap()
+  DB$summary$subsets[[subset_name]] <- list(
+    subset_name = subset_name,
+    filter_field = filter_field,
+    filter_choices = filter_choices,
+    # id_col = NULL,
+    last_save_time = Sys.time(),
+    file_path = file.path(dir_other,paste0(file_name,".xlsx"))
+  )
+  original_metadata <- DB$metadata
+  original_data <- DB$data
+  DB$data <- filter_DB(
+    DB = DB,
+    field_names = field_names,
+    form_names = form_names,
+    filter_field = filter_field,
+    filter_choices = filter_choices
+  )
+  to_save_list <- DB$data
+  link_col_list <- list()
+  if(with_links){
+    if(DB$internals$DB_type=="redcap"){
+      to_save_list <-to_save_list %>% lapply(function(DF){add_redcap_links_to_DF(DF,DB)})
+      link_col_list <- list(
+        "redcap_link"
+      )
+      names(link_col_list) <- DB$redcap$id_col
+    }
+  }
+  to_save_list$forms <- annotate_forms(DB)
+  to_save_list$fields <- annotate_fields(DB)
+  to_save_list$choices <- annotate_choices(DB)
+  to_save_list$choices <- annotate_choices(DB)
+  to_save_list$choices <- annotate_choices(DB)
+
+  if(DB$internals$use_csv){
+    to_save_list %>% list_to_csv(
+      dir = dir_other,
+      file_name = file_name,
+      overwrite = TRUE
+    )
+  }else{
+    to_save_list %>% list_to_excel(
+      dir = dir_other,
+      separate = separate,
+      link_col_list = link_col_list,
+      file_name = file_name,
+      header_df_list = to_save_list %>% construct_header_list(),
+      key_cols_list = construct_key_col_list(DB),
+      overwrite = TRUE
+    )
+  }
+  original_metadata <- DB$metadata
+  original_data <- DB$data
+  return(DB)
+}
