@@ -113,7 +113,7 @@ summarize_RosyREDCap <- function(
   )
   original_metadata <- DB$metadata
   original_data <- DB$data
-  DB$data <- filter_DB(
+  DB$data <- RosyDB::filter_DB(
     DB = DB,
     field_names = field_names,
     form_names = form_names,
