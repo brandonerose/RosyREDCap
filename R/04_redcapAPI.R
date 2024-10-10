@@ -344,13 +344,14 @@ upload_redcap_structure<- function(DB,redcap){
     print("example of '","' being uploaded")
   }
 }
-get_REDCap_data <- function(DB,labelled=T,records=NULL){
+get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   forms <- get_original_forms(DB)
   data_list <- list()
   raw <- get_raw_redcap(
     DB = DB,
     labelled = F,
-    records = records
+    records = records,
+    batch_size = batch_size
   )
   data_list <- raw %>% raw_process_redcap(DB=DB,labelled=labelled)
   return(data_list)

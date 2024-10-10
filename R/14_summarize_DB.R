@@ -261,7 +261,7 @@ generate_summary_from_subset_name <- function(
     include_users = T,
     include_log = T,
     add_to_global = T
-    ){
+){
   subset_list <- DB$summary$subsets[[subset_name]]
   if(subset_list$filter_field==DB$redcap$id_col){
     subset_list$filter_choices <- subset_list$subset_records[[DB$redcap$id_col]]
@@ -342,7 +342,6 @@ summarize_RosyREDCap <- function(
       DB$summary$subsets[[subset_name]]$last_save_time <- Sys.time()
       to_save_list <- DB %>% generate_summary_from_subset_name(
         subset_name = subset_name,
-        deidentify = subset_list$deidentify||deidentify,
         clean = clean,
         drop_blanks = drop_blanks,
         drop_unknowns = drop_unknowns,

@@ -210,20 +210,18 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
         DB$metadata$fields$field_name[which(DB$metadata$fields$field_type=="notes")]
       ) %>% unique()
   }
-  for (data_choice in c("data","data_update")){
-    if(is_something(DB$data)){
-      drop_list <- Map(function(NAME, COLS) {identifiers[which(identifiers %in% COLS)]},names(DB$data), lapply(DB$data, colnames))
-      drop_list <- drop_list[sapply(drop_list, length) > 0]
-      if(length(drop_list)==0){
-        bullet_in_console(paste0("Deidentified ",DB$short_name),bullet_type = "v")
-      }else{
-        bullet_in_console(paste0("Nothing to deidentify from --> ",identifiers %>% paste0(collapse = ", ")),bullet_type = "x")
-      }
-      for (FORM in names(drop_list)) {
-        for(DROP in drop_list[[FORM]]){
-          DB$data[[FORM]][[DROP]] <- NULL
-          # message("Dropped '",DROP,"' from '",data_choice,"' --> '", FORM,"'")
-        }
+  if(is_something(DB$data)){
+    drop_list <- Map(function(NAME, COLS) {identifiers[which(identifiers %in% COLS)]},names(DB$data), lapply(DB$data, colnames))
+    drop_list <- drop_list[sapply(drop_list, length) > 0]
+    if(length(drop_list)==0){
+      bullet_in_console(paste0("Deidentified ",DB$short_name),bullet_type = "v")
+    }else{
+      bullet_in_console(paste0("Nothing to deidentify from --> ",identifiers %>% paste0(collapse = ", ")),bullet_type = "x")
+    }
+    for (FORM in names(drop_list)) {
+      for(DROP in drop_list[[FORM]]){
+        DB$data[[FORM]][[DROP]] <- NULL
+        # message("Dropped '",DROP,"' from '",data_choice,"' --> '", FORM,"'")
       }
     }
   }

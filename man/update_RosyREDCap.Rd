@@ -14,7 +14,8 @@ update_RosyREDCap(
   entire_log = F,
   metadata_only = F,
   ask_about_overwrites = T,
-  save_to_dir = T
+  save_to_dir = T,
+  batch_size = 2000
 )
 }
 \arguments{

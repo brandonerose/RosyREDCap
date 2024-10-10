@@ -49,7 +49,8 @@ update_RosyREDCap <- function(
     entire_log = F,
     metadata_only = F,
     ask_about_overwrites = T,
-    save_to_dir = T
+    save_to_dir = T,
+    batch_size = 2000
 ) {
   IDs <- NULL
   will_update <- T
@@ -130,7 +131,7 @@ update_RosyREDCap <- function(
       DB$data <- list()
       DB$data_update <- list()
       DB$summary <- list()
-      DB$data <- DB %>% get_REDCap_data(labelled = labelled)
+      DB$data <- DB %>% get_REDCap_data(labelled = labelled,batch_size=batch_size)
       DB$internals$data_extract_labelled <- labelled
       log <- DB$redcap$log # in case there is a log already
       if(entire_log){
