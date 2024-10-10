@@ -338,6 +338,7 @@ summarize_RosyREDCap <- function(
   if(is_something(subset_names)){
     for(subset_name in subset_names){
       DB$data <- original_data
+      subset_list <- DB$summary$subsets[[subset_name]]
       DB$summary$subsets[[subset_name]]$subset_records <- get_subset_records(DB=DB,subset_name = subset_name)
       DB$summary$subsets[[subset_name]]$last_save_time <- Sys.time()
       to_save_list <- DB %>% generate_summary_from_subset_name(
