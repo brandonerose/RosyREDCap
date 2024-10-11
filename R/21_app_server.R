@@ -20,6 +20,7 @@ app_server <- function(input, output, session) {
   values$listen_to_click <- NULL
   values$all_records <- NULL
   values$subset_records <- NULL
+  values$sbc <- NULL
   values$user_adds_project <- NULL
   values$REDCap_diagram <- NULL
   # user input project -------
@@ -201,6 +202,22 @@ app_server <- function(input, output, session) {
       choices = NULL
     )
   })
+  output$selected_group_ <- renderUI({
+    selectInput(
+      inputId = "selected_group",
+      label = "Choose Group",
+      selected = NULL,
+      choices = NULL
+    )
+  })
+  output$choose_split_ <- renderUI({
+    selectInput(
+      inputId = "choose_split",
+      label = "Choose Split",
+      selected = NULL,
+      choices = NULL
+    )
+  })
   observeEvent(input$choose_project,{
     if(!is.null(input$choose_project)){
       if(is_something(input$choose_project)){
@@ -227,6 +244,18 @@ app_server <- function(input, output, session) {
   })
   observe({
     updateSelectizeInput(session,"selected_record",choices = values$subset_records,server = T)
+    message("updated selected_record choices")
+  })
+  observe({
+    # if(!is.null(values$sbc)){
+    #   if(nrow(values$sbc)>0){
+    #     updateSelectizeInput(session,"selected_group",choices =values$sbc$label ,server = T)
+    #     message("updated selected_record choices")
+    #   }
+    # }
+  })
+  observe({
+    updateSelectizeInput(session,"choose_split",choices = values$subset_records,server = T)
     message("updated selected_record choices")
   })
   # observeEvent(values$last_clicked_record,{
@@ -260,6 +289,7 @@ app_server <- function(input, output, session) {
     if(!is.null(values$DB)){
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
       updateSelectizeInput(session,"selected_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
+      # values$sbc <- sidebar_choices(values$DB)
       if(!is.null(values$DB$transformation)){
         values$editable_forms_transformation_table <- values$DB$transformation$forms %>% as.data.frame(stringsAsFactors = FALSE)
       }else{

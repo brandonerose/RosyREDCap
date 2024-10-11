@@ -78,6 +78,7 @@ app_ui<- function(request) {
         ),
         conditionalPanel(
           "input.sb1 === 'data'",
+          uiOutput("selected_group_"),
           uiOutput("transformation_switch_")
         ),
         menuItem(
@@ -87,7 +88,7 @@ app_ui<- function(request) {
         ),
         conditionalPanel(
           "input.sb1 === 'group'",
-          uiOutput("choose_split"),
+          uiOutput("choose_split_"),
           shinyWidgets::awesomeCheckbox(
             inputId = "render_missing",
             label = "Missing in Table1",

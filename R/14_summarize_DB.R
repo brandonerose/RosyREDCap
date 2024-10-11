@@ -177,7 +177,7 @@ generate_summary_save_list <- function(
     DB <- deidentify_DB(DB)
   }
   if(clean){
-    DB <- DB %>% clean_DB(drop_blanks = drop_blanks,drop_unknowns = drop_unknowns)
+    DB <- DB %>% RosyDB::clean_DB(drop_blanks = drop_blanks,drop_unknowns = drop_unknowns)
   }
   to_save_list <- DB$data
   if(include_metadata){

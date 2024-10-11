@@ -142,6 +142,19 @@ create_node_edge_REDCap <- function(DB, include_vars = F,type = "DiagrammeR", du
     )
     edge_df$id <- 1:nrow(edge_df)
   }else{
+    node_df <- node_df %>% dplyr::bind_rows(
+      data.frame(
+        id = NA,
+        type = "arm",
+        label = DB$short_name,
+        # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
+        shape = "box", # entity
+        style = "filled",
+        fillcolor = "green",
+        fontcolor = fontcolor
+      )
+    )
+    node_df$id <- 1:nrow(node_df)
     #structure ------------
     if(DB$redcap$has_repeating_forms){
       node_df <- node_df %>% dplyr::bind_rows(
