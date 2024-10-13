@@ -6,8 +6,8 @@
 \usage{
 REDCap_diagram(
   DB,
+  static = F,
   render = T,
-  type = "visNetwork",
   duplicate_forms = T,
   clean_names = T,
   include_fields = F,

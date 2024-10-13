@@ -322,19 +322,17 @@ create_node_edge_REDCap <- function(
 #' @title REDCap_diagram
 #' @return messages for confirmation
 #' @export
-REDCap_diagram <- function(DB, render = T,type = "visNetwork",duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical){
+REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical){
   if(is.null(DB$redcap))DB <- update_RosyREDCap(DB, metadata_only = T,save_to_dir = F)
   if(missing(hierarchical)) hierarchical <- !include_fields
-  is_DiagrammeR <- type == "DiagrammeR"
-  is_visNetwork <- type == "visNetwork"
   OUT <- create_node_edge_REDCap(DB,duplicate_forms = duplicate_forms,include_fields = include_fields,include_choices = include_choices)
   if(!clean_names){OUT$node_df$label <- OUT$node_df$entity_name}
-  if(is_DiagrammeR){
+  if(static){
     OUT$node_df$shape[which(OUT$node_df$shape=="box")] <- "rectangle"
     OUT$node_df$shape[which(OUT$node_df$shape=="ellipse")] <- "circle"
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="title")] <- "tooltip"
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="group")] <- "type"
-    colnames(OUT$node_df)[which(colnames(node_df)=="color.border")] <- "color"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="color.border")] <- "color"
     # node_df$color <- node_df$fillcolor
     # node_df$color.highlight <- "gold"
     OUT$node_df$tooltip <-gsub("<br>","\\\n",OUT$node_df$tooltip) %>% remove_html_tags()
