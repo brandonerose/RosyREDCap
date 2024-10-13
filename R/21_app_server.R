@@ -58,7 +58,7 @@ app_server <- function(input, output, session) {
     output$REDCap_diagram_test_vis <- visNetwork::renderVisNetwork({
       REDCap_diagram(
         DB = values$DB,
-        type = "visNetwork",
+        static = F,
         render = T,
         include_fields = input$metadata_graph_include_vars,
         duplicate_forms = input$metadata_graph_duplicate_forms,
@@ -70,7 +70,7 @@ app_server <- function(input, output, session) {
         DiagrammeR::generate_dot(
           REDCap_diagram(
             DB = values$DB,
-            type = "DiagrammeR",
+            static = T,
             render = F,
             include_fields = input$metadata_graph_include_vars,
             duplicate_forms = input$metadata_graph_duplicate_forms,

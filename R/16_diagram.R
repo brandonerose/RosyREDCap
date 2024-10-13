@@ -340,7 +340,7 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
   }else{
     OUT$node_df$type <- OUT$node_df$group
   }
-  if(type == "DiagrammeR")type <- "graph"
+  if(static)type <- "graph"
   graph <-
     DiagrammeR::create_graph(
       nodes_df =  OUT$node_df,
