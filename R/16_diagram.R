@@ -351,19 +351,25 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
       graph,
       title = DB$redcap$project_info$project_title,
       output = ifelse(static,"graph","visNetwork")
-    ) %>%
-    visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
-    visNetwork::visLegend() %>%
-    visNetwork::visLayout(hierarchical = hierarchical)
-  rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
-    list(
-      shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
-      color = list(
-        background = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]],
-        border = OUT$node_df$color.border[which(OUT$node_df$group==group)[[1]]]
-      )
     )
-  },simplify = F)
+  if(!static){
+    rendered_graph <- rendered_graph %>%
+      visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
+      visNetwork::visLegend() %>%
+      visNetwork::visLayout(hierarchical = hierarchical)
+    if(include_choices){
+      rendered_graph <- rendered_graph %>% visNetwork::visClusteringByHubsize(20)
+    }
+    rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
+      list(
+        shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
+        color = list(
+          background = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]],
+          border = OUT$node_df$color.border[which(OUT$node_df$group==group)[[1]]]
+        )
+      )
+    },simplify = F)
+  }
   if(render) return(rendered_graph)
   return(graph)
 }
