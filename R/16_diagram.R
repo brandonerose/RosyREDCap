@@ -6,15 +6,11 @@
 #' @export
 create_node_edge_REDCap <- function(
     DB,
-    type = "DiagrammeR",
     duplicate_forms = T,
-    clean_name = T,
     include_fields = F,
     include_choices = F
 ){
   # setup ==========================
-  is_DiagrammeR <- type == "DiagrammeR"
-  is_visNetwork <- type == "visNetwork"
   node_df <- NULL
   edge_df <- NULL
   bordercolor <- font.color <- "black"
@@ -38,7 +34,7 @@ create_node_edge_REDCap <- function(
   node_df <- node_df %>% dplyr::bind_rows(
     data.frame(
       id = NA,
-      type = "project",
+      group = "project",
       entity_name = DB$short_name,
       entity_label = DB$redcap$project_info$project_title,
       # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
@@ -56,7 +52,7 @@ create_node_edge_REDCap <- function(
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
-        type = "arm",
+        group = "arm",
         entity_name = arms$arm_num,
         entity_label = arms$arm_num,
         # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
@@ -72,14 +68,13 @@ create_node_edge_REDCap <- function(
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
-        type = "event",
+        group = "event",
         entity_name = events$unique_event_name,
-        entity_label = events$unique_event_name,
+        entity_label = events$event_name,
         # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         level = level,
         shape = "box", # entity
         style = "filled",
-        color = event_color,
         color.background = event_color,
         color.border = bordercolor,
         font.color = font.color
@@ -92,7 +87,7 @@ create_node_edge_REDCap <- function(
   #   node_df <- node_df %>% dplyr::bind_rows(
   #     data.frame(
   #       id = NA,
-  #       type = "structure",
+  #       group = "structure",
   #       entity_name = c("Repeating","Not Repeating"),
   #       entity_label = c("Repeating","Not Repeating"),
   #       level = level,
@@ -110,9 +105,9 @@ create_node_edge_REDCap <- function(
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
-        type = "form",
+        group = "form",
         entity_name = event_mapping$form,
-        entity_label = event_mapping$form,
+        entity_label = forms$form_label[match(event_mapping$form,forms$form_name)],# turn to function
         level = level,
         # label = forms$form_label %>% stringr::str_replace_all( "[^[:alnum:]]", ""),
         title = event_mapping$form %>% sapply(function(x){
@@ -130,7 +125,7 @@ create_node_edge_REDCap <- function(
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
-        type = "form",
+        group = "form",
         entity_name = forms$form_name,
         entity_label = forms$form_label,
         level = level,
@@ -152,7 +147,7 @@ create_node_edge_REDCap <- function(
     node_df <- node_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
-        type = "field",
+        group = "field",
         entity_name = fields$field_name,
         entity_label = fields$field_label,
         level = level,
@@ -170,7 +165,7 @@ create_node_edge_REDCap <- function(
       node_df <- node_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
-          type = "choice",
+          group = "choice",
           entity_name = choices$name,
           entity_label = choices$name,
           level = level,
@@ -185,37 +180,6 @@ create_node_edge_REDCap <- function(
       )
     }
   }
-  # # clean names -----------
-  # if(clean_name){
-  #   types <- node_df$type %>% unique()
-  #   for(type in types){#type <- types %>% sample1()
-  #     ROWS <- which(node_df$type == type)
-  #     if (type == "form"){
-  #       node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
-  #         y <- forms$form_label[forms$form_name==x]
-  #         return(ifelse(is.na(y),x,y))
-  #       })
-  #     }
-  #     if (type == "arm"){
-  #       node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
-  #         y <- arms$name[arms$arm_num==x]
-  #         return(ifelse(is.na(y),x,y))
-  #       })
-  #     }
-  #     # if (type == "field"){
-  #     #   node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
-  #     #     y <- DB$metadata$fields$field_label[metadata$field_name==x]
-  #     #     return(ifelse(is.na(y),x,y))
-  #     #   })
-  #     # }
-  #     if (type == "event"){
-  #       node_df$label[ROWS] <- node_df$label[ROWS] %>% sapply(function(x){
-  #         y <- events$event_name[events$unique_event_name==x]
-  #         return(ifelse(is.na(y),x,y))
-  #       })
-  #     }
-  #   }
-  # }
   # final nodes-------------------
   node_df$id <- 1:nrow(node_df)
   node_df$fixedsize <- F
@@ -223,6 +187,7 @@ create_node_edge_REDCap <- function(
   node_df$label<-node_df$entity_label %>% sapply(function(text){
     wrap_text(text,25)
   })
+
   rownames(node_df) <- NULL
   # edges ======================
   # edges not longitudinal ---------------
@@ -231,8 +196,8 @@ create_node_edge_REDCap <- function(
     edge_df <- edge_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
-        from = node_df$id[which(node_df$type=="project")],
-        to = node_df$id[which(node_df$type=="form")],
+        from = node_df$id[which(node_df$group=="project")],
+        to = node_df$id[which(node_df$group=="form")],
         rel = NA,#"Belongs to",
         style = "filled",
         color = font.color,
@@ -240,9 +205,8 @@ create_node_edge_REDCap <- function(
         arrows = arrow_type
       )
     )
-
     # if(DB$redcap$has_repeating_forms){
-    #   sub_node_df_structure <- node_df[which(node_df$type=="structure"),]
+    #   sub_node_df_structure <- node_df[which(node_df$group=="structure"),]
     #   edge_df <- edge_df %>% dplyr::bind_rows(
     #     data.frame(
     #       id = NA,
@@ -263,8 +227,8 @@ create_node_edge_REDCap <- function(
     edge_df <- edge_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
-        from = node_df$id[which(node_df$type=="project")],
-        to = node_df$id[which(node_df$type=="arm")],
+        from = node_df$id[which(node_df$group=="project")],
+        to = node_df$id[which(node_df$group=="arm")],
         rel = NA,#"Belongs to",
         style = "filled",
         color = font.color,
@@ -276,51 +240,50 @@ create_node_edge_REDCap <- function(
     edge_df <- edge_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
-        from = events$arm_num %>% sapply(function(x){node_df$id[which(node_df$type=="arm"&node_df$label==x)]}),
-        to = events$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$type=="event"&node_df$label==x)]}),
+        from = events$arm_num %>% sapply(function(x){node_df$id[which(node_df$group=="arm"&node_df$entity_name==x)]}),
+        to = events$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$group=="event"&node_df$entity_name==x)]}),
         rel = NA,#"Belongs to",
         style = "filled",
         color = font.color,
         arrowhead = "none",
-        arrows = ""
+        arrows = arrow_type
       )
     )
     # events to forms ----------------------
     if(duplicate_forms){
-      sub_node_df <- node_df[which(node_df$type=="form"),]
-      if(any(sub_node_df$label != event_mapping$form))stop("event match error! check the diagram function. For now do not duplicate forms.")
+      sub_node_df <- node_df[which(node_df$group=="form"),]
+      if(any(!sub_node_df$entity_name %in% event_mapping$form))stop("event match error! check the diagram function. For now do not duplicate forms.")
       edge_df <- edge_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
-          from = event_mapping$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$type=="event"&node_df$label==x)]}),
+          from = event_mapping$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$group=="event"&node_df$entity_name==x)]}),
           to = sub_node_df$id,
           rel = NA,#"Belongs to",
           style = "filled",
           color = font.color,
           arrowhead = "none",
-          arrows = ""
+          arrows = arrow_type
         )
       )
-      edge_df$id <- 1:nrow(edge_df)
     }else{
       edge_df <- edge_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
-          from = event_mapping$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$type=="event"&node_df$label==x)]}),
-          to = event_mapping$form %>% sapply(function(x){node_df$id[which(node_df$type=="form"&node_df$label==x)]}),
+          from = event_mapping$unique_event_name %>% sapply(function(x){node_df$id[which(node_df$group=="event"&node_df$entity_name==x)]}),
+          to = event_mapping$form %>% sapply(function(x){node_df$id[which(node_df$group=="form"&node_df$entity_name==x)]}),
           rel = NA,#"Belongs to",
           style = "filled",
           color = font.color,
           arrowhead = "none",
-          arrows = ""
+          arrows = arrow_type
         )
       )
     }
   }
   # forms to fields --------------
-  sub_node_df_forms <- node_df[which(node_df$type=="form"),]
+  sub_node_df_forms <- node_df[which(node_df$group=="form"),]
   if(include_fields){
-    sub_node_df_fields <- node_df[which(node_df$type=="field"),]
+    sub_node_df_fields <- node_df[which(node_df$group=="field"),]
     edge_df <- edge_df %>% dplyr::bind_rows(
       data.frame(
         id = NA,
@@ -334,7 +297,7 @@ create_node_edge_REDCap <- function(
       )
     )
     if(include_choices){
-      sub_node_df_choices <- node_df[which(node_df$type=="choice"),]
+      sub_node_df_choices <- node_df[which(node_df$group=="choice"),]
       edge_df <- edge_df %>% dplyr::bind_rows(
         data.frame(
           id = NA,
@@ -351,37 +314,33 @@ create_node_edge_REDCap <- function(
   }
   # final edges -------------------
   edge_df$id <- 1:nrow(edge_df)
-  # visNetwork::visNetwork(nodes = node_df,edges = edge_df) %>% visNetwork::visLayout(hierarchical = F)
-  # out -----------------
-  # if(is_visNetwork){
-  #   node_df$shape[which(node_df$shape=="rectangle")] <- "box"
-  #   node_df$shape[which(node_df$shape=="ellipse")] <- "ellipse"
-  #   colnames(node_df)[which(colnames(node_df)=="tooltip")] <- "title"
-  #   node_df$color <- node_df$fillcolor
-  # }
-  if(is_DiagrammeR){
-    node_df$shape[which(node_df$shape=="box")] <- "rectangle"
-    node_df$shape[which(node_df$shape=="ellipse")] <- "circle"
-    colnames(node_df)[which(colnames(node_df)=="title")] <- "tooltip"
-    colnames(node_df)[which(colnames(node_df)=="color.border")] <- "color"
-    # node_df$color <- node_df$fillcolor
-    # node_df$color.highlight <- "gold"
-    node_df$tooltip <-gsub("<br>","\\\n",node_df$tooltip) %>% remove_html_tags()
-    if(is_something(edge_df))colnames(edge_df)[which(colnames(edge_df)=="width")] <- "penwidth"
-  }
   OUT <- list(
     node_df = node_df,
     edge_df = edge_df
   )
   return(OUT)
 }
-
 #' @title REDCap_diagram
 #' @return messages for confirmation
 #' @export
-REDCap_diagram <- function(DB, render = T, include_fields = F,type = "visNetwork",duplicate_forms = T, clean_name = T){
+REDCap_diagram <- function(DB, render = T,type = "visNetwork",duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical){
   if(is.null(DB$redcap))DB <- update_RosyREDCap(DB, metadata_only = T,save_to_dir = F)
-  OUT <- create_node_edge_REDCap(DB,include_fields = include_fields,type = type, duplicate_forms = duplicate_forms,clean_name = clean_name)
+  if(missing(hierarchical)) hierarchical <- !include_fields
+  is_DiagrammeR <- type == "DiagrammeR"
+  is_visNetwork <- type == "visNetwork"
+  OUT <- create_node_edge_REDCap(DB,duplicate_forms = duplicate_forms,include_fields = include_fields,include_choices = include_choices)
+  if(!clean_names){OUT$node_df$label <- OUT$node_df$entity_name}
+  if(is_DiagrammeR){
+    OUT$node_df$shape[which(OUT$node_df$shape=="box")] <- "rectangle"
+    OUT$node_df$shape[which(OUT$node_df$shape=="ellipse")] <- "circle"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="title")] <- "tooltip"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="group")] <- "type"
+    colnames(OUT$node_df)[which(colnames(node_df)=="color.border")] <- "color"
+    # node_df$color <- node_df$fillcolor
+    # node_df$color.highlight <- "gold"
+    OUT$node_df$tooltip <-gsub("<br>","\\\n",OUT$node_df$tooltip) %>% remove_html_tags()
+    if(is_something(OUT$edge_df))colnames(OUT$edge_df)[which(colnames(OUT$edge_df)=="width")] <- "penwidth"
+  }
   if(type == "DiagrammeR")type <- "graph"
   graph <-
     DiagrammeR::create_graph(
@@ -392,9 +351,12 @@ REDCap_diagram <- function(DB, render = T, include_fields = F,type = "visNetwork
     DiagrammeR::render_graph(
       graph,
       title = DB$redcap$project_info$project_title,
-      output = type,
-      layout = "nicely"
-    )
+      output = type
+    ) %>%
+    visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
+    visNetwork::visLegend() %>%
+    visNetwork::visLayout(hierarchical = hierarchical)
+
   # rendered_graph$x$options$edges$arrows$to$enabled <- F
   if(render) return(rendered_graph)
   return(graph)

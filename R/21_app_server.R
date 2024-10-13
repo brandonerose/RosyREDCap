@@ -62,7 +62,7 @@ app_server <- function(input, output, session) {
         render = T,
         include_fields = input$metadata_graph_include_vars,
         duplicate_forms = input$metadata_graph_duplicate_forms,
-        clean_name = input$metadata_graph_clean_name
+        clean_names = input$metadata_graph_clean_name
       )
     })
     output$REDCap_diagram_test_dia <- DiagrammeR::renderGrViz({
@@ -74,7 +74,7 @@ app_server <- function(input, output, session) {
             render = F,
             include_fields = input$metadata_graph_include_vars,
             duplicate_forms = input$metadata_graph_duplicate_forms,
-            clean_name = input$metadata_graph_clean_name
+            clean_names = input$metadata_graph_clean_name
           )
         )
       )

@@ -7,10 +7,12 @@
 REDCap_diagram(
   DB,
   render = T,
-  include_fields = F,
   type = "visNetwork",
   duplicate_forms = T,
-  clean_name = T
+  clean_names = T,
+  include_fields = F,
+  include_choices = F,
+  hierarchical
 )
 }
 \value{
