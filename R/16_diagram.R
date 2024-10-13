@@ -187,7 +187,6 @@ create_node_edge_REDCap <- function(
   node_df$label<-node_df$entity_label %>% sapply(function(text){
     wrap_text(text,25)
   })
-
   rownames(node_df) <- NULL
   # edges ======================
   # edges not longitudinal ---------------
@@ -340,6 +339,8 @@ REDCap_diagram <- function(DB, render = T,type = "visNetwork",duplicate_forms = 
     # node_df$color.highlight <- "gold"
     OUT$node_df$tooltip <-gsub("<br>","\\\n",OUT$node_df$tooltip) %>% remove_html_tags()
     if(is_something(OUT$edge_df))colnames(OUT$edge_df)[which(colnames(OUT$edge_df)=="width")] <- "penwidth"
+  }else{
+    OUT$node_df$type <- OUT$node_df$group
   }
   if(type == "DiagrammeR")type <- "graph"
   graph <-
@@ -347,6 +348,7 @@ REDCap_diagram <- function(DB, render = T,type = "visNetwork",duplicate_forms = 
       nodes_df =  OUT$node_df,
       edges_df = OUT$edge_df
     )
+  OUT$node_df$group %>% unique()
   rendered_graph <-
     DiagrammeR::render_graph(
       graph,
@@ -356,8 +358,15 @@ REDCap_diagram <- function(DB, render = T,type = "visNetwork",duplicate_forms = 
     visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
     visNetwork::visLegend() %>%
     visNetwork::visLayout(hierarchical = hierarchical)
-
-  # rendered_graph$x$options$edges$arrows$to$enabled <- F
+  rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
+    list(
+      shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
+      color = list(
+        background = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]],
+        border = OUT$node_df$color.border[which(OUT$node_df$group==group)[[1]]]
+      )
+    )
+  },simplify = F)
   if(render) return(rendered_graph)
   return(graph)
 }
