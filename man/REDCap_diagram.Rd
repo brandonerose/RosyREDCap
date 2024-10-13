@@ -7,7 +7,7 @@
 REDCap_diagram(
   DB,
   render = T,
-  include_vars = F,
+  include_fields = F,
   type = "visNetwork",
   duplicate_forms = T,
   clean_name = T

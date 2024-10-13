@@ -6,10 +6,11 @@
 \usage{
 create_node_edge_REDCap(
   DB,
-  include_vars = F,
   type = "DiagrammeR",
   duplicate_forms = T,
-  clean_name = T
+  clean_name = T,
+  include_fields = F,
+  include_choices = F
 )
 }
 \value{

@@ -60,7 +60,7 @@ app_server <- function(input, output, session) {
         DB = values$DB,
         type = "visNetwork",
         render = T,
-        include_vars = input$metadata_graph_include_vars,
+        include_fields = input$metadata_graph_include_vars,
         duplicate_forms = input$metadata_graph_duplicate_forms,
         clean_name = input$metadata_graph_clean_name
       )
@@ -72,7 +72,7 @@ app_server <- function(input, output, session) {
             DB = values$DB,
             type = "DiagrammeR",
             render = F,
-            include_vars = input$metadata_graph_include_vars,
+            include_fields = input$metadata_graph_include_vars,
             duplicate_forms = input$metadata_graph_duplicate_forms,
             clean_name = input$metadata_graph_clean_name
           )
@@ -184,7 +184,8 @@ app_server <- function(input, output, session) {
   output$transformation_switch_ <- renderUI({
     shinyWidgets::switchInput(
       inputId = "transformation_switch",
-      label = "Transformation"
+      label = "Transformation",
+      value = values$DB$internals$is_transformed
     )
   })
   output$choose_project_ <- renderUI({
@@ -222,7 +223,7 @@ app_server <- function(input, output, session) {
     if(!is.null(input$choose_project)){
       if(is_something(input$choose_project)){
         values$DB <- tryCatch({
-          load_RosyREDCap(short_name=input$choose_project)
+          load_RosyREDCap(short_name=input$choose_project) %>% clean_DB(drop_blanks = F,drop_unknowns = F)
         },error = function(e) {NULL})
         if(is_something(input$choose_project)){
           if(!is.null(input[[paste0("projects_table_state")]])){
@@ -297,7 +298,7 @@ app_server <- function(input, output, session) {
       }
       if(!is.null(values$DB$transformation)){
         if(!is.null(values$DB$internals$is_transformed)){
-          if(input$transformation_switch !=values$DB$internals$is_transformed){
+          if(input$transformation_switch != values$DB$internals$is_transformed){
             shinyWidgets::updateSwitchInput(
               inputId = "transformation_switch",value = values$DB$internals$is_transformed, label = "Transformation"
             )
