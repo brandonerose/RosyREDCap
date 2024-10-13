@@ -340,7 +340,6 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
   }else{
     OUT$node_df$type <- OUT$node_df$group
   }
-  if(static)type <- "graph"
   graph <-
     DiagrammeR::create_graph(
       nodes_df =  OUT$node_df,
@@ -351,7 +350,7 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
     DiagrammeR::render_graph(
       graph,
       title = DB$redcap$project_info$project_title,
-      output = type
+      output = ifelse(static,"graph","visNetwork")
     ) %>%
     visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
     visNetwork::visLegend() %>%
