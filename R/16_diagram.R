@@ -332,7 +332,7 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
     OUT$node_df$shape[which(OUT$node_df$shape=="ellipse")] <- "circle"
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="title")] <- "tooltip"
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="group")] <- "type"
-    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="color.border")] <- "color"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="color.background")] <- "color"
     # node_df$color <- node_df$fillcolor
     # node_df$color.highlight <- "gold"
     OUT$node_df$tooltip <-gsub("<br>","\\\n",OUT$node_df$tooltip) %>% remove_html_tags()
@@ -355,7 +355,7 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
   if(!static){
     rendered_graph <- rendered_graph %>%
       visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
-      visNetwork::visLegend() %>%
+      visNetwork::visLegend(main = DB$redcap$project_info$project_title) %>%
       visNetwork::visLayout(hierarchical = hierarchical)
     if(include_fields){
       groups <- "field"
