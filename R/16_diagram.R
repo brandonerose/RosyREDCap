@@ -357,8 +357,10 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
       visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
       visNetwork::visLegend() %>%
       visNetwork::visLayout(hierarchical = hierarchical)
-    if(include_choices){
-      rendered_graph <- rendered_graph %>% visNetwork::visClusteringByHubsize(20)
+    if(include_fields){
+      groups <- "field"
+      if(include_choices) groups <- groups %>% append("choice")
+      rendered_graph <- rendered_graph %>% visNetwork::visClusteringByGroup(groups = groups)
     }
     rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
       list(
