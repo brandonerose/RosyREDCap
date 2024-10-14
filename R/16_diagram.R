@@ -361,9 +361,7 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
       # visNetwork::visLegend(main = "Legend") %>%
       visNetwork::visLayout(hierarchical = hierarchical)
     if(hierarchical){
-      if(!missing(direction)){
-        rendered_graph <- rendered_graph %>% visNetwork::visHierarchicalLayout(direction = direction, levelSeparation = 300)
-      }
+      rendered_graph <- rendered_graph %>% visNetwork::visHierarchicalLayout(direction = direction, levelSeparation = 300)
     }
     # if(include_fields){
     #   groups <- "field"
