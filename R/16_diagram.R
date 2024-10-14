@@ -333,7 +333,7 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="title")] <- "tooltip"
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="group")] <- "type"
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="color.border")] <- "color"
-    node_df$fillcolor <- OUT$node_df$color.background
+    OUT$node_df$fillcolor <- OUT$node_df$color.background
     # node_df$color.highlight <- "gold"
     OUT$node_df$tooltip <-gsub("<br>","\\\n",OUT$node_df$tooltip) %>% remove_html_tags()
     if(is_something(OUT$edge_df))colnames(OUT$edge_df)[which(colnames(OUT$edge_df)=="width")] <- "penwidth"
