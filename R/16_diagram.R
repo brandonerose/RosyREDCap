@@ -357,11 +357,11 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
       visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
       visNetwork::visLegend(main = DB$redcap$project_info$project_title) %>%
       visNetwork::visLayout(hierarchical = hierarchical)
-    if(include_fields){
-      groups <- "field"
-      if(include_choices) groups <- groups %>% append("choice")
-      rendered_graph <- rendered_graph %>% visNetwork::visClusteringByGroup(groups = groups)
-    }
+    # if(include_fields){
+    #   groups <- "field"
+    #   if(include_choices) groups <- groups %>% append("choice")
+    #   rendered_graph <- rendered_graph %>% visNetwork::visClusteringByGroup(groups = groups)
+    # }
     rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
       list(
         shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
