@@ -372,7 +372,7 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
       list(
         shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
         font = list(
-          color = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]]
+          color = OUT$node_df$font.color[which(OUT$node_df$group==group)[[1]]]
         ),
         color = list(
           background = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]],
