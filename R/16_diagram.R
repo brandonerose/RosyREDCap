@@ -354,8 +354,8 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
       nodes =  OUT$node_df,
       edges = OUT$edge_df,
       main = DB$redcap$project_info$project_title,
-      submain = DB$redcap$project_info$project_notes,
-      footer = "Code by Brandon Rose, M.D., M.P.H. at <a href='https://www.thecodingdocs.com/home'>TheCodingDocs.com</a> "
+      submain = DB$redcap$project_info$project_notes %>%
+        paste0("<br>Code by Brandon Rose, M.D., M.P.H. at <a href='https://www.thecodingdocs.com/home'>TheCodingDocs.com</a> using <a href='https://github.com/brandonerose/rosyredcap'>RosyREDCap</a> and <a href='https://github.com/datastorm-open/visNetwork'>VisNetwork</a>")
     ) %>%
       visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
       visNetwork::visLegend(main = "Legend") %>%
@@ -371,7 +371,9 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
     rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
       list(
         shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
-        font.color=OUT$node_df$font.color[which(OUT$node_df$group==group)[[1]]],
+        font = list(
+          color = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]]
+        ),
         color = list(
           background = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]],
           border = OUT$node_df$color.border[which(OUT$node_df$group==group)[[1]]]
