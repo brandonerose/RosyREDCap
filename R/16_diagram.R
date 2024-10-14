@@ -354,11 +354,11 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
       nodes =  OUT$node_df,
       edges = OUT$edge_df,
       main = DB$redcap$project_info$project_title,
-      submain = DB$redcap$project_info$project_notes %>% wrap_text(100,"<br>"),
+      submain = DB$redcap$project_info$project_notes,
       footer = "Code by Brandon Rose, M.D., M.P.H. at <a href='https://www.thecodingdocs.com/home'>TheCodingDocs.com</a> "
     ) %>%
-      # visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE,collapse = T) %>%
-      # visNetwork::visLegend(main = "Legend") %>%
+      visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
+      visNetwork::visLegend(main = "Legend") %>%
       visNetwork::visLayout(hierarchical = hierarchical)
     if(hierarchical){
       rendered_graph <- rendered_graph %>% visNetwork::visHierarchicalLayout(direction = direction, levelSeparation = 300)
