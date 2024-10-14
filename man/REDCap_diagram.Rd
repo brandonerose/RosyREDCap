@@ -12,7 +12,8 @@ REDCap_diagram(
   clean_names = T,
   include_fields = F,
   include_choices = F,
-  hierarchical
+  hierarchical = F,
+  direction = "LR"
 )
 }
 \value{

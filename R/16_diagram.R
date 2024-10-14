@@ -322,41 +322,49 @@ create_node_edge_REDCap <- function(
 #' @title REDCap_diagram
 #' @return messages for confirmation
 #' @export
-REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical){
+REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical = F,direction = "LR"){
   if(is.null(DB$redcap))DB <- update_RosyREDCap(DB, metadata_only = T,save_to_dir = F)
-  if(missing(hierarchical)) hierarchical <- !include_fields
   OUT <- create_node_edge_REDCap(DB,duplicate_forms = duplicate_forms,include_fields = include_fields,include_choices = include_choices)
   if(!clean_names){OUT$node_df$label <- OUT$node_df$entity_name}
+  OUT$node_df$physics <- T
+  OUT$node_df$physics[which(OUT$node_df$group =="project")] <- F
   if(static){
     OUT$node_df$shape[which(OUT$node_df$shape=="box")] <- "rectangle"
     OUT$node_df$shape[which(OUT$node_df$shape=="ellipse")] <- "circle"
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="title")] <- "tooltip"
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="group")] <- "type"
     colnames(OUT$node_df)[which(colnames(OUT$node_df)=="color.border")] <- "color"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="font.color")] <- "fontcolor"
     OUT$node_df$fillcolor <- OUT$node_df$color.background
     # node_df$color.highlight <- "gold"
     OUT$node_df$tooltip <-gsub("<br>","\\\n",OUT$node_df$tooltip) %>% remove_html_tags()
     if(is_something(OUT$edge_df))colnames(OUT$edge_df)[which(colnames(OUT$edge_df)=="width")] <- "penwidth"
-  }else{
-    OUT$node_df$type <- OUT$node_df$group
-  }
-  graph <-
-    DiagrammeR::create_graph(
+    graph <- DiagrammeR::create_graph(
       nodes_df =  OUT$node_df,
       edges_df = OUT$edge_df
     )
-  OUT$node_df$group %>% unique()
-  rendered_graph <-
-    DiagrammeR::render_graph(
+    rendered_graph <- DiagrammeR::render_graph(
       graph,
       title = DB$redcap$project_info$project_title,
-      output = ifelse(static,"graph","visNetwork")
+      output = "graph"
     )
-  if(!static){
-    rendered_graph <- rendered_graph %>%
-      visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
-      visNetwork::visLegend(main = DB$redcap$project_info$project_title) %>%
+  }else{
+    OUT$node_df$type <- OUT$node_df$group
+    rendered_graph <- visNetwork::visNetwork(
+      nodes =  OUT$node_df,
+      edges = OUT$edge_df,
+      main = DB$redcap$project_info$project_title,
+      submain = DB$redcap$project_info$project_notes %>% wrap_text(100,"<br>"),
+      footer = "Code by Brandon Rose, M.D., M.P.H. at <a href='https://www.thecodingdocs.com/home'>TheCodingDocs.com</a> "
+    ) %>%
+      # visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE,collapse = T) %>%
+      # visNetwork::visLegend(main = "Legend") %>%
       visNetwork::visLayout(hierarchical = hierarchical)
+    if(hierarchical){
+      if(!missing(direction)){
+        rendered_graph <- rendered_graph %>% visNetwork::visHierarchicalLayout(direction = direction, levelSeparation = 300)
+      }
+    }
     # if(include_fields){
     #   groups <- "field"
     #   if(include_choices) groups <- groups %>% append("choice")
@@ -365,6 +373,7 @@ REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_n
     rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
       list(
         shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
+        font.color=OUT$node_df$font.color[which(OUT$node_df$group==group)[[1]]],
         color = list(
           background = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]],
           border = OUT$node_df$color.border[which(OUT$node_df$group==group)[[1]]]
