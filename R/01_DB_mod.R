@@ -95,6 +95,9 @@ setup_RosyREDCap <- function (
   }
   if( ! missing_dir_path){
     if(force){
+      # log_save <- tryCatch({
+      #   load_RosyREDCap(short_name=short_name)$redcap$log
+      # },error = function(e) {NULL})
       DB <- blank_RosyREDCap()
     }else{
       DB <- load_RosyREDCap(short_name,validate = validate)

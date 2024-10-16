@@ -127,6 +127,7 @@ update_RosyREDCap <- function(
   }
   if(force){
     DB <- DB %>% get_REDCap_metadata(include_users = !metadata_only)
+    DB$internals$is_transformed <- F
     if(!metadata_only){
       DB$data <- list()
       DB$data_update <- list()

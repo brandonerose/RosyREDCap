@@ -207,6 +207,7 @@ get_REDCap_metadata <- function(DB,include_users = T){
   if(any(DB$metadata$fields$field_type=="yesno")){
     DB$metadata$fields$select_choices_or_calculations[which(DB$metadata$fields$field_type=="yesno")] <- c("0, No | 1, Yes")
   }
+  DB$metadata$fields <- DB %>% annotate_fields(summarize_data = F)
   DB$metadata$choices <- fields_to_choices(fields = DB$metadata$fields)
   # is longitudinal ------
   if(DB$redcap$is_longitudinal){
