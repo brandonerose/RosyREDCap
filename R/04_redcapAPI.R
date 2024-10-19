@@ -1,14 +1,11 @@
 #' @import RosyUtils
 #' @import RosyDB
 #' @import RosyApp
-redcap_api_base <- function(url,token,content,additional_args=NULL){
+api_request <- function(url,token,additional_args=NULL){
   body  <- list(
-    "token"= token,
-    content=content,
-    format='csv',
-    returnFormat='json'
+    "token"= token
   )
-  if(!missing(additional_args)||is.null(additional_args)){
+  if(!is.null(additional_args)){
     body <- body %>% append(additional_args)
   }
   httr::POST(
@@ -17,31 +14,91 @@ redcap_api_base <- function(url,token,content,additional_args=NULL){
     encode = "form"
   )
 }
-process_response <- function(response,error_action){
-  content <- httr::content(response)
+process_response <- function(response,error_action="warn",method){
+  content <- httr::content(response) %>% dplyr::bind_rows()
   if(httr::http_error(response)){
-    if(!missing(error_action)){
-      if(!is.null(error_action)){
-        if(!error_action%in%c("stop","warn"))stop("error_action must be 'stop' or 'warn'")
-        general_error <- response$status_code
-        specific_error <- http_errors$Description[which(http_errors$Value==response$status_code)]
-        message <- paste0("HTTP error ",general_error, ". ",specific_error,". ",content[["error"]])
-        if(error_action=="stop")stop(message)
-        warning(message,immediate. = T)
-      }
-    }
+    if(!error_action%in%c("stop","warn"))stop("error_action must be 'stop' or 'warn'")
+    general_error <- response$status_code
+    specific_error <- http_errors$Description[which(http_errors$Value==response$status_code)]
+    message <- paste0("HTTP error ",general_error, ". ",specific_error,". ",content[["error"]])
+    if(error_action=="stop")stop(message)
+    warning(message,immediate. = T)
+    if(!missing(method))show_redcap_api_method_info(method)
     return(NA)
   }
   return(all_character_cols(content))
 }
+get_redcap_api_methods <- function(){
+  REDCap_API$methods$method_short_name %>% sort()
+}
+show_redcap_api_method_info <- function(method){
+  if(missing(method)){
+    bullet_in_console("Missing method, so one will be chosen at random!",bullet_type = "x")
+    method <- REDCap_API$methods$method_short_name %>% sample1()
+  }
+  if(!method%in%REDCap_API$methods$method_short_name)stop("Must use the following methods... ",as_comma_string(REDCap_API$methods$method_short_name))
+  method_df <- REDCap_API$methods[which(REDCap_API$methods$method_short_name==method),]
+  method_param_df <- REDCap_API$params[which(REDCap_API$params$method_short_name==method),]
+  method_param_df_base <- method_param_df[which(!method_param_df$non_base),]
+  method_param_df_req <- method_param_df[which(method_param_df$non_base_req_by_user),]
+  method_param_df_opt <- method_param_df[which(method_param_df$non_base_opt_by_user),]
+  bullet_in_console(paste0("REDCap API method '",method,"'..."))
+  bullet_in_console("Help is here: ",url = method_df$help_url)
+  bullet_in_console(paste0(method_df$description))
+  if(nrow(method_param_df_base)>0){
+    bullet_in_console(paste0("Default: ",method_param_df_base$Parameter %>% as_comma_string()),bullet_type = "v")
+  }
+  if(nrow(method_param_df_req)>0){
+    x <- method_param_df_req$Parameter
+    x[which(method_param_df_req$is_longitudinal_only)] <- paste0(x[which(method_param_df_req$is_longitudinal_only)]," (if longitudinal)")
+    x[which(method_param_df_req$has_repeating_instruments_or_events_only)] <- paste0(x[which(method_param_df_req$has_repeating_instruments_or_events_only)]," (if has repeating)")
+    bullet_in_console(paste0("Required by User: ", as_comma_string(x)),bullet_type = ">")
+  }
+  if(nrow(method_param_df_opt)>0){
+    bullet_in_console(paste0("Optional by User: ",method_param_df_opt$Parameter %>% as_comma_string()),bullet_type = ">")
+  }
+}
+redcap_api_method <- function(DB,url,token,method,error_action = "warn",additional_args=NULL,only_get = F){
+  if(!missing(DB)){
+    url <- DB$links$redcap_uri
+    token <- validate_redcap_token(DB)
+  }
+  allowed_methods <- REDCap_API$methods$method_short_name %>% sort()
+  if(only_get){
+    allowed_methods <- REDCap_API$methods$method_short_name[which(REDCap_API$methods$action_type=="export")] %>% sort()
+  }
+  if(!method%in%allowed_methods)stop("Can only use the following methods... ",as_comma_string(allowed_methods))
+  method_param_df <- REDCap_API$params[which(REDCap_API$params$method_short_name==method),]
+  method_param_df <- method_param_df[which(method_param_df$Parameter!="token"),]
+  base_rows <- which(!method_param_df$non_base)
+  if(!is.null(additional_args)){
+    if(any(method_param_df$Parameter[base_rows]%in%names(additional_args)))stop("Do not supply default-defined params to additional_args... ",method_param_df$Parameter[base_rows] %>% as_comma_string())
+  }
+  for(i in base_rows){
+    additional_args <- additional_args %>% append(
+      setNames(method_param_df$default[i], method_param_df$Parameter[i]) %>% as.list()
+    )
+  }
+  api_request(url=url,token = token,additional_args=additional_args) %>% process_response(error_action=error_action,method=method) %>% return()
+}
+get_REDCap <- function(DB,method,error_action = "warn",additional_args=NULL){
+  redcap_api_method(
+    url = DB$links$redcap_uri,
+    token = validate_redcap_token(DB),
+    method = method,
+    additional_args = additional_args,
+    error_action = error_action,
+    only_get = T
+  )
+}
 redcap_token_works <- function(DB){
-  redcap_api_base(DB$links$redcap_uri,validate_redcap_token(DB,silent = T,ask = F),"version") %>%
+  api_request(DB$links$redcap_uri,validate_redcap_token(DB,silent = T,ask = F),"version") %>%
     httr::http_error() %>% magrittr::not() %>% return()
 }
 test_REDCap <- function(DB){
   ERROR  <- T
   while(ERROR){
-    version <- redcap_api_base(DB$links$redcap_uri,validate_redcap_token(DB),"version")
+    version <- api_request(DB$links$redcap_uri,validate_redcap_token(DB),"version")
     ERROR  <- version %>% httr::http_error()
     if(ERROR){
       warning('Your REDCap API token check failed. Invalid token or API privileges. Contact Admin! Consider rerunnning `setup_DB()`',immediate. = T)
@@ -53,11 +110,6 @@ test_REDCap <- function(DB){
   message("Connected to REDCap!")
   DB$redcap$version <- version %>% httr::content(as="text") %>% as.character()
   DB
-}
-get_REDCap_info <- function(DB,content,error_action=NULL,additional_args=NULL){
-  allowed_content <- REDCap_API$contents$content
-  if(!content%in%allowed_content)stop("Must use the following content... ",paste0(allowed_content,collapse = ", "))
-  redcap_api_base(url=DB$links$redcap_uri,token = validate_redcap_token(DB),content = content,additional_args=additional_args) %>% process_response(error_action)
 }
 #' @title Drop redcap files to directory
 #' @param original_file_names logical for using original uploaded filenames vs system defined
@@ -127,19 +179,19 @@ get_REDCap_metadata <- function(DB,include_users = T){
   DB$internals$last_metadata_update <- Sys.time()
   DB$metadata <- list()
   # info ----------
-  DB$redcap$project_info <- get_REDCap_info(DB,"project")
+  DB$redcap$project_info <- get_REDCap(DB,method = "exp_proj")
   DB$redcap$project_title <-  DB$redcap$project_info$project_title
   DB$redcap$project_id <- DB$redcap$project_info$project_id
   DB$redcap$is_longitudinal <- DB$redcap$project_info$is_longitudinal == "1"
   DB$metadata$missing_codes <- missing_codes2(DB)
   # instruments --------
-  DB$metadata$forms <- get_REDCap_info(DB,"instrument","warn") %>% rename_forms_redcap_to_default()
+  DB$metadata$forms <- get_REDCap(DB,method = "exp_instr") %>% rename_forms_redcap_to_default()
   DB$metadata$forms$repeating <- F
   DB$redcap$has_repeating_forms <- F
   DB$redcap$has_repeating_events <- F
   DB$redcap$has_repeating_forms_or_events <- DB$redcap$project_info$has_repeating_instruments_or_events=="1"
   # if(DB$redcap$project_info$has_repeating_instruments_or_events=="1")
-  repeatingFormsEvents <- get_REDCap_info(DB,"repeatingFormsEvents")
+  repeatingFormsEvents <- get_REDCap(DB,method = "exp_repeating_forms_events")
   if(is.data.frame(repeatingFormsEvents)){
     DB$metadata$forms$repeating <- DB$metadata$forms$form_name%in%repeatingFormsEvents$form_name
   }
@@ -147,7 +199,7 @@ get_REDCap_metadata <- function(DB,include_users = T){
     DB$redcap$has_repeating_forms <- T
   }
   # metadata ----------
-  DB$metadata$fields <- get_REDCap_info(DB,"metadata","stop")
+  DB$metadata$fields <- get_REDCap(DB,method = "exp_metadata",error_action = "stop")
   DB$metadata$fields$section_header <- DB$metadata$fields$section_header %>% remove_html_tags()
   DB$metadata$fields$field_label <- DB$metadata$fields$field_label %>% remove_html_tags()
   DB$redcap$id_col <- DB$metadata$fields[1,1] %>% as.character() #RISKY?
@@ -212,12 +264,12 @@ get_REDCap_metadata <- function(DB,include_users = T){
   # is longitudinal ------
   if(DB$redcap$is_longitudinal){
     DB$redcap$raw_structure_cols <- c(DB$redcap$raw_structure_cols,"arm_num","event_name") %>% unique()
-    DB$metadata$arms <- get_REDCap_info(DB,"arm")
+    DB$metadata$arms <- get_REDCap(DB,"exp_arms")
     DB$redcap$has_arms <- T
     DB$redcap$has_multiple_arms <- nrow(DB$metadata$arms)>1
     DB$redcap$has_arms_that_matter <- DB$redcap$has_multiple_arms
-    DB$metadata$event_mapping  <- get_REDCap_info(DB,"formEventMapping","warn")
-    DB$metadata$events <- get_REDCap_info(DB,"event","warn")
+    DB$metadata$event_mapping  <- get_REDCap(DB,"exp_inst_event_maps")
+    DB$metadata$events <- get_REDCap(DB,"exp_events")
     DB$metadata$events$repeating <- F
     DB$metadata$event_mapping$repeating <- F
     if(is.data.frame(repeatingFormsEvents)){
@@ -274,77 +326,6 @@ get_REDCap_metadata <- function(DB,include_users = T){
   DB$links$redcap_API_playground <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/playground.php?pid=",DB$redcap$project_id)
   return(DB)
 }
-#' @title get_REDCap_structure
-#' @param parse_codes logical for parsing choice codes and missing codes into tabs
-#' @return redcap structure list
-#' @export
-get_REDCap_structure <- function(DB, parse_codes = F){
-  redcap <- NULL
-  # redcap$uri <- DB$links$redcap_uri
-  # redcap$version <- redcap_api_base(url = redcap$uri,token = validate_redcap_token(DB),"version") %>% httr::content(as="text") %>% as.character()
-  redcap$project_info <- get_REDCap_info(DB,"project")
-  redcap$arms <- get_REDCap_info(DB,"arm")
-  redcap$events <- get_REDCap_info(DB,"event","warn")
-  redcap$event_mapping  <- get_REDCap_info(DB,"formEventMapping","warn")
-  redcap$forms <- get_REDCap_info(DB,"instrument","warn")
-  redcap$repeating <- get_REDCap_info(DB,"repeatingFormsEvents")
-  redcap$metadata <- get_REDCap_info(DB,"metadata","stop")
-  if(parse_codes){
-    redcap$codebook <- redcap$metadata %>% fields_to_choices()
-    redcap$missing_codes <- missing_codes2(DB)
-  }
-  return(redcap)
-}
-#' @title save_redcap_structure_to_dir
-#' @inheritParams get_REDCap_structure
-#' @return redcap structure list
-#' @export
-save_redcap_structure_to_dir <- function(DB,parse_codes = F){
-  redcap <- get_REDCap_structure(DB,parse_codes = parse_codes)
-  names(redcap)[which(names(redcap)=="events")] <- "events_in"
-  NAMES <- names(REDCap_API$return_form_names)
-  NAMES <- NAMES[which(!NAMES == "events")]
-  if(! parse_codes){
-    NAMES <- NAMES[which(!NAMES %in% c("codebook","missing_codes"))]
-  }
-  for (NAME in NAMES){
-    x <- REDCap_API$return_form_names[[NAME]]
-    DF <- matrix(data = NA, nrow = 0,ncol = length(x)) %>% as.data.frame()
-    colnames(DF) <- x
-    DF <- all_character_cols(DF)
-    if(is_something(redcap[[NAME]])){
-      DF <- redcap[[NAME]][,which(colnames(redcap[[NAME]])%in%REDCap_API$return_form_names[[NAME]])]
-    }
-    redcap[[NAME]] <- DF
-  }
-  redcap %>% list_to_excel(dir = file.path(DB$dir_path,"REDCap"),file_name = "REDCap_structure",drop_empty = F)
-}
-#' @title load_redcap_structure_from_dir
-#' @param parse_codes logical for parsing choice codes and missing codes into tabs
-#' @return redcap structure list
-#' @export
-load_redcap_structure_from_dir <- function(DB, path = file.path(DB$dir_path,"REDCap","REDCap_structure.xlsx")){
-  redcap <- excel_to_list(path)
-  if("codebook"%in%names(redcap)){
-    # add to metadata
-  }
-  if("missing_data"%in%names(redcap)){
-    # add to proj info after writing to code function
-  }
-  return(redcap)
-}
-#' @title upload_redcap_structure
-#' @param redcap list to be uploaded
-#' @return redcap structure list
-#' @export
-upload_redcap_structure<- function(DB,redcap){
-  OK  <- names(REDCap_API$return_form_names)[which(!names(REDCap_API$return_form_names)%in%c("codebook","missing_codes"))]
-  BAD <- names(redcap)[which(!names(redcap)  %in% OK)]
-  if(length(BAD)>0) stop("Bad Names in redcap object not matching: ",BAD %>% paste0(collapse = ", "))
-  for (NAME in names(redcap)){
-    print("example of '","' being uploaded")
-  }
-}
 get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   forms <- get_original_forms(DB)
   data_list <- list()
@@ -358,10 +339,12 @@ get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   return(data_list)
 }
 get_REDCap_users <- function(DB){
-  userRole  <- get_REDCap_info(DB,"userRole") %>% dplyr::select("unique_role_name","role_label")
-  userRoleMapping <-  get_REDCap_info(DB,"userRoleMapping")
-  user <-  get_REDCap_info(DB,"user")
+  userRole  <- get_REDCap(DB,"exp_users") %>% dplyr::select("unique_role_name","role_label")
+  userRoleMapping <-  get_REDCap(DB,"exp_user_roles")
+  user <-  get_REDCap(DB,"user")
   return(merge(merge(userRole,userRoleMapping,by="unique_role_name"),user, by="username"))
+}
+get_REDCap_structure <- function(){
 }
 #' @title Check the REDCap log
 #' @param last numeric paired with units. Default is 24.
@@ -387,7 +370,7 @@ check_redcap_log <- function(DB,last=24,user = "",units="hours",begin_time="",cl
   if(begin_time!=""){
     x <- begin_time
   }
-  log <- get_REDCap_info(DB,"log",additional_args = list(beginTime=x,record=record,user = user))
+  log <- get_REDCap(DB,"exp_logging",additional_args = list(beginTime=x,record=record,user = user))
   log <- log %>% clean_redcap_log(purge_api=clean)
   log
 }
@@ -427,4 +410,14 @@ delete_redcap_records <- function(DB, records){
     ) %>% process_response(error_action = "warn")
   }
   message("Records deleted!")
+}
+#' @title push_redcap_dictionary
+#' @export
+push_redcap_dictionary <- function(){
+  api_request(
+    url,
+    token,
+    additional_args=NULL
+  )
+  return()
 }
