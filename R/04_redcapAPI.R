@@ -341,8 +341,8 @@ get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   return(data_list)
 }
 get_REDCap_users <- function(DB){
-  users  <- get_REDCap(DB,method = "exp_users",additional_args = list(format = "csv"))
-  userRole  <- get_REDCap(DB,method = "exp_user_roles",additional_args = list(format = "csv")) %>% dplyr::select("unique_role_name","role_label")
+  users  <- get_REDCap(DB,method = "exp_users")
+  userRole  <- get_REDCap(DB,method = "exp_user_roles") %>% dplyr::select("unique_role_name","role_label")
   userRoleMapping <-  get_REDCap(DB,method = "exp_user_role_maps")
   final <- merge(merge(userRole,userRoleMapping,by="unique_role_name"),users, by="username",all.y = T)
   return(final)
