@@ -98,7 +98,7 @@ redcap_token_works <- function(DB){
 test_REDCap <- function(DB){
   ERROR  <- T
   while(ERROR){
-    version <- api_request(DB$links$redcap_uri,validate_redcap_token(DB),"version")
+    version <- api_request(url = DB$links$redcap_uri,token = validate_redcap_token(DB),additional_args = list(content="version"))
     ERROR  <- version %>% httr::http_error()
     if(ERROR){
       warning('Your REDCap API token check failed. Invalid token or API privileges. Contact Admin! Consider rerunnning `setup_DB()`',immediate. = T)

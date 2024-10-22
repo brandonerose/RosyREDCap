@@ -195,6 +195,20 @@ app_server <- function(input, output, session) {
       choices = NULL
     )
   })
+  output$choose_field_ <- renderUI({
+    selectInput(
+      inputId = "choose_field",
+      label = "Choose Field",
+      choices = NULL
+    )
+  })
+  output$choose_fields_ <- renderUI({
+    selectInput(
+      inputId = "choose_fields",
+      label = "Choose Fields",
+      choices = NULL
+    )
+  })
   output$selected_record_ <- renderUI({
     selectInput(
       inputId = "selected_record",
@@ -223,7 +237,7 @@ app_server <- function(input, output, session) {
     if(!is.null(input$choose_project)){
       if(is_something(input$choose_project)){
         values$DB <- tryCatch({
-          load_RosyREDCap(short_name=input$choose_project) %>% clean_DB(drop_blanks = F,drop_unknowns = F)
+          load_RosyREDCap(short_name=input$choose_project)# %>% clean_DB(drop_blanks = F,drop_unknowns = F)
         },error = function(e) {NULL})
         if(is_something(input$choose_project)){
           if(!is.null(input[[paste0("projects_table_state")]])){
@@ -247,18 +261,6 @@ app_server <- function(input, output, session) {
     updateSelectizeInput(session,"selected_record",choices = values$subset_records,server = T)
     message("updated selected_record choices")
   })
-  observe({
-    # if(!is.null(values$sbc)){
-    #   if(nrow(values$sbc)>0){
-    #     updateSelectizeInput(session,"selected_group",choices =values$sbc$label ,server = T)
-    #     message("updated selected_record choices")
-    #   }
-    # }
-  })
-  observe({
-    updateSelectizeInput(session,"choose_split",choices = values$subset_records,server = T)
-    message("updated selected_record choices")
-  })
   # observeEvent(values$last_clicked_record,{
   #   if(!is.null(values$last_clicked_record)){
   #     message("values$last_clicked_record changed!")
@@ -277,6 +279,7 @@ app_server <- function(input, output, session) {
             values$DB <-untransform_DB(values$DB)
           }
         }
+        updateSelectizeInput(session,"choose_split",choices = sidebar_choices(values$DB),server = T)
       }else{
         message("Nothing to do, no DB$transformation info! ",input$transformation_switch)
         shinyWidgets::updateSwitchInput(
@@ -290,7 +293,13 @@ app_server <- function(input, output, session) {
     if(!is.null(values$DB)){
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
       updateSelectizeInput(session,"selected_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
-      # values$sbc <- sidebar_choices(values$DB)
+      values$sbc <- sidebar_choices(values$DB)
+      if(!is.null(values$sbc)){
+        if(nrow(values$sbc)>0){
+          updateSelectizeInput(session,"selected_group",choices = values$sbc$label, selected = values$sbc$label[1],server = T)
+          message("updated selected_group choices")
+        }
+      }
       if(!is.null(values$DB$transformation)){
         values$editable_forms_transformation_table <- values$DB$transformation$forms %>% as.data.frame(stringsAsFactors = FALSE)
       }else{
