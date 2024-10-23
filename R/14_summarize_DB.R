@@ -241,6 +241,7 @@ save_RosyREDCap_list <- function(
       separate = separate,
       link_col_list = link_col_list,
       file_name = file_name,
+      # str_trunc_length = 10000,
       header_df_list = to_save_list %>% construct_header_list(fields = DB$metadata$fields) %>% process_df_list(silent = T),
       key_cols_list = construct_key_col_list(DB),
       overwrite = TRUE
