@@ -93,6 +93,7 @@ clean_redcap_log <- function(log,purge_api=T){
   log$record_id <- NULL
   # rows <- which(!is.na(log$record)&is.na(log$record_id))
   # log$record_id[rows] <- log$record[rows]
+  log$details <- gsub("[[:cntrl:]]", "", log$details)
   if(purge_api){
     log <- log[which(!log$details%in%c("Export Logging (API)","Export REDCap version (API)","export_format: CSV, rawOrLabel: raw", "Download data dictionary (API)")),]
     log <- log[which(!startsWith(log$details,"Export ")),]
