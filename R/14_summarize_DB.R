@@ -236,12 +236,12 @@ save_RosyREDCap_list <- function(
       overwrite = TRUE
     )
   }else{
-    to_save_list %>% list_to_excel(
+    to_save_list %>% RosyUtils::list_to_excel(
       dir = dir_other,
       separate = separate,
       link_col_list = link_col_list,
       file_name = file_name,
-      header_df_list = to_save_list %>% construct_header_list(fields = DB$metadata$fields),
+      header_df_list = to_save_list %>% construct_header_list(fields = DB$metadata$fields) %>% process_df_list(silent = T),
       key_cols_list = construct_key_col_list(DB),
       overwrite = TRUE
     )
