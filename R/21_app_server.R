@@ -199,14 +199,15 @@ app_server <- function(input, output, session) {
     selectInput(
       inputId = "choose_field",
       label = "Choose Field",
-      choices = NULL
+      choices = setNames(values$DB$metadata$fields$field_name,values$DB$metadata$fields$field_label)
     )
   })
   output$choose_fields_ <- renderUI({
     selectInput(
       inputId = "choose_fields",
       label = "Choose Fields",
-      choices = NULL
+      multiple = T,
+      choices = setNames(values$DB$metadata$fields$field_name,values$DB$metadata$fields$field_label)
     )
   })
   output$selected_record_ <- renderUI({
