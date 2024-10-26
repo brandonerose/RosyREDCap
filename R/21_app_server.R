@@ -222,7 +222,7 @@ app_server <- function(input, output, session) {
       inputId = "selected_group",
       label = "Choose Group",
       selected = NULL,
-      choices = NULL
+      choices = values$sbc$label
     )
   })
   output$choose_split_ <- renderUI({
@@ -294,12 +294,6 @@ app_server <- function(input, output, session) {
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
       updateSelectizeInput(session,"selected_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
       values$sbc <- sidebar_choices(values$DB)
-      if(!is.null(values$sbc)){
-        if(nrow(values$sbc)>0){
-          updateSelectizeInput(session,"selected_group",choices = values$sbc$label, selected = values$sbc$label[1],server = T)
-          message("updated selected_group choices")
-        }
-      }
       if(!is.null(values$DB$transformation)){
         values$editable_forms_transformation_table <- values$DB$transformation$forms %>% as.data.frame(stringsAsFactors = FALSE)
       }else{
