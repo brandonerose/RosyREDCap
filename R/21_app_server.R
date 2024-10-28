@@ -215,7 +215,7 @@ app_server <- function(input, output, session) {
       inputId = "selected_record",
       label = "Choose Record",
       selected = NULL,
-      choices = NULL
+      choices = values$subset_records
     )
   })
   output$selected_group_ <- renderUI({
@@ -223,7 +223,7 @@ app_server <- function(input, output, session) {
       inputId = "selected_group",
       label = "Choose Group",
       selected = NULL,
-      choices = values$sbc$label
+      choices = c("All Records","Custom Records",values$sbc$label)
     )
   })
   output$choose_split_ <- renderUI({
@@ -258,10 +258,10 @@ app_server <- function(input, output, session) {
       }
     }
   })
-  observe({
-    updateSelectizeInput(session,"selected_record",choices = values$subset_records,server = T)
-    message("updated selected_record choices")
-  })
+  # observe({
+  #   updateSelectizeInput(session,"selected_record",choices = values$subset_records,server = T)
+  #   message("updated selected_record choices")
+  # })
   # observeEvent(values$last_clicked_record,{
   #   if(!is.null(values$last_clicked_record)){
   #     message("values$last_clicked_record changed!")
@@ -287,6 +287,20 @@ app_server <- function(input, output, session) {
           inputId = "transformation_switch",value = F, label = "Transformation"
         )
       }
+    }
+  })
+  observeEvent(input$selected_group,{
+    if(input$selected_group == "All Records"){
+      values$subset_records <- values$all_records
+    }
+    if(input$selected_group == "Custom Records"){
+      values$subset_records <- values$all_records
+    }
+    if(!input$selected_group %in% c("All Records","Custom Records")){
+      x <- values$sbc[which(values$sbc$label == input$selected_group),]
+      DF <- values$DB$data[[x$form_name]]
+      DF[c(DB$metadata$form_key_cols[[x$form_name]])][which(DF[[x$field_name]]==x$name),]
+
     }
   })
   observeEvent(values$DB,{
