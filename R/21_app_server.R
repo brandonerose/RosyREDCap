@@ -497,11 +497,10 @@ app_server <- function(input, output, session) {
   }
   # plotly -----------
   output$parcats <- plotly::renderPlotly({
-    # DF <- values$DB$data[[values$selected_form]]
-    # cols <- vec1_in_vec2(input$choose_fields,colnames(DF))
-    # if(length(cols)>0){
-    #   DF <- DF[,cols]
-      DF[,c("sarc_metastatic","sarc_type_choice")] %>% plotly_parcats() %>% return()
-    # }
+    DF <- values$DB$data[[values$selected_form]]
+    cols <- vec1_in_vec2(input$choose_fields,colnames(DF))
+    if(length(cols)>0){
+      DF <- DF[,cols] %>% clean_DF(fields = values$DB$metadata,drop_blanks = T) %>% plotly_parcats(remove_missing = F) %>% return()
+    }
   })
 }
