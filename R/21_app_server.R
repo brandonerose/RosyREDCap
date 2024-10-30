@@ -124,7 +124,7 @@ app_server <- function(input, output, session) {
     values$editable_forms_transformation_table[info$row, info$col+1] <- info$value # had to add +1 because not showing rownames
   })
   output$table1 <- renderUI({
-    DF <- values$DB$data[[values$selected_form]][,input$choose_fields]
+    DF <- values$DB$data[[values$selected_form]][,input$choose_fields,drop = F]
     x<- values$sbc[which(values$sbc$label==input$choose_group),]
     print.table(x)
     if(nrow(x)>0&length(input$choose_fields)>0){
@@ -134,7 +134,7 @@ app_server <- function(input, output, session) {
         filter_choices = x$name,
         form_names = values$selected_form,
         field_names = input$choose_fields
-      )[[values$selected_form]][,input$choose_fields]
+      )[[values$selected_form]][,input$choose_fields,drop = F]
     }
     DF %>% head() %>% print()
     html_output <- htmlTable::htmlTable(
