@@ -123,6 +123,39 @@ app_server <- function(input, output, session) {
     message(info$col, " col!")
     values$editable_forms_transformation_table[info$row, info$col+1] <- info$value # had to add +1 because not showing rownames
   })
+  output$table1 <- renderUI({
+    DF <- values$DB$data[[values$selected_form]][,input$choose_fields]
+    x<- values$sbc[which(values$sbc$label==input$choose_group),]
+    print.table(x)
+    if(nrow(x)>0&length(input$choose_fields)>0){
+      DF <- filter_DB(
+        DB = values$DB,
+        filter_field = x$field_name,
+        filter_choices = x$name,
+        form_names = values$selected_form,
+        field_names = input$choose_fields
+      )[[values$selected_form]][,input$choose_fields]
+    }
+    DF %>% head() %>% print()
+    html_output <- htmlTable::htmlTable(
+      align = "l",
+      DF %>% clean_DF(values$DB$metadata$fields) %>% make_table1(
+        group = input$choose_split,
+        variables = unique(
+          c(
+            ifelse(input$choose_split=="no_choice",NA,input$choose_split),
+            input$choose_fields
+          ) %>% drop_nas()
+        ),
+        render.missing = input$render_missing
+      ),
+      css.cell = "width:100%; overflow-x:auto;"  # Ensures width and adds horizontal overflow
+    )
+    tags$div(
+      style = "width:100%; overflow-x:auto;",  # Force containment within the box
+      HTML(html_output)
+    )
+  })
   # simple tables ---------
   output$projects_table <- DT::renderDT({
     values$projects %>% make_DT_table()
@@ -227,11 +260,12 @@ app_server <- function(input, output, session) {
     )
   })
   output$choose_split_ <- renderUI({
+    row_match <-which(values$DB$metadata$fields$field_type_R %in% c("factor", "integer", "numeric"))
     selectInput(
       inputId = "choose_split",
       label = "Choose Split",
       selected = NULL,
-      choices = c("None",setNames(values$DB$metadata$fields$field_name,values$DB$metadata$fields$field_label))
+      choices = c(setNames("no_choice","None"),setNames(values$DB$metadata$fields$field_name[row_match],values$DB$metadata$fields$field_label[row_match]))
     )
   })
   observeEvent(input$choose_project,{
@@ -498,9 +532,15 @@ app_server <- function(input, output, session) {
   # plotly -----------
   output$parcats <- plotly::renderPlotly({
     DF <- values$DB$data[[values$selected_form]]
-    cols <- vec1_in_vec2(input$choose_fields,colnames(DF))
-    if(length(cols)>0){
-      DF <- DF[,cols] %>% clean_DF(fields = values$DB$metadata,drop_blanks = T) %>% plotly_parcats(remove_missing = F) %>% return()
+    input$shuffle_colors
+    # print(input$choose_fields)
+    # cols <- vec1_in_vec2(input$choose_fields,colnames(DF))
+    # print(cols)
+    # # fields_to_forms
+    print(input$choose_fields)
+    if(length(input$choose_fields)>0){
+      DF[,input$choose_fields, drop = FALSE] %>% clean_DF(fields = values$DB$metadata,drop_blanks = T) %>% plotly_parcats(remove_missing = F) %>% return()
+      # mtcars  %>% plotly_parcats(remove_missing = F) %>% return()
     }
   })
 }

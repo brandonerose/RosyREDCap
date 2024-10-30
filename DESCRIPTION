@@ -18,6 +18,7 @@ Imports:
     dplyr,
     DT,
     golem (>= 0.4.1),
+    htmlTable,
     httr,
     lubridate,
     magrittr,

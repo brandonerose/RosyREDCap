@@ -198,7 +198,15 @@ app_ui<- function(request) {
             box(
               title = h1("Group"),
               width = 12,
-              plotly::plotlyOutput("parcats")
+              plotly::plotlyOutput("parcats"),
+              actionButton("shuffle_colors", "Shuffle Colors")
+            )
+          ),
+          fluidRow(
+            box(
+              title = h1("Table1"),
+              width = 6,
+              uiOutput("table1")
             )
           )
         ),
