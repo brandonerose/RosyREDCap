@@ -78,7 +78,7 @@ app_ui<- function(request) {
         ),
         conditionalPanel(
           "input.sb1 === 'data'",
-          uiOutput("selected_group_"),
+          uiOutput("choose_group_"),
           uiOutput("transformation_switch_")
         ),
         menuItem(
@@ -89,6 +89,7 @@ app_ui<- function(request) {
         conditionalPanel(
           "input.sb1 === 'group'",
           uiOutput("choose_split_"),
+          uiOutput("choose_field_"),
           uiOutput("choose_fields_"),
           shinyWidgets::awesomeCheckbox(
             inputId = "render_missing",
@@ -106,7 +107,7 @@ app_ui<- function(request) {
           tabName = "record",
           icon =shiny::icon("user-large")
         ),
-        uiOutput("selected_record_"),
+        uiOutput("choose_record_"),
         conditionalPanel(
           "input.sb1 === 'record'",
           actionButton("ab_random_record","Random Record!")
@@ -192,14 +193,14 @@ app_ui<- function(request) {
         ),
         # group--------
         tabItem(
-          "group"
-          # fluidRow(
-          #   box(
-          #     title = h1("REDCap Log"),
-          #     width = 12,
-          #     DT::DTOutput("log_table_chosen")
-          #   )
-          # )
+          "group",
+          fluidRow(
+            box(
+              title = h1("Group"),
+              width = 12,
+              plotly::plotlyOutput("parcats")
+            )
+          )
         ),
         # record--------
         tabItem(

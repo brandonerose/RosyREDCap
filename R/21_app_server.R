@@ -10,10 +10,10 @@ app_server <- function(input, output, session) {
   values <- reactiveValues()
   values$projects <- get_projects() # get list of cached projects
   values$DB <- NULL
-  # values$selected_record <- NULL
+  # values$choose_record <- NULL
   values$last_clicked_record <- NULL
   values$selected_form <- NULL
-  values$selected_variable <- NULL
+  values$selected_field <- NULL
   values$selected_instance <- NULL
   values$active_table_id <- NULL
   values$active_table_rows <- NULL
@@ -172,9 +172,9 @@ app_server <- function(input, output, session) {
     )
   })
   # vb -----------
-  # output$vb_selected_record <- shinydashboard::renderValueBox({
+  # output$vb_choose_record <- shinydashboard::renderValueBox({
   #   shinydashboard::valueBox(
-  #     value = values$selected_record,
+  #     value = values$choose_record,
   #     subtitle = "Selected Patient (PSN)",
   #     width = 12
   #   )
@@ -210,17 +210,17 @@ app_server <- function(input, output, session) {
       choices = setNames(values$DB$metadata$fields$field_name,values$DB$metadata$fields$field_label)
     )
   })
-  output$selected_record_ <- renderUI({
+  output$choose_record_ <- renderUI({
     selectInput(
-      inputId = "selected_record",
+      inputId = "choose_record",
       label = "Choose Record",
       selected = NULL,
       choices = values$subset_records
     )
   })
-  output$selected_group_ <- renderUI({
+  output$choose_group_ <- renderUI({
     selectInput(
-      inputId = "selected_group",
+      inputId = "choose_group",
       label = "Choose Group",
       selected = NULL,
       choices = c("All Records","Custom Records",values$sbc$label)
@@ -231,14 +231,14 @@ app_server <- function(input, output, session) {
       inputId = "choose_split",
       label = "Choose Split",
       selected = NULL,
-      choices = NULL
+      choices = c("None",setNames(values$DB$metadata$fields$field_name,values$DB$metadata$fields$field_label))
     )
   })
   observeEvent(input$choose_project,{
     if(!is.null(input$choose_project)){
       if(is_something(input$choose_project)){
         values$DB <- tryCatch({
-          load_RosyREDCap(short_name=input$choose_project)# %>% clean_DB(drop_blanks = F,drop_unknowns = F)
+          load_RosyREDCap(short_name=input$choose_project)# %>% clean_DB(drop_blanks = F,other_drops = NULL)
         },error = function(e) {NULL})
         if(is_something(input$choose_project)){
           if(!is.null(input[[paste0("projects_table_state")]])){
@@ -259,13 +259,13 @@ app_server <- function(input, output, session) {
     }
   })
   # observe({
-  #   updateSelectizeInput(session,"selected_record",choices = values$subset_records,server = T)
-  #   message("updated selected_record choices")
+  #   updateSelectizeInput(session,"choose_record",choices = values$subset_records,server = T)
+  #   message("updated choose_record choices")
   # })
   # observeEvent(values$last_clicked_record,{
   #   if(!is.null(values$last_clicked_record)){
   #     message("values$last_clicked_record changed!")
-  #     updateSelectizeInput(session,"selected_record", selected = values$last_clicked_record,choices = values$subset_records,server = T)
+  #     updateSelectizeInput(session,"choose_record", selected = values$last_clicked_record,choices = values$subset_records,server = T)
   #   }
   # })
   observeEvent(input$transformation_switch,ignoreNULL = T,ignoreInit = T,{
@@ -280,7 +280,6 @@ app_server <- function(input, output, session) {
             values$DB <-untransform_DB(values$DB)
           }
         }
-        updateSelectizeInput(session,"choose_split",choices = sidebar_choices(values$DB),server = T)
       }else{
         message("Nothing to do, no DB$transformation info! ",input$transformation_switch)
         shinyWidgets::updateSwitchInput(
@@ -289,25 +288,24 @@ app_server <- function(input, output, session) {
       }
     }
   })
-  observeEvent(input$selected_group,{
-    if(input$selected_group == "All Records"){
+  observeEvent(input$choose_group,{
+    if(input$choose_group == "All Records"){
       values$subset_records <- values$all_records
     }
-    if(input$selected_group == "Custom Records"){
+    if(input$choose_group == "Custom Records"){
       values$subset_records <- values$all_records
     }
-    if(!input$selected_group %in% c("All Records","Custom Records")){
-      x <- values$sbc[which(values$sbc$label == input$selected_group),]
+    if(!input$choose_group %in% c("All Records","Custom Records")){
+      x <- values$sbc[which(values$sbc$label == input$choose_group),]
       DF <- values$DB$data[[x$form_name]]
       DF[c(DB$metadata$form_key_cols[[x$form_name]])][which(DF[[x$field_name]]==x$name),]
-
     }
   })
   observeEvent(values$DB,{
     message("values$DB changed!")
     if(!is.null(values$DB)){
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
-      updateSelectizeInput(session,"selected_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
+      updateSelectizeInput(session,"choose_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
       values$sbc <- sidebar_choices(values$DB)
       if(!is.null(values$DB$transformation)){
         values$editable_forms_transformation_table <- values$DB$transformation$forms %>% as.data.frame(stringsAsFactors = FALSE)
@@ -343,7 +341,7 @@ app_server <- function(input, output, session) {
     })
   })
   observe({
-    if(!is.null(input$selected_record)){
+    if(!is.null(input$choose_record)){
       form_name <- "form_label"
       z <- values$DB$metadata$forms
       all_forms <- names(values$DB$data)
@@ -354,12 +352,12 @@ app_server <- function(input, output, session) {
       isolate({
         if(is_something(values$selected_form)) {
           values$active_table_id <- paste0("table___home__", values$selected_form)
-          starting_record <- input$selected_record
+          starting_record <- input$choose_record
           data_form <- values$DB$data[[values$selected_form]]
           state <- input[[paste0(values$active_table_id, "_state")]]
           for(form in all_forms) {
             if(!is.null(input[[paste0("table___home__", form, "_state")]])){
-              ROWS <- which(values$DB$data[[form]][[values$DB$redcap$id_col]] == input$selected_record)
+              ROWS <- which(values$DB$data[[form]][[values$DB$redcap$id_col]] == input$choose_record)
               skip <- F
               if(!is.null(input[[paste0("table___home__", form, "_rows_selected")]])){
                 # message("ident ",identical(ROWS,input[[paste0("table___home__", form, "_rows_selected")]]), " ", ROWS, " ", input[[paste0("table___home__", form, "_rows_selected")]])
@@ -394,13 +392,13 @@ app_server <- function(input, output, session) {
         if(is_something(values$selected_form)){
           expected <- NULL
           data_col <- values$DB$data[[values$selected_form]][[values$DB$redcap$id_col]]
-          expected <- which(data_col==input$selected_record)
+          expected <- which(data_col==input$choose_record)
           # message("expected: ", expected)
           if(is_something(selected)){
             if(!identical(selected,expected)){
               selected <- unique(data_col[[selected]])
               message("valid_click: ", selected)
-              updateSelectizeInput(session,"selected_record",selected = selected,choices = values$subset_records,server = T)
+              updateSelectizeInput(session,"choose_record",selected = selected,choices = values$subset_records,server = T)
             }
           }
         }
@@ -413,15 +411,15 @@ app_server <- function(input, output, session) {
     }
   })
   observe({
-    # updateSelectizeInput(session,"selected_record" ,selected = input$selected_record)
+    # updateSelectizeInput(session,"choose_record" ,selected = input$choose_record)
     # values$variables_to_change_input_list <- NULL
-    # if(is_something(input$selected_record)){
-    #   if(input$selected_record %in% values$DB$summary$all_records[[values$DB$redcap$id_col]]){
+    # if(is_something(input$choose_record)){
+    #   if(input$choose_record %in% values$DB$summary$all_records[[values$DB$redcap$id_col]]){
     #     values$variables_to_change_input_list <- values$DB %>%
     #       filter_DB(
-    #         records = input$selected_record,
+    #         records = input$choose_record,
     #         data_choice = "data",
-    #         form_names = field_names_to_form_names(values$DB,field_names = values$selected_variable)
+    #         form_names = field_names_to_form_names(values$DB,field_names = values$selected_field)
     #       ) %>% process_df_list()
     #     if(!is_something(values$variables_to_change_input_list)){
     #       values$variables_to_change_input_list <- NULL
@@ -444,7 +442,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$ab_random_record,{
     random_record <- values$subset_records %>% sample1()
     message("Random Record: ", random_record)
-    updateSelectizeInput(session,"selected_record",selected = random_record,choices = values$subset_records,server = T)
+    updateSelectizeInput(session,"choose_record",selected = random_record,choices = values$subset_records,server = T)
   })
   observeEvent(input$ab_update_redcap,{
     values$DB <- values$DB %>% update_RosyREDCap()
@@ -460,11 +458,11 @@ app_server <- function(input, output, session) {
   })
   # redcap links -----
   output$redcap_links <- renderUI({
-    if(is_something(input$selected_record)&length(input$selected_record)>0){
+    if(is_something(input$choose_record)&length(input$choose_record)>0){
       IF <- shinydashboard::menuItem(
-        text=paste0("REDCap Record (",input$selected_record,")"),
+        text=paste0("REDCap Record (",input$choose_record,")"),
         icon = shiny::icon("file-lines"),
-        href=paste0(values$DB$links$redcap_base,"redcap_v",values$DB$redcap$version,"/DataEntry/record_home.php?pid=",values$DB$redcap$project_id,"&arm=1&id=",input$selected_record)
+        href=paste0(values$DB$links$redcap_base,"redcap_v",values$DB$redcap$version,"/DataEntry/record_home.php?pid=",values$DB$redcap$project_id,"&arm=1&id=",input$choose_record)
       )
     }else{
       IF <- NULL
@@ -497,4 +495,13 @@ app_server <- function(input, output, session) {
     mod_list_server("input_list",values = input)
     mod_list_server("values_list",values = values)
   }
+  # plotly -----------
+  output$parcats <- plotly::renderPlotly({
+    # DF <- values$DB$data[[values$selected_form]]
+    # cols <- vec1_in_vec2(input$choose_fields,colnames(DF))
+    # if(length(cols)>0){
+    #   DF <- DF[,cols]
+      DF[,c("sarc_metastatic","sarc_type_choice")] %>% plotly_parcats() %>% return()
+    # }
+  })
 }

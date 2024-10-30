@@ -10,7 +10,7 @@ summarize_RosyREDCap(
   deidentify = T,
   clean = T,
   drop_blanks = T,
-  drop_unknowns = T,
+  other_drops = NULL,
   include_metadata = T,
   annotate_metadata = T,
   include_record_summary = T,

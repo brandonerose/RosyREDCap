@@ -22,6 +22,7 @@ Imports:
     lubridate,
     magrittr,
     openxlsx,
+    plotly,
     readxl,
     REDCapR,
     RosyApp,

@@ -165,7 +165,7 @@ generate_summary_save_list <- function(
     deidentify = T,
     clean = T,
     drop_blanks = T,
-    drop_unknowns = T,
+    other_drops = NULL,
     include_metadata = T,
     annotate_metadata = T,
     include_record_summary = T,
@@ -177,7 +177,7 @@ generate_summary_save_list <- function(
     DB <- deidentify_DB(DB)
   }
   if(clean){
-    DB <- DB %>% RosyDB::clean_DB(drop_blanks = drop_blanks,drop_unknowns = drop_unknowns)
+    DB <- DB %>% RosyDB::clean_DB(drop_blanks = drop_blanks,other_drops = other_drops)
   }
   to_save_list <- DB$data
   if(include_metadata){
@@ -255,7 +255,7 @@ generate_summary_from_subset_name <- function(
     subset_name,
     clean = T,
     drop_blanks = T,
-    drop_unknowns = T,
+    other_drops = NULL,
     include_metadata = T,
     annotate_metadata = T,
     include_record_summary = T,
@@ -278,7 +278,7 @@ generate_summary_from_subset_name <- function(
     deidentify = subset_list$deidentify,
     clean = clean,
     drop_blanks = drop_blanks,
-    drop_unknowns = drop_unknowns,
+    other_drops = other_drops,
     include_metadata = include_metadata,
     annotate_metadata = annotate_metadata,
     include_record_summary = include_record_summary,
@@ -299,7 +299,7 @@ summarize_RosyREDCap <- function(
     deidentify = T,
     clean = T,
     drop_blanks = T,
-    drop_unknowns = T,
+    other_drops = NULL,
     include_metadata = T,
     annotate_metadata = T,
     include_record_summary = T,
@@ -320,7 +320,7 @@ summarize_RosyREDCap <- function(
       deidentify = deidentify,
       clean = clean,
       drop_blanks = drop_blanks,
-      drop_unknowns = drop_unknowns,
+      other_drops = other_drops,
       include_metadata = include_metadata,
       annotate_metadata = annotate_metadata,
       include_record_summary = include_record_summary,
@@ -346,7 +346,7 @@ summarize_RosyREDCap <- function(
         subset_name = subset_name,
         clean = clean,
         drop_blanks = drop_blanks,
-        drop_unknowns = drop_unknowns,
+        other_drops = other_drops,
         include_metadata = include_metadata,
         annotate_metadata = annotate_metadata,
         include_record_summary = include_record_summary,
