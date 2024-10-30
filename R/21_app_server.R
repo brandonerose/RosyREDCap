@@ -166,16 +166,20 @@ app_server <- function(input, output, session) {
       # If the list is empty, show a message
       return(h3("No tables available to display."))
     } else {
-      # Otherwise, generate the list of tables
-      lapply(seq_along(values$dt_tables_view_list), function(i) {
-        table_name <- names(values$dt_tables_view_list)[i]
-        table_id <- paste0("table__dt_view_", i)
-        # Create DTOutput for each table
-        tagList(
-          h3(paste("Table:", table_name)),
-          DT::DTOutput(table_id)
-        )
-      })
+      if(input$view_switch_text){
+        DF_list_to_text(DF_list = values$dt_tables_view_list, DB)
+      }else{
+        # Otherwise, generate the list of tables
+        lapply(seq_along(values$dt_tables_view_list), function(i) {
+          table_name <- names(values$dt_tables_view_list)[i]
+          table_id <- paste0("table__dt_view_", i)
+          # Create DTOutput for each table
+          tagList(
+            h3(paste("Table:", table_name)),
+            DT::DTOutput(table_id)
+          )
+        })
+      }
     }
   })
   # Render each DT table
@@ -227,7 +231,7 @@ app_server <- function(input, output, session) {
       table_id <- paste0("table___home__", TABLE)
       output[[table_id]] <- DT::renderDT({
         table_data %>%
-          clean_RC_df_for_DT(values$DB) %>%
+          # clean_RC_df_for_DT(values$DB) %>%
           make_DT_table()
       })
     }) %>% return()

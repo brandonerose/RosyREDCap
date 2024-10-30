@@ -110,7 +110,13 @@ app_ui<- function(request) {
         uiOutput("choose_record_"),
         conditionalPanel(
           "input.sb1 === 'record'",
-          actionButton("ab_random_record","Random Record!")
+          actionButton("ab_random_record","Random Record!"),
+          shinyWidgets::switchInput(
+            inputId = "view_switch_text",
+            onLabel = "Text",
+            onLabel = "Tables",
+            value = T
+          )
         ),
         menuItem(
           text="Backend",
