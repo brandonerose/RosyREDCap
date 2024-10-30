@@ -77,7 +77,7 @@ app_ui<- function(request) {
           icon =shiny::icon("users")
         ),
         conditionalPanel(
-          "input.sb1 === 'data'",
+          "input.sb1 === 'data' || input.sb1 === 'group' || input.sb1 === 'record'",
           uiOutput("choose_group_"),
           uiOutput("transformation_switch_")
         ),
@@ -87,7 +87,7 @@ app_ui<- function(request) {
           icon =shiny::icon("users")
         ),
         conditionalPanel(
-          "input.sb1 === 'group'",
+          "input.sb1 === 'group' || input.sb1 === 'record'",
           uiOutput("choose_split_"),
           uiOutput("choose_field_"),
           uiOutput("choose_fields_"),
@@ -217,8 +217,7 @@ app_ui<- function(request) {
             box(
               title = h1("View"),
               width = 6,
-              uiOutput("choose_variables_to_view")
-              # uiOutput("dt_tables_view")
+              uiOutput("dt_tables_view_records")
             ),
             box(
               title = h1("Change"),

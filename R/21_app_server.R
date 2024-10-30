@@ -23,6 +23,7 @@ app_server <- function(input, output, session) {
   values$sbc <- NULL
   values$user_adds_project <- NULL
   values$REDCap_diagram <- NULL
+  values$dt_tables_view_list <- NULL
   # user input project -------
   observeEvent(input$user_adds_project_modal, {
     # display a modal dialog with a header, textinput and action buttons
@@ -124,7 +125,14 @@ app_server <- function(input, output, session) {
     values$editable_forms_transformation_table[info$row, info$col+1] <- info$value # had to add +1 because not showing rownames
   })
   output$table1 <- renderUI({
-    DF <- values$DB$data[[values$selected_form]][,input$choose_fields,drop = F]
+    variables <- unique(
+      c(
+        ifelse(input$choose_split=="no_choice",NA,input$choose_split),
+        input$choose_fields
+      ) %>% drop_nas()
+    )
+    if(length(variables)==0)return()
+    DF <- values$DB$data[[values$selected_form]][,variables,drop = F]
     x<- values$sbc[which(values$sbc$label==input$choose_group),]
     print.table(x)
     if(nrow(x)>0&length(input$choose_fields)>0){
@@ -141,12 +149,7 @@ app_server <- function(input, output, session) {
       align = "l",
       DF %>% clean_DF(values$DB$metadata$fields) %>% make_table1(
         group = input$choose_split,
-        variables = unique(
-          c(
-            ifelse(input$choose_split=="no_choice",NA,input$choose_split),
-            input$choose_fields
-          ) %>% drop_nas()
-        ),
+        variables = variables,
         render.missing = input$render_missing
       ),
       css.cell = "width:100%; overflow-x:auto;"  # Ensures width and adds horizontal overflow
@@ -155,6 +158,47 @@ app_server <- function(input, output, session) {
       style = "width:100%; overflow-x:auto;",  # Force containment within the box
       HTML(html_output)
     )
+  })
+  #dt_tables_view-----------
+  # Create a reactive list of DT tables
+  output$dt_tables_view_records <- renderUI({
+    if (length(values$dt_tables_view_list) == 0) {
+      # If the list is empty, show a message
+      return(h3("No tables available to display."))
+    } else {
+      # Otherwise, generate the list of tables
+      lapply(seq_along(values$dt_tables_view_list), function(i) {
+        table_name <- names(values$dt_tables_view_list)[i]
+        table_id <- paste0("table__dt_view_", i)
+        # Create DTOutput for each table
+        tagList(
+          h3(paste("Table:", table_name)),
+          DT::DTOutput(table_id)
+        )
+      })
+    }
+  })
+  # Render each DT table
+  observe({
+    if (is_something(input$choose_record)&&is_something(input$choose_fields)) {
+      values$dt_tables_view_list <- values$DB %>% filter_DB(
+        filter_field = values$DB$redcap$id_col,
+        filter_choices = input$choose_record,
+        form_names = field_names_to_form_names(values$DB, field_names = input$choose_fields),
+        field_names = input$choose_fields
+      ) %>% RosyUtils:::process_df_list()
+      print(values$dt_tables_view_list)
+      # values$dt_tables_view_list <- DB %>% filter_DB(records = DB$data$sarcoma$record_id %>% sample1(), data_choice = RosyREDCap:::get_default_data_choice(values$DB),field_names = "sarc_timeline") %>% RosyUtils:::process_df_list()
+      # values$DB$data$sarcoma %>% dplyr::filter(sarcoma_id%in%values$chosen_group_sarcoma) %>% make_PSDB_table(DB = values$DB)
+      if(!is_something(values$dt_tables_view_list))return(h3("No tables available to display."))
+      lapply(seq_along(values$dt_tables_view_list), function(i) {
+        table_data <- values$dt_tables_view_list[[i]]
+        table_id <- paste0("table__dt_view_", i)
+        output[[table_id]] <- DT::renderDT({
+          table_data %>% clean_DF(fields = values$DB$metadata$fields) %>% make_DT_table()
+        })
+      }) %>% return()
+    }
   })
   # simple tables ---------
   output$projects_table <- DT::renderDT({
