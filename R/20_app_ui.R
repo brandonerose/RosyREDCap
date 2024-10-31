@@ -43,7 +43,7 @@ app_ui<- function(request) {
         ),
         conditionalPanel(
           "input.sb1 === 'project'",
-          selectInput(
+          selectizeInput(
             "metadata_graph_type",
             label = "Graph Type",
             choices = c("visNetwork","DiagrammeR"),
@@ -79,7 +79,8 @@ app_ui<- function(request) {
         conditionalPanel(
           "input.sb1 === 'data' || input.sb1 === 'group' || input.sb1 === 'record'",
           uiOutput("choose_group_"),
-          uiOutput("transformation_switch_")
+          uiOutput("transformation_switch_"),
+          uiOutput("filter_switch_")
         ),
         menuItem(
           text="Group",
@@ -114,7 +115,7 @@ app_ui<- function(request) {
           shinyWidgets::switchInput(
             inputId = "view_switch_text",
             onLabel = "Text",
-            onLabel = "Tables",
+            offLabel = "Tables",
             value = T
           )
         ),

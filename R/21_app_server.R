@@ -20,6 +20,7 @@ app_server <- function(input, output, session) {
   values$listen_to_click <- NULL
   values$all_records <- NULL
   values$subset_records <- NULL
+  values$subset_list <- NULL
   values$sbc <- NULL
   values$user_adds_project <- NULL
   values$REDCap_diagram <- NULL
@@ -92,26 +93,22 @@ app_server <- function(input, output, session) {
   })
   # tables --------
   output$dt_tables_view <- renderUI({
-    if (length(values$DB$data) == 0) {
-      # If the list is empty, show a message
-      return(h3("No tables available to display."))
-    } else {
-      tabsetPanel(
+    if(length(values$subset_list) == 0) return(h3("No tables available to display."))
+    tabsetPanel(
+      id = "tabs",
+      do.call(tabsetPanel, c(
         id = "tabs",
-        do.call(tabsetPanel, c(
-          id = "tabs",
-          lapply(seq_along(values$DB$data), function(i) {
-            table_name_raw <- names(values$DB$data)[i]
-            table_name <- values$DB$metadata$forms$form_label[which(values$DB$metadata$forms$form_name==table_name_raw)]
-            table_id <- paste0("table___home__", table_name_raw)
-            tabPanel(
-              title = table_name,
-              DT::DTOutput(table_id)
-            )
-          })
-        ))
-      )
-    }
+        lapply(seq_along(values$subset_list), function(i) {
+          table_name_raw <- names(values$subset_list)[i]
+          table_name <- values$DB$metadata$forms$form_label[which(values$DB$metadata$forms$form_name==table_name_raw)]
+          table_id <- paste0("table___home__", table_name_raw)
+          tabPanel(
+            title = table_name,
+            DT::DTOutput(table_id)
+          )
+        })
+      ))
+    )
   })
   output$forms_transformation <- DT::renderDT({
     cols <- which(colnames(values$editable_forms_transformation_table)%in%c("form_name","form_label","repeating","repeating_via_events"))
@@ -132,9 +129,9 @@ app_server <- function(input, output, session) {
       ) %>% drop_nas()
     )
     if(length(variables)==0)return()
-    DF <- values$DB$data[[values$selected_form]][,variables,drop = F]
+    DF <- values$subset_list[[values$selected_form]][,variables,drop = F]
     x<- values$sbc[which(values$sbc$label==input$choose_group),]
-    print.table(x)
+    # print.table(x)
     if(nrow(x)>0&length(input$choose_fields)>0){
       DF <- filter_DB(
         DB = values$DB,
@@ -144,7 +141,7 @@ app_server <- function(input, output, session) {
         field_names = input$choose_fields
       )[[values$selected_form]][,input$choose_fields,drop = F]
     }
-    DF %>% head() %>% print()
+    # DF %>% head() %>% print()
     html_output <- htmlTable::htmlTable(
       align = "l",
       DF %>% clean_DF(values$DB$metadata$fields) %>% make_table1(
@@ -167,7 +164,7 @@ app_server <- function(input, output, session) {
       return(h3("No tables available to display."))
     } else {
       if(input$view_switch_text){
-        DF_list_to_text(DF_list = values$dt_tables_view_list, DB)
+        DF_list_to_text(DF_list = values$dt_tables_view_list, DB) %>% HTML()
       }else{
         # Otherwise, generate the list of tables
         lapply(seq_along(values$dt_tables_view_list), function(i) {
@@ -192,8 +189,8 @@ app_server <- function(input, output, session) {
         field_names = input$choose_fields
       ) %>% RosyUtils:::process_df_list()
       print(values$dt_tables_view_list)
-      # values$dt_tables_view_list <- DB %>% filter_DB(records = DB$data$sarcoma$record_id %>% sample1(), data_choice = RosyREDCap:::get_default_data_choice(values$DB),field_names = "sarc_timeline") %>% RosyUtils:::process_df_list()
-      # values$DB$data$sarcoma %>% dplyr::filter(sarcoma_id%in%values$chosen_group_sarcoma) %>% make_PSDB_table(DB = values$DB)
+      # values$dt_tables_view_list <- DB %>% filter_DB(records = subset_list$sarcoma$record_id %>% sample1(), data_choice = RosyREDCap:::get_default_data_choice(values$DB),field_names = "sarc_timeline") %>% RosyUtils:::process_df_list()
+      # values$subset_list$sarcoma %>% dplyr::filter(sarcoma_id%in%values$chosen_group_sarcoma) %>% make_PSDB_table(DB = values$DB)
       if(!is_something(values$dt_tables_view_list))return(h3("No tables available to display."))
       lapply(seq_along(values$dt_tables_view_list), function(i) {
         table_data <- values$dt_tables_view_list[[i]]
@@ -225,9 +222,9 @@ app_server <- function(input, output, session) {
   })
   # Render each DT table ------
   observe({
-    if(!is_something(values$DB$data))return(h3("No tables available to display."))
-    lapply(names(values$DB$data), function(TABLE) {
-      table_data <- values$DB$data[[TABLE]]
+    if(!is_something(values$subset_list))return(h3("No tables available to display."))
+    lapply(names(values$subset_list), function(TABLE) {
+      table_data <- values$subset_list[[TABLE]]
       table_id <- paste0("table___home__", TABLE)
       output[[table_id]] <- DT::renderDT({
         table_data %>%
@@ -237,9 +234,9 @@ app_server <- function(input, output, session) {
     }) %>% return()
   })
   observe({
-    if(!is_something(values$DB$data))return(h3("No tables available to display."))
-    lapply(names(values$DB$data), function(TABLE) {
-      table_data <- values$DB$data[[TABLE]]
+    if(!is_something(values$subset_list))return(h3("No tables available to display."))
+    lapply(names(values$subset_list), function(TABLE) {
+      table_data <- values$subset_list[[TABLE]]
       table_id <- paste0("table___home__", TABLE,"_exists")
       values[[table_id]] <- !is.null(input[[paste0("table___home__", TABLE,"_state")]])
     }) %>% return()
@@ -269,22 +266,32 @@ app_server <- function(input, output, session) {
       value = values$DB$internals$is_transformed
     )
   })
+  output$filter_switch_ <- renderUI({
+    if (input$choose_group != "All Records") {
+      shinyWidgets::switchInput(
+        inputId = "filter_switch",
+        onLabel = "Strict",
+        offLabel = "Records",
+        value = T
+      )
+    }
+  })
   output$choose_project_ <- renderUI({
-    selectInput(
+    selectizeInput(
       inputId = "choose_project",
       label = "Choose Project",
       choices = NULL
     )
   })
   output$choose_field_ <- renderUI({
-    selectInput(
+    selectizeInput(
       inputId = "choose_field",
       label = "Choose Field",
       choices = setNames(values$DB$metadata$fields$field_name,values$DB$metadata$fields$field_label)
     )
   })
   output$choose_fields_ <- renderUI({
-    selectInput(
+    selectizeInput(
       inputId = "choose_fields",
       label = "Choose Fields",
       multiple = T,
@@ -292,7 +299,7 @@ app_server <- function(input, output, session) {
     )
   })
   output$choose_record_ <- renderUI({
-    selectInput(
+    selectizeInput(
       inputId = "choose_record",
       label = "Choose Record",
       selected = NULL,
@@ -300,16 +307,20 @@ app_server <- function(input, output, session) {
     )
   })
   output$choose_group_ <- renderUI({
-    selectInput(
+    selectizeInput(
       inputId = "choose_group",
       label = "Choose Group",
       selected = NULL,
-      choices = c("All Records","Custom Records",values$sbc$label)
+      choices = c(
+        "All Records",
+        "Custom Records",
+        values$sbc$label
+      )
     )
   })
   output$choose_split_ <- renderUI({
     row_match <-which(values$DB$metadata$fields$field_type_R %in% c("factor", "integer", "numeric"))
-    selectInput(
+    selectizeInput(
       inputId = "choose_split",
       label = "Choose Split",
       selected = NULL,
@@ -373,20 +384,39 @@ app_server <- function(input, output, session) {
   observeEvent(input$choose_group,{
     if(input$choose_group == "All Records"){
       values$subset_records <- values$all_records
+      values$subset_list <- values$DB$data
     }
     if(input$choose_group == "Custom Records"){
       values$subset_records <- values$all_records
+      values$subset_list <- values$DB$data
     }
     if(!input$choose_group %in% c("All Records","Custom Records")){
-      x <- values$sbc[which(values$sbc$label == input$choose_group),]
-      DF <- values$DB$data[[x$form_name]]
-      DF[c(DB$metadata$form_key_cols[[x$form_name]])][which(DF[[x$field_name]]==x$name),]
+      x<- values$sbc[which(values$sbc$label==input$choose_group),]
+      if(nrow(x)>0){
+        DF <- values$DB$data[[x$form_name]]
+        filter_field <- DB$redcap$id_col
+        values$subset_records <- filter_choices <- DF[[values$DB$redcap$id_col]][which(DF[[x$field_name]]==x$name)]
+        if(input$filter_switch){
+          filter_field <- x$field_name
+          filter_choices <- x$name
+        }
+        print(filter_field)
+        print(filter_choices)
+        values$subset_list <- filter_DB(
+          DB = values$DB,
+          filter_field = filter_field,
+          filter_choices = filter_choices
+          # form_names = values$selected_form,
+          # field_names = input$choose_fields
+        )
+      }
     }
   })
   observeEvent(values$DB,{
     message("values$DB changed!")
     if(!is.null(values$DB)){
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
+      values$subset_list <- values$DB$data
       updateSelectizeInput(session,"choose_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
       values$sbc <- sidebar_choices(values$DB)
       if(!is.null(values$DB$transformation)){
@@ -426,8 +456,8 @@ app_server <- function(input, output, session) {
     if(!is.null(input$choose_record)){
       form_name <- "form_label"
       z <- values$DB$metadata$forms
-      all_forms <- names(values$DB$data)
-      values$DB$data %>% names() %>% lapply(function(form){
+      all_forms <- names(values$subset_list)
+      values$subset_list %>% names() %>% lapply(function(form){
         values[[paste0("table___home__", form,"_exists")]]
       })
       values$selected_form <- z$form_name[which(z[[form_name]] == input$tabs)]
@@ -435,11 +465,11 @@ app_server <- function(input, output, session) {
         if(is_something(values$selected_form)) {
           values$active_table_id <- paste0("table___home__", values$selected_form)
           starting_record <- input$choose_record
-          data_form <- values$DB$data[[values$selected_form]]
+          data_form <- values$subset_list[[values$selected_form]]
           state <- input[[paste0(values$active_table_id, "_state")]]
           for(form in all_forms) {
             if(!is.null(input[[paste0("table___home__", form, "_state")]])){
-              ROWS <- which(values$DB$data[[form]][[values$DB$redcap$id_col]] == input$choose_record)
+              ROWS <- which(values$subset_list[[form]][[values$DB$redcap$id_col]] == input$choose_record)
               skip <- F
               if(!is.null(input[[paste0("table___home__", form, "_rows_selected")]])){
                 # message("ident ",identical(ROWS,input[[paste0("table___home__", form, "_rows_selected")]]), " ", ROWS, " ", input[[paste0("table___home__", form, "_rows_selected")]])
@@ -473,7 +503,7 @@ app_server <- function(input, output, session) {
       isolate({
         if(is_something(values$selected_form)){
           expected <- NULL
-          data_col <- values$DB$data[[values$selected_form]][[values$DB$redcap$id_col]]
+          data_col <- values$subset_list[[values$selected_form]][[values$DB$redcap$id_col]]
           expected <- which(data_col==input$choose_record)
           # message("expected: ", expected)
           if(is_something(selected)){
@@ -579,7 +609,7 @@ app_server <- function(input, output, session) {
   }
   # plotly -----------
   output$parcats <- plotly::renderPlotly({
-    DF <- values$DB$data[[values$selected_form]]
+    DF <- values$subset_list[[values$selected_form]]
     input$shuffle_colors
     # print(input$choose_fields)
     # cols <- vec1_in_vec2(input$choose_fields,colnames(DF))
