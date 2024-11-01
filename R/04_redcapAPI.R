@@ -374,8 +374,10 @@ check_redcap_log <- function(DB,last=24,user = "",units="hours",begin_time="",cl
     x <- begin_time
   }
   log <- get_REDCap(DB,"exp_logging",additional_args = list(beginTime=x,record=record,user = user))
-  log <- log %>% clean_redcap_log(purge_api=clean)
-  log
+  if(is.data.frame(log)){
+    log <- log %>% clean_redcap_log(purge_api=clean)
+  }
+  log # deal with if NA if user does not have log privelages.
 }
 #' @title Check the REDCap log
 #' @param labelled T/F for clean vs raw labels

@@ -72,3 +72,16 @@ view_redcap_token <- function(DB){
   DB  <- validate_RosyREDCap(DB)
   validate_redcap_token(DB,silent = F,return = T)
 }
+other_drops <- function(ignore = F){
+  if(ignore)return(NULL)
+  c(
+    "Not applicable",
+    "No information",
+    "Not asked",
+    "Unknown",
+    "Unencoded",
+    "Unknown / Not Reported",
+    "Missing Dates",
+    "Pediatric"
+  ) %>% return()
+}

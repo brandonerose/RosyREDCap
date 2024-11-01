@@ -78,6 +78,7 @@ app_ui<- function(request) {
         ),
         conditionalPanel(
           "input.sb1 === 'data' || input.sb1 === 'group' || input.sb1 === 'record'",
+          uiOutput("choose_form_"),
           uiOutput("choose_group_"),
           uiOutput("transformation_switch_"),
           uiOutput("filter_switch_")
@@ -94,7 +95,7 @@ app_ui<- function(request) {
           uiOutput("choose_fields_"),
           shinyWidgets::awesomeCheckbox(
             inputId = "render_missing",
-            label = "Missing in Table1",
+            label = "Include Missing/Unkown",
             value = F
           ),
           shinyWidgets::awesomeCheckbox(
@@ -212,7 +213,7 @@ app_ui<- function(request) {
           fluidRow(
             box(
               title = h1("Table1"),
-              width = 6,
+              width = 12,
               uiOutput("table1")
             )
           )
