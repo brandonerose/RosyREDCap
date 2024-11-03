@@ -427,7 +427,8 @@ app_server <- function(input, output, session) {
       }
     }
   })
-  observeEvent(input$tabs, {
+  debounced_tabs <- debounce(reactive(input$tabs), 250)  # 250ms delay
+  observeEvent(debounced_tabs(), {
     updateSelectizeInput(session, "choose_form", selected = input$tabs %>% form_labels_to_form_names(values$DB))
   }, ignoreInit = TRUE)
   # Update the tabset panel when a new tab is selected in the selectInput
@@ -467,20 +468,24 @@ app_server <- function(input, output, session) {
         }
       }
       field_names <- values$sbc$field_name %>% unique() %>% vec1_in_vec2(
-        values$DB$metadata$fields$field_names[which(values$DB$metadata$fields$field_type_R %in% c("factor", "integer", "numeric"))]
+        values$DB$metadata$fields$field_name[which(values$DB$metadata$fields$field_type_R %in% c("factor", "integer", "numeric"))]
       )
       group_choices <- c(
         "All Records",
         "Custom Records",
         values$sbc$label[which(values$sbc$field_name %in% field_names)]
       )
-      updateSelectizeInput(session,"choose_group",choices = group_choices,server = T)
+      updateSelectizeInput(
+        session,"choose_group",
+        choices = group_choices,
+        server = T
+        )
       updateSelectizeInput(
         session = session,
         inputId = "choose_form",
         choices = setNames(
-          object =values$DB$metadata$forms$form_names,
-          nm = values$DB$metadata$forms$form_labels
+          object =values$DB$metadata$forms$form_name,
+          nm = values$DB$metadata$forms$form_label
         )
       )
     }
@@ -508,10 +513,10 @@ app_server <- function(input, output, session) {
       values$subset_list %>% names() %>% lapply(function(form){
         values[[paste0("table___home__", form,"_exists")]]
       })
-      message("input$tabs : ", input$tabs )
-      values$selected_form <- input$tabs %>% form_labels_to_form_names(values$DB)
-      message("values$selected_form: ",values$selected_form)
       isolate({
+        message("input$tabs : ", input$tabs )
+        values$selected_form <- input$tabs %>% form_labels_to_form_names(values$DB)
+        message("values$selected_form: ",values$selected_form)
         if(is_something(values$selected_form)) {
           values$active_table_id <- paste0("table___home__", values$selected_form)
           message("values$active_table_id: ",values$active_table_id)
@@ -522,14 +527,13 @@ app_server <- function(input, output, session) {
           for(form in all_forms) {
             if(!is.null(input[[paste0("table___home__", form, "_state")]])){
               message("form: ",form)
-              message("values$DB$redcap$id_col: ",values$DB$redcap$id_col)
-              message("input$choose_record: ",input$choose_record)
               ROWS <- which(values$subset_list[[form]][[values$DB$redcap$id_col]] == input$choose_record)
               message("ROWS: ",ROWS %>% as_comma_string())
               skip <- F
               if(!is.null(input[[paste0("table___home__", form, "_rows_selected")]])){
-                # message("ident ",identical(ROWS,input[[paste0("table___home__", form, "_rows_selected")]]), " ", ROWS, " ", input[[paste0("table___home__", form, "_rows_selected")]])
+                message("ident ",identical(ROWS,input[[paste0("table___home__", form, "_rows_selected")]]), " ", ROWS, " ", input[[paste0("table___home__", form, "_rows_selected")]])
                 skip <- identical(ROWS,input[[paste0("table___home__", form, "_rows_selected")]])
+                message("SKIP: ",skip)
               }
               if(!skip){
                 message("triggered proxy Tabs: ", form, " Row ", ROWS)
