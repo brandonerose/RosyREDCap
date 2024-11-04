@@ -151,7 +151,7 @@ app_server <- function(input, output, session) {
       HTML(html_output)
     )
   })
-  #dt_tables_view-----------
+  # dt_tables_view-----------
   # Create a reactive list of DT tables
   output$dt_tables_view_records <- renderUI({
     if (length(values$dt_tables_view_list) == 0) {
@@ -328,22 +328,52 @@ app_server <- function(input, output, session) {
       choices = NULL
     )
   })
-  observeEvent(values$subset_list,{
-    if(is_something(values$subset_list)){
-      if(!is_something(values$selected_form))values$selected_form<- names(values$subset_list)[[1]]
-      form_names <- values$subset_list %>% names()
-      form_labels <- form_names %>% form_names_to_form_labels(values$DB)
-      if(is_something(values$subset_list)&&is_something(values$selected_form)){
-        field_names <- colnames(values$subset_list[[values$selected_form]])
-        field_labels <- field_names %>% field_names_to_field_labels(values$DB)
-        field_choices <- setNames(field_names,field_labels)
+  observeEvent(values$DB,{
+    message("values$DB changed!")
+    if(is_something(values$DB)){
+      values$selected_form <- NULL
+      values$selected_field <- NULL
+      values$selected_instance <- NULL
+      values$active_table_id <- NULL
+      values$all_records <- NULL
+      values$subset_records <- NULL
+      values$subset_list <- NULL
+      values$sbc <- NULL
+      values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
+      values$subset_list <- values$DB$data
+      updateSelectizeInput(session,"choose_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
+      values$sbc <- sidebar_choices(values$DB)
+      if(!is.null(values$DB$transformation)){
+        values$editable_forms_transformation_table <- values$DB$transformation$forms %>% as.data.frame(stringsAsFactors = FALSE)
       }
-      field_names <- values$DB$metadata$fields$field_name[which(values$DB$metadata$fields$field_type_R %in% c("factor", "integer", "numeric"))]
-      split_choices <- c(
-        setNames("no_choice","None"),
-        setNames(
-          object = field_names,
-          nm = field_names %>% field_names_to_field_labels(values$DB)
+      if(!is.null(values$DB$transformation)){
+        if(!is.null(values$DB$internals$is_transformed)){
+          if(input$transformation_switch != values$DB$internals$is_transformed){
+            shinyWidgets::updateSwitchInput(
+              inputId = "transformation_switch",value = values$DB$internals$is_transformed, label = "Transformation"
+            )
+          }
+        }
+      }
+      field_names <- values$sbc$field_name %>% unique() %>% vec1_in_vec2(
+        values$DB$metadata$fields$field_name[which(values$DB$metadata$fields$field_type_R %in% c("factor", "integer", "numeric"))]
+      )
+      group_choices <- c(
+        "All Records",
+        "Custom Records",
+        values$sbc$label[which(values$sbc$field_name %in% field_names)]
+      )
+      updateSelectizeInput(
+        session,"choose_group",
+        choices = group_choices,
+        server = T
+      )
+      updateSelectizeInput(
+        session = session,
+        inputId = "choose_form",
+        choices = setNames(
+          object =values$DB$metadata$forms$form_name,
+          nm = values$DB$metadata$forms$form_label
         )
       )
     }
@@ -432,9 +462,64 @@ app_server <- function(input, output, session) {
     updateSelectizeInput(session, "choose_form", selected = input$tabs %>% form_labels_to_form_names(values$DB))
   }, ignoreInit = TRUE)
   # Update the tabset panel when a new tab is selected in the selectInput
-  observeEvent(input$choose_form, {
-    updateTabsetPanel(session, "tabs", selected = input$choose_form %>% form_names_to_form_labels(values$DB))
-  }, ignoreInit = TRUE)
+  observe({
+    input$sb1
+    if(is_something(values$DB)){
+      if(is_something(input$choose_form)){
+        updateTabsetPanel(session, "tabs", selected = input$choose_form %>% form_names_to_form_labels(values$DB))
+      }
+      if(is_something(values$subset_list)){
+        field_names <- values$DB$metadata$fields$field_name[which(values$DB$metadata$fields$field_type_R %in% c("factor", "integer", "numeric"))]
+        field_names <- colnames(values$subset_list[[input$choose_form]]) %>% vec1_in_vec2(field_names)
+        field_labels <- field_names %>% field_names_to_field_labels(values$DB)
+        if(is_something(field_names)){
+          field_choices <- setNames(field_names,field_labels)
+          selected <- "no_choice"
+          if(is_something(input$choose_split)){
+            if(input$choose_split %in% field_names)selected <- input$choose_split
+          }
+          updateSelectizeInput(
+            session = session,
+            inputId = "choose_split",
+            selected = selected,
+            choices = c(
+              setNames("no_choice","None"),
+              setNames(
+                object = field_names,
+                nm = field_names %>% field_names_to_field_labels(values$DB)
+              )
+            )
+          )
+          selected <- NULL
+          if(is_something(input$choose_field)){
+            if(input$choose_field %in% field_names)selected <- input$choose_field
+          }
+          updateSelectizeInput(
+            session = session,
+            inputId = "choose_field",
+            selected = selected,
+            choices = setNames(
+              object =field_names,
+              nm = field_labels
+            )
+          )
+          selected <- NULL
+          if(is_something(input$choose_fields)){
+            if(all(input$choose_fields %in% field_names))selected <- input$choose_fields
+          }
+          updateSelectizeInput(
+            session = session,
+            inputId = "choose_fields",
+            selected = selected,
+            choices = setNames(
+              object =field_names,
+              nm = field_labels
+            )
+          )
+        }
+      }
+    }
+  })
   # observeEvent(input$choose_form,{
   #   selected <-  input$choose_form %>% form_names_to_form_labels(values$DB)
   #   if(is_something(selected)){
@@ -448,48 +533,6 @@ app_server <- function(input, output, session) {
   #     # }
   #   }
   # })
-  observeEvent(values$DB,{
-    message("values$DB changed!")
-    if(is_something(values$DB)){
-      values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
-      values$subset_list <- values$DB$data
-      updateSelectizeInput(session,"choose_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
-      values$sbc <- sidebar_choices(values$DB)
-      if(!is.null(values$DB$transformation)){
-        values$editable_forms_transformation_table <- values$DB$transformation$forms %>% as.data.frame(stringsAsFactors = FALSE)
-      }
-      if(!is.null(values$DB$transformation)){
-        if(!is.null(values$DB$internals$is_transformed)){
-          if(input$transformation_switch != values$DB$internals$is_transformed){
-            shinyWidgets::updateSwitchInput(
-              inputId = "transformation_switch",value = values$DB$internals$is_transformed, label = "Transformation"
-            )
-          }
-        }
-      }
-      field_names <- values$sbc$field_name %>% unique() %>% vec1_in_vec2(
-        values$DB$metadata$fields$field_name[which(values$DB$metadata$fields$field_type_R %in% c("factor", "integer", "numeric"))]
-      )
-      group_choices <- c(
-        "All Records",
-        "Custom Records",
-        values$sbc$label[which(values$sbc$field_name %in% field_names)]
-      )
-      updateSelectizeInput(
-        session,"choose_group",
-        choices = group_choices,
-        server = T
-        )
-      updateSelectizeInput(
-        session = session,
-        inputId = "choose_form",
-        choices = setNames(
-          object =values$DB$metadata$forms$form_name,
-          nm = values$DB$metadata$forms$form_label
-        )
-      )
-    }
-  })
   observe({
     selected <- input[["projects_table_rows_selected"]]
     # message("selected: ", selected)
@@ -675,7 +718,6 @@ app_server <- function(input, output, session) {
     # cols <- vec1_in_vec2(input$choose_fields,colnames(DF))
     # print(cols)
     # # fields_to_forms
-    print(input$choose_fields)
     if(length(input$choose_fields)>0){
       cols <- input$choose_fields %>% vec1_in_vec2(colnames(DF))
       DF[,cols, drop = FALSE] %>% clean_DF(fields = values$DB$metadata,drop_blanks = T,other_drops = other_drops(ignore = input$render_missing)) %>% plotly_parcats(remove_missing = F) %>% return()

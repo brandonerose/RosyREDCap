@@ -90,9 +90,6 @@ app_ui<- function(request) {
         ),
         conditionalPanel(
           "input.sb1 === 'group' || input.sb1 === 'record'",
-          uiOutput("choose_split_"),
-          uiOutput("choose_field_"),
-          uiOutput("choose_fields_"),
           shinyWidgets::awesomeCheckbox(
             inputId = "render_missing",
             label = "Include Missing/Unkown",
@@ -202,6 +199,20 @@ app_ui<- function(request) {
         # group--------
         tabItem(
           "group",
+          fluidRow(
+            box(
+              width = 4,
+              uiOutput("choose_split_"),
+            ),
+            box(
+              width = 4,
+              uiOutput("choose_field_"),
+            ),
+            box(
+              width = 4,
+              uiOutput("choose_fields_")
+            )
+          ),
           fluidRow(
             box(
               title = h1("Group"),
