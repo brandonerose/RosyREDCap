@@ -56,11 +56,6 @@ app_ui<- function(request) {
             value = F
           ),
           shinyWidgets::awesomeCheckbox(
-            inputId = "metadata_graph_clean_name",
-            label = "Clean Name?",
-            value = F
-          ),
-          shinyWidgets::awesomeCheckbox(
             inputId = "metadata_graph_duplicate_forms",
             label = "Duplicate Forms?",
             value = T
@@ -99,7 +94,10 @@ app_ui<- function(request) {
             inputId = "sidebar_choice_radio",
             label = "Dropdown instead of radio",
             value = F
-          )
+          ),
+          uiOutput("choose_split_"),
+          # uiOutput("choose_field_"),
+          uiOutput("choose_fields_")
         ),
         menuItem(
           text="Record",
@@ -107,16 +105,16 @@ app_ui<- function(request) {
           icon =shiny::icon("user-large")
         ),
         uiOutput("choose_record_"),
-        conditionalPanel(
-          "input.sb1 === 'record'",
-          actionButton("ab_random_record","Random Record!"),
-          shinyWidgets::switchInput(
-            inputId = "view_switch_text",
-            onLabel = "Text",
-            offLabel = "Tables",
-            value = T
-          )
-        ),
+        # conditionalPanel(
+        #   "input.sb1 === 'record'",
+        #   actionButton("ab_random_record","Random Record!"),
+        #   shinyWidgets::switchInput(
+        #     inputId = "view_switch_text",
+        #     onLabel = "Text",
+        #     offLabel = "Tables",
+        #     value = T
+        #   )
+        # ),
         menuItem(
           text="Backend",
           tabName = "backend",
@@ -201,20 +199,6 @@ app_ui<- function(request) {
           "group",
           fluidRow(
             box(
-              width = 4,
-              uiOutput("choose_split_"),
-            ),
-            box(
-              width = 4,
-              uiOutput("choose_field_"),
-            ),
-            box(
-              width = 4,
-              uiOutput("choose_fields_")
-            )
-          ),
-          fluidRow(
-            box(
               title = h1("Group"),
               width = 12,
               plotly::plotlyOutput("parcats"),
@@ -236,6 +220,14 @@ app_ui<- function(request) {
             box(
               title = h1("View"),
               width = 6,
+              shinyWidgets::switchInput(
+                inputId = "view_switch_text",
+                onLabel = "Text",
+                offLabel = "Tables",
+                value = T
+              ),
+              actionButton("ab_random_record","Random Record!"),
+              actionButton("ab_next_record","Next Record!"),
               uiOutput("dt_tables_view_records")
             ),
             box(
@@ -253,7 +245,18 @@ app_ui<- function(request) {
           )
         )
       ),
-      controlbar = dbControlbar(),
+      controlbar = dbControlbar(
+        shinyWidgets::awesomeCheckbox(
+          inputId = "metadata_graph_clean_name",
+          label = "Clean Variable Names",
+          value = T
+        ),
+        shinyWidgets::awesomeCheckbox(
+          inputId = "allow_multiple_groups",
+          label = "Allow Multiple Groups",
+          value = F
+        )
+      ),
       footer = TCD_NF(),
       skin = "black"
     )

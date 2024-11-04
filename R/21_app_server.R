@@ -301,6 +301,7 @@ app_server <- function(input, output, session) {
       inputId = "choose_field",
       label = "Choose Field",
       multiple = F,
+      selected = NULL,
       choices = NULL
     )
   })
@@ -316,6 +317,7 @@ app_server <- function(input, output, session) {
     selectizeInput(
       inputId = "choose_group",
       label = "Choose Group",
+      multiple = input$allow_multiple_groups,
       selected = NULL,
       choices = NULL
     )
@@ -360,7 +362,7 @@ app_server <- function(input, output, session) {
       )
       group_choices <- c(
         "All Records",
-        "Custom Records",
+        # "Custom Records",
         values$sbc$label[which(values$sbc$field_name %in% field_names)]
       )
       updateSelectizeInput(
@@ -424,36 +426,67 @@ app_server <- function(input, output, session) {
   })
   observeEvent(input$choose_group,{
     if(is_something(input$choose_group)){
-      if(input$choose_group == "All Records"){
-        values$subset_records <- values$all_records
-        values$subset_list <- values$DB$data
-      }
-      if(input$choose_group == "Custom Records"){
-        values$subset_records <- values$all_records
-        values$subset_list <- values$DB$data
-      }
-      if(!input$choose_group %in% c("All Records","Custom Records")){
-        x<- values$sbc[which(values$sbc$label==input$choose_group),]
-        if(nrow(x)>0){
-          DF <- values$DB$data[[x$form_name]]
-          filter_field <- DB$redcap$id_col
-          values$subset_records <- filter_choices <- DF[[values$DB$redcap$id_col]][which(DF[[x$field_name]]==x$name)] %>% unique()
-          if(is_something(input$filter_switch)){
-            if(input$filter_switch){
-              filter_field <- x$field_name
-              filter_choices <- x$name
+      if(length(input$choose_group) == 1){
+        if(input$choose_group == "All Records"){
+          values$subset_records <- values$all_records
+          values$subset_list <- values$DB$data
+        } else {
+          # if(input$choose_group == "Custom Records"){
+          #   values$subset_records <- values$all_records
+          #   values$subset_list <- values$DB$data
+          # }
+          # if(!input$choose_group %in% c("All Records","Custom Records")){
+          x<- values$sbc[which(values$sbc$label==input$choose_group),]
+          if(nrow(x)>0){
+            DF <- values$DB$data[[x$form_name]]
+            filter_field <- DB$redcap$id_col
+            values$subset_records <- filter_choices <- DF[[values$DB$redcap$id_col]][which(DF[[x$field_name]]==x$name)] %>% unique()
+            if(is_something(input$filter_switch)){
+              if(input$filter_switch){
+                filter_field <- x$field_name
+                filter_choices <- x$name
+              }
             }
+            print(filter_field)
+            print(filter_choices)
+            values$subset_list <- filter_DB(
+              DB = values$DB,
+              filter_field = filter_field,
+              filter_choices = filter_choices
+              # form_names = values$selected_form,
+              # field_names = input$choose_fields
+            )
           }
-          print(filter_field)
-          print(filter_choices)
-          values$subset_list <- filter_DB(
-            DB = values$DB,
-            filter_field = filter_field,
-            filter_choices = filter_choices
-            # form_names = values$selected_form,
-            # field_names = input$choose_fields
-          )
         }
+      }
+      if(length(input$choose_group) > 1){
+        # if(input$choose_group == "Custom Records"){
+        #   values$subset_records <- values$all_records
+        #   values$subset_list <- values$DB$data
+        # }
+        # if(!input$choose_group %in% c("All Records","Custom Records")){
+        x<- values$sbc[which(values$sbc$label%in%input$choose_group),]
+        # add observe to remove all records if new is selected
+        # if(nrow(x)>0){
+        #   DF <- values$DB$data[[x$form_name]]
+        #   filter_field <- DB$redcap$id_col
+        #   values$subset_records <- filter_choices <- DF[[values$DB$redcap$id_col]][which(DF[[x$field_name]]==x$name)] %>% unique()
+        #   if(is_something(input$filter_switch)){
+        #     if(input$filter_switch){
+        #       filter_field <- x$field_name
+        #       filter_choices <- x$name
+        #     }
+        #   }
+        #   print(filter_field)
+        #   print(filter_choices)
+        #   values$subset_list <- filter_DB(
+        #     DB = values$DB,
+        #     filter_field = filter_field,
+        #     filter_choices = filter_choices
+        #     # form_names = values$selected_form,
+        #     # field_names = input$choose_fields
+        #   )
+        # }
       }
     }
   })
@@ -659,6 +692,23 @@ app_server <- function(input, output, session) {
     message("Random Record: ", random_record)
     updateSelectizeInput(session,"choose_record",selected = random_record,choices = values$subset_records,server = T)
   })
+  observeEvent(input$ab_next_record,{
+    if(is_something(values$subset_records)&&is_something(input$choose_record)){
+      if(length(values$subset_records)>1){
+        row <- which(values$subset_records == input$choose_record)
+        len <- length(values$subset_records)
+        if(row == len){
+          next_record_row <- len
+        }else{
+          next_record_row <- row + 1
+        }
+        next_record <- values$subset_records[next_record_row]
+        if(is_something(next_record)){
+          updateSelectizeInput(session,"choose_record",selected = next_record,choices = values$subset_records,server = T)
+        }
+      }
+    }
+  })
   observeEvent(input$ab_update_redcap,{
     values$DB <- values$DB %>% update_RosyREDCap()
   })
@@ -720,7 +770,14 @@ app_server <- function(input, output, session) {
     # # fields_to_forms
     if(length(input$choose_fields)>0){
       cols <- input$choose_fields %>% vec1_in_vec2(colnames(DF))
-      DF[,cols, drop = FALSE] %>% clean_DF(fields = values$DB$metadata,drop_blanks = T,other_drops = other_drops(ignore = input$render_missing)) %>% plotly_parcats(remove_missing = F) %>% return()
+      DF[,cols, drop = FALSE] %>%
+        clean_DF(
+          fields = values$DB$metadata,
+          drop_blanks = T,
+          other_drops = other_drops(ignore = input$render_missing)
+        ) %>%
+        plotly_parcats(remove_missing = !input$render_missing) %>%
+        return()
       # mtcars  %>% plotly_parcats(remove_missing = F) %>% return()
     }
   })
