@@ -94,10 +94,7 @@ app_ui<- function(request) {
             inputId = "sidebar_choice_radio",
             label = "Dropdown instead of radio",
             value = F
-          ),
-          uiOutput("choose_split_"),
-          # uiOutput("choose_field_"),
-          uiOutput("choose_fields_")
+          )
         ),
         menuItem(
           text="Record",
@@ -199,6 +196,16 @@ app_ui<- function(request) {
           "group",
           fluidRow(
             box(
+              width = 6,
+              uiOutput("choose_split_")
+            ),
+            box(
+              width = 6,
+              uiOutput("choose_fields_cat_")
+            )
+          ),
+          fluidRow(
+            box(
               title = h1("Group"),
               width = 12,
               plotly::plotlyOutput("parcats"),
@@ -228,6 +235,7 @@ app_ui<- function(request) {
               ),
               actionButton("ab_random_record","Random Record!"),
               actionButton("ab_next_record","Next Record!"),
+              uiOutput("choose_fields_view_"),
               uiOutput("dt_tables_view_records")
             ),
             box(

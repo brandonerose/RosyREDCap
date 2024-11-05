@@ -115,41 +115,43 @@ app_server <- function(input, output, session) {
     values$editable_forms_transformation_table[info$row, info$col+1] <- info$value # had to add +1 because not showing rownames
   })
   output$table1 <- renderUI({
-    variables <- unique(
-      c(
-        ifelse(input$choose_split=="no_choice",NA,input$choose_split),
-        input$choose_fields
-      ) %>% drop_nas()
-    )
-    if(length(variables)==0)return()
-    DF <- values$subset_list[[values$selected_form]][,variables,drop = F]
-    x<- values$sbc[which(values$sbc$label==input$choose_group),]
-    # print.table(x)
-    if(nrow(x)>0&length(input$choose_fields)>0){
-      DF <- filter_DB(
-        DB = values$DB,
-        filter_field = x$field_name,
-        filter_choices = x$name,
-        form_names = values$selected_form,
-        field_names = input$choose_fields
-      )[[values$selected_form]][,input$choose_fields,drop = F]
+    if(is_something(input$choose_form)){
+      variables <- unique(
+        c(
+          ifelse(input$choose_split=="no_choice",NA,input$choose_split),
+          input$choose_fields_cat
+        ) %>% drop_nas() %>% drop_if("")
+      )
+      if(length(variables)==0)return()
+      DF <- values$subset_list[[input$choose_form]][,variables,drop = F]
+      x<- values$sbc[which(values$sbc$label==input$choose_group),]
+      # print.table(x)
+      if(nrow(x)>0&length(input$choose_fields_cat)>0){
+        DF <- filter_DB(
+          DB = values$DB,
+          filter_field = x$field_name,
+          filter_choices = x$name,
+          form_names = input$choose_form,
+          field_names = input$choose_fields_cat
+        )[[input$choose_form]][,input$choose_fields_cat,drop = F]
+      }
+      message("input$choose_split: ",input$choose_split)
+      message("variables: ",variables %>% as_comma_string())
+      # DF %>% head() %>% print()
+      html_output <- htmlTable::htmlTable(
+        align = "l",
+        DF %>% clean_DF(values$DB$metadata$fields,other_drops = other_drops(ignore = input$render_missing)) %>% make_table1(
+          group = input$choose_split,
+          variables = variables,
+          render.missing = input$render_missing
+        ),
+        css.cell = "width:100%; overflow-x:auto;"  # Ensures width and adds horizontal overflow
+      )
+      tags$div(
+        style = "width:100%; overflow-x:auto;",  # Force containment within the box
+        HTML(html_output)
+      )
     }
-    message("input$choose_split: ",input$choose_split)
-    message("variables: ",variables %>% as_comma_string())
-    # DF %>% head() %>% print()
-    html_output <- htmlTable::htmlTable(
-      align = "l",
-      DF %>% clean_DF(values$DB$metadata$fields,other_drops = other_drops(ignore = input$render_missing)) %>% make_table1(
-        group = input$choose_split,
-        variables = variables,
-        render.missing = input$render_missing
-      ),
-      css.cell = "width:100%; overflow-x:auto;"  # Ensures width and adds horizontal overflow
-    )
-    tags$div(
-      style = "width:100%; overflow-x:auto;",  # Force containment within the box
-      HTML(html_output)
-    )
   })
   # dt_tables_view-----------
   # Create a reactive list of DT tables
@@ -176,24 +178,32 @@ app_server <- function(input, output, session) {
   })
   # Render each DT table
   observe({
-    if (is_something(input$choose_record)&&is_something(input$choose_fields)) {
-      values$dt_tables_view_list <- values$DB %>% filter_DB(
-        filter_field = values$DB$redcap$id_col,
-        filter_choices = input$choose_record,
-        form_names = field_names_to_form_names(values$DB, field_names = input$choose_fields),
-        field_names = input$choose_fields
-      ) %>% RosyUtils:::process_df_list()
-      print(values$dt_tables_view_list)
-      # values$dt_tables_view_list <- DB %>% filter_DB(records = subset_list$sarcoma$record_id %>% sample1(), data_choice = RosyREDCap:::get_default_data_choice(values$DB),field_names = "sarc_timeline") %>% RosyUtils:::process_df_list()
-      # values$subset_list$sarcoma %>% dplyr::filter(sarcoma_id%in%values$chosen_group_sarcoma) %>% make_PSDB_table(DB = values$DB)
-      if(!is_something(values$dt_tables_view_list))return(h3("No tables available to display."))
-      lapply(seq_along(values$dt_tables_view_list), function(i) {
-        table_data <- values$dt_tables_view_list[[i]]
-        table_id <- paste0("table__dt_view_", i)
-        output[[table_id]] <- DT::renderDT({
-          table_data %>% clean_DF(fields = values$DB$metadata$fields,other_drops = other_drops(ignore = input$render_missing)) %>% make_DT_table()
-        })
-      }) %>% return()
+    if (is_something(input$choose_record)&&is_something(input$choose_fields_view)) {
+      if(is_something(values$DB)){
+        DB_x <- values$DB
+        data_list <- DB_x %>% filter_DB(
+          filter_field = values$DB$redcap$id_col,
+          filter_choices = input$choose_record,
+          form_names = field_names_to_form_names(values$DB, field_names = input$choose_fields_view),
+          field_names = input$choose_fields_view
+        )
+        DB_x$data <- data_list
+        if(DB_x$internals$is_transformed){
+          DB_x <- untransform_DB(DB_x)
+        }
+        values$dt_tables_view_list <- DB_x$data %>% RosyUtils:::process_df_list()
+        # print(values$dt_tables_view_list)
+        # values$dt_tables_view_list <- DB %>% filter_DB(records = subset_list$sarcoma$record_id %>% sample1(), data_choice = RosyREDCap:::get_default_data_choice(values$DB),field_names = "sarc_timeline") %>% RosyUtils:::process_df_list()
+        # values$subset_list$sarcoma %>% dplyr::filter(sarcoma_id%in%values$chosen_group_sarcoma) %>% make_PSDB_table(DB = values$DB)
+        if(!is_something(values$dt_tables_view_list))return(h3("No tables available to display."))
+        lapply(seq_along(values$dt_tables_view_list), function(i) {
+          table_data <- values$dt_tables_view_list[[i]]
+          table_id <- paste0("table__dt_view_", i)
+          output[[table_id]] <- DT::renderDT({
+            table_data %>% clean_DF(fields = values$DB$metadata$fields,other_drops = other_drops(ignore = input$render_missing)) %>% make_DT_table()
+          })
+        }) %>% return()
+      }
     }
   })
   # simple tables ---------
@@ -305,9 +315,17 @@ app_server <- function(input, output, session) {
       choices = NULL
     )
   })
-  output$choose_fields_ <- renderUI({
+  output$choose_fields_cat_ <- renderUI({
     selectizeInput(
-      inputId = "choose_fields",
+      inputId = "choose_fields_cat",
+      label = "Choose Fields",
+      multiple = T,
+      choices = NULL
+    )
+  })
+  output$choose_fields_view_ <- renderUI({
+    selectizeInput(
+      inputId = "choose_fields_view",
       label = "Choose Fields",
       multiple = T,
       choices = NULL
@@ -454,7 +472,7 @@ app_server <- function(input, output, session) {
               filter_field = filter_field,
               filter_choices = filter_choices
               # form_names = values$selected_form,
-              # field_names = input$choose_fields
+              # field_names = input$choose_fields_cat
             )
           }
         }
@@ -484,7 +502,7 @@ app_server <- function(input, output, session) {
         #     filter_field = filter_field,
         #     filter_choices = filter_choices
         #     # form_names = values$selected_form,
-        #     # field_names = input$choose_fields
+        #     # field_names = input$choose_fields_cat
         #   )
         # }
       }
@@ -496,59 +514,59 @@ app_server <- function(input, output, session) {
   }, ignoreInit = TRUE)
   # Update the tabset panel when a new tab is selected in the selectInput
   observe({
-    input$sb1
     if(is_something(values$DB)){
-      if(is_something(input$choose_form)){
-        updateTabsetPanel(session, "tabs", selected = input$choose_form %>% form_names_to_form_labels(values$DB))
-      }
-      if(is_something(values$subset_list)){
-        field_names <- values$DB$metadata$fields$field_name[which(values$DB$metadata$fields$field_type_R %in% c("factor", "integer", "numeric"))]
-        field_names <- colnames(values$subset_list[[input$choose_form]]) %>% vec1_in_vec2(field_names)
-        field_labels <- field_names %>% field_names_to_field_labels(values$DB)
-        if(is_something(field_names)){
-          field_choices <- setNames(field_names,field_labels)
-          selected <- "no_choice"
-          if(is_something(input$choose_split)){
-            if(input$choose_split %in% field_names)selected <- input$choose_split
-          }
-          updateSelectizeInput(
-            session = session,
-            inputId = "choose_split",
-            selected = selected,
-            choices = c(
+      if(input$sb1 %in% c("group","record")){
+        message("input$sb1:",input$sb1)
+        if(is_something(input$choose_form)){
+          updateTabsetPanel(session, "tabs", selected = input$choose_form %>% form_names_to_form_labels(values$DB))
+        }
+        if(is_something(values$subset_list)){
+          DF <- values$DB$metadata$fields
+          field_names_view <- DF$field_name[which(!DF$field_type %in% c("description"))]
+          field_names_cat <- DF$field_name[which(DF$field_type_R %in% c("factor", "integer", "numeric"))]
+          field_names_cat <- colnames(values$subset_list[[input$choose_form]]) %>% vec1_in_vec2(field_names_cat)
+          field_names_view <- colnames(values$subset_list[[input$choose_form]]) %>% vec1_in_vec2(field_names_view)
+          field_labels_cat <- field_names_cat %>% field_names_to_field_labels(values$DB)
+          field_labels_view <- field_names_view %>% field_names_to_field_labels(values$DB)
+          if(is_something(field_names_cat)){
+            field_choices_cat <- c(
               setNames("no_choice","None"),
-              setNames(
-                object = field_names,
-                nm = field_names %>% field_names_to_field_labels(values$DB)
-              )
+              setNames(field_names_cat,field_labels_cat)
             )
-          )
-          selected <- NULL
-          if(is_something(input$choose_field)){
-            if(input$choose_field %in% field_names)selected <- input$choose_field
+            selected <- "no_choice"
+            if(is_something(input$choose_split)){
+              if(input$choose_split %in% field_names_cat)selected <- input$choose_split
+            }
+            updateSelectizeInput(
+              session = session,
+              inputId = "choose_split",
+              selected = selected,
+              choices = field_choices_cat
+            )
+            selected <- NULL
+            if(is_something(input$choose_fields_cat)){
+              if(all(input$choose_fields_cat %in% field_names_cat))selected <- input$choose_fields_cat
+            }
+            updateSelectizeInput(
+              session = session,
+              inputId = "choose_fields_cat",
+              selected = selected,
+              choices = field_choices_cat
+            )
           }
-          updateSelectizeInput(
-            session = session,
-            inputId = "choose_field",
-            selected = selected,
-            choices = setNames(
-              object =field_names,
-              nm = field_labels
+          if(is_something(field_names_view)){
+            field_choices_view <- setNames(field_names_view,field_labels_view)
+            selected <- NULL
+            if(is_something(input$choose_fields_view)){
+              if(all(input$choose_fields_view %in% field_names_view))selected <- input$choose_fields_view
+            }
+            updateSelectizeInput(
+              session = session,
+              inputId = "choose_fields_view",
+              selected = selected,
+              choices = field_choices_view
             )
-          )
-          selected <- NULL
-          if(is_something(input$choose_fields)){
-            if(all(input$choose_fields %in% field_names))selected <- input$choose_fields
           }
-          updateSelectizeInput(
-            session = session,
-            inputId = "choose_fields",
-            selected = selected,
-            choices = setNames(
-              object =field_names,
-              nm = field_labels
-            )
-          )
         }
       }
     }
@@ -762,14 +780,15 @@ app_server <- function(input, output, session) {
   }
   # plotly -----------
   output$parcats <- plotly::renderPlotly({
-    DF <- values$subset_list[[values$selected_form]]
+    if(is_something(input$choose_form))
+      DF <- values$subset_list[[input$choose_form]]
     input$shuffle_colors
-    # print(input$choose_fields)
-    # cols <- vec1_in_vec2(input$choose_fields,colnames(DF))
+    # print(input$choose_fields_cat)
+    # cols <- vec1_in_vec2(input$choose_fields_cat,colnames(DF))
     # print(cols)
     # # fields_to_forms
-    if(length(input$choose_fields)>0){
-      cols <- input$choose_fields %>% vec1_in_vec2(colnames(DF))
+    if(length(input$choose_fields_cat)>0){
+      cols <- input$choose_fields_cat %>% vec1_in_vec2(colnames(DF))
       DF[,cols, drop = FALSE] %>%
         clean_DF(
           fields = values$DB$metadata,
