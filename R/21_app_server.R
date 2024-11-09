@@ -161,7 +161,7 @@ app_server <- function(input, output, session) {
       return(h3("No tables available to display."))
     } else {
       if(input$view_switch_text){
-        DF_list_to_text(DF_list = values$dt_tables_view_list, DB) %>% HTML()
+        DF_list_to_text(DF_list = values$dt_tables_view_list, values$DB) %>% HTML()
       }else{
         # Otherwise, generate the list of tables
         lapply(seq_along(values$dt_tables_view_list), function(i) {
@@ -457,7 +457,7 @@ app_server <- function(input, output, session) {
           x<- values$sbc[which(values$sbc$label==input$choose_group),]
           if(nrow(x)>0){
             DF <- values$DB$data[[x$form_name]]
-            filter_field <- DB$redcap$id_col
+            filter_field <- values$DB$redcap$id_col
             values$subset_records <- filter_choices <- DF[[values$DB$redcap$id_col]][which(DF[[x$field_name]]==x$name)] %>% unique()
             if(is_something(input$filter_switch)){
               if(input$filter_switch){
