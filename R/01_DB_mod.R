@@ -54,11 +54,16 @@ validate_RosyREDCap <- function(DB,silent = T,warn_only = F){
 }
 #' @title load_RosyREDCap
 #' @export
-load_RosyREDCap <- function(short_name,validate = T){
+load_RosyREDCap <- function(short_name,dir_path,validate = T){
   projects <- get_projects()
-  if(nrow(projects)==0)return(blank_RosyREDCap())
-  if(!short_name%in%projects$short_name)return(blank_RosyREDCap())
-  dir_path <- projects$dir_path[which(projects$short_name==short_name)]
+  if(missing(dir_path)){
+    if(nrow(projects)==0)return(blank_RosyREDCap())
+    if(!short_name%in%projects$short_name)return(blank_RosyREDCap())
+    dir_path <- projects$dir_path[which(projects$short_name==short_name)]
+  }else{
+    if(!file.exists(dir_path))stop("`dir_path` doesn't exist")
+    #consider search feature by saving all rdata files with suffix "_RosyREDCap.Rdata"
+  }
   DB_path <- file.path(dir_path,"R_objects",paste0(short_name,".rdata"))
   if(!file.exists(DB_path))return(blank_RosyREDCap())
   readRDS(file=DB_path) %>%

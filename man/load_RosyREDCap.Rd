@@ -4,7 +4,7 @@
 \alias{load_RosyREDCap}
 \title{load_RosyREDCap}
 \usage{
-load_RosyREDCap(short_name, validate = T)
+load_RosyREDCap(short_name, dir_path, validate = T)
 }
 \description{
 load_RosyREDCap
