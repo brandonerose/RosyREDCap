@@ -97,6 +97,11 @@ app_ui<- function(request) {
           )
         ),
         menuItem(
+          text="Plot",
+          tabName = "plot",
+          icon =shiny::icon("chart-bar")
+        ),
+        menuItem(
           text="Record",
           tabName = "record",
           icon =shiny::icon("user-large")
@@ -217,6 +222,28 @@ app_ui<- function(request) {
               title = h1("Table1"),
               width = 12,
               uiOutput("table1")
+            )
+          )
+        ),
+        # plot--------
+        tabItem(
+          "plot",
+          fluidRow(
+            box(
+              width = 6
+              # uiOutput("choose_split_")
+            ),
+            box(
+              width = 6
+              # uiOutput("choose_fields_cat_")
+            )
+          ),
+          fluidRow(
+            box(
+              title = h1("Plot"),
+              width = 12,
+              # uiOutput("parcats"),
+              actionButton("shuffle_colors2", "Shuffle Colors")
             )
           )
         ),

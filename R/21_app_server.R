@@ -189,7 +189,7 @@ app_server <- function(input, output, session) {
         )
         DB_x$data <- data_list
         if(DB_x$internals$is_transformed){
-          DB_x <- untransform_DB(DB_x)
+          DB_x <- untransform_DB(DB_x, allow_partial = T)
         }
         values$dt_tables_view_list <- DB_x$data %>% RosyUtils:::process_df_list()
         # print(values$dt_tables_view_list)
