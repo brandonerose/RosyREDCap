@@ -731,8 +731,7 @@ app_server <- function(input, output, session) {
       values$fields_to_change_input_df <- NULL
       values$dynamic_input_ids <- NULL
     }else{
-      DF <- NULL
-      # DF <- values$fields_to_change_input_df <- values$subset_list[[input$choose_form]][,unique(c(DB$metadata$form_key_cols[[input$choose_form]],input$choose_fields_change)),drop = F]
+      DF <- values$fields_to_change_input_df <- values$subset_list[[input$choose_form]][,unique(c(DB$metadata$form_key_cols[[input$choose_form]],input$choose_fields_change)),drop = F]
       if(!is_something(DF)){
         values$dynamic_input_ids <- values$fields_to_change_input_df <- NULL
       }else{
