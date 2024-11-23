@@ -180,18 +180,13 @@ app_server <- function(input, output, session) {
   observe({
     if (is_something(input$choose_record)&&is_something(input$choose_fields_view)) {
       if(is_something(values$DB)){
-        DB_x <- values$DB
-        data_list <- DB_x %>% filter_DB(
+        values$dt_tables_view_list <- values$DB %>% filter_DB(
           filter_field = values$DB$redcap$id_col,
           filter_choices = input$choose_record,
           form_names = field_names_to_form_names(values$DB, field_names = input$choose_fields_view),
-          field_names = input$choose_fields_view
-        )
-        DB_x$data <- data_list
-        if(DB_x$internals$is_transformed){
-          DB_x <- untransform_DB(DB_x, allow_partial = T)
-        }
-        values$dt_tables_view_list <- DB_x$data %>% RosyUtils:::process_df_list()
+          field_names = input$choose_fields_view,
+          no_duplicate_cols = T
+        ) %>% RosyUtils:::process_df_list()
         # print(values$dt_tables_view_list)
         # values$dt_tables_view_list <- DB %>% filter_DB(records = subset_list$sarcoma$record_id %>% sample1(), data_choice = RosyREDCap:::get_default_data_choice(values$DB),field_names = "sarc_timeline") %>% RosyUtils:::process_df_list()
         # values$subset_list$sarcoma %>% dplyr::filter(sarcoma_id%in%values$chosen_group_sarcoma) %>% make_PSDB_table(DB = values$DB)
@@ -331,6 +326,14 @@ app_server <- function(input, output, session) {
       choices = NULL
     )
   })
+  output$choose_fields_change_ <- renderUI({
+    selectizeInput(
+      inputId = "choose_field_change_",
+      label = "Choose Field",
+      multiple = F,
+      choices = NULL
+    )
+  })
   output$choose_group_ <- renderUI({
     selectizeInput(
       inputId = "choose_group",
@@ -361,7 +364,13 @@ app_server <- function(input, output, session) {
       values$sbc <- NULL
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
       values$subset_list <- values$DB$data
-      updateSelectizeInput(session,"choose_record", selected = values$subset_records[1],choices = values$subset_records,server = T)
+      updateSelectizeInput(
+        session,
+        "choose_record",
+        selected = values$subset_records[1],
+        choices = values$subset_records,
+        server = T
+      )
       values$sbc <- sidebar_choices(values$DB)
       if(!is.null(values$DB$transformation)){
         values$editable_forms_transformation_table <- values$DB$transformation$forms %>% as.data.frame(stringsAsFactors = FALSE)
@@ -566,6 +575,16 @@ app_server <- function(input, output, session) {
               selected = selected,
               choices = field_choices_view
             )
+            selected <- NULL
+            if(is_something(input$choose_field_change)){
+              if(all(input$choose_field_change %in% field_names_view))selected <- input$choose_field_change
+            }
+            updateSelectizeInput(
+              session = session,
+              inputId = "choose_field_change",
+              selected = selected,
+              choices = field_choices_view
+            )
           }
         }
       }
@@ -664,7 +683,13 @@ app_server <- function(input, output, session) {
             if(!identical(selected,expected)){
               selected <- unique(data_col[[selected]])
               message("valid_click: ", selected)
-              updateSelectizeInput(session,"choose_record",selected = selected,choices = values$subset_records,server = T)
+              updateSelectizeInput(
+                session,
+                "choose_record",
+                selected = selected,
+                choices = values$subset_records,
+                server = T
+              )
             }
           }
         }
@@ -708,7 +733,13 @@ app_server <- function(input, output, session) {
   observeEvent(input$ab_random_record,{
     random_record <- values$subset_records %>% sample1()
     message("Random Record: ", random_record)
-    updateSelectizeInput(session,"choose_record",selected = random_record,choices = values$subset_records,server = T)
+    updateSelectizeInput(
+      session,
+      "choose_record",
+      selected = random_record,
+      choices = values$subset_records,
+      server = T
+    )
   })
   observeEvent(input$ab_next_record,{
     if(is_something(values$subset_records)&&is_something(input$choose_record)){
@@ -722,7 +753,12 @@ app_server <- function(input, output, session) {
         }
         next_record <- values$subset_records[next_record_row]
         if(is_something(next_record)){
-          updateSelectizeInput(session,"choose_record",selected = next_record,choices = values$subset_records,server = T)
+          updateSelectizeInput(
+            session,"choose_record",
+            selected = next_record,
+            choices = values$subset_records,
+            server = T
+          )
         }
       }
     }
