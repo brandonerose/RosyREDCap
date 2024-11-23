@@ -21,6 +21,8 @@ app_server <- function(input, output, session) {
   values$user_adds_project <- NULL
   values$REDCap_diagram <- NULL
   values$dt_tables_view_list <- NULL
+  values$fields_to_change_input_df <- NULL
+  values$dynamic_input_ids <- NULL
   # user input project -------
   observeEvent(input$user_adds_project_modal, {
     # display a modal dialog with a header, textinput and action buttons
@@ -124,33 +126,24 @@ app_server <- function(input, output, session) {
       )
       if(length(variables)==0)return()
       DF <- values$subset_list[[input$choose_form]][,variables,drop = F]
-      x<- values$sbc[which(values$sbc$label==input$choose_group),]
-      # print.table(x)
-      if(nrow(x)>0&length(input$choose_fields_cat)>0){
-        DF <- filter_DB(
-          DB = values$DB,
-          filter_field = x$field_name,
-          filter_choices = x$name,
-          form_names = input$choose_form,
-          field_names = input$choose_fields_cat
-        )[[input$choose_form]][,input$choose_fields_cat,drop = F]
+      if(is_something(DF)){
+        message("input$choose_split: ",input$choose_split)
+        message("variables: ",variables %>% as_comma_string())
+        # DF %>% head() %>% print()
+        html_output <- htmlTable::htmlTable(
+          align = "l",
+          DF %>% clean_DF(values$DB$metadata$fields,other_drops = other_drops(ignore = input$render_missing)) %>% make_table1(
+            group = input$choose_split,
+            variables = variables,
+            render.missing = input$render_missing
+          ),
+          css.cell = "width:100%; overflow-x:auto;"  # Ensures width and adds horizontal overflow
+        )
+        tags$div(
+          style = "width:100%; overflow-x:auto;",  # Force containment within the box
+          HTML(html_output)
+        )
       }
-      message("input$choose_split: ",input$choose_split)
-      message("variables: ",variables %>% as_comma_string())
-      # DF %>% head() %>% print()
-      html_output <- htmlTable::htmlTable(
-        align = "l",
-        DF %>% clean_DF(values$DB$metadata$fields,other_drops = other_drops(ignore = input$render_missing)) %>% make_table1(
-          group = input$choose_split,
-          variables = variables,
-          render.missing = input$render_missing
-        ),
-        css.cell = "width:100%; overflow-x:auto;"  # Ensures width and adds horizontal overflow
-      )
-      tags$div(
-        style = "width:100%; overflow-x:auto;",  # Force containment within the box
-        HTML(html_output)
-      )
     }
   })
   # dt_tables_view-----------
@@ -328,7 +321,7 @@ app_server <- function(input, output, session) {
   })
   output$choose_fields_change_ <- renderUI({
     selectizeInput(
-      inputId = "choose_field_change_",
+      inputId = "choose_fields_change",
       label = "Choose Field",
       multiple = F,
       choices = NULL
@@ -362,6 +355,8 @@ app_server <- function(input, output, session) {
       values$subset_records <- NULL
       values$subset_list <- NULL
       values$sbc <- NULL
+      values$fields_to_change_input_df <- NULL
+      values$dynamic_input_ids <- NULL
       values$subset_records <- values$all_records <- values$DB$summary$all_records[[values$DB$redcap$id_col]]
       values$subset_list <- values$DB$data
       updateSelectizeInput(
@@ -521,6 +516,24 @@ app_server <- function(input, output, session) {
   observeEvent(debounced_tabs(), {
     updateSelectizeInput(session, "choose_form", selected = input$tabs %>% form_labels_to_form_names(values$DB))
   }, ignoreInit = TRUE)
+  observeEvent(values$subset_records,{
+    message("values$subset_records changed!")
+    selected <- NULL
+    if(is_something(input$choose_record)){
+      if(!input$choose_record %in% values$subset_records){
+        if(is_something(values$subset_records)){
+          selected <- values$subset_records[1]
+        }
+      }
+    }
+    updateSelectizeInput(
+      session,
+      "choose_record",
+      selected = selected,
+      choices = values$subset_records,
+      server = T
+    )
+  })
   # Update the tabset panel when a new tab is selected in the selectInput
   observe({
     if(is_something(values$DB)){
@@ -537,6 +550,12 @@ app_server <- function(input, output, session) {
           field_names_view <- colnames(values$subset_list[[input$choose_form]]) %>% vec1_in_vec2(field_names_view)
           field_labels_cat <- field_names_cat %>% field_names_to_field_labels(values$DB)
           field_labels_view <- field_names_view %>% field_names_to_field_labels(values$DB)
+          field_names_change <- DF$field_name[which(
+            (!DF$field_type %in% c("description","file")) &
+              DF$in_original_redcap &
+              DF$form_name == input$choose_form
+          )]
+          field_labels_change <- field_names_change %>% field_names_to_field_labels(values$DB)
           if(is_something(field_names_cat)){
             field_choices_cat <- c(
               setNames("no_choice","None"),
@@ -564,7 +583,6 @@ app_server <- function(input, output, session) {
             )
           }
           if(is_something(field_names_view)){
-            field_choices_view <- setNames(field_names_view,field_labels_view)
             selected <- NULL
             if(is_something(input$choose_fields_view)){
               if(all(input$choose_fields_view %in% field_names_view))selected <- input$choose_fields_view
@@ -573,17 +591,19 @@ app_server <- function(input, output, session) {
               session = session,
               inputId = "choose_fields_view",
               selected = selected,
-              choices = field_choices_view
+              choices = setNames(field_names_view,field_labels_view)
             )
+          }
+          if(is_something(field_names_change)){
             selected <- NULL
-            if(is_something(input$choose_field_change)){
-              if(all(input$choose_field_change %in% field_names_view))selected <- input$choose_field_change
+            if(is_something(input$choose_fields_change)){
+              if(all(input$choose_fields_change %in% field_names_change))selected <- input$choose_fields_change
             }
             updateSelectizeInput(
               session = session,
-              inputId = "choose_field_change",
+              inputId = "choose_fields_change",
               selected = selected,
-              choices = field_choices_view
+              choices =  setNames(field_names_change,field_labels_change)
             )
           }
         }
@@ -701,33 +721,54 @@ app_server <- function(input, output, session) {
       updateSelectizeInput(session,"choose_project" ,choices = values$projects$short_name,server = T)
     }
   })
+  # record_changes ---------
   observe({
-    # updateSelectizeInput(session,"choose_record" ,selected = input$choose_record)
-    # values$variables_to_change_input_list <- NULL
-    # if(is_something(input$choose_record)){
-    #   if(input$choose_record %in% values$DB$summary$all_records[[values$DB$redcap$id_col]]){
-    #     values$variables_to_change_input_list <- values$DB %>%
-    #       filter_DB(
-    #         records = input$choose_record,
-    #         data_choice = "data",
-    #         form_names = field_names_to_form_names(values$DB,field_names = values$selected_field)
-    #       ) %>% process_df_list()
-    #     if(!is_something(values$variables_to_change_input_list)){
-    #       values$variables_to_change_input_list <- NULL
-    #       # return(h3("No Items available to display."))
-    #     }
-    #     if(!is_something(values$variables_to_change_input_list[[values$selected_form]])){
-    #       values$variables_to_change_input_list <- NULL
-    #       # return(h3("No Items available to display."))
-    #     }
-    #     DF <- values$variables_to_change_input_list[[values$selected_form]]
-    #     dynamic_input_ids <- NULL
-    #     if(is_something(DF)){
-    #       dynamic_input_ids <- paste0("input_dynamic_", seq_len(nrow(DF)))
-    #     }
-    #     values$dynamic_input_ids <- dynamic_input_ids
+    if(
+      !is_something(input$choose_record)||
+      !is_something(input$choose_fields_change)||
+      !is_something(input$choose_form)
+    ){
+      values$fields_to_change_input_df <- NULL
+      values$dynamic_input_ids <- NULL
+    }else{
+      DF <- NULL
+      # DF <- values$fields_to_change_input_df <- values$subset_list[[input$choose_form]][,unique(c(DB$metadata$form_key_cols[[input$choose_form]],input$choose_fields_change)),drop = F]
+      if(!is_something(DF)){
+        values$dynamic_input_ids <- values$fields_to_change_input_df <- NULL
+      }else{
+        values$dynamic_input_ids <- paste0("input_dynamic_", seq_len(nrow(DF)))
+      }
+    }
+  })
+  output$add_input_instance_ui_ <- renderUI({
+    # if (is_something(input$choose_record)&&is_something(input$choose_fields_change)&&is_something(input$choose_form)) {
+    #   if (values$DB$redcap$instruments$repeating[which(values$DB$redcap$instruments$instrument_name==input$choose_form)]) {
+    #     actionButton(
+    #       inputId = "add_input_instance_ui",
+    #       label = "Add Instance"
+    #     )
     #   }
     # }
+  })
+  observeEvent(input$add_input_instance_ui,ignoreInit = T,{
+    if(is_something(input$choose_fields_change)){
+      DF <- values$variables_to_change_input_df
+      blank_df <- DF[0,]
+      x <- data.frame(
+        record_id = input$choose_record,
+        redcap_repeat_instrument = input$choose_form,
+        redcap_repeat_instance = "1",
+        form_name = "Incomplete"
+      )
+      colnames(x)[which(colnames(x)=="record_id")]<- values$DB$redcap$id_col
+      colnames(x)[which(colnames(x)=="form_name")]<- paste0(values$selected_form,"_complete")
+      if(is_something(DF)){
+        if(nrow(DF)>0){
+          x$redcap_repeat_instance <- DF$redcap_repeat_instance %>% as.integer() %>% max() %>% magrittr::add(1) %>% as.character()
+        }
+      }
+      values$variables_to_change_input_df <- DF %>% dplyr::bind_rows(x)
+    }
   })
   # ab----------
   observeEvent(input$ab_random_record,{
@@ -747,7 +788,7 @@ app_server <- function(input, output, session) {
         row <- which(values$subset_records == input$choose_record)
         len <- length(values$subset_records)
         if(row == len){
-          next_record_row <- len
+          next_record_row <- 1
         }else{
           next_record_row <- row + 1
         }

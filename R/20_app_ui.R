@@ -268,11 +268,11 @@ app_ui<- function(request) {
             box(
               title = h1("Change"),
               width = 6,
-              uiOutput("choose_field_change_"),
+              uiOutput("choose_fields_change_"),
               uiOutput("variables_to_change_dynamic_inputs"),
               h1("Below is what will be uploaded to REDCap!"),
               DT::DTOutput("the_uploading_table"),
-              uiOutput("add_input_instance_ui"),
+              uiOutput("add_input_instance_ui_"),
               actionButton("submit_data_values", "Submit Data")
               # verbatimTextOutput("output_values_change"),
               # verbatimTextOutput("input_changes")
