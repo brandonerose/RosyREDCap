@@ -740,8 +740,7 @@ app_server <- function(input, output, session) {
       vars <- unique(
         c(
           values$DB$metadata$form_key_cols[[input$choose_form]],
-          input$choose_fields_change,
-          paste0(input$choose_form,"_complete")
+          input$choose_fields_change
         )
       )
       DF <- NULL
@@ -753,7 +752,9 @@ app_server <- function(input, output, session) {
       if(!is_something(DF)){
         values$dynamic_input_ids <- values$fields_to_change_input_df <- NULL
       }else{
-        values$dynamic_input_ids <- paste0("input_dynamic_", seq_len(nrow(DF)))
+        for(i in seq_along(input$choose_fields_change)){
+          values$dynamic_input_ids[[input$choose_fields_change[[i]]]] <- paste0("input_dynamic_", seq_len(nrow(DF)))
+        }
       }
     }
   })
@@ -775,18 +776,18 @@ app_server <- function(input, output, session) {
       x <- data.frame(
         record_id = input$choose_record,
         redcap_repeat_instrument = input$choose_form,
-        redcap_repeat_instance = "1",
-        form_name = "Incomplete"
+        redcap_repeat_instance = "1"
       )
       colnames(x)[which(colnames(x)=="record_id")]<- values$DB$redcap$id_col
-      colnames(x)[which(colnames(x)=="form_name")]<- paste0(input$choose_form,"_complete")
       if(is_something(DF)){
         if(nrow(DF)>0){
           x$redcap_repeat_instance <- DF$redcap_repeat_instance %>% as.integer() %>% max() %>% magrittr::add(1) %>% as.character()
         }
       }
-      values$fields_to_change_input_df <- DF %>% dplyr::bind_rows(x)
-      values$dynamic_input_ids <- paste0("input_dynamic_", seq_len(nrow(values$fields_to_change_input_df)))
+      DF <- values$fields_to_change_input_df <- DF %>% dplyr::bind_rows(x)
+      for(i in seq_along(input$choose_fields_change)){
+        values$dynamic_input_ids[[input$choose_fields_change[[i]]]] <- paste0("input_dynamic_", seq_len(nrow(DF)))
+      }
     }
   })
   observeEvent(input$submit_data_values, {
@@ -799,60 +800,90 @@ app_server <- function(input, output, session) {
   })
   output$fields_to_change_dynamic_inputs <- renderUI({
     print("fields_to_change_dynamic_inputs triggered")
+    input$choose_fields_change
     if (is.null(values$fields_to_change_input_df)) {
       return(h3("No Items available to display."))
     }
     DF <- values$fields_to_change_input_df
-    ref_cols <- values$DB$metadata$forms_key_cols[[input$choose_form]]
+    ref_cols <- values$DB$metadata$form_key_cols[[input$choose_form]]
     if(nrow(DF)==0){
       return(h3("No Items available to display."))
     }
-    input_list <- lapply(1:nrow(DF), function(i) {
-      input_name <-paste0(DF[i,ref_cols],collapse = "_")
-      input_value <- DF[[input$choose_fields_change]][[i]]
-      if(values$DB$metadata$fields$field_type[which(values$DB$metadata$fields$field_name==input$choose_fields_change)]%in%c("radio","dropdown","yesno")){
-        # codebook_names <-
-        # missing_codes <- values$DB$metadata$missing_codes
-        choice_names <- c("*Truly blank in REDCap*",codebook_names)
-        choice_values <- c("_truly_blank_in_redcap_",codebook_names)
-        if(is_something(missing_codes)){
-          choice_names <- choice_names %>% append(missing_codes$name)
-          choice_values <- choice_values %>% append(missing_codes$name)
-        }
-        if(input$sidebar_choice_radio){
-          return(
-            radioButtons(
-              inputId = paste0("input_dynamic_",i),
-              label = h3(input_name),
-              choiceNames = choice_names,
-              choiceValues = choice_values,
-              selected = input_value
-            )
-          )
-        }else{
-          choices <- choice_values %>%  as.list()
-          names(choices) <- choice_names
-          return(
-            selectInput(
-              inputId = paste0("input_dynamic_",i),
-              label = h3(input_name),
-              choices = choices,
-              selected = input_value
-            )
-          )
-        }
-      }else{
-        return(
-          textInput(
-            inputId = paste0("input_dynamic_",i),
-            label = h3(input_name),
-            value = input_value
-          )
+    ncols <- ncol(DF)
+    nrows <- nrow(DF)
+    ncols <- 1
+    ncols <-  ncols + 1
+    the_cols <- (1:ncols)[which(!colnames(DF)%in%ref_cols)]
+    the_number_of_cols <- ncols-length(ref_cols)
+    base_width <- floor(12 / the_number_of_cols)
+    remainder <- 12 %% the_number_of_cols
+    column_widths <- rep(base_width, the_number_of_cols)
+    if (remainder > 0) {
+      column_widths[1:remainder] <- column_widths[1:remainder] + 1
+    }
+    # column_widths
+    input_list <- lapply(the_cols, function(j) {
+      the_col_name <- names(DF)[j]
+      if(!the_col_name %in% ref_cols){
+        column(
+          width = column_widths[[which(names(column_widths) == j)]], # Dynamically adjust column width
+          h4(names(DF)[j], style = "text-align: center;"), # Column name as header
+          lapply(1:nrows, function(i) {
+            input_name <-paste0(DF[i,ref_cols],collapse = "_")
+            input_value <- DF[i,j]
+            input_id <- paste0("input_dynamic_", i, "_", j)
+            if(values$DB$metadata$fields$field_type[which(values$DB$metadata$fields$field_name==the_col_name)]%in%c("radio","dropdown","yesno")){
+              codebook_names <- values$DB$metadata$choices$name[which(values$DB$metadata$choices$field_name == the_col_name)]
+              missing_codes <- values$DB$metadata$missing_codes
+              choice_names <- c("*Truly blank in REDCap*",codebook_names)
+              choice_values <- c("_truly_blank_in_redcap_",codebook_names)
+              if(is_something(missing_codes)){
+                choice_names <- choice_names %>% append(missing_codes$name)
+                choice_values <- choice_values %>% append(missing_codes$name)
+              }
+              if(input$sidebar_choice_radio){
+                return(
+                  radioButtons(
+                    inputId = input_id,
+                    label = h3(input_name),
+                    choiceNames = choice_names,
+                    choiceValues = choice_values,
+                    selected = input_value
+                  )
+                )
+              }else{
+                choices <- choice_values %>%  as.list()
+                names(choices) <- choice_names
+                return(
+                  selectInput(
+                    inputId = input_id,
+                    label = h3(input_name),
+                    choices = choices,
+                    selected = input_value
+                  )
+                )
+              }
+            }else{
+              return(
+                textInput(
+                  inputId = input_id,
+                  label = h3(input_name),
+                  value = input_value
+                )
+              )
+            }
+          })
         )
       }
     })
-    do.call(tagList, input_list)
+    do.call(fluidRow, input_list) # Arrange columns in a fluidRow
   })
+  # observe({
+  #   DF <- values$variables_to_change_input_df
+  #   if(is_something(values$variables_to_change_input_df)){
+  #     values$dynamic_input_ids <- paste0("input_dynamic_", seq_len(nrow(values$variables_to_change_input_df)))
+  #   }
+  # })
   # ab----------
   observeEvent(input$ab_random_record,{
     random_record <- values$subset_records %>% sample1()
