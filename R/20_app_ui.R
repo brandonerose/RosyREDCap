@@ -269,7 +269,7 @@ app_ui<- function(request) {
               title = h1("Change"),
               width = 6,
               uiOutput("choose_fields_change_"),
-              uiOutput("variables_to_change_dynamic_inputs"),
+              uiOutput("fields_to_change_dynamic_inputs"),
               h1("Below is what will be uploaded to REDCap!"),
               DT::DTOutput("the_uploading_table"),
               uiOutput("add_input_instance_ui_"),

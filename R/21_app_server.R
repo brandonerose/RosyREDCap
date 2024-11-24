@@ -326,7 +326,7 @@ app_server <- function(input, output, session) {
     selectizeInput(
       inputId = "choose_fields_change",
       label = "Choose Field",
-      multiple = F,
+      multiple = T,
       choices = NULL
     )
   })
@@ -556,7 +556,8 @@ app_server <- function(input, output, session) {
           field_names_change <- DF$field_name[which(
             (!DF$field_type %in% c("description","file")) &
               DF$in_original_redcap &
-              DF$form_name == input$choose_form
+              DF$form_name == input$choose_form &
+              DF$field_name != values$DB$redcap$id_col
           )]
           field_labels_change <- field_names_change %>% field_names_to_field_labels(values$DB)
           if(is_something(field_names_cat)){
@@ -736,7 +737,13 @@ app_server <- function(input, output, session) {
       values$fields_to_change_input_df <- NULL
       values$dynamic_input_ids <- NULL
     }else{
-      vars <- unique(c(values$DB$metadata$form_key_cols[[input$choose_form]],input$choose_fields_change))
+      vars <- unique(
+        c(
+          values$DB$metadata$form_key_cols[[input$choose_form]],
+          input$choose_fields_change,
+          paste0(input$choose_form,"_complete")
+        )
+      )
       DF <- NULL
       if(is_something(input$choose_form)){
         DF <- values$subset_list[[input$choose_form]]
@@ -751,18 +758,19 @@ app_server <- function(input, output, session) {
     }
   })
   output$add_input_instance_ui_ <- renderUI({
-    # if (is_something(input$choose_record)&&is_something(input$choose_fields_change)&&is_something(input$choose_form)) {
-    #   if (values$DB$redcap$instruments$repeating[which(values$DB$redcap$instruments$instrument_name==input$choose_form)]) {
-    #     actionButton(
-    #       inputId = "add_input_instance_ui",
-    #       label = "Add Instance"
-    #     )
-    #   }
-    # }
+    if (is_something(input$choose_record)&&is_something(input$choose_fields_change)&&is_something(input$choose_form)) {
+      if (values$DB$metadata$forms$repeating[which(values$DB$metadata$forms$form_name==input$choose_form)]) {
+        actionButton(
+          inputId = "add_input_instance_ui",
+          label = "Add Instance"
+        )
+      }
+    }
   })
   observeEvent(input$add_input_instance_ui,ignoreInit = T,{
     if(is_something(input$choose_fields_change)){
-      DF <- values$variables_to_change_input_df
+      message("clicked add_input_instance_ui")
+      DF <- values$fields_to_change_input_df
       blank_df <- DF[0,]
       x <- data.frame(
         record_id = input$choose_record,
@@ -771,14 +779,79 @@ app_server <- function(input, output, session) {
         form_name = "Incomplete"
       )
       colnames(x)[which(colnames(x)=="record_id")]<- values$DB$redcap$id_col
-      colnames(x)[which(colnames(x)=="form_name")]<- paste0(values$selected_form,"_complete")
+      colnames(x)[which(colnames(x)=="form_name")]<- paste0(input$choose_form,"_complete")
       if(is_something(DF)){
         if(nrow(DF)>0){
           x$redcap_repeat_instance <- DF$redcap_repeat_instance %>% as.integer() %>% max() %>% magrittr::add(1) %>% as.character()
         }
       }
-      values$variables_to_change_input_df <- DF %>% dplyr::bind_rows(x)
+      values$fields_to_change_input_df <- DF %>% dplyr::bind_rows(x)
+      values$dynamic_input_ids <- paste0("input_dynamic_", seq_len(nrow(values$fields_to_change_input_df)))
     }
+  })
+  observeEvent(input$submit_data_values, {
+    if(is_something(values$fields_to_change_input_df)){
+      # values$DB$data <- values$fields_to_change_input_df
+      # "uploading..." %>% paste(values$fields_to_change_input_df) %>% print()
+      # values$DB <- upload_DB_to_redcap(values$DB, ask = F)
+      print("uploaded!")
+    }
+  })
+  output$fields_to_change_dynamic_inputs <- renderUI({
+    print("fields_to_change_dynamic_inputs triggered")
+    if (is.null(values$fields_to_change_input_df)) {
+      return(h3("No Items available to display."))
+    }
+    DF <- values$fields_to_change_input_df
+    ref_cols <- values$DB$metadata$forms_key_cols[[input$choose_form]]
+    if(nrow(DF)==0){
+      return(h3("No Items available to display."))
+    }
+    input_list <- lapply(1:nrow(DF), function(i) {
+      input_name <-paste0(DF[i,ref_cols],collapse = "_")
+      input_value <- DF[[input$choose_fields_change]][[i]]
+      if(values$DB$metadata$fields$field_type[which(values$DB$metadata$fields$field_name==input$choose_fields_change)]%in%c("radio","dropdown","yesno")){
+        # codebook_names <-
+        # missing_codes <- values$DB$metadata$missing_codes
+        choice_names <- c("*Truly blank in REDCap*",codebook_names)
+        choice_values <- c("_truly_blank_in_redcap_",codebook_names)
+        if(is_something(missing_codes)){
+          choice_names <- choice_names %>% append(missing_codes$name)
+          choice_values <- choice_values %>% append(missing_codes$name)
+        }
+        if(input$sidebar_choice_radio){
+          return(
+            radioButtons(
+              inputId = paste0("input_dynamic_",i),
+              label = h3(input_name),
+              choiceNames = choice_names,
+              choiceValues = choice_values,
+              selected = input_value
+            )
+          )
+        }else{
+          choices <- choice_values %>%  as.list()
+          names(choices) <- choice_names
+          return(
+            selectInput(
+              inputId = paste0("input_dynamic_",i),
+              label = h3(input_name),
+              choices = choices,
+              selected = input_value
+            )
+          )
+        }
+      }else{
+        return(
+          textInput(
+            inputId = paste0("input_dynamic_",i),
+            label = h3(input_name),
+            value = input_value
+          )
+        )
+      }
+    })
+    do.call(tagList, input_list)
   })
   # ab----------
   observeEvent(input$ab_random_record,{
