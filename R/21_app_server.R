@@ -213,6 +213,9 @@ app_server <- function(input, output, session) {
   output$log_table <- DT::renderDT({
     values$DB$redcap$log %>% make_DT_table()
   })
+  output$the_uploading_table <- DT::renderDT({
+    values$fields_to_change_input_df %>% make_DT_table()
+  })
   # Render each DT table ------
   observe({
     if(!is_something(values$subset_list))return(h3("No tables available to display."))
@@ -724,14 +727,22 @@ app_server <- function(input, output, session) {
   # record_changes ---------
   observe({
     if(
-      !is_something(input$choose_record)||
-      !is_something(input$choose_fields_change)||
-      !is_something(input$choose_form)
+      !(
+        is_something(input$choose_record) &&
+        is_something(input$choose_fields_change) &&
+        is_something(input$choose_form)
+      )
     ){
       values$fields_to_change_input_df <- NULL
       values$dynamic_input_ids <- NULL
     }else{
-      DF <- values$fields_to_change_input_df <- values$subset_list[[input$choose_form]][,unique(c(DB$metadata$form_key_cols[[input$choose_form]],input$choose_fields_change)),drop = F]
+      vars <- unique(c(values$DB$metadata$form_key_cols[[input$choose_form]],input$choose_fields_change))
+      DF <- NULL
+      if(is_something(input$choose_form)){
+        DF <- values$subset_list[[input$choose_form]]
+        rows <-  which(DF[[values$DB$redcap$id_col]]==input$choose_record)
+        DF <- values$fields_to_change_input_df <- DF[rows,vec1_in_vec2(vars,colnames(DF)),drop = F]
+      }
       if(!is_something(DF)){
         values$dynamic_input_ids <- values$fields_to_change_input_df <- NULL
       }else{
