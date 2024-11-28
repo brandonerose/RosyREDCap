@@ -727,36 +727,37 @@ app_server <- function(input, output, session) {
   })
   # record_changes ---------
   observe({
-    if(
-      !(
-        is_something(input$choose_record) &&
+    running_it <- !(
+      is_something(input$choose_record) &&
         is_something(input$choose_fields_change) &&
         is_something(input$choose_form)
-      )
-    ){
-      values$fields_to_change_input_df <- NULL
-      values$dynamic_input_ids <- NULL
-    }else{
-      vars <- unique(
-        c(
-          values$DB$metadata$form_key_cols[[input$choose_form]],
-          input$choose_fields_change
-        )
-      )
-      DF <- NULL
-      if(is_something(input$choose_form)){
-        DF <- values$subset_list[[input$choose_form]]
-        rows <-  which(DF[[values$DB$redcap$id_col]]==input$choose_record)
-        DF <- values$fields_to_change_input_df <- DF[rows,vec1_in_vec2(vars,colnames(DF)),drop = F]
-      }
-      if(!is_something(DF)){
-        values$dynamic_input_ids <- values$fields_to_change_input_df <- NULL
+    )
+    isolate({
+      if(running_it){
+        values$fields_to_change_input_df <- NULL
+        values$dynamic_input_ids <- NULL
       }else{
-        for(i in seq_along(input$choose_fields_change)){
-          values$dynamic_input_ids[[input$choose_fields_change[[i]]]] <- paste0("input_dynamic_", seq_len(nrow(DF)))
+        vars <- unique(
+          c(
+            values$DB$metadata$form_key_cols[[input$choose_form]],
+            input$choose_fields_change
+          )
+        )
+        DF <- NULL
+        if(is_something(input$choose_form)){
+          DF <- values$subset_list[[input$choose_form]]
+          rows <-  which(DF[[values$DB$redcap$id_col]]==input$choose_record)
+          DF <- values$fields_to_change_input_df <- DF[rows,vec1_in_vec2(vars,colnames(DF)),drop = F]
+        }
+        if(!is_something(DF)){
+          values$dynamic_input_ids <- values$fields_to_change_input_df <- NULL
+        }else{
+          for(i in seq_along(input$choose_fields_change)){
+            values$dynamic_input_ids[[input$choose_fields_change[[i]]]] <- paste0("input_dynamic_", seq_len(nrow(DF)))
+          }
         }
       }
-    }
+    })
   })
   output$add_input_instance_ui_ <- renderUI({
     if (is_something(input$choose_record)&&is_something(input$choose_fields_change)&&is_something(input$choose_form)) {
@@ -811,17 +812,18 @@ app_server <- function(input, output, session) {
     }
     ncols <- ncol(DF)
     nrows <- nrow(DF)
-    ncols <- 1
-    ncols <-  ncols + 1
     the_cols <- (1:ncols)[which(!colnames(DF)%in%ref_cols)]
     the_number_of_cols <- ncols-length(ref_cols)
     base_width <- floor(12 / the_number_of_cols)
     remainder <- 12 %% the_number_of_cols
+    message("ref_cols: ",ref_cols %>% length())
+    message("base_width: ",base_width)
+    message("the_number_of_cols: ",the_number_of_cols)
     column_widths <- rep(base_width, the_number_of_cols)
     if (remainder > 0) {
       column_widths[1:remainder] <- column_widths[1:remainder] + 1
     }
-    # column_widths
+    names(column_widths) <- the_cols
     input_list <- lapply(the_cols, function(j) {
       the_col_name <- names(DF)[j]
       if(!the_col_name %in% ref_cols){
