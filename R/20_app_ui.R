@@ -266,16 +266,22 @@ app_ui<- function(request) {
               uiOutput("dt_tables_view_records")
             ),
             box(
-              title = h1("Change"),
               width = 6,
-              uiOutput("choose_fields_change_"),
-              uiOutput("fields_to_change_dynamic_inputs"),
-              h1("Below is what will be uploaded to REDCap!"),
-              DT::DTOutput("the_uploading_table"),
-              uiOutput("add_input_instance_ui_"),
-              actionButton("submit_data_values", "Submit Data")
-              # verbatimTextOutput("output_values_change"),
-              # verbatimTextOutput("input_changes")
+              tabsetPanel(
+                tabPanel(
+                  title = "Change",
+                  uiOutput("choose_fields_change_"),
+                  uiOutput("fields_to_change_dynamic_inputs"),
+                  fluidRow(uiOutput("add_input_instance_ui_")),
+                  fluidRow(actionButton("reset_data_values", "Reset Data")),
+                  fluidRow(actionButton("submit_data_values", "Submit Data"))
+                ),
+                tabPanel(
+                  title = "Upload",
+                  h3("Below is what will be uploaded to REDCap!"),
+                  DT::DTOutput("the_uploading_table")
+                )
+              )
             )
           )
         )
