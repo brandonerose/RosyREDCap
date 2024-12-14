@@ -1,8 +1,8 @@
 ---
-title: "Why RosyREDCap?"
+title: "Get Started"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Why RosyREDCap?}
+  %\VignetteIndexEntry{Get Started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

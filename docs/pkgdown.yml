@@ -2,8 +2,8 @@ pandoc: '3.2'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
-  intro: intro.html
-last_built: 2024-12-14T19:42Z
+  RosyREDCap: RosyREDCap.html
+last_built: 2024-12-14T19:46Z
 urls:
   reference: https://brandonerose.github.io/RosyREDCap/reference
   article: https://brandonerose.github.io/RosyREDCap/articles
