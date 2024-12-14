@@ -1,5 +1,9 @@
 url: https://brandonerose.github.io/RosyREDCap/
 
+home:
+  title: RosyREDCap
+  description: Unleash R and REDCap
+
 template:
   bootstrap: 5
   math-rendering: mathjax
