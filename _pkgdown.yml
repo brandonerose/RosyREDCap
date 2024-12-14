@@ -1,0 +1,11 @@
+# Title of the site
+title: RosyREDCap
+
+# URL of the website (optional)
+url: https://github.com/brandonerose/RosyREDCap
+
+template:
+  bootstrap: 5
+# Build settings
+development:
+  mode: devel
