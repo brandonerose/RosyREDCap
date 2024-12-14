@@ -11,3 +11,6 @@
 .DS_Store
 .quarto
 docs
+inst/doc
+/doc/
+/Meta/

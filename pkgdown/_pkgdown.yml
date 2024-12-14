@@ -1,0 +1,74 @@
+url: https://brandonerose.github.io/RosyREDCap/
+
+template:
+  bootstrap: 5
+  math-rendering: mathjax
+  light-switch: true
+  bslib:
+    primary: "#0054AD"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+    danger: "#A6081A"
+  includes:
+    in_header:
+      <script defer data-domain="pkgdown.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+  opengraph:
+    image:
+      src: man/figures/logo.png
+      alt: "Brandon Rose, MD,MPH"
+    twitter:
+      creator: "@brosemdmph"
+      site: "@thecodingdocs"
+      card: summary_large_image
+
+authors:
+  Brandon Rose, MD, MPH:
+    href: https://www.thecodingdocs.com/founder
+  Natalie Goulett:
+    href: https://github.com/Goulett
+
+development:
+  mode: auto
+
+reference:
+- title: Build
+- subtitle: Build part of a site
+  desc: These functions are useful for rapid iteration when you're working on a
+    specific part of your site.
+  contents:
+  - add_ID_to_DF
+  - add_redcap_folder
+  - add_subset
+  - check_redcap_files
+  - check_redcap_log
+  - create_node_edge_REDCap
+  - deidentify_DB
+  - delete_file_from_redcap
+  - delete_redcap_file
+  - drop_redcap_dir
+  - find_upload_diff
+  - generate_horizontal_transform
+  - generate_summary_from_subset_name
+  - get_raw_redcap
+  - get_REDCap_files
+  - link_API_playground
+  - link_API_token
+  - link_REDCap_home
+  - link_REDCap_project
+  - link_REDCap_record
+  - load_RosyREDCap
+  - "%>%"
+  - push_redcap_dictionary
+  - read_redcap_dir
+  - REDCap_diagram
+  - run_RosyREDCap
+  - set_redcap_token
+  - setup_RosyREDCap
+  - summarize_RosyREDCap
+  - update_RosyREDCap
+  - upload_DB_to_redcap
+  - upload_file_to_redcap_fileRepository
+  - upload_file_to_redcap
+  - upload_form_to_redcap
+  - upload_transform_to_DB
+  - view_redcap_token
