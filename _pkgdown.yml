@@ -1,11 +1,4 @@
-# Title of the site
-title: RosyREDCap
-
-# URL of the website (optional)
-url: https://github.com/brandonerose/RosyREDCap
-
+url: https://brandonerose.github.io/RosyREDCap/
 template:
   bootstrap: 5
-# Build settings
-development:
-  mode: devel
+
