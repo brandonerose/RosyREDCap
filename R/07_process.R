@@ -169,6 +169,7 @@ missing_codes2 <- function(DB){
 #' @title add REDCap ID to any dataframe using a ref_id
 #' @description
 #'  add REDCap ID to any dataframe using a ref_id
+#' @inheritParams setup_RosyREDCap
 #' @param DF dataframe
 #' @param ref_id column name that matches a REDCap variable name that could be an ALT id such as MRN
 #' @return original dataframe with REDCap id_col added as the first column

@@ -110,7 +110,6 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
   DB$data_update <- list()
   return(DB)
 }
-#' @export
 check_field <- function(DB,DF, field_name,autofill_new=T){
   form <- field_names_to_form_names(DB,field_name)
   records <- DF[[DB$redcap$id_col]] %>% unique()
@@ -186,6 +185,7 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
     }
   }
 }
+#' @title edit_redcap_while_viewing
 #' @export
 edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
   change_form <- field_names_to_form_names(DB,field_name_to_change)

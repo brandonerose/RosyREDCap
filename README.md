@@ -40,6 +40,11 @@ functions are taking more than a minute or two you can use the internal
 functions of the package to build a subset. More to come in future
 versions!
 
+<figure>
+<img src="man/figures/cover.jpg" alt="Caption for the picture." />
+<figcaption aria-hidden="true">Caption for the picture.</figcaption>
+</figure>
+
 ## Installation
 
 You can install the development version of RosyREDCap like so:

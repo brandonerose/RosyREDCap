@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   RosyREDCap: RosyREDCap.html
-last_built: 2024-12-14T19:46Z
+last_built: 2024-12-14T22:13Z
 urls:
   reference: https://brandonerose.github.io/RosyREDCap/reference
   article: https://brandonerose.github.io/RosyREDCap/articles

@@ -1,15 +1,16 @@
 Package: RosyREDCap
-Title: A REDCap-project-agnostic R package that uses an API token to make
-    a single, updating, standardized R list object containing all metadata
-    and data for exports, imports, transformations, and shiny applications
+Title: RosyREDCap
 Version: 1.0.0.9030
-Authors@R: 
+Authors@R: c(
     person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"),
-           comment = c(ORCID = "0009-0009-7813-1960"))
+           comment = c(ORCID = "0009-0009-7813-1960")),
+    person("Natalie", "Goulett", role = "aut"),
+    person("Sydney", "Stern", role = "ctb",
+           comment = c(ORCID = "0000-0002-1479-605X"))
+  )
 Description: Rosy development for your R package.
 License: MIT + file LICENSE
-URL: https://github.com/brandonerose/RosyREDCap,
-    https://brandonerose.github.io/RosyREDCap/
+URL: https://github.com/brandonerose/RosyREDCap
 BugReports: https://github.com/brandonerose/RosyREDCap/issues
 Depends: 
     R (>= 2.10)
@@ -36,6 +37,7 @@ Imports:
     shinyWidgets,
     stringr,
     tools,
+    usethis,
     utils,
     visNetwork
 Suggests: 

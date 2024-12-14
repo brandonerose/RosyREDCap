@@ -38,6 +38,8 @@ If you have any issues above download the most recent version of R at RStudtio a
 
 Use your REDCap API token to create an updatable R list object (DB) to be used downstream for analysis, data exports, shiny apps, and even data imports! We are still in development. At this time this package is **not suited for Multi-Arm projects or massive REDCap projects yet**. If the functions are taking more than a minute or two you can use the internal functions of the package to build a subset. More to come in future versions!
 
+![Caption for the picture.](man/figures/cover.jpg)
+
 ## Installation
 
 You can install the development version of RosyREDCap like so:

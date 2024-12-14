@@ -397,6 +397,7 @@ get_raw_redcap <- function(DB,labelled=F,records=NULL,batch_size = 1000){
   )$data %>% all_character_cols()
   return(raw)
 }
+#' @title Check the REDCap log
 #' @export
 delete_redcap_records <- function(DB, records){
   BAD<-records[which(!records%in%DB$summary$all_records[[DB$redcap$id_col]])]
