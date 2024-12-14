@@ -31,9 +31,6 @@ authors:
   Natalie Goulett:
     href: https://github.com/Goulett
 
-development:
-  mode: auto
-
 reference:
 - title: Build
 - subtitle: Build part of a site
