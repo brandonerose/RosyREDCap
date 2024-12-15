@@ -10,7 +10,8 @@ Authors@R: c(
   )
 Description: Rosy development for your R package.
 License: MIT + file LICENSE
-URL: https://github.com/brandonerose/RosyREDCap, https://brandonerose.github.io/RosyREDCap/
+URL: https://github.com/brandonerose/RosyREDCap,
+    https://brandonerose.github.io/RosyREDCap/
 BugReports: https://github.com/brandonerose/RosyREDCap/issues
 Depends: 
     R (>= 2.10)
