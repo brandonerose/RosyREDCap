@@ -14,8 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r}
 library(RosyREDCap)
 ```
 
 Made a change to test something...
+
+```{r}
+library(RosyREDCap)
+```
+
