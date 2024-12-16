@@ -8,8 +8,6 @@ template:
   bootstrap: 5
   math-rendering: mathjax
   light-switch: true
-  params:
-    favicon: "favicon.ico"
   bslib:
     primary: "#0054AD"
     border-radius: 0.5rem
@@ -29,6 +27,8 @@ template:
 
 authors:
   Brandon Rose, MD, MPH:
-    href: https://www.thecodingdocs.com/founder
+    href: https://github.com/brandonerose
   Natalie Goulett:
     href: https://github.com/Goulett
+  Chris Hilsinger-Pate:
+    href: https://github.com/chrishilsingerpate
