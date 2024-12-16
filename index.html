@@ -45,6 +45,19 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="articles/RosyREDCap.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/Advanced.html">RosyREDCap for the Advanced R User</a></li>
+    <li><a class="dropdown-item" href="articles/API.html">Using API Tokens</a></li>
+    <li><a class="dropdown-item" href="articles/Basic.html">RosyREDCap for the Basic R User</a></li>
+    <li><a class="dropdown-item" href="articles/Download.html">Downloading REDCap Data</a></li>
+    <li><a class="dropdown-item" href="articles/Intermediate.html">RosyREDCap for the Intermediate R User</a></li>
+    <li><a class="dropdown-item" href="articles/REDCap.html">REDCap Project Structure</a></li>
+    <li><a class="dropdown-item" href="articles/Shiny.html">Using the Shiny App</a></li>
+    <li><a class="dropdown-item" href="articles/Upload.html">Uploading REDCap Data</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -91,115 +104,63 @@
 <h2 id="rosyredcap-installation">RosyREDCap Installation<a class="anchor" aria-label="anchor" href="#rosyredcap-installation"></a>
 </h2>
 <p>Use your REDCap API token to create an updatable R list object (DB) to be used downstream for analysis, data exports, shiny apps, and even data imports! We are still in development. At this time this package is <strong>not suited for Multi-Arm projects or massive REDCap projects yet</strong>. If the functions are taking more than a minute or two you can use the internal functions of the package to build a subset. More to come in future versions!</p>
-<figure><img src="reference/figures/cover.jpg" alt="Caption for the picture."><figcaption aria-hidden="true">
-Caption for the picture.
-</figcaption></figure>
+<p><img src="reference/figures/cover.jpg"> # What is <a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a>?</p>
+<!-- <img src="images" class="left" width="20%"/> -->
+<p>[<a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a>] <img src="images/RosyREDCap.png" align="right" height="150"></p>
+<p>R and REDCap are both widely utilized in medicine, including basic science, clinical research, and clinal trials. Both have independent strengths, but together they can create powerful data pipelines. While several R packages exist for extracting data using the REDCap API, <a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a> stands out by offering comprehensive extraction of all metadata and data from any REDCap project into a standardized R list object, facilitating effortless downstream use in exports, imports, transformation, and applications. This is showcased in the exploratory data analysis shiny app included in the package. The three core aims of <a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a> are to</p>
+<ol style="list-style-type: decimal">
+<li>Maintain a local version of the database (DB) object by only calling recently updated records using the REDCap log.</li>
+<li>Allow imports of non-coded versions of the dataset using R or Excel/CSV.</li>
+<li>Launch a shiny app that allows you to explore all of your REDCap projects.</li>
+</ol>
+<p>By leveraging the combined strengths of R and REDCap, users can maintain strong clinical data pipelines, collected and processed appropriately to improve research and patient care. RosyREDCap can be used as a base data object and data quality tool for most REDCap projects to aid in collection, monitoring, transformation, and analysis.</p>
 </div>
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+<h2 id="installing-rosyredcap">Installing RosyREDCap<a class="anchor" aria-label="anchor" href="#installing-rosyredcap"></a>
 </h2>
-<p>You can install the development version of RosyREDCap like so:</p>
+<p><em>Note: The current version of <a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a> used when writing this book is 1.0.0.9030, and some of the features presented in this book might not be available if you are using an older version, or be a little bit different if you have a newer version. Feel free to browse the package NEWS.</em></p>
+<p>The stable release can be found on CRAN and installed with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install remotes package if you don't have it</span></span>
-<span><span class="co"># install.packages("remotes") </span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"brandonerose/RosyREDCap"</span><span class="op">)</span></span></code></pre></div>
-<p>If you have any issues above download the most recent version of R at RStudtio and update all packages in RStudio. See <a href="https://www.thecodingdocs.com/r/getting-started" title="R Getting Started" class="external-link">thecodingdocs.com/r/getting-started</a>.</p>
-</div>
-<div class="section level2">
-<h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
-</h2>
-<p>This is how you get REDCap turned into an R database…</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"RosyREDCap"</span><span class="op">)</span></span></code></pre></div>
+<p>You can install the development version of RosyREDCap from GitHub by using the <a href="https://remotes.r-lib.org" class="external-link">remotes</a> package. Be sure to install <a href="https://remotes.r-lib.org" class="external-link">remotes</a> if you don’t have it already.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/brandonerose/RosyREDCap" class="external-link">"RosyREDCap"</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">projects</span> <span class="op">&lt;-</span> <span class="fu">get_projects</span><span class="op">(</span><span class="op">)</span> <span class="co"># get list of cached projects</span></span>
-<span></span>
-<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/setup_RosyREDCap.html">setup_RosyREDCap</a></span><span class="op">(</span></span>
-<span>  short_name <span class="op">=</span> <span class="st">"PROJECT1"</span>,</span>
-<span>  token_name <span class="op">=</span> <span class="st">"PROJECT1_token"</span>,</span>
-<span>  <span class="va">redcap_base_link</span><span class="op">&lt;-</span><span class="st">"https://redcap.miami.edu/"</span>,</span>
-<span>  dir_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, <span class="co"># or change to your intended file path</span></span>
-<span>  <span class="co"># force = T,</span></span>
-<span>  merge_form_name <span class="op">=</span> <span class="st">"patient"</span>,</span>
-<span>  use_csv <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># if you don't have Microsoft change to TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>You can set your REDCap token in two ways!</p>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"brandonerose/RosyREDCap"</span><span class="op">)</span></span></code></pre></div>
+<p>Note that the version used at the time of writing this book is 1.0.0.9030. You can check what version you have installed with the following.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#1. set each time in your session (not recommended in saved/shared scripts!)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>PROJECT1_token <span class="op">=</span> <span class="st">"YoUrNevErShaReToken"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">#2. set to your private R sessions!</span></span>
-<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">edit_r_environ</a></span><span class="op">(</span><span class="op">)</span> <span class="co">#finds your file</span></span>
-<span><span class="co"># Then you add --&gt; PROJECT1_token = 'YoUrNevErShaReToken'</span></span>
-<span><span class="co"># then save file and restart R</span></span>
-<span></span>
-<span><span class="co"># If it worked you will see your token when you run...</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"PROJECT1_token"</span><span class="op">)</span></span>
-<span><span class="co">#And if your DB object is setup properly...</span></span>
-<span><span class="fu"><a href="reference/view_redcap_token.html">view_redcap_token</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="run-core-functions">Run Core Functions<a class="anchor" aria-label="anchor" href="#run-core-functions"></a>
-</h2>
-<p>The following functions represent the core functions of the package.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/update_RosyREDCap.html">update_RosyREDCap</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span> <span class="co"># update from redcap by checking log and using saved object </span></span>
-<span></span>
-<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">add_forms_transformation_to_DB</span><span class="op">(</span><span class="va">DB</span>,forms_tranformation <span class="op">=</span> <span class="fu">default_forms_transformation</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">transform_DB</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span> <span class="co"># transform to most basic forms, can be modified</span></span>
-<span></span>
-<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/drop_redcap_dir.html">drop_redcap_dir</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">#run shiny app!</span></span>
-<span><span class="fu"><a href="reference/run_RosyREDCap.html">run_RosyREDCap</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># dev functions not ready for public yet</span></span>
-<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">clean_DB</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span>
-<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">summarize_DB</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span> <span class="co">#can use for subsets!</span></span>
-<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">summarize_DB</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span>
-<span><span class="va">DB</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu">save_summary</span><span class="op">(</span><span class="op">)</span> <span class="co"># will save summary data, look at the tabs!</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="explore-outputs">Explore Outputs!<a class="anchor" aria-label="anchor" href="#explore-outputs"></a>
-</h2>
-<p>If it worked you will see your token when you run…</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">DB</span><span class="op">$</span><span class="va">metadata</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu">add_list_to_global</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">DB</span><span class="op">$</span><span class="va">data</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu">add_list_to_global</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">#DB$summary %&gt;% add_list_to_global() #not ready for public</span></span>
-<span></span>
-<span><span class="fu">listviewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/listviewer/man/jsonedit.html" class="external-link">jsonedit</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span> <span class="co"># view object</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RosyREDCap"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] '1.0.0.9030'</span></span></code></pre></div>
+<p>If you have any issues, try downloading the most recent version of R at RStudtio and update all packages in RStudio. See <a href="https://www.thecodingdocs.com/r/getting-started" title="R Getting Started" class="external-link">thecodingdocs.com/r/getting-started</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="future-plans">Future plans<a class="anchor" aria-label="anchor" href="#future-plans"></a>
 </h2>
 <ul>
-<li>Future versions will demonstrate more advanced features already included!</li>
+<li>Future versions will document more advanced features that are already included!</li>
 <li>Documentation needs to be updated</li>
 <li>Need to add vignettes</li>
 <li>Need to clean up external vs internal namespace</li>
 <li>Plan to document how to use excel for bulk uncoded edits</li>
 <li>Plan to document how to use quality control functions</li>
-<li>Plan to have shiny app that is more all-in-one</li>
+<li>Plan to document shiny app</li>
 <li>Plan to show R Markdown and automatic HTML, PDF reports</li>
 <li>Need to submit to CRAN</li>
-<li>Open to collaboration/feedback</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
 </h2>
-<p>The RosyREDCap package is at <a href="https://github.com/brandonerose/RosyREDCap" title="RosyREDCap R package" class="external-link">github.com/brandonerose/RosyREDCap</a> See instructions above. Install remotes and install RosyREDCap</p>
-<p>Donate if I helped you out and want more development (anything helps)! <a href="https://account.venmo.com/u/brandonerose" title="Venmo Donation" class="external-link">account.venmo.com/u/brandonerose</a></p>
-<p>For more R coding visit <a href="https://www.thecodingdocs.com/" title="TheCodingDocs.com" class="external-link">thecodingdocs.com/</a></p>
-<p>For correspondence/feedback/issues, please email <a href="mailto:TheCodingDocs@gmail.com" class="email">TheCodingDocs@gmail.com</a>!</p>
-<p>Follow us on Twitter <a href="https://twitter.com/TheCodingDocs" title="TheCodingDocs Twitter" class="external-link">twitter.com/TheCodingDocs</a></p>
-<p>Follow me on Twitter <a href="https://twitter.com/BRoseMDMPH" title="BRoseMDMPH Twitter" class="external-link">twitter.com/BRoseMDMPH</a></p>
+<ul>
+<li>The RosyREDCap package is at <a href="https://github.com/brandonerose/RosyREDCap" title="RosyREDCap R package" class="external-link">github.com/brandonerose/RosyREDCap</a>. See instructions above. Install remotes and install RosyREDCap</li>
+<li>Donate if I helped you out and want more development (anything helps)! <a href="https://account.venmo.com/u/brandonerose" title="Venmo Donation" class="external-link">account.venmo.com/u/brandonerose</a>
+</li>
+<li>For more R coding visit <a href="https://www.thecodingdocs.com/" title="TheCodingDocs.com" class="external-link">thecodingdocs.com/</a>
+</li>
+<li>For correspondence/feedback/issues, please email <a href="mailto:TheCodingDocs@gmail.com" class="email">TheCodingDocs@gmail.com</a>!</li>
+<li>Follow us on Twitter <a href="https://twitter.com/TheCodingDocs" title="TheCodingDocs Twitter" class="external-link">twitter.com/TheCodingDocs</a>
+</li>
+<li>Follow me on Twitter <a href="https://twitter.com/BRoseMDMPH" title="BRoseMDMPH Twitter" class="external-link">twitter.com/BRoseMDMPH</a>
+</li>
+</ul>
 <p><a href="http://www.thecodingdocs.com" class="external-link"><img src="reference/figures/TCD.png" alt="TheCodingDocs.com"></a></p>
 </div>
 </div>

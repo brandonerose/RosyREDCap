@@ -38,6 +38,19 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/RosyREDCap.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/Advanced.html">RosyREDCap for the Advanced R User</a></li>
+    <li><a class="dropdown-item" href="../articles/API.html">Using API Tokens</a></li>
+    <li><a class="dropdown-item" href="../articles/Basic.html">RosyREDCap for the Basic R User</a></li>
+    <li><a class="dropdown-item" href="../articles/Download.html">Downloading REDCap Data</a></li>
+    <li><a class="dropdown-item" href="../articles/Intermediate.html">RosyREDCap for the Intermediate R User</a></li>
+    <li><a class="dropdown-item" href="../articles/REDCap.html">REDCap Project Structure</a></li>
+    <li><a class="dropdown-item" href="../articles/Shiny.html">Using the Shiny App</a></li>
+    <li><a class="dropdown-item" href="../articles/Upload.html">Uploading REDCap Data</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -74,12 +87,79 @@
 
     
     
+<div class="section level2">
+<h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
+</h2>
+<p>This is how you get REDCap turned into an R database…</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a></span><span class="op">)</span></span></code></pre></div>
-<p>Made a change to test something…</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/brandonerose/RosyREDCap" class="external-link">"RosyREDCap"</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">projects</span> <span class="op">&lt;-</span> <span class="fu">get_projects</span><span class="op">(</span><span class="op">)</span> <span class="co"># get list of cached projects</span></span>
+<span></span>
+<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup_RosyREDCap.html">setup_RosyREDCap</a></span><span class="op">(</span></span>
+<span>  short_name <span class="op">=</span> <span class="st">"PROJECT1"</span>,</span>
+<span>  token_name <span class="op">=</span> <span class="st">"PROJECT1_token"</span>,</span>
+<span>  <span class="va">redcap_base_link</span><span class="op">&lt;-</span><span class="st">"https://redcap.miami.edu/"</span>,</span>
+<span>  dir_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, <span class="co"># or change to your intended file path</span></span>
+<span>  <span class="co"># force = T,</span></span>
+<span>  merge_form_name <span class="op">=</span> <span class="st">"patient"</span>,</span>
+<span>  use_csv <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># if you don't have Microsoft change to TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>You can set your REDCap token in two ways!</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a></span><span class="op">)</span></span></code></pre></div>
-  </main>
+<code class="sourceCode R"><span><span class="co">#1. set each time in your session (not recommended in saved/shared scripts!)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>PROJECT1_token <span class="op">=</span> <span class="st">"YoUrNevErShaReToken"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#2. set to your private R sessions!</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">edit_r_environ</a></span><span class="op">(</span><span class="op">)</span> <span class="co">#finds your file</span></span>
+<span><span class="co"># Then you add --&gt; PROJECT1_token = 'YoUrNevErShaReToken'</span></span>
+<span><span class="co"># then save file and restart R</span></span>
+<span></span>
+<span><span class="co"># If it worked you will see your token when you run...</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"PROJECT1_token"</span><span class="op">)</span></span>
+<span><span class="co">#And if your DB object is setup properly...</span></span>
+<span><span class="fu"><a href="../reference/view_redcap_token.html">view_redcap_token</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="run-core-functions">Run Core Functions<a class="anchor" aria-label="anchor" href="#run-core-functions"></a>
+</h2>
+<p>The following functions represent the core functions of the
+package.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/update_RosyREDCap.html">update_RosyREDCap</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span> <span class="co"># update from redcap by checking log and using saved object </span></span>
+<span></span>
+<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">add_forms_transformation_to_DB</span><span class="op">(</span><span class="va">DB</span>,forms_tranformation <span class="op">=</span> <span class="fu">default_forms_transformation</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">transform_DB</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span> <span class="co"># transform to most basic forms, can be modified</span></span>
+<span></span>
+<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/drop_redcap_dir.html">drop_redcap_dir</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#run shiny app!</span></span>
+<span><span class="fu"><a href="../reference/run_RosyREDCap.html">run_RosyREDCap</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># dev functions not ready for public yet</span></span>
+<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">clean_DB</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span>
+<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">summarize_DB</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span> <span class="co">#can use for subsets!</span></span>
+<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu">summarize_DB</span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span>
+<span><span class="va">DB</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">save_summary</span><span class="op">(</span><span class="op">)</span> <span class="co"># will save summary data, look at the tabs!</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="explore-outputs">Explore Outputs!<a class="anchor" aria-label="anchor" href="#explore-outputs"></a>
+</h2>
+<p>If it worked you will see your token when you run…</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">DB</span><span class="op">$</span><span class="va">metadata</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">add_list_to_global</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">DB</span><span class="op">$</span><span class="va">data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">add_list_to_global</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#DB$summary %&gt;% add_list_to_global() #not ready for public</span></span>
+<span></span>
+<span><span class="fu">listviewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/listviewer/man/jsonedit.html" class="external-link">jsonedit</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span> <span class="co"># view object</span></span></code></pre></div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
