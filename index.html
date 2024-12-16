@@ -88,19 +88,6 @@
 <!-- badges: start -->
 
 <div class="section level2">
-<h2 id="rosyverse">Rosyverse<a class="anchor" aria-label="anchor" href="#rosyverse"></a>
-</h2>
-<p>Rosyverse is an evolving pre-CRAN set of packages maintained by Brandon Rose, MD, MPH. It is important to continue to run <code>Rosyverse::update_all()</code> while you are using this set of related packages. Please reach out if there are any issues with installation, documentation, or packages.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install remotes package if you don't have it</span></span>
-<span><span class="co"># install.packages("remotes") </span></span>
-<span><span class="co"># install Rosyverse metapackage which has a function called `update_all()`</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"brandonerose/Rosyverse"</span><span class="op">)</span></span>
-<span><span class="fu">Rosyverse</span><span class="fu">::</span><span class="fu">update_all</span><span class="op">(</span><span class="op">)</span> <span class="co"># run update on all packages</span></span>
-<span><span class="fu">Rosyverse</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span> <span class="co">#load all Rosyverse packages!</span></span></code></pre></div>
-<p>If you have any issues above download the most recent version of R at RStudtio and update all packages in RStudio. See <a href="https://www.thecodingdocs.com/r/getting-started" title="R Getting Started" class="external-link">thecodingdocs.com/r/getting-started</a>.</p>
-</div>
-<div class="section level2">
 <h2 id="rosyredcap-installation">RosyREDCap Installation<a class="anchor" aria-label="anchor" href="#rosyredcap-installation"></a>
 </h2>
 <p>Use your REDCap API token to create an updatable R list object (DB) to be used downstream for analysis, data exports, shiny apps, and even data imports! We are still in development. At this time this package is <strong>not suited for Multi-Arm projects or massive REDCap projects yet</strong>. If the functions are taking more than a minute or two you can use the internal functions of the package to build a subset. More to come in future versions!</p>
@@ -122,13 +109,13 @@
 </h2>
 <p><em>Note: The current version of <a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a> used when writing this book is 1.0.0.9030, and some of the features presented in this book might not be available if you are using an older version, or be a little bit different if you have a newer version. Feel free to browse the package NEWS.</em></p>
 <p>The stable release can be found on CRAN and installed with:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"RosyREDCap"</span><span class="op">)</span></span></code></pre></div>
 <p>You can install the development version of RosyREDCap from GitHub by using the <a href="https://remotes.r-lib.org" class="external-link">remotes</a> package. Be sure to install <a href="https://remotes.r-lib.org" class="external-link">remotes</a> if you don’t have it already.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"brandonerose/RosyREDCap"</span><span class="op">)</span></span></code></pre></div>
 <p>Note that the version used at the time of writing this book is 1.0.0.9030. You can check what version you have installed with the following.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RosyREDCap"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] '1.0.0.9030'</span></span></code></pre></div>
 <p>If you have any issues, try downloading the most recent version of R at RStudtio and update all packages in RStudio. See <a href="https://www.thecodingdocs.com/r/getting-started" title="R Getting Started" class="external-link">thecodingdocs.com/r/getting-started</a>.</p>
@@ -203,6 +190,8 @@
 <li>Brandon Rose <br><small class="roles"> Maintainer, author </small> <a href="https://orcid.org/0009-0009-7813-1960" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>
 <a href="https://github.com/Goulett" class="external-link">Natalie Goulett</a> <br><small class="roles"> Author </small>  </li>
+<li>
+<a href="https://github.com/chrishilsingerpate" class="external-link">Chris Hilsinger-Pate</a> <br><small class="roles"> Author </small>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -219,7 +208,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Brandon Rose, <a href="https://github.com/Goulett" class="external-link">Natalie Goulett</a>.</p>
+  <p>Developed by Brandon Rose, <a href="https://github.com/Goulett" class="external-link">Natalie Goulett</a>, <a href="https://github.com/chrishilsingerpate" class="external-link">Chris Hilsinger-Pate</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
