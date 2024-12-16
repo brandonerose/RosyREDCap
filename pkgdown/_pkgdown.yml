@@ -19,14 +19,14 @@ template:
   opengraph:
     image:
       src: man/figures/logo.png
-      alt: "Brandon Rose, MD,MPH"
+      alt: "Brandon Rose"
     twitter:
       creator: "@brosemdmph"
       site: "@thecodingdocs"
       card: summary_large_image
 
 authors:
-  Brandon Rose, MD, MPH:
+  Brandon Rose:
     href: https://github.com/brandonerose
   Natalie Goulett:
     href: https://github.com/Goulett
