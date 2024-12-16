@@ -8,6 +8,8 @@ template:
   bootstrap: 5
   math-rendering: mathjax
   light-switch: true
+  params:
+    favicon: "man/figures/logo.png"
   bslib:
     primary: "#0054AD"
     border-radius: 0.5rem
