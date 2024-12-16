@@ -39,10 +39,8 @@ If you have any issues above download the most recent version of R at RStudtio a
 Use your REDCap API token to create an updatable R list object (DB) to be used downstream for analysis, data exports, shiny apps, and even data imports! We are still in development. At this time this package is **not suited for Multi-Arm projects or massive REDCap projects yet**. If the functions are taking more than a minute or two you can use the internal functions of the package to build a subset. More to come in future versions!
 
 ![](man/figures/cover.jpg)
-# What is `{RosyREDCap}`?
 
-<!-- <img src="images" class="left" width="20%"/> -->
-[`{RosyREDCap}`] <img src="images/RosyREDCap.png" align="right" height="150" />
+# What is `{RosyREDCap}`?
 
 R and REDCap are both widely utilized in medicine, including basic science, clinical research, and clinal trials. Both have independent strengths, but together they can create powerful data pipelines. While several R packages exist for extracting data using the REDCap API, `{RosyREDCap}` stands out by offering comprehensive extraction of all metadata and data from any REDCap project into a standardized R list object, facilitating effortless downstream use in exports, imports, transformation, and applications. This is showcased in the exploratory data analysis shiny app included in the package.
 The three core aims of `{RosyREDCap}` are to

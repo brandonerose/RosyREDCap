@@ -40,12 +40,9 @@ functions are taking more than a minute or two you can use the internal
 functions of the package to build a subset. More to come in future
 versions!
 
-![](man/figures/cover.jpg) \# What is `{RosyREDCap}`?
+![](man/figures/cover.jpg)
 
-<!-- <img src="images" class="left" width="20%"/> -->
-
-\[`{RosyREDCap}`\]
-<img src="images/RosyREDCap.png" align="right" height="150" />
+# What is `{RosyREDCap}`?
 
 R and REDCap are both widely utilized in medicine, including basic
 science, clinical research, and clinal trials. Both have independent
