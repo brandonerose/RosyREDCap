@@ -9,7 +9,7 @@ template:
   math-rendering: mathjax
   light-switch: true
   params:
-    favicon: "man/figures/logo.png"
+    favicon: "favicon.ico"
   bslib:
     primary: "#0054AD"
     border-radius: 0.5rem
