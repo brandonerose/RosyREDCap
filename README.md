@@ -40,134 +40,99 @@ functions are taking more than a minute or two you can use the internal
 functions of the package to build a subset. More to come in future
 versions!
 
-<figure>
-<img src="man/figures/cover.jpg" alt="Caption for the picture." />
-<figcaption aria-hidden="true">Caption for the picture.</figcaption>
-</figure>
+![](man/figures/cover.jpg) \# What is `{RosyREDCap}`?
 
-## Installation
+<!-- <img src="images" class="left" width="20%"/> -->
 
-You can install the development version of RosyREDCap like so:
+\[`{RosyREDCap}`\]
+<img src="images/RosyREDCap.png" align="right" height="150" />
+
+R and REDCap are both widely utilized in medicine, including basic
+science, clinical research, and clinal trials. Both have independent
+strengths, but together they can create powerful data pipelines. While
+several R packages exist for extracting data using the REDCap API,
+`{RosyREDCap}` stands out by offering comprehensive extraction of all
+metadata and data from any REDCap project into a standardized R list
+object, facilitating effortless downstream use in exports, imports,
+transformation, and applications. This is showcased in the exploratory
+data analysis shiny app included in the package. The three core aims of
+`{RosyREDCap}` are to
+
+1.  Maintain a local version of the database (DB) object by only calling
+    recently updated records using the REDCap log.
+2.  Allow imports of non-coded versions of the dataset using R or
+    Excel/CSV.
+3.  Launch a shiny app that allows you to explore all of your REDCap
+    projects.
+
+By leveraging the combined strengths of R and REDCap, users can maintain
+strong clinical data pipelines, collected and processed appropriately to
+improve research and patient care. RosyREDCap can be used as a base data
+object and data quality tool for most REDCap projects to aid in
+collection, monitoring, transformation, and analysis.
+
+## Installing RosyREDCap
+
+*Note: The current version of `{RosyREDCap}` used when writing this book
+is 1.0.0.9030, and some of the features presented in this book might not
+be available if you are using an older version, or be a little bit
+different if you have a newer version. Feel free to browse the package
+NEWS.*
+
+The stable release can be found on CRAN and installed with:
 
 ``` r
-# install remotes package if you don't have it
-# install.packages("remotes") 
+install.packages("RosyREDCap")
+```
+
+You can install the development version of RosyREDCap from GitHub by
+using the `{remotes}` package. Be sure to install `{remotes}` if you
+don’t have it already.
+
+``` r
 remotes::install_github("brandonerose/RosyREDCap")
 ```
 
-If you have any issues above download the most recent version of R at
+Note that the version used at the time of writing this book is
+1.0.0.9030. You can check what version you have installed with the
+following.
+
+``` r
+packageVersion("RosyREDCap")
+#> [1] '1.0.0.9030'
+```
+
+If you have any issues, try downloading the most recent version of R at
 RStudtio and update all packages in RStudio. See
 [thecodingdocs.com/r/getting-started](https://www.thecodingdocs.com/r/getting-started "R Getting Started").
 
-## Setup
-
-This is how you get REDCap turned into an R database…
-
-``` r
-library("RosyREDCap")
-
-projects <- get_projects() # get list of cached projects
-
-DB <- setup_RosyREDCap(
-  short_name = "PROJECT1",
-  token_name = "PROJECT1_token",
-  redcap_base_link<-"https://redcap.miami.edu/",
-  dir_path = getwd(), # or change to your intended file path
-  # force = T,
-  merge_form_name = "patient",
-  use_csv = FALSE # if you don't have Microsoft change to TRUE
-)
-```
-
-You can set your REDCap token in two ways!
-
-``` r
-#1. set each time in your session (not recommended in saved/shared scripts!)
-Sys.setenv(PROJECT1_token = "YoUrNevErShaReToken")
-
-#2. set to your private R sessions!
-usethis::edit_r_environ() #finds your file
-# Then you add --> PROJECT1_token = 'YoUrNevErShaReToken'
-# then save file and restart R
-
-# If it worked you will see your token when you run...
-Sys.getenv("PROJECT1_token")
-#And if your DB object is setup properly...
-view_redcap_token(DB)
-```
-
-## Run Core Functions
-
-The following functions represent the core functions of the package.
-
-``` r
-
-DB <- update_RosyREDCap(DB) # update from redcap by checking log and using saved object 
-
-DB <- add_forms_transformation_to_DB(DB,forms_tranformation = default_forms_transformation(DB))
-
-DB <- transform_DB(DB) # transform to most basic forms, can be modified
-
-DB <- drop_redcap_dir(DB)
-
-#run shiny app!
-run_RosyREDCap()
-
-# dev functions not ready for public yet
-DB <- clean_DB(DB)
-DB <- summarize_DB(DB) #can use for subsets!
-DB <- summarize_DB(DB)
-DB %>% save_summary() # will save summary data, look at the tabs!
-```
-
-## Explore Outputs!
-
-If it worked you will see your token when you run…
-
-``` r
-
-DB$metadata %>% add_list_to_global()
-
-DB$data %>% add_list_to_global()
-
-#DB$summary %>% add_list_to_global() #not ready for public
-
-listviewer::jsonedit(DB) # view object
-```
-
 ## Future plans
 
-- Future versions will demonstrate more advanced features already
+- Future versions will document more advanced features that are already
   included!
 - Documentation needs to be updated
 - Need to add vignettes
 - Need to clean up external vs internal namespace
 - Plan to document how to use excel for bulk uncoded edits
 - Plan to document how to use quality control functions
-- Plan to have shiny app that is more all-in-one
+- Plan to document shiny app
 - Plan to show R Markdown and automatic HTML, PDF reports
 - Need to submit to CRAN
-- Open to collaboration/feedback
 
 ## Links
 
-The RosyREDCap package is at
-[github.com/brandonerose/RosyREDCap](https://github.com/brandonerose/RosyREDCap "RosyREDCap R package")
-See instructions above. Install remotes and install RosyREDCap
-
-Donate if I helped you out and want more development (anything helps)!
-[account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
-
-For more R coding visit
-[thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com")
-
-For correspondence/feedback/issues, please email
-<TheCodingDocs@gmail.com>!
-
-Follow us on Twitter
-[twitter.com/TheCodingDocs](https://twitter.com/TheCodingDocs "TheCodingDocs Twitter")
-
-Follow me on Twitter
-[twitter.com/BRoseMDMPH](https://twitter.com/BRoseMDMPH "BRoseMDMPH Twitter")
+- The RosyREDCap package is at
+  [github.com/brandonerose/RosyREDCap](https://github.com/brandonerose/RosyREDCap "RosyREDCap R package").
+  See instructions above. Install remotes and install RosyREDCap
+- Donate if I helped you out and want more development (anything helps)!
+  [account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
+- For more R coding visit
+  [thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com")
+- For correspondence/feedback/issues, please email
+  <TheCodingDocs@gmail.com>!
+- Follow us on Twitter
+  [twitter.com/TheCodingDocs](https://twitter.com/TheCodingDocs "TheCodingDocs Twitter")
+- Follow me on Twitter
+  [twitter.com/BRoseMDMPH](https://twitter.com/BRoseMDMPH "BRoseMDMPH Twitter")
 
 [![TheCodingDocs.com](man/figures/TCD.png)](http://www.thecodingdocs.com)
