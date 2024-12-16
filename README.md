@@ -32,7 +32,7 @@ metadata and data from any REDCap project into a standardized R list
 object, facilitating effortless downstream use in exports, imports,
 transformation, and applications. This is showcased in the exploratory
 data analysis shiny app included in the package. The three core aims of
-`{RosyREDCap}` are to
+`{RosyREDCap}` are to…
 
 1.  Maintain a local version of the database (DB) object by only calling
     recently updated records using the REDCap log.
