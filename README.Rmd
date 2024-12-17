@@ -28,7 +28,7 @@ Use your REDCap API token to create an updatable R list object (DB) to be used d
 # What is `{RosyREDCap}`?
 
 R and REDCap are both widely utilized in medicine, including basic science, clinical research, and clinal trials. Both have independent strengths, but together they can create powerful data pipelines. While several R packages exist for extracting data using the REDCap API, `{RosyREDCap}` stands out by offering comprehensive extraction of all metadata and data from any REDCap project into a standardized R list object, facilitating effortless downstream use in exports, imports, transformation, and applications. This is showcased in the exploratory data analysis shiny app included in the package.
-The three core aims of `{RosyREDCap}` are to...
+The three core aims of `{RosyREDCap}` are to... 
 
 1.  Maintain a local version of the database (DB) object by only calling recently updated records using the REDCap log.
 2.  Allow imports of non-coded versions of the dataset using R or Excel/CSV.
