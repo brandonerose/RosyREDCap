@@ -347,16 +347,19 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>projects <span class="ot">&lt;-</span> <span class="fu">get_projects</span>() <span class="co"># get list of cached projects</span></span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>DB <span class="ot">&lt;-</span> <span class="fu">setup_RosyREDCap</span>(</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="at">short_name =</span> <span class="st">&quot;PROJECT1&quot;</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="at">token_name =</span> <span class="st">&quot;PROJECT1_token&quot;</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  redcap_base_link<span class="ot">&lt;-</span><span class="st">&quot;https://redcap.miami.edu/&quot;</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="at">dir_path =</span> <span class="fu">getwd</span>(), <span class="co"># or change to your intended file path</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="co"># force = T,</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  <span class="at">merge_form_name =</span> <span class="st">&quot;patient&quot;</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  <span class="at">use_csv =</span> <span class="cn">FALSE</span> <span class="co"># if you don&#39;t have Microsoft change to TRUE</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>)</span></code></pre></div>
-<p>You can set your REDCap token in two ways!</p>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">View</span>(projects) <span class="co"># show your previously saved projects</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>DB <span class="ot">&lt;-</span> <span class="fu">setup_RosyREDCap</span>(</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="at">short_name =</span> <span class="st">&quot;PROJECT1&quot;</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="at">token_name =</span> <span class="st">&quot;PROJECT1_token&quot;</span>, <span class="co"># see the article on setting your token if needed</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="at">redcap_base_link =</span> <span class="st">&quot;https://redcap.miami.edu/&quot;</span>, <span class="co"># change to your institutions link</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  <span class="at">dir_path =</span> <span class="fu">getwd</span>(), <span class="co"># or change to your intended file path</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  <span class="co"># force = T, # use this to force a refresh</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>  <span class="at">merge_form_name =</span> <span class="st">&quot;patient&quot;</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>  <span class="at">use_csv =</span> <span class="cn">FALSE</span> <span class="co"># if you don&#39;t have Microsoft change to TRUE</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>)</span></code></pre></div>
+<p>You can set your REDCap token in two ways! If you need more help
+setting your tokens see this article –&gt; placeholder</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co">#1. set each time in your session (not recommended in saved/shared scripts!)</span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">PROJECT1_token =</span> <span class="st">&quot;YoUrNevErShaReToken&quot;</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
@@ -394,7 +397,6 @@ package.</p>
 </div>
 <div id="explore-outputs" class="section level2">
 <h2>Explore Outputs!</h2>
-<p>If it worked you will see your token when you run…</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>DB<span class="sc">$</span>metadata <span class="sc">%&gt;%</span> <span class="fu">add_list_to_global</span>()</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>

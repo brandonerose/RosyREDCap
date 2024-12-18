@@ -23,18 +23,20 @@ library("RosyREDCap")
 
 projects <- get_projects() # get list of cached projects
 
+View(projects) # show your previously saved projects
+
 DB <- setup_RosyREDCap(
   short_name = "PROJECT1",
-  token_name = "PROJECT1_token",
-  redcap_base_link<-"https://redcap.miami.edu/",
+  token_name = "PROJECT1_token", # see the article on setting your token if needed
+  redcap_base_link = "https://redcap.miami.edu/", # change to your institutions link
   dir_path = getwd(), # or change to your intended file path
-  # force = T,
+  # force = T, # use this to force a refresh
   merge_form_name = "patient",
   use_csv = FALSE # if you don't have Microsoft change to TRUE
 )
 ```
 
-You can set your REDCap token in two ways!
+You can set your REDCap token in two ways! If you need more help setting your tokens see this article --> placeholder
 
 ```{r example2, eval=FALSE}
 #1. set each time in your session (not recommended in saved/shared scripts!)
@@ -54,6 +56,7 @@ view_redcap_token(DB)
 ## Run Core Functions
 
 The following functions represent the core functions of the package.
+
 ```{r , eval=FALSE}
 
 DB <- update_RosyREDCap(DB) # update from redcap by checking log and using saved object 
@@ -76,7 +79,7 @@ DB %>% save_summary() # will save summary data, look at the tabs!
 
 ## Explore Outputs!
 
-If it worked you will see your token when you run...
+
 ```{r , eval=FALSE}
 
 DB$metadata %>% add_list_to_global()

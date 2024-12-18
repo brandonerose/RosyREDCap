@@ -9,12 +9,14 @@ knitr::opts_chunk$set(
 # 
 # projects <- get_projects() # get list of cached projects
 # 
+# View(projects) # show your previously saved projects
+# 
 # DB <- setup_RosyREDCap(
 #   short_name = "PROJECT1",
-#   token_name = "PROJECT1_token",
-#   redcap_base_link<-"https://redcap.miami.edu/",
+#   token_name = "PROJECT1_token", # see the article on setting your token if needed
+#   redcap_base_link = "https://redcap.miami.edu/", # change to your institutions link
 #   dir_path = getwd(), # or change to your intended file path
-#   # force = T,
+#   # force = T, # use this to force a refresh
 #   merge_form_name = "patient",
 #   use_csv = FALSE # if you don't have Microsoft change to TRUE
 # )
