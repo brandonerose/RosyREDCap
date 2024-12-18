@@ -22,7 +22,7 @@ Precisely because tokens are sensitive, RosyREDCap is designed to only reference
 
 ## Setting Your Token for One Session
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 library("RosyREDCap")
 Sys.getenv("TEST_token")
 #>[1] ""
@@ -30,7 +30,7 @@ Sys.getenv("TEST_token")
 
 Unless you specifically set the token `Sys.getenv("TEST_token")` will be blank.
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 # Set your token
 Sys.setenv(TEST_token="a_FaKe_TOkEn")
 
@@ -51,7 +51,7 @@ You may find want to reuse a token, and you may have several projects, so a conv
 4.  Restart R Session (Session tab or `.rs.restartR()`).
 5.  Confirm with `Sys.getenv("TEST_token")`
 
-```{r, echo=FALSE}
+```{r, eval=FALSE}
 #Install usethis if you don't have it.
 #install.packages("usethis") 
 usethis::edit_r_environ()
@@ -64,6 +64,18 @@ Sys.getenv("TEST_token") # now should contain your token
 ```
 
 The only reference to your token that is ever made or saved in RosyREDCap is with its name. For example, any RosyREDCap DB object will have the token name at `DB$token_name`. In the future, we may set our token in a different way. 
+
+## Testing Your Token (optional)
+
+If you are ever having any issues with your token, you can test your DB object with `view_REDCap_token(DB)` and/or `test_REDCap_token(DB)`
+
+```{r, eval=FALSE}
+
+view_REDCap_token(DB)
+
+test_REDCap_token(DB)
+
+```
 
 ## Additional Resources
 
