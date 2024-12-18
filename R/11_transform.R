@@ -103,7 +103,7 @@ extract_form_from_merged <- function(DB,form_name){
 upload_transform_to_DB <- function(DB){
   if(is_something(DB$transformation$data_updates)){
     for(i in 1:length(DB$transformation$data_updates)){
-      DB$transformation$data_updates[[i]] %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+      DB$transformation$data_updates[[i]] %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
     }
     bullet_in_console("Successfully uploaded to REDCap!",bullet_type = "v")
     DB$transformation$data_updates<- NULL

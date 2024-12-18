@@ -52,32 +52,14 @@ validate_RosyREDCap <- function(DB,silent = T,warn_only = F){
   DB <- RosyDB:::validate_DB(DB,silent = silent,warn_only = warn_only,allowed_names = names(blank_RosyREDCap()))
   return(DB)
 }
-#' @title load_RosyREDCap
-#' @export
-load_RosyREDCap <- function(short_name,dir_path,validate = T){
-  projects <- get_projects()
-  if(missing(dir_path)){
-    if(nrow(projects)==0)return(blank_RosyREDCap())
-    if(!short_name%in%projects$short_name)return(blank_RosyREDCap())
-    dir_path <- projects$dir_path[which(projects$short_name==short_name)]
-  }else{
-    if(!file.exists(dir_path))stop("`dir_path` doesn't exist")
-    #consider search feature by saving all rdata files with suffix "_RosyREDCap.Rdata"
-  }
-  DB_path <- file.path(dir_path,"R_objects",paste0(short_name,".rdata"))
-  if(!file.exists(DB_path))return(blank_RosyREDCap())
-  readRDS(file=DB_path) %>%
-    validate_RosyREDCap(silent = F, warn_only = !validate) %>%
-    return()
-}
 #' @title Setup for DB including token
-#' @param DB a list object slightly modified version of RosyDB and contains all metadata, data, transformations, and more
+#' @param DB a list object that contains all metadata, data, log, transformations, and more for one REDCap project.
 #' @param short_name character name as a shortcut
 #' @param dir_path character file path of the directory
 #' @param token_name character string of what the token is called when using Sys.setenv and Sys.getenv
 #' @param redcap_base character of the base REDCap link, ex. https://redcap.miami.edu
 #' @param force logical for force blank load vs last save
-#' @param validate logical for validation
+#' @param validate logical for validation check
 #' @param merge_form_name name of merged non-repeating to be used in package
 #' @return DB
 #' @export
@@ -95,7 +77,7 @@ setup_RosyREDCap <- function (
   if(missing(short_name))stop("`short_name` is required for DBs that haven't been validated")
   missing_dir_path <- missing(dir_path)
   if(missing_dir_path){
-    warning("If you don't supply a directory, RosyDB will only run in R session. Package is best with a directory",immediate. = T)
+    warning("If you don't supply a directory, RosyREDCap will only run in R session. Package is best with a directory.",immediate. = T)
     DB <- blank_RosyREDCap()
   }
   if( ! missing_dir_path){
@@ -151,6 +133,28 @@ setup_RosyREDCap <- function (
   DB$internals$use_csv <- use_csv
   DB$data <- DB$data %>% all_character_cols_list()
   return(DB)
+}
+#' @title Load RosyREDCap
+#' @description
+#' Will take your previously chosen `short_name` and load directory-saved DB object by using the cache. `dir_path` is optional if you already used `setup_RosyREDCap()`
+#' @inheritParams setup_RosyREDCap
+#' @return DB list object
+#' @export
+load_RosyREDCap <- function(short_name,dir_path,validate = T){
+  projects <- get_projects()
+  if(missing(dir_path)){
+    if(nrow(projects)==0)return(blank_RosyREDCap())
+    if(!short_name%in%projects$short_name)return(blank_RosyREDCap())
+    dir_path <- projects$dir_path[which(projects$short_name==short_name)]
+  }else{
+    if(!file.exists(dir_path))stop("`dir_path` doesn't exist")
+    #consider search feature by saving all rdata files with suffix "_RosyREDCap.Rdata"
+  }
+  DB_path <- file.path(dir_path,"R_objects",paste0(short_name,".rdata"))
+  if(!file.exists(DB_path))return(blank_RosyREDCap())
+  readRDS(file=DB_path) %>%
+    validate_RosyREDCap(silent = F, warn_only = !validate) %>%
+    return()
 }
 redcap_field_types_not_in_data <- c(
   "descriptive", "checkbox"

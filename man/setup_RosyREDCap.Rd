@@ -28,9 +28,9 @@ setup_RosyREDCap(
 
 \item{merge_form_name}{name of merged non-repeating to be used in package}
 
-\item{validate}{logical for validation}
+\item{validate}{logical for validation check}
 
-\item{DB}{a list object slightly modified version of RosyDB and contains all metadata, data, transformations, and more}
+\item{DB}{a list object that contains all metadata, data, log, transformations, and more for one REDCap project.}
 }
 \value{
 DB

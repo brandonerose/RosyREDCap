@@ -1,35 +1,6 @@
 #' @import RosyUtils
 #' @import RosyDB
 #' @import RosyApp
-ignore_redcap_log <- function(collapse = T){
-  ignores <- c(
-    'export',
-    'download ',
-    'edit report',
-    'Switch DAG',
-    'Copy report',
-    'Multi-Language',
-    'File Repository ',
-    'custom record dashboard',
-    'User regenerate own API token',
-    'Create report',
-    ' external module'
-  )
-  if(collapse)return(paste0(ignores,collapse = "|"))
-  return(ignores)
-}
-log_details_that_trigger_refresh <- function(){
-  c(
-    "Edit project field",
-    "Delete project field",
-    "Create project field",
-    "Make project customizations",
-    "Delete data collection instrument",
-    "Download instrument from Shared Library",
-    "Create data collection instrument",
-    "Tag new identifier fields"
-  )
-}
 #' @title Shows DB in the env
 #' @param DB DB from load_RosyREDCap or setup_DB
 #' @param force logical for force a fresh update
@@ -64,7 +35,7 @@ update_RosyREDCap <- function(
       }
     }
   }
-  DB <- test_REDCap(DB)
+  DB <- test_REDCap_token_console(DB)
   if(metadata_only)force <- T
   # DB$internals$last_metadata_update <- Sys.time()-lubridate::days(1)
   # DB$internals$last_data_update <- Sys.time()-lubridate::days(1)
@@ -86,7 +57,7 @@ update_RosyREDCap <- function(
     ){
       force <- T
     }else{
-      ilog <- check_redcap_log(
+      ilog <- check_REDCap_log(
         DB,
         begin_time = as.character(strptime(DB$redcap$log$timestamp[1],format = "%Y-%m-%d %H:%M") - lubridate::days(1))
       ) %>% clean_redcap_log() %>% unique()
@@ -137,11 +108,11 @@ update_RosyREDCap <- function(
       log <- DB$redcap$log # in case there is a log already
       if(entire_log){
         DB$redcap$log <- log %>% dplyr::bind_rows(
-          DB %>% check_redcap_log(begin_time = DB$redcap$project_info$creation_time) %>% unique()
+          DB %>% check_REDCap_log(begin_time = DB$redcap$project_info$creation_time) %>% unique()
         )
       }else{
         DB$redcap$log <- log %>% dplyr::bind_rows(
-          DB %>% check_redcap_log(last = day_of_log,units = "days") %>% unique()
+          DB %>% check_REDCap_log(last = day_of_log,units = "days") %>% unique()
         )
       }
       # DB <- annotate_fields(DB)

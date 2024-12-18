@@ -76,3 +76,45 @@ remove_records_from_list <- function(DB,records,silent=F){
   if(!silent)message("Removed: ",paste0(records,collapse = ", "))
   return(data_list)
 }
+other_drops <- function(ignore = F){
+  if(ignore)return(NULL)
+  c(
+    "Not applicable",
+    "No information",
+    "Not asked",
+    "Unknown",
+    "Unencoded",
+    "Unknown / Not Reported",
+    "Missing Dates",
+    "Pediatric"
+  ) %>% return()
+}
+ignore_redcap_log <- function(collapse = T){
+  ignores <- c(
+    'export',
+    'download ',
+    'edit report',
+    'Switch DAG',
+    'Copy report',
+    'Multi-Language',
+    'File Repository ',
+    'custom record dashboard',
+    'User regenerate own API token',
+    'Create report',
+    ' external module'
+  )
+  if(collapse)return(paste0(ignores,collapse = "|"))
+  return(ignores)
+}
+log_details_that_trigger_refresh <- function(){
+  c(
+    "Edit project field",
+    "Delete project field",
+    "Create project field",
+    "Make project customizations",
+    "Delete data collection instrument",
+    "Download instrument from Shared Library",
+    "Create data collection instrument",
+    "Tag new identifier fields"
+  )
+}

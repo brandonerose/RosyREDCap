@@ -26,7 +26,7 @@ upload_file_to_redcap_fileRepository <- function(DB,file){
 #' @title Checks REDCap for current files
 #' @return data.frame of files
 #' @export
-check_redcap_files <- function(DB){
+check_REDCap_files <- function(DB){
   DB <- validate_RosyREDCap(DB)
   response <- httr::POST(
     url = DB$links$redcap_uri,
@@ -68,7 +68,7 @@ add_redcap_folder <- function(DB,name){
   httr::content(response)
 }
 #' @title Uploads a folder name to REDCap
-#' @param doc_id from the file list `check_redcap_files(DB)`
+#' @param doc_id from the file list `check_REDCap_files(DB)`
 #' @return messages for confirmation
 #' @export
 delete_redcap_file <- function(DB,doc_id){

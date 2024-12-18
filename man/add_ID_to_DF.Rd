@@ -9,7 +9,7 @@ add_ID_to_DF(DF, DB, ref_id)
 \arguments{
 \item{DF}{dataframe}
 
-\item{DB}{a list object slightly modified version of RosyDB and contains all metadata, data, transformations, and more}
+\item{DB}{a list object that contains all metadata, data, log, transformations, and more for one REDCap project.}
 
 \item{ref_id}{column name that matches a REDCap variable name that could be an ALT id such as MRN}
 }

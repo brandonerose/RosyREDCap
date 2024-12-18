@@ -10,7 +10,7 @@
 #' @param batch_size numeric of how big the REDCap batch upload is. Default 500.
 #' @return messages
 #' @export
-upload_form_to_redcap <- function(to_be_uploaded,DB,batch_size=500){
+upload_form_to_REDCap <- function(to_be_uploaded,DB,batch_size=500){
   REDCapR::redcap_write(
     ds_to_write = to_be_uploaded %>% all_character_cols(),
     batch_size=batch_size,
@@ -23,7 +23,7 @@ upload_form_to_redcap <- function(to_be_uploaded,DB,batch_size=500){
 }
 #' @title Upload from your directory to REDCap
 #' @description
-#' This function is meant to be run after `DB_import <- read_redcap_dir(DB)`.
+#' This function is meant to be run after `DB_import <- read_from_REDCap_upload(DB)`.
 #' It compares DB_import to DB and only uploads the changes.
 #' This will only overwrite and new data. It will not directly delete and data.
 #' Because this is the only function that can mess up your data, use it at your own risk.
@@ -32,7 +32,7 @@ upload_form_to_redcap <- function(to_be_uploaded,DB,batch_size=500){
 #' @param ask logical for if you want to preview uploads first
 #' @return messages
 #' @export
-upload_DB_to_redcap <- function(DB,batch_size = 500, ask = T, view_old = T, n_row_view = 20){
+upload_DB_to_REDCap <- function(DB,batch_size = 500, ask = T, view_old = T, n_row_view = 20){
   warning("This function is not ready for primetime yet! Use at your own risk!",immediate. = T)
   DB <- validate_RosyREDCap(DB)
   # if(ask){
@@ -61,7 +61,7 @@ upload_DB_to_redcap <- function(DB,batch_size = 500, ask = T, view_old = T, n_ro
           do_it  <- utils::menu(choices = c("Yes upload","No and go to next"),title = "Do you want to upload this?")
         }
         if(do_it==1){
-          upload_form_to_redcap(to_be_uploaded=to_be_uploaded,DB=DB,batch_size=batch_size)
+          upload_form_to_REDCap(to_be_uploaded=to_be_uploaded,DB=DB,batch_size=batch_size)
           DB$data_update[[TABLE]] <- NULL
           any_updates <- T
           DB$internals$last_data_update <- Sys.time()
@@ -166,7 +166,7 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
           choice <- 1
         }
         if(choice==1){
-          OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+          OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
           message("Uploaded: ",OUT %>% paste0(collapse = " | "))
         }
         if(choice==2){
@@ -176,7 +176,7 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
           DB %>% link_REDCap_record(OUT[[DB$redcap$id_col]])
           OUT[[field_name]] <- readline("What would you like it to be? ")
           print.data.frame(OUT)
-          OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+          OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
         }
         if(choice==4){#account for repeat? instance
           DB %>% link_REDCap_record(OUT[[DB$redcap$id_col]],form,instance = OUT[["redcap_repeat_instance"]])
@@ -254,7 +254,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
             if(choice=="Manual Entry"){
               OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
               if(upload_individually){
-                OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
                 message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
                 record_was_updated <- T
               }else{
@@ -267,7 +267,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
           }else{
             OUT_sub[[field_name_to_change]] <- choice
             if(upload_individually){
-              OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+              OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
               message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
               record_was_updated <- T
             }else{
@@ -297,7 +297,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
                 if(choice=="Manual Entry"){
                   OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
                   if(upload_individually){
-                    OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                    OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
                     message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
                     record_was_updated <- T
                   }else{
@@ -311,7 +311,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
               }else{
                 OUT_sub[[field_name_to_change]] <- choice
                 if(upload_individually){
-                  OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                  OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
                   message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
                   record_was_updated <- T
                 }else{
@@ -326,5 +326,5 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
     }
     if(record_was_updated)DB <- update_RosyREDCap(DB)
   }
-  if(!upload_individually)OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+  if(!upload_individually)OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
 }

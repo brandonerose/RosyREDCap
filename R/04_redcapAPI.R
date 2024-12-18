@@ -93,26 +93,6 @@ get_REDCap <- function(DB,method,error_action = "warn",additional_args=NULL){
     only_get = T
   )
 }
-redcap_token_works <- function(DB){
-  redcap_api_request(DB$links$redcap_uri,validate_redcap_token(DB,silent = T,ask = F),"version") %>%
-    httr::http_error() %>% magrittr::not() %>% return()
-}
-test_REDCap <- function(DB){
-  ERROR  <- T
-  while(ERROR){
-    version <- redcap_api_request(url = DB$links$redcap_uri,token = validate_redcap_token(DB),additional_args = list(content="version"))
-    ERROR  <- version %>% httr::http_error()
-    if(ERROR){
-      warning('Your REDCap API token check failed. Invalid token or API privileges. Contact Admin! Consider rerunnning `setup_DB()`',immediate. = T)
-      warning("HTTP error ",version %>% httr::status_code(), ". Check your token, internet connection, and redcap base link.",immediate. = T)
-      message("Try going to REDCap --> '",DB$links$redcap_API,"' or run `link_API_token(DB)`")
-      set_redcap_token(DB)
-    }
-  }
-  message("Connected to REDCap!")
-  DB$redcap$version <- version %>% httr::content(as="text") %>% as.character()
-  DB
-}
 #' @title Drop redcap files to directory
 #' @param original_file_names logical for using original uploaded filenames vs system defined
 #' @param overwrite logical rewriting over the downloaded files in your directory. A better alternative is deleting files you want to update.
@@ -317,7 +297,7 @@ get_REDCap_metadata <- function(DB,include_users = T){
   # other-------
   if(include_users){
     DB$redcap$users <- get_REDCap_users(DB)
-    DB$redcap$log <- check_redcap_log(DB,last = 2,units = "mins")
+    DB$redcap$log <- check_REDCap_log(DB,last = 2,units = "mins")
     DB$redcap$users$current_user <- DB$redcap$users$username==DB$redcap$log$username[which(DB$redcap$log$details=="Export REDCap version (API)") %>% dplyr::first()]
   }
   DB$links$redcap_home <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/index.php?pid=",DB$redcap$project_id)
@@ -331,7 +311,7 @@ get_REDCap_metadata <- function(DB,include_users = T){
 get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   forms <- get_original_forms(DB)
   data_list <- list()
-  raw <- get_raw_redcap(
+  raw <- get_raw_REDCap(
     DB = DB,
     labelled = F,
     records = records,
@@ -357,7 +337,7 @@ get_REDCap_structure <- function(){
 #' @param clean logical for cleaning of API data
 #' @return data.frame of log that has been cleaned and has extra summary columns
 #' @export
-check_redcap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clean = T,record = ""){
+check_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clean = T,record = ""){
   if(units=="days"){
     x <- (Sys.time()-lubridate::days(last)) %>% format( "%Y-%m-%d %H:%M") %>% as.character()
   }
@@ -384,7 +364,7 @@ check_redcap_log <- function(DB,last=24,user = "",units="hours",begin_time="",cl
 #' @param records optional records
 #' @return data.frame of raw_redcap
 #' @export
-get_raw_redcap <- function(DB,labelled=F,records=NULL,batch_size = 1000){
+get_raw_REDCap <- function(DB,labelled=F,records=NULL,batch_size = 1000){
   raw <- REDCapR::redcap_read(
     redcap_uri = DB$links$redcap_uri,
     token = validate_redcap_token(DB),
@@ -418,7 +398,6 @@ delete_redcap_records <- function(DB, records){
   message("Records deleted!")
 }
 #' @title push_redcap_dictionary
-#' @export
 push_redcap_dictionary <- function(){
   redcap_api_request(
     url,

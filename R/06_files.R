@@ -1,9 +1,9 @@
 #' @import RosyUtils
 #' @import RosyDB
 #' @import RosyApp
-#' @title upload_file_to_redcap
+#' @title upload_file_to_REDCap
 #' @export
-upload_file_to_redcap <- function(DB,file,record, field,repeat_instance = NULL,event = NULL){
+upload_file_to_REDCap <- function(DB,file,record, field,repeat_instance = NULL,event = NULL){
   # DB <- validate_RosyREDCap(DB)
   file <- normalizePath(file)
   if(!file.exists(file)) stop("File does not exist! --> ",file)
@@ -30,9 +30,9 @@ upload_file_to_redcap <- function(DB,file,record, field,repeat_instance = NULL,e
   if(httr::http_error(response))stop("File upload failed")
   message("File uploaded! --> ",file)
 }
-#' @title delete_file_from_redcap
+#' @title delete_file_from_REDCap
 #' @export
-delete_file_from_redcap <- function(DB,record, field,repeat_instance = NULL, event = NULL){
+delete_file_from_REDCap <- function(DB,record, field,repeat_instance = NULL, event = NULL){
   # DB <- validate_RosyREDCap(DB)
   body <- list(
     "token"=validate_redcap_token(DB),

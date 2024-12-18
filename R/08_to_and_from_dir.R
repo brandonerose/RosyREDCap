@@ -16,7 +16,7 @@
 #' @param forms optional character vector for only selected forms
 #' @return messages for confirmation
 #' @export
-drop_redcap_dir <- function(
+drop_REDCap_to_directory <- function(
     DB,
     records,
     smart = T,
@@ -176,7 +176,7 @@ drop_redcap_dir <- function(
 #' @param stop_or_warn character string of whether to stop, warn, or do nothing when forbidden cols are present
 #' @return messages for confirmation
 #' @export
-read_redcap_dir <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_form_vars=T,stop_or_warn="warn"){
+read_from_REDCap_upload <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_form_vars=T,stop_or_warn="warn"){
   DB <- validate_RosyREDCap(DB)
   path <- file.path(get_dir(DB),"REDCap","upload")
   if(!file.exists(path))stop("No REDCap files found at path --> ",path)

@@ -1,9 +1,6 @@
 #' @import RosyUtils
 #' @import RosyDB
 #' @import RosyApp
-#' @title create_node_edge_REDCap
-#' @return messages for confirmation
-#' @export
 create_node_edge_REDCap <- function(
     DB,
     duplicate_forms = T,
