@@ -85,6 +85,26 @@ reference:
     contents:
       - generate_horizontal_transform
       - upload_form_to_REDCap
+articles:
+  - title: "Feautures by R User Level"
+    contents:
+      - Basic
+      - Intermediate
+      - Advanced
+  - title: "Using RosyREDCap"
+    contents:
+      - REDCap
+  - title: "API and Tokens"
+    contents:
+      - API
+      - Tokens
+  - title: "File Management"
+    contents:
+      - Download
+      - Upload
+  - title: "Shiny Application"
+    contents:
+      - Shiny
 
 authors:
   Brandon Rose:
