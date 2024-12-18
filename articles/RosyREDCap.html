@@ -48,6 +48,7 @@
     <li><a class="dropdown-item" href="../articles/Intermediate.html">RosyREDCap for the Intermediate R User</a></li>
     <li><a class="dropdown-item" href="../articles/REDCap.html">REDCap Project Structure</a></li>
     <li><a class="dropdown-item" href="../articles/Shiny.html">Using the Shiny App</a></li>
+    <li><a class="dropdown-item" href="../articles/Tokens.html">Tokens</a></li>
     <li><a class="dropdown-item" href="../articles/Upload.html">Uploading REDCap Data</a></li>
   </ul>
 </li>
@@ -96,16 +97,19 @@
 <span></span>
 <span><span class="va">projects</span> <span class="op">&lt;-</span> <span class="fu">get_projects</span><span class="op">(</span><span class="op">)</span> <span class="co"># get list of cached projects</span></span>
 <span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/View.html" class="external-link">View</a></span><span class="op">(</span><span class="va">projects</span><span class="op">)</span> <span class="co"># show your previously saved projects</span></span>
+<span></span>
 <span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup_RosyREDCap.html">setup_RosyREDCap</a></span><span class="op">(</span></span>
 <span>  short_name <span class="op">=</span> <span class="st">"PROJECT1"</span>,</span>
-<span>  token_name <span class="op">=</span> <span class="st">"PROJECT1_token"</span>,</span>
-<span>  <span class="va">redcap_base_link</span><span class="op">&lt;-</span><span class="st">"https://redcap.miami.edu/"</span>,</span>
+<span>  token_name <span class="op">=</span> <span class="st">"PROJECT1_token"</span>, <span class="co"># see the article on setting your token if needed</span></span>
+<span>  redcap_base_link <span class="op">=</span> <span class="st">"https://redcap.miami.edu/"</span>, <span class="co"># change to your institutions link</span></span>
 <span>  dir_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, <span class="co"># or change to your intended file path</span></span>
-<span>  <span class="co"># force = T,</span></span>
+<span>  <span class="co"># force = T, # use this to force a refresh</span></span>
 <span>  merge_form_name <span class="op">=</span> <span class="st">"patient"</span>,</span>
 <span>  use_csv <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># if you don't have Microsoft change to TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>You can set your REDCap token in two ways!</p>
+<p>You can set your REDCap token in two ways! If you need more help
+setting your tokens see this article –&gt; placeholder</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#1. set each time in your session (not recommended in saved/shared scripts!)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>PROJECT1_token <span class="op">=</span> <span class="st">"YoUrNevErShaReToken"</span><span class="op">)</span></span>
@@ -147,7 +151,6 @@ package.</p>
 <div class="section level2">
 <h2 id="explore-outputs">Explore Outputs!<a class="anchor" aria-label="anchor" href="#explore-outputs"></a>
 </h2>
-<p>If it worked you will see your token when you run…</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">DB</span><span class="op">$</span><span class="va">metadata</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">add_list_to_global</span><span class="op">(</span><span class="op">)</span></span>
