@@ -108,10 +108,19 @@ to set and check your tokens…</p>
 <div class="section level3">
 <h3 id="setting-your-token-for-one-session">Setting Your Token for One Session<a class="anchor" aria-label="anchor" href="#setting-your-token-for-one-session"></a>
 </h3>
-<pre><code><span><span class="co">#&gt; [1] ""</span></span></code></pre>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/brandonerose/RosyREDCap" class="external-link">"RosyREDCap"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"TEST_token"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;[1] ""</span></span></code></pre></div>
 <p>Unless you specifically set the token
 <code>Sys.getenv("TEST_token")</code> will be blank.</p>
-<pre><code><span><span class="co">#&gt; [1] "a_FaKe_TOkEn"</span></span></code></pre>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Set your token</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>TEST_token<span class="op">=</span><span class="st">"a_FaKe_TOkEn"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Get your token</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"TEST_token"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;[1] "a_FaKe_TOkEn"</span></span></code></pre></div>
 <p>Now the token is set for this R session only. If you restarted R, it
 would be blank again.</p>
 </div>
@@ -138,13 +147,32 @@ token will be visible to you if specifically called with
 <li>Confirm with <code>Sys.getenv("TEST_token")</code>
 </li>
 </ol>
-<pre><code><span><span class="co">#&gt; <span style="color: #BB0000;">☐</span> Edit <span style="color: #0000BB;">/home/runner/.Renviron</span>.</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">☐</span> Restart R for changes to take effect.</span></span>
-<span><span class="co">#&gt; [1] "a_FaKe_TOkEn"</span></span></code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#Install usethis if you don't have it.</span></span>
+<span><span class="co">#install.packages("usethis") </span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">edit_r_environ</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Now save your token.... (without the comment symbol '#')</span></span>
+<span><span class="co"># TEST_token = "faKeTokeN"</span></span>
+<span><span class="co"># Save the file and Close</span></span>
+<span><span class="co"># Restart R Session (session tab)</span></span>
+<span><span class="co"># .rs.restartR() # this will also restart R session for you.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"TEST_token"</span><span class="op">)</span> <span class="co"># now should contain your token</span></span></code></pre></div>
 <p>The only reference to your token that is ever made or saved in
 RosyREDCap is with its name. For example, any RosyREDCap DB object will
 have the token name at <code>DB$token_name</code>. In the future, we may
 set our token in a different way.</p>
+</div>
+<div class="section level3">
+<h3 id="testing-your-token-optional">Testing Your Token (optional)<a class="anchor" aria-label="anchor" href="#testing-your-token-optional"></a>
+</h3>
+<p>If you are ever having any issues with your token, you can test your
+DB object with <code>view_REDCap_token(DB)</code> and/or
+<code>test_REDCap_token(DB)</code></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="../reference/view_redcap_token.html">view_REDCap_token</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/test_REDCap_token.html">test_REDCap_token</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="additional-resources">Additional Resources<a class="anchor" aria-label="anchor" href="#additional-resources"></a>
