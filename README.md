@@ -9,15 +9,11 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-## RosyREDCap Installation
-
-Use your REDCap API token to create an updatable R list object (DB) to
-be used downstream for analysis, data exports, shiny apps, and even data
-imports! We are still in development. At this time this package is **not
-suited for Multi-Arm projects or massive REDCap projects yet**. If the
-functions are taking more than a minute or two you can use the internal
-functions of the package to build a subset. More to come in future
-versions!
+Use your REDCap API tokens to create an updating R list object (DB)
+which can used downstream for analysis, data exports, shiny apps, and
+even data imports! We are still in development. At this time this
+package is **not suited for Multi-Arm projects or massive REDCap
+projects yet**. More to come in future versions!
 
 ![](man/figures/cover.jpg)
 
@@ -56,9 +52,10 @@ different if you have a newer version. Feel free to browse the package
 NEWS.*
 
 The stable release can be found on CRAN and installed with:
+**PLACEHOLDER NOT SUBMITTED TO CRAN YET**
 
 ``` r
-install.packages("RosyREDCap")
+#install.packages("RosyREDCap") #PLACEHOLDER NOT SUBMITTED TO CRAN YET
 ```
 
 You can install the development version of RosyREDCap from GitHub by
@@ -66,6 +63,7 @@ using the `{remotes}` package. Be sure to install `{remotes}` if you
 don’t have it already.
 
 ``` r
+#install.packages("remotes)
 remotes::install_github("brandonerose/RosyREDCap")
 ```
 
@@ -82,24 +80,11 @@ If you have any issues, try downloading the most recent version of R at
 RStudtio and update all packages in RStudio. See
 [thecodingdocs.com/r/getting-started](https://www.thecodingdocs.com/r/getting-started "R Getting Started").
 
-## Future plans
-
-- Future versions will document more advanced features that are already
-  included!
-- Documentation needs to be updated
-- Need to add vignettes
-- Need to clean up external vs internal namespace
-- Plan to document how to use excel for bulk uncoded edits
-- Plan to document how to use quality control functions
-- Plan to document shiny app
-- Plan to show R Markdown and automatic HTML, PDF reports
-- Need to submit to CRAN
-
 ## Links
 
 - The RosyREDCap package is at
   [github.com/brandonerose/RosyREDCap](https://github.com/brandonerose/RosyREDCap "RosyREDCap R package").
-  See instructions above. Install remotes and install RosyREDCap
+  See instructions above.
 - Donate if I helped you out and want more development (anything helps)!
   [account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
 - For more R coding visit
