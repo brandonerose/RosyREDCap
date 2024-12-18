@@ -87,6 +87,7 @@ reference:
       - upload_form_to_REDCap
 articles:
   - title: "Feautures by R User Level"
+    navbar: ~
     contents:
       - Basic
       - Intermediate
