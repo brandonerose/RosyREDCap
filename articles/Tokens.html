@@ -128,13 +128,13 @@ projects, so a convenient way to store the tokens in a separate
 location. One way to do this is your personal .Renviron file. Again, you
 should check always confirm the location of this file and make sure it’s
 not a part of any cloud storage or git or GitHub. You can use
-<code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code> to semi-permanently save your
+<code>usethis::edit_r_environ()</code> to semi-permanently save your
 token. Each time you launch an R session this file will run and your
 token will be visible to you if specifically called with
 <code>Sys.getenv("TEST_token")</code>.</p>
 <ol style="list-style-type: decimal">
 <li>Open the .Renviron file with
-<code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code>
+<code>usethis::edit_r_environ()</code>
 </li>
 <li>Add the token like this… <code>TEST_token = "faKeTokeN"</code>
 </li>
@@ -146,7 +146,7 @@ token will be visible to you if specifically called with
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Install usethis if you don't have it.</span></span>
 <span><span class="co">#install.packages("usethis") </span></span>
-<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">edit_r_environ</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">edit_r_environ</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># Now save your token.... (without the comment symbol '#')</span></span>
 <span><span class="co"># TEST_token = "faKeTokeN"</span></span>
 <span><span class="co"># Save the file and Close</span></span>

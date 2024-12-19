@@ -9,10 +9,11 @@ articles:
   Intermediate: Intermediate.html
   REDCap: REDCap.html
   RosyREDCap: RosyREDCap.html
+  Security: Security.html
   Shiny: Shiny.html
   Tokens: Tokens.html
   Upload: Upload.html
-last_built: 2024-12-18T22:01Z
+last_built: 2024-12-19T12:35Z
 urls:
   reference: https://brandonerose.github.io/RosyREDCap/reference
   article: https://brandonerose.github.io/RosyREDCap/articles
