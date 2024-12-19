@@ -7,11 +7,10 @@
 setup_RosyREDCap(
   short_name,
   dir_path,
-  token_name,
   redcap_base,
+  token_name,
   force = F,
   merge_form_name = "merged",
-  validate = T,
   use_csv = F
 )
 }
@@ -20,15 +19,13 @@ setup_RosyREDCap(
 
 \item{dir_path}{character file path of the directory}
 
-\item{token_name}{character string of what the token is called when using Sys.setenv and Sys.getenv}
-
 \item{redcap_base}{character of the base REDCap link, ex. https://redcap.miami.edu}
+
+\item{token_name}{character string of what the token is called when using Sys.setenv and Sys.getenv}
 
 \item{force}{logical for force blank load vs last save}
 
 \item{merge_form_name}{name of merged non-repeating to be used in package}
-
-\item{validate}{logical for validation check}
 
 \item{DB}{a list object that contains all metadata, data, log, transformations, and more for one REDCap project.}
 }

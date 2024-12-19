@@ -59,22 +59,25 @@ validate_RosyREDCap <- function(DB,silent = T,warn_only = F){
 #' @param token_name character string of what the token is called when using Sys.setenv and Sys.getenv
 #' @param redcap_base character of the base REDCap link, ex. https://redcap.miami.edu
 #' @param force logical for force blank load vs last save
-#' @param validate logical for validation check
 #' @param merge_form_name name of merged non-repeating to be used in package
 #' @return DB
 #' @export
 setup_RosyREDCap <- function (
     short_name,
     dir_path,
-    token_name,
     redcap_base,
+    token_name,
     force = F,
     merge_form_name = "merged",
-    validate = T,
     use_csv = F
 )
 {
+  projects <- get_projects()# add cache check
   if(missing(short_name))stop("`short_name` is required for DBs that haven't been validated")
+  short_name <- validate_env_name(short_name)
+  if(missing(token_name)){
+    token_name <- paste0("RosyREDCap_",short_name,"_token")
+  }
   missing_dir_path <- missing(dir_path)
   if(missing_dir_path){
     warning("If you don't supply a directory, RosyREDCap will only run in R session. Package is best with a directory.",immediate. = T)
@@ -82,56 +85,31 @@ setup_RosyREDCap <- function (
   }
   if( ! missing_dir_path){
     if(force){
-      # log_save <- tryCatch({
-      #   load_RosyREDCap(short_name=short_name)$redcap$log
-      # },error = function(e) {NULL})
       DB <- blank_RosyREDCap()
     }else{
-      DB <- load_RosyREDCap(short_name,validate = validate)
+      DB <- load_RosyREDCap(short_name)
     }
     DB$dir_path <-RosyDB:::set_dir(dir_path)
   }
-  DB$short_name <- validate_env_name(short_name)
-  if(validate)DB <- validate_RosyREDCap(DB)
+  DB$short_name <- short_name
+  DB <- validate_RosyREDCap(DB)
+  DB$internals$use_csv <- use_csv
+  DB$redcap$token_name <- token_name %>% validate_env_name()
+  DB$links$redcap_base <- validate_web_link(redcap_base)
+  DB$links$redcap_uri <- DB$links$redcap_base %>% paste0("api/")
+  DB$internals$merge_form_name <- validate_env_name(merge_form_name)
   DB$internals$use_csv <- use_csv
   DB$data <- DB$data %>% all_character_cols_list()
-  if (force || is.null(DB$internals$last_metadata_update) ||
-      is.null(DB$redcap$project_info) || is.null(DB$short_name) |
-      is.null(DB$redcap$token_name) || is.null(DB$links$redcap_uri) |
-      is.null(DB$redcap$project_title) || is.null(DB$redcap$project_id)) {
-    if (missing(short_name)) stop("`short_name` is required for DBs that haven't been validated")
-    if (missing(token_name)) stop("`token_name` is required for DBs that haven't been validated")
-    if (missing(redcap_base))  stop("`redcap_base` is required for DBs that haven't been validated")
-    DB$redcap$token_name <- token_name %>% validate_env_name()
-    DB$links$redcap_base <- validate_web_link(redcap_base)
-    DB$links$redcap_uri <- DB$links$redcap_base %>% paste0("api/")
-    if (validate)DB <- validate_RosyREDCap(DB)
-  } else {
-    if (!missing(token_name)) {
-      if (validate) {
-        if (DB$redcap$token_name != token_name)
-          stop("The `token_name`, ", token_name, ", you provided does not match the one the was loaded ",
-               DB$redcap$token_name)
-      } else {
-        DB$redcap$token_name <- token_name %>% validate_env_name()
-      }
-    }
-    if (!missing(redcap_base)) {
-      if (validate) {
-        if (DB$links$redcap_base != redcap_base)
-          stop("The `redcap_base`, ", redcap_base, ", you provided does not match the one the was loaded ",
-               DB$links$redcap_base)
-      } else {
-        DB$links$redcap_base <- validate_web_link(redcap_base)
-        DB$links$redcap_uri <- DB$links$redcap_base %>% paste0("api/")
-      }
-    }
+  bullet_in_console(paste0("Token name: '",token_name,"'"))
+  passed <- is_REDCap_token(Sys.getenv(token_name),silent = T)
+  if(passed){
+    bullet_in_console(paste0("`Sys.getenv('",token_name,"')` is already a valid REDCap token (pending test connection)."), bullet_type = "v")
+  }else{
+    bullet_in_console(paste0("`Sys.getenv('",token_name,"')` is an empty string or an invalid token."), bullet_type = "x")
+    bullet_in_console(paste0("You can set it each session with `set_REDCap_token(DB)` OR `Sys.setenv(",token_name,"='YoUrNevErShaReToKeNfRoMREDCapWebsiTe')`... or for higher security run `usethis::edit_r_environ()` and add
+        `",token_name," = 'YoUrNevErShaReToKeNfRoMREDCapWebsiTe'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the
+        code, `Sys.getenv('",token_name,"')`"))
   }
-  if (!missing(merge_form_name)) {
-    DB$internals$merge_form_name <- merge_form_name
-  }
-  DB$internals$use_csv <- use_csv
-  DB$data <- DB$data %>% all_character_cols_list()
   return(DB)
 }
 #' @title Load RosyREDCap

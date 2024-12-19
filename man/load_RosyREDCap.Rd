@@ -10,8 +10,6 @@ load_RosyREDCap(short_name, dir_path, validate = T)
 \item{short_name}{character name as a shortcut}
 
 \item{dir_path}{character file path of the directory}
-
-\item{validate}{logical for validation check}
 }
 \value{
 DB list object
