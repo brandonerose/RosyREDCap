@@ -8,7 +8,7 @@ upload_file_to_REDCap <- function(DB,file,record, field,repeat_instance = NULL,e
   file <- normalizePath(file)
   if(!file.exists(file)) stop("File does not exist! --> ",file)
   body <- list(
-    "token"=validate_redcap_token(DB),
+    "token"=validate_REDCap_token(DB),
     action='import',
     content='file',
     record =record,
@@ -35,7 +35,7 @@ upload_file_to_REDCap <- function(DB,file,record, field,repeat_instance = NULL,e
 delete_file_from_REDCap <- function(DB,record, field,repeat_instance = NULL, event = NULL){
   # DB <- validate_RosyREDCap(DB)
   body <- list(
-    "token"=validate_redcap_token(DB),
+    "token"=validate_REDCap_token(DB),
     action='delete',
     content='file',
     record =record,

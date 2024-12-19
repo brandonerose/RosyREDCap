@@ -6,6 +6,9 @@
 \usage{
 view_REDCap_token(DB)
 }
+\arguments{
+\item{DB}{a list object that contains all metadata, data, log, transformations, and more for one REDCap project.}
+}
 \value{
 REDCap API token currently stored in the session
 }

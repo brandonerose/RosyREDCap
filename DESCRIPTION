@@ -39,6 +39,7 @@ Imports:
     shinyWidgets,
     stringr,
     tools,
+    usethis,
     utils,
     visNetwork
 Suggests: 

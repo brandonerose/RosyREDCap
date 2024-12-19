@@ -15,7 +15,14 @@ redcap_api_request <- function(url,token,additional_args=NULL){
   )
 }
 process_redcap_response <- function(response,error_action="warn",method){
-  content <- httr::content(response) %>% dplyr::bind_rows()
+  bind <- T
+  if(!missing(method)){
+    if(method=="exp_rc_v"){
+      content <- response %>% httr::content(as="text") %>% as.character()
+      bind <- F
+    }
+  }
+  if(bind)content <- httr::content(response) %>% dplyr::bind_rows() %>% all_character_cols()
   if(httr::http_error(response)){
     if(!error_action%in%c("stop","warn"))stop("error_action must be 'stop' or 'warn'")
     general_error <- response$status_code
@@ -23,10 +30,12 @@ process_redcap_response <- function(response,error_action="warn",method){
     message <- paste0("HTTP error ",general_error, ". ",specific_error,". ",content[["error"]])
     if(error_action=="stop")stop(message)
     warning(message,immediate. = T)
-    if(!missing(method))show_redcap_api_method_info(method)
+    if(!missing(method)){
+      show_redcap_api_method_info(method)
+    }
     return(NA)
   }
-  return(all_character_cols(content))
+  return(content)
 }
 get_redcap_api_methods <- function(){
   REDCap_API$methods$method_short_name %>% sort()
@@ -61,7 +70,7 @@ show_redcap_api_method_info <- function(method){
 run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",additional_args=NULL,only_get = F){
   if(!missing(DB)){
     url <- DB$links$redcap_uri
-    token <- validate_redcap_token(DB)
+    token <- validate_REDCap_token(DB)
   }
   allowed_methods <- REDCap_API$methods$method_short_name %>% sort()
   if(only_get){
@@ -86,11 +95,20 @@ run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",addi
 get_REDCap <- function(DB,method,error_action = "warn",additional_args=NULL){
   run_redcap_api_method(
     url = DB$links$redcap_uri,
-    token = validate_redcap_token(DB),
+    token = validate_REDCap_token(DB),
     method = method,
     additional_args = additional_args,
     error_action = error_action,
     only_get = T
+  )
+}
+get_REDCap_version <- function(DB){
+  return(
+    get_REDCap(
+      DB = DB,
+      method = "exp_rc_v",
+      error_action = "stop"
+    )
   )
 }
 #' @title Drop redcap files to directory
@@ -126,7 +144,7 @@ get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
         if(!file.exists(file.path(out_dir_folder,file_name))||overwrite){
           REDCapR::redcap_file_download_oneshot(
             redcap_uri = DB$links$redcap_uri,
-            token = validate_redcap_token(DB),
+            token = validate_REDCap_token(DB),
             field = field_name,
             record = form[[DB$redcap$id_col]][i],
             directory = out_dir_folder,
@@ -142,20 +160,6 @@ get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
     }
   }
   message("Checked for files!")
-}
-rename_forms_redcap_to_default <- function(forms){
-  the_names <- colnames(forms)
-  the_names[which(the_names=="instrument_name")] <- "form_name"
-  the_names[which(the_names=="instrument_label")] <- "form_label"
-  colnames(forms) <- the_names
-  return(forms)
-}
-rename_forms_default_to_redcap <- function(forms){
-  the_names <- colnames(forms)
-  the_names[which(the_names=="form_name")] <- "instrument_name"
-  the_names[which(the_names=="form_label")] <- "instrument_label"
-  colnames(forms) <- the_names
-  return(forms)
 }
 get_REDCap_metadata <- function(DB,include_users = T){
   DB$internals$last_metadata_update <- Sys.time()
@@ -329,6 +333,20 @@ get_REDCap_users <- function(DB){
 }
 get_REDCap_structure <- function(){
 }
+rename_forms_redcap_to_default <- function(forms){
+  the_names <- colnames(forms)
+  the_names[which(the_names=="instrument_name")] <- "form_name"
+  the_names[which(the_names=="instrument_label")] <- "form_label"
+  colnames(forms) <- the_names
+  return(forms)
+}
+rename_forms_default_to_redcap <- function(forms){
+  the_names <- colnames(forms)
+  the_names[which(the_names=="form_name")] <- "instrument_name"
+  the_names[which(the_names=="form_label")] <- "instrument_label"
+  colnames(forms) <- the_names
+  return(forms)
+}
 #' @title Check the REDCap log
 #' @param last numeric paired with units. Default is 24.
 #' @param user optional user filter.
@@ -367,7 +385,7 @@ check_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",cl
 get_raw_REDCap <- function(DB,labelled=F,records=NULL,batch_size = 1000){
   raw <- REDCapR::redcap_read(
     redcap_uri = DB$links$redcap_uri,
-    token = validate_redcap_token(DB),
+    token = validate_REDCap_token(DB),
     # forms = forms,
     # events = events,
     batch_size = batch_size,
@@ -386,7 +404,7 @@ delete_redcap_records <- function(DB, records){
     httr::POST(
       url = DB$links$redcap_uri,
       body = list(
-        "token"=validate_redcap_token(DB),
+        "token"=validate_REDCap_token(DB),
         content='record',
         action='delete',
         `records[0]`=record,

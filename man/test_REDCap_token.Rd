@@ -4,7 +4,7 @@
 \alias{test_REDCap_token}
 \title{Test REDCap API token of DB object}
 \usage{
-test_REDCap_token(DB)
+test_REDCap_token(DB, silent = F)
 }
 \arguments{
 \item{DB}{a list object that contains all metadata, data, log, transformations, and more for one REDCap project.}

@@ -12,7 +12,7 @@ upload_file_to_redcap_fileRepository <- function(DB,file){
   response <- httr::POST(
     url = DB$links$redcap_uri,
     body = list(
-      "token"=validate_redcap_token(DB),
+      "token"=validate_REDCap_token(DB),
       action='import',
       content='fileRepository',
       returnFormat='json',
@@ -31,7 +31,7 @@ check_REDCap_files <- function(DB){
   response <- httr::POST(
     url = DB$links$redcap_uri,
     body = list(
-      "token"=validate_redcap_token(DB),
+      "token"=validate_REDCap_token(DB),
       content='fileRepository',
       action='list',
       format='csv',
@@ -53,7 +53,7 @@ add_redcap_folder <- function(DB,name){
   response <- httr::POST(
     url = DB$links$redcap_uri,
     body = list(
-      "token"=validate_redcap_token(DB),
+      "token"=validate_REDCap_token(DB),
       content='fileRepository',
       action='createFolder',
       format='csv',
@@ -75,7 +75,7 @@ delete_redcap_file <- function(DB,doc_id){
   response <- httr::POST(
     url = DB$links$redcap_uri,
     body = list(
-      "token"=validate_redcap_token(DB),
+      "token"=validate_REDCap_token(DB),
       content='fileRepository',
       action='delete',
       doc_id=doc_id,
