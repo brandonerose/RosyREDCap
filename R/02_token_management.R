@@ -62,3 +62,34 @@ test_REDCap_token <- function(DB, silent = F){
   }
   return(connected)
 }
+#' @title Sets a valid token for this session
+#' @return message for confirmation
+#' @export
+set_REDCap_token <- function(DB){
+  token <- readline("What is your PSDB REDCap API token: ")
+  while (!is_redcap_token(token)) {
+    warning("You set an invalid token. Try going to REDCap --> '",DB$links$redcap_API,"' or run `link_API_token(DB)`",immediate. = T)
+    token <- readline("What is your PSDB REDCap API token: ")
+  }
+  args =list(args =list(token))
+  names(args) = DB$redcap$token_name
+  do.call(Sys.setenv, args)
+  bullet_in_console(paste0("Token was set for this session only using `Sys.getenv('",DB$redcap$token_name,"')` <- 'TheSecretTokenYouJustEntered'"),bullet_type = "v")
+  bullet_in_console(paste0("For higher safety run `usethis::edit_r_environ()` and add `",DB$redcap$token_name,"='YoUrNevErShaReToKeN'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the code, `Sys.getenv('",DB$redcap$token_name,"')` or `Sys.getenv(DB$redcap$token_name)` or `has_redcap_token(DB)`, and see if it returns your token!...'"))
+}
+test_REDCap_token_console <- function(DB){
+  ERROR  <- T
+  while(ERROR){
+    version <- redcap_api_request(url = DB$links$redcap_uri,token = validate_REDCap_token(DB),additional_args = list(content="version"))
+    ERROR  <- version %>% httr::http_error()
+    if(ERROR){
+      warning('Your REDCap API token check failed. Invalid token or API privileges. Contact Admin! Consider rerunnning `setup_DB()`',immediate. = T)
+      warning("HTTP error ",version %>% httr::status_code(), ". Check your token, internet connection, and redcap base link.",immediate. = T)
+      message("Try going to REDCap --> '",DB$links$redcap_API,"' or run `link_API_token(DB)`")
+      set_REDCap_token(DB)
+    }
+  }
+  message("Connected to REDCap!")
+  DB$redcap$version <- version %>% httr::content(as="text") %>% as.character()
+  DB
+}
