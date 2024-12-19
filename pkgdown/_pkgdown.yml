@@ -24,67 +24,46 @@ template:
       creator: "@brosemdmph"
       site: "@thecodingdocs"
       card: summary_large_image
-
 reference:
   - title: "REDCap Diagram"
     contents:
-      - REDCap_diagram
-  - title: "ID Management"
-    contents:
+      - "`%>%`"
       - add_ID_to_DF
-  - title: "Folder Management"
-    contents:
       - add_redcap_folder
-  - title: "Subset Management"
-    contents:
       - add_subset
-      - generate_summary_from_subset_name
-  - title: "File Management"
-    contents:
       - check_REDCap_files
       - check_REDCap_log
-      - delete_file_from_REDCap
-      - drop_REDCap_to_directory
-      - get_REDCap_files
-      - read_from_REDCap_upload
-      - upload_file_to_REDCap
-      - upload_file_to_redcap_fileRepository
-  - title: "Database Management"
-    contents:
       - deidentify_DB
+      - delete_file_from_REDCap
       - delete_redcap_file
       - delete_redcap_records
+      - drop_REDCap_to_directory
+      - edit_redcap_while_viewing
       - find_upload_diff
+      - generate_horizontal_transform
+      - generate_summary_from_subset_name
       - get_raw_REDCap
-      - push_redcap_dictionary
-      - upload_DB_to_REDCap
-      - upload_transform_to_DB
-  - title: "Link Management"
-    contents:
+      - get_REDCap_files
       - link_API_playground
       - link_API_token
       - link_REDCap_home
       - link_REDCap_project
       - link_REDCap_record
-  - title: "RosyREDCap Management"
-    contents:
       - load_RosyREDCap
+      - read_from_REDCap_upload
+      - push_redcap_dictionary
+      - REDCap_diagram
       - run_RosyREDCap
       - setup_RosyREDCap
       - summarize_RosyREDCap
-      - update_RosyREDCap
-  - title: "Token Management"
-    contents:
       - test_REDCap_token
-      - test_REDCap_token_console
-      - view_REDCap_token
-  - title: "Editing and Viewing"
-    contents:
-      - edit_redcap_while_viewing
-  - title: "Other Helpers"
-    contents:
-      - generate_horizontal_transform
+      - update_RosyREDCap
+      - upload_DB_to_REDCap
+      - upload_file_to_REDCap
+      - upload_file_to_redcap_fileRepository
       - upload_form_to_REDCap
+      - upload_transform_to_DB
+      - view_REDCap_token
 articles:
   - title: "Feautures by R User Level"
     navbar: ~
