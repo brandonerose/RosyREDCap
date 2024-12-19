@@ -57,7 +57,6 @@ view_REDCap_token <- function(DB){
 test_REDCap_token <- function(DB, silent = F){
   token <- validate_REDCap_token(DB, silent = silent)
   if(!is_REDCap_token(token,silent = silent))return(FALSE)
-
   if(connected){
     if(!silent)bullet_in_console("Connected to REDCap! 🚀",bullet_type = "v")
   }

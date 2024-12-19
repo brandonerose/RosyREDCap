@@ -1,6 +1,6 @@
 Package: RosyREDCap
 Title: RosyREDCap
-Version: 1.0.0.9030
+Version: 1.0.0.9031
 Authors@R: c(
     person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"),
            comment = c(ORCID = "0009-0009-7813-1960")),
