@@ -106,7 +106,9 @@ articles:
   - title: "Shiny Application"
     contents:
       - Shiny
-
+  - title: "Security"
+    contents:
+      - Security
 authors:
   Brandon Rose:
     href: https://github.com/brandonerose
