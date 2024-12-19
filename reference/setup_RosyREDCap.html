@@ -56,11 +56,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">setup_RosyREDCap</span><span class="op">(</span></span>
 <span>  <span class="va">short_name</span>,</span>
 <span>  <span class="va">dir_path</span>,</span>
-<span>  <span class="va">token_name</span>,</span>
 <span>  <span class="va">redcap_base</span>,</span>
+<span>  <span class="va">token_name</span>,</span>
 <span>  force <span class="op">=</span> <span class="cn">F</span>,</span>
 <span>  merge_form_name <span class="op">=</span> <span class="st">"merged"</span>,</span>
-<span>  validate <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>  use_csv <span class="op">=</span> <span class="cn">F</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -77,12 +76,12 @@
 <dd><p>character file path of the directory</p></dd>
 
 
-<dt id="arg-token-name">token_name<a class="anchor" aria-label="anchor" href="#arg-token-name"></a></dt>
-<dd><p>character string of what the token is called when using Sys.setenv and Sys.getenv</p></dd>
-
-
 <dt id="arg-redcap-base">redcap_base<a class="anchor" aria-label="anchor" href="#arg-redcap-base"></a></dt>
 <dd><p>character of the base REDCap link, ex. https://redcap.miami.edu</p></dd>
+
+
+<dt id="arg-token-name">token_name<a class="anchor" aria-label="anchor" href="#arg-token-name"></a></dt>
+<dd><p>character string of what the token is called when using Sys.setenv and Sys.getenv</p></dd>
 
 
 <dt id="arg-force">force<a class="anchor" aria-label="anchor" href="#arg-force"></a></dt>
@@ -91,10 +90,6 @@
 
 <dt id="arg-merge-form-name">merge_form_name<a class="anchor" aria-label="anchor" href="#arg-merge-form-name"></a></dt>
 <dd><p>name of merged non-repeating to be used in package</p></dd>
-
-
-<dt id="arg-validate">validate<a class="anchor" aria-label="anchor" href="#arg-validate"></a></dt>
-<dd><p>logical for validation check</p></dd>
 
 
 <dt id="arg-db">DB<a class="anchor" aria-label="anchor" href="#arg-db"></a></dt>
