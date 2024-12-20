@@ -55,6 +55,7 @@ reference:
       - REDCap_diagram
       - run_RosyREDCap
       - setup_RosyREDCap
+      - set_REDCap_token
       - summarize_RosyREDCap
       - test_REDCap_token
       - update_RosyREDCap
