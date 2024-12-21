@@ -2,7 +2,7 @@
 % Please edit documentation in R/01_DB_mod.R
 \name{setup_RosyREDCap}
 \alias{setup_RosyREDCap}
-\title{Setup a DB Object for a REDCap Project}
+\title{Setup RosyREDCap}
 \usage{
 setup_RosyREDCap(
   short_name,
@@ -15,37 +15,37 @@ setup_RosyREDCap(
 )
 }
 \arguments{
-\item{short_name}{Character string with no spaces or symbols. A short unique name to use as a shortcut for the project such PSDB.}
+\item{short_name}{A character string representing the short name for the REDCap project.}
 
-\item{dir_path}{Character. File path of the directory where project data is stored.}
+\item{dir_path}{Optional character string representing the directory path where you want the REDCap project data to be stored. If missing, DB object will only be in current R session.}
 
-\item{redcap_base}{Character. The base URL of the REDCap server, e.g., "https://redcap.miami.edu".}
+\item{redcap_base}{A character string representing the base URL of the REDCap server.}
 
-\item{force}{Logical. If `TRUE`, forces a blank load instead of loading the last saved state. Default is `FALSE`.}
+\item{force}{Logical (TRUE/FALSE). If TRUE, forces the setup even if the `DB` object already exists. Default is `FALSE`.}
 
-\item{merge_form_name}{Character. Name of the merged non-repeating form to use in the package. Default is `"merged"`.}
+\item{merge_form_name}{A character string representing the name of the merged form. Default is "merged".}
 
-\item{use_csv}{Logical. If `TRUE`, uses CSV files instead of other storage formats. Default is `FALSE`.}
+\item{use_csv}{Logical (TRUE/FALSE). If TRUE, uses CSV files for data storage. Default is `FALSE`.}
 
-\item{auto_check_token}{Logical. If `TRUE`, automatically tests the REDCap API token after setup. Default is `TRUE`.}
-
-\item{DB}{A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.}
+\item{auto_check_token}{Logical (TRUE/FALSE). If TRUE, automatically checks the validity of the REDCap API token. Default is `TRUE`.}
 }
 \value{
-A `DB` object configured for the REDCap project.
+The `DB` object with the REDCap API token and configurations set.
 }
 \description{
-Initializes a RosyREDCap `DB` object from one REDCap project and if a directory is chosen it will structure that directory for later imports and exports.
+Initializes the `DB` object with the necessary REDCap API token and other configurations.
 }
 \details{
-This function creates or loads a `DB` object containing all the necessary elements for working with a REDCap project.
-It supports integration with REDCap servers, handles metadata configuration, and optionally validates the REDCap API token on setup.
-
-The function allows customization of project-specific settings such as the base REDCap URL, file paths, and merge form names.
-If the `force` argument is `TRUE`, the function skips loading a previously saved project and initializes a blank setup, which may be helpful if you are getting errors.
+This function sets up the `DB` object by storing the REDCap API token and other configurations required for interacting with the REDCap server.
+It ensures that the token is valid and ready for use in subsequent API calls.
 }
-\seealso{
-\code{\link[RosyREDCap]{test_REDCap_token}} for testing the API token.
-\code{\link[RosyREDCap]{set_REDCap_token}} for setting a new API token.
-\code{\link[RosyREDCap]{view_REDCap_token}} for viewing the stored API token.
+\examples{
+\dontrun{
+# Initialize the DB object with the REDCap API token and URL
+DB <- setup_RosyREDCap(
+  short_name = "ABC",
+  dir_path = "path/to/secure/file/storage",
+  redcap_base = "https://redcap.yourinstitution.edu/"
+)
+}
 }

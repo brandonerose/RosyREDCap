@@ -2,13 +2,11 @@
 % Please edit documentation in R/02_token_management.R
 \name{set_REDCap_token}
 \alias{set_REDCap_token}
-\title{Set a Valid REDCap API Token an R Session}
+\title{Set a REDCap API Token}
 \usage{
 set_REDCap_token(DB, ask = T)
 }
 \arguments{
-\item{DB}{A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.}
-
 \item{ask}{Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.}
 }
 \value{
@@ -21,10 +19,15 @@ Instead of using this function you should consider setting your token within you
 }
 \details{
 If a valid token already exists in the R session, the function notifies the user and asks whether they want to replace it.
-The user is guided to provide a new token through the console prompt.
+The user is guided to provide a new token through the console.
 The token is validated internally and stored using `Sys.setenv()`.
 }
 \seealso{
 \code{\link[RosyREDCap]{view_REDCap_token}} to view the token in your console.
 \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
+
+Other token_functions: 
+\code{\link{test_REDCap_token}()},
+\code{\link{view_REDCap_token}()}
 }
+\concept{token_functions}

@@ -6,9 +6,6 @@
 \usage{
 view_REDCap_token(DB)
 }
-\arguments{
-\item{DB}{A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.}
-}
 \value{
 Invisible. Prints a message displaying the stored token.
 }
@@ -23,4 +20,9 @@ Use this function to confirm the token currently in use without exposing it unne
 \seealso{
 \code{\link[RosyREDCap]{set_REDCap_token}} to set a new token.
 \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
+
+Other token_functions: 
+\code{\link{set_REDCap_token}()},
+\code{\link{test_REDCap_token}()}
 }
+\concept{token_functions}

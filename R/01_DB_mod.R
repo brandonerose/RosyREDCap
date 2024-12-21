@@ -52,30 +52,31 @@ validate_RosyREDCap <- function(DB,silent = T,warn_only = F){
   DB <- RosyDB:::validate_DB(DB,silent = silent,warn_only = warn_only,allowed_names = names(blank_RosyREDCap()))
   return(DB)
 }
-#' @title Setup a DB Object for a REDCap Project
+#' @title Setup RosyREDCap
 #' @description
-#' Initializes a RosyREDCap `DB` object from one REDCap project and if a directory is chosen it will structure that directory for later imports and exports.
+#' Initializes the `DB` object with the necessary REDCap API token and other configurations.
 #'
 #' @details
-#' This function creates or loads a `DB` object containing all the necessary elements for working with a REDCap project.
-#' It supports integration with REDCap servers, handles metadata configuration, and optionally validates the REDCap API token on setup.
+#' This function sets up the `DB` object by storing the REDCap API token and other configurations required for interacting with the REDCap server.
+#' It ensures that the token is valid and ready for use in subsequent API calls.
 #'
-#' The function allows customization of project-specific settings such as the base REDCap URL, file paths, and merge form names.
-#' If the `force` argument is `TRUE`, the function skips loading a previously saved project and initializes a blank setup, which may be helpful if you are getting errors.
-#'
-#' @param DB A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.
-#' @param short_name Character string with no spaces or symbols. A short unique name to use as a shortcut for the project such PSDB.
-#' @param dir_path Character. File path of the directory where project data is stored.
-#' @param redcap_base Character. The base URL of the REDCap server, e.g., "https://redcap.miami.edu".
-#' @param force Logical. If `TRUE`, forces a blank load instead of loading the last saved state. Default is `FALSE`.
-#' @param merge_form_name Character. Name of the merged non-repeating form to use in the package. Default is `"merged"`.
-#' @param use_csv Logical. If `TRUE`, uses CSV files instead of other storage formats. Default is `FALSE`.
-#' @param auto_check_token Logical. If `TRUE`, automatically tests the REDCap API token after setup. Default is `TRUE`.
-#' @return A `DB` object configured for the REDCap project.
-#' @seealso
-#' \code{\link[RosyREDCap]{test_REDCap_token}} for testing the API token.
-#' \code{\link[RosyREDCap]{set_REDCap_token}} for setting a new API token.
-#' \code{\link[RosyREDCap]{view_REDCap_token}} for viewing the stored API token.
+#' @param short_name A character string representing the short name for the REDCap project.
+#' @param dir_path Optional character string representing the directory path where you want the REDCap project data to be stored. If missing, DB object will only be in current R session.
+#' @param redcap_base A character string representing the base URL of the REDCap server.
+#' @param force Logical (TRUE/FALSE). If TRUE, forces the setup even if the `DB` object already exists. Default is `FALSE`.
+#' @param merge_form_name A character string representing the name of the merged form. Default is "merged".
+#' @param use_csv Logical (TRUE/FALSE). If TRUE, uses CSV files for data storage. Default is `FALSE`.
+#' @param auto_check_token Logical (TRUE/FALSE). If TRUE, automatically checks the validity of the REDCap API token. Default is `TRUE`.
+#' @return The `DB` object with the REDCap API token and configurations set.
+#' @examples
+#' \dontrun{
+#' # Initialize the DB object with the REDCap API token and URL
+#' DB <- setup_RosyREDCap(
+#'   short_name = "ABC",
+#'   dir_path = "path/to/secure/file/storage",
+#'   redcap_base = "https://redcap.yourinstitution.edu/"
+#' )
+#' }
 #' @export
 setup_RosyREDCap <- function (
     short_name,
@@ -121,11 +122,26 @@ setup_RosyREDCap <- function (
   validate_REDCap_token(DB,silent = F)
   return(DB)
 }
-#' @title Load RosyREDCap
+#' @title Load RosyREDCap Project
 #' @description
-#' Will take your previously chosen `short_name` and load directory-saved DB object by using the cache. `dir_path` is optional if you already used `setup_RosyREDCap()`
-#' @inheritParams setup_RosyREDCap
-#' @return DB list object
+#' Will take your previously chosen `short_name` and load the directory-saved DB object by using the cache. `dir_path` is optional if you already used `setup_RosyREDCap()`.
+#'
+#' @details
+#' This function loads the `DB` object from the specified directory using the provided `short_name`. If `dir_path` is not provided, it will use the path set during the `setup_RosyREDCap()` call.
+#' Optionally, it can validate the loaded `DB` object. It references a cache that is updated whenever you run `setup_RosyREDCap()`.
+#'
+#' @param short_name A character string representing the short name you previously chose for the REDCap project.
+#' @param dir_path A character string representing the directory path where the REDCap project files are stored. Optional if already set by `setup_RosyREDCap()`.
+#' @param validate Logical (TRUE/FALSE). If TRUE, validates the loaded `DB` object. Default is `TRUE`.
+#' @return The RosyREDCap `DB` list object.
+#' @seealso
+#' \code{\link[RosyDB]{get_projects}} for retrieving a list of projects from the directory cache.
+#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for retrieving a list of projects from the directory cache.
+#' @examples
+#' \dontrun{
+#' # Load the DB object using the short name and directory path
+#' DB <- load_RosyREDCap("ABC")
+#' }
 #' @export
 load_RosyREDCap <- function(short_name,dir_path,validate = T){
   projects <- get_projects()

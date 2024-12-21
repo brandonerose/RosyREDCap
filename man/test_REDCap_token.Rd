@@ -7,8 +7,6 @@
 test_REDCap_token(DB, set_if_fails = T, launch_browser = T)
 }
 \arguments{
-\item{DB}{A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.}
-
 \item{set_if_fails}{Logical (TRUE/FALSE). If TRUE and test connection fails, asks user to paster token into consult using `set_REDCap_token(DB)` function. Default is `TRUE`.}
 
 \item{launch_browser}{Logical (TRUE/FALSE). If TRUE, launches the REDCap login page in the default web browser when validation fails. Default is `TRUE`.}
@@ -25,4 +23,9 @@ If the token is invalid, the function can optionally open the REDCap login page 
 }
 \seealso{
 \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object with an API token.
+
+Other token_functions: 
+\code{\link{set_REDCap_token}()},
+\code{\link{view_REDCap_token}()}
 }
+\concept{token_functions}

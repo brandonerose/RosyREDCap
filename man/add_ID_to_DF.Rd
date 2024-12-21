@@ -9,8 +9,6 @@ add_ID_to_DF(DF, DB, ref_id)
 \arguments{
 \item{DF}{dataframe}
 
-\item{DB}{A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.}
-
 \item{ref_id}{column name that matches a REDCap variable name that could be an ALT id such as MRN}
 }
 \value{

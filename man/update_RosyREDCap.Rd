@@ -6,6 +6,7 @@
 \usage{
 update_RosyREDCap(
   DB,
+  set_token_if_fails = T,
   force = F,
   day_of_log = 10,
   labelled = T,

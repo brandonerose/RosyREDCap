@@ -44,14 +44,14 @@ validate_REDCap_token <- function(DB,silent=T){
   }
   return(token)
 }
-#' @title Set a Valid REDCap API Token an R Session
+#' @title Set a REDCap API Token
 #' @description
 #' Prompts the user to input a valid REDCap API token and stores it as an environment variable for the current R session.
 #' This function validates the token before storing it. It is strongly discouraged to include API tokens directly within R scripts.
 #' Instead of using this function you should consider setting your token within your REnviron file which can be edited with `usethis::edit_r_environ()`
 #' @details
 #' If a valid token already exists in the R session, the function notifies the user and asks whether they want to replace it.
-#' The user is guided to provide a new token through the console prompt.
+#' The user is guided to provide a new token through the console.
 #' The token is validated internally and stored using `Sys.setenv()`.
 #'
 #' @inheritParams setup_RosyREDCap
@@ -60,6 +60,7 @@ validate_REDCap_token <- function(DB,silent=T){
 #' @seealso
 #' \code{\link[RosyREDCap]{view_REDCap_token}} to view the token in your console.
 #' \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
+#' @family token_functions
 #' @export
 set_REDCap_token <- function(DB,ask = T){
   DB  <- validate_RosyREDCap(DB)
@@ -101,6 +102,7 @@ set_REDCap_token <- function(DB,ask = T){
 #' @seealso
 #' \code{\link[RosyREDCap]{set_REDCap_token}} to set a new token.
 #' \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
+#' @family token_functions
 #' @export
 view_REDCap_token <- function(DB){
   DB  <- validate_RosyREDCap(DB)
@@ -120,6 +122,7 @@ view_REDCap_token <- function(DB){
 #' @return Logical. Returns `TRUE` if the API token is valid, otherwise `FALSE`.
 #' @seealso
 #' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object with an API token.
+#' @family token_functions
 #' @export
 test_REDCap_token <- function(DB, set_if_fails = T, launch_browser = T){
   token <- validate_REDCap_token(DB, silent = F)

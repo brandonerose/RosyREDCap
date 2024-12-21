@@ -12,6 +12,7 @@
 #' @export
 update_RosyREDCap <- function(
     DB,
+    set_token_if_fails = T,
     force = F,
     day_of_log = 10,
     labelled = T,
@@ -35,7 +36,7 @@ update_RosyREDCap <- function(
       }
     }
   }
-  DB <- test_REDCap_token(DB)
+  DB <- test_REDCap_token(DB,set_if_fails = set_token_if_fails)
   connected <- DB$internals$last_test_connection_outcome
   if(metadata_only)force <- T
   # DB$internals$last_metadata_update <- Sys.time()-lubridate::days(1)
