@@ -2,7 +2,7 @@
 % Please edit documentation in R/04_redcapAPI.R
 \name{check_REDCap_log}
 \alias{check_REDCap_log}
-\title{Check the REDCap log}
+\title{Check the REDCap Log}
 \usage{
 check_REDCap_log(
   DB,
@@ -15,19 +15,30 @@ check_REDCap_log(
 )
 }
 \arguments{
-\item{last}{numeric paired with units. Default is 24.}
+\item{DB}{A validated `DB` object containing REDCap project data and settings.}
 
-\item{user}{optional user filter.}
+\item{last}{Numeric. Specifies the time range paired with `units` to filter the log. Default is `24`.}
 
-\item{units}{character paired with last. Options are "mins","hours","days". Default is "hours".}
+\item{user}{Character. Optional user filter to retrieve log entries associated with a specific username. Default is an empty string (`""`), which includes all users.}
 
-\item{begin_time}{character of time where the log should start from. Example 2023-07-11 13:15:06.}
+\item{units}{Character. Units paired with `last` to define the time range. Options are `"mins"`, `"hours"`, `"days"`. Default is `"hours"`.}
 
-\item{clean}{logical for cleaning of API data}
+\item{begin_time}{Character. A specific timestamp (e.g., "2023-07-11 13:15:06") to define the start of the log retrieval. Overrides `last` and `units` if provided. Default is an empty string (`""`).}
+
+\item{clean}{Logical. If `TRUE`, cleans the API data and adds extra summary columns to the log. Default is `TRUE`.}
+
+\item{record}{Character. Optional record filter for retrieving log entries associated with a specific record. Default is an empty string (`""`).}
 }
 \value{
-data.frame of log that has been cleaned and has extra summary columns
+A `data.frame` containing the cleaned and summarized REDCap log.
 }
 \description{
-Check the REDCap log
+Retrieve and analyze the REDCap log to monitor recent activity or filter for specific users and time ranges.
+}
+\details{
+This function queries the REDCap project log to retrieve recent activity based on the specified time range, user, or starting timestamp.
+It optionally cleans the raw API data and adds summary columns to enhance log readability and analysis.
+}
+\seealso{
+\code{\link[RosyREDCap]{update_RosyREDCap}} for updating the `DB` object, including the log.
 }

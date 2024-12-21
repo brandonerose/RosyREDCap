@@ -7,7 +7,7 @@
 generate_horizontal_transform(DB, records)
 }
 \arguments{
-\item{DB}{a list object that contains all metadata, data, log, transformations, and more for one REDCap project.}
+\item{DB}{A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.}
 }
 \description{
 Horizontal Transform

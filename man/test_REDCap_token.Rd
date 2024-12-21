@@ -2,16 +2,27 @@
 % Please edit documentation in R/02_token_management.R
 \name{test_REDCap_token}
 \alias{test_REDCap_token}
-\title{Test REDCap API token of DB object}
+\title{Test REDCap API Token linked to a DB Object}
 \usage{
-test_REDCap_token(DB, silent = F)
+test_REDCap_token(DB, set_if_fails = T, launch_browser = T)
 }
 \arguments{
-\item{DB}{a list object that contains all metadata, data, log, transformations, and more for one REDCap project.}
+\item{DB}{A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.}
+
+\item{set_if_fails}{Logical (TRUE/FALSE). If TRUE and test connection fails, asks user to paster token into consult using `set_REDCap_token(DB)` function. Default is `TRUE`.}
+
+\item{launch_browser}{Logical (TRUE/FALSE). If TRUE, launches the REDCap login page in the default web browser when validation fails. Default is `TRUE`.}
 }
 \value{
-TRUE or FALSE based on API token test
+Logical. Returns `TRUE` if the API token is valid, otherwise `FALSE`.
 }
 \description{
-Test REDCap API token of DB object
+Validates the REDCap API token stored in the `DB` object by attempting a connection to the REDCap server.
+}
+\details{
+This function tests whether the API token stored in the `DB` object is valid by making a request to the REDCap server.
+If the token is invalid, the function can optionally open the REDCap login page in a browser (`launch_browser`) and/or reset the token (`set_if_fails`) using the console.
+}
+\seealso{
+\code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object with an API token.
 }

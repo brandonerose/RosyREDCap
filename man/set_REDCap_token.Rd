@@ -2,13 +2,29 @@
 % Please edit documentation in R/02_token_management.R
 \name{set_REDCap_token}
 \alias{set_REDCap_token}
-\title{Sets a valid token for this session}
+\title{Set a Valid REDCap API Token an R Session}
 \usage{
-set_REDCap_token(DB)
+set_REDCap_token(DB, ask = T)
+}
+\arguments{
+\item{DB}{A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.}
+
+\item{ask}{Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.}
 }
 \value{
-message for confirmation
+Invisible. A message is printed to confirm the token is successfully set.
 }
 \description{
-Sets a valid token for this session
+Prompts the user to input a valid REDCap API token and stores it as an environment variable for the current R session.
+This function validates the token before storing it. It is strongly discouraged to include API tokens directly within R scripts.
+Instead of using this function you should consider setting your token within your REnviron file which can be edited with `usethis::edit_r_environ()`
+}
+\details{
+If a valid token already exists in the R session, the function notifies the user and asks whether they want to replace it.
+The user is guided to provide a new token through the console prompt.
+The token is validated internally and stored using `Sys.setenv()`.
+}
+\seealso{
+\code{\link[RosyREDCap]{view_REDCap_token}} to view the token in your console.
+\code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
 }

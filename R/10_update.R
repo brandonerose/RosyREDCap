@@ -35,7 +35,8 @@ update_RosyREDCap <- function(
       }
     }
   }
-  connected <- test_REDCap_token(DB)
+  DB <- test_REDCap_token(DB)
+  connected <- DB$internals$last_test_connection_outcome
   if(metadata_only)force <- T
   # DB$internals$last_metadata_update <- Sys.time()-lubridate::days(1)
   # DB$internals$last_data_update <- Sys.time()-lubridate::days(1)

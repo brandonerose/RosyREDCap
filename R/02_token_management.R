@@ -1,97 +1,146 @@
 #' @import RosyUtils
 #' @import RosyDB
 #' @import RosyApp
-has_REDCap_token <- function(DB,silent=T){
-  DB <- validate_RosyREDCap(DB, silent = silent)
-  DB$redcap$token_name %>% validate_env_name()
-  DB$redcap$token_name %>% Sys.getenv() %>% is_REDCap_token() %>% return()
-}
-is_REDCap_token <- function(token, silent = T){
+is_valid_REDCap_token <- function(token, silent = T){
   pattern <- "^([0-9A-Fa-f]{32})(?:\\n)?$"
-  token2 <-  sub(pattern,"\\1", token, perl = TRUE) %>% trimws(whitespace = "[\\h\\v]")
-  info_message <- paste0("You can set it each session with `Sys.setenv(YOUR_token_name='YoUrNevErShaReToKeN')...` or for higher safety run `usethis::edit_r_environ()` from the `usethis` package and add `YOUR_token_name = 'YoUrNevErShaReToKeN'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the code, `Sys.getenv('YOUR_token_name')` or `Sys.getenv(DB$redcap$token_name)` and see if it returns your token!...")
+  trimmed_token <-  sub(pattern,"\\1", token, perl = TRUE) %>% trimws(whitespace = "[\\h\\v]")
+  end_message <- "not a valid 32-character hexademical value."
   if(is.null(token)){
-    if(!silent)bullet_in_console("The token is `NULL`, not a valid 32-character hexademical value.",bullet_type = "x")
+    if(!silent)bullet_in_console(paste0("The token is `NULL`, ",end_message),bullet_type = "x")
     return(F)
   }else if (is.na(token)) {
-    if(!silent)bullet_in_console("The token is `NA`, not a valid 32-character hexademical value.",bullet_type = "x")
+    if(!silent)bullet_in_console(paste0("The token is `NA`, ",end_message),bullet_type = "x")
     return(F)
   }else if (nchar(token) == 0L) {
-    if(!silent)bullet_in_console(paste0("`Sys.getenv(DB$redcap$token_name)` returned no token or is an empty string. ",info_message),bullet_type = "x")
+    if(!silent)bullet_in_console(paste0("The token is `` (empty), ",end_message),bullet_type = "x")
     return(F)
-  }else if(token2 != token){
-    if(!silent)bullet_in_console("remove whitespace or extra lines from your token.",bullet_type = "x")
+  }else if(token != trimmed_token){
+    if(!silent)bullet_in_console(paste0("The token contains whitespace (extra lines) and is therefore ",end_message),bullet_type = "x")
     return(F)
   }else if (!grepl(pattern, token, perl = TRUE)) {
-    if(!silent)bullet_in_console(paste0("The token from `Sys.getenv(DB$redcap$token_name)` is not a valid 32-character hexademical value.",info_message),bullet_type = "x")
+    if(!silent)bullet_in_console(paste0("The token is ",end_message),bullet_type = "x")
     return(F)
   }
   return(T)
 }
-validate_REDCap_token <- function(DB,silent=T,return=T){
-  valid <- has_REDCap_token(DB, silent = silent)
+get_REDCap_token_name <- function(DB){
+  token_name <- paste0("RosyREDCap_token_",validate_env_name(DB$short_name))
+  return(token_name)
+}
+validate_REDCap_token <- function(DB,silent=T){
+  token_name <- DB %>% get_REDCap_token_name()
+  token <- DB %>% get_REDCap_token_name() %>% Sys.getenv()
+  valid <- token %>% is_valid_REDCap_token(silent=silent)
   if(!silent){
+    bullet_in_console(paste0("You can set REDCap tokens each session with `set_REDCap_token(DB)` or `Sys.setenv(",token_name,"='YoUrNevErShaReToKeNfRoMREDCapWebsiTe')`... or for higher security run `usethis::edit_r_environ()` and add
+        `",token_name," = 'YoUrNevErShaReToKeNfRoMREDCapWebsiTe'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the
+        code, `Sys.getenv('",token_name,"')`"))
+    if(is_something(DB$links$redcap_API)){
+      bullet_in_console(paste0("You can request/regenerate/delete tokens at --> '",DB$links$redcap_API,"' or run `link_API_token(DB)` to launch in browser"))
+    }
     if(valid){
-      bullet_in_console("You have a valid token set in your session!",bullet_type = "v")
-    }else{
-      paste0("Token validation failed!","Try going to REDCap --> '",DB$links$redcap_API,"' or run `link_API_token(DB)` to launch in browser") %>%
-        bullet_in_console(bullet_type = "x")
+      bullet_in_console(paste0("Valid token for ",DB$short_name," is set in your R session (pending connection)!"),bullet_type = "v")
     }
   }
-  if(return){
-    return(Sys.getenv(DB$redcap$token_name))
-  }
+  return(token)
 }
-#' @title View the REDCap API token currently stored in the session
+#' @title Set a Valid REDCap API Token an R Session
+#' @description
+#' Prompts the user to input a valid REDCap API token and stores it as an environment variable for the current R session.
+#' This function validates the token before storing it. It is strongly discouraged to include API tokens directly within R scripts.
+#' Instead of using this function you should consider setting your token within your REnviron file which can be edited with `usethis::edit_r_environ()`
+#' @details
+#' If a valid token already exists in the R session, the function notifies the user and asks whether they want to replace it.
+#' The user is guided to provide a new token through the console prompt.
+#' The token is validated internally and stored using `Sys.setenv()`.
+#'
 #' @inheritParams setup_RosyREDCap
-#' @return REDCap API token currently stored in the session
+#' @param ask Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.
+#' @return Invisible. A message is printed to confirm the token is successfully set.
+#' @seealso
+#' \code{\link[RosyREDCap]{view_REDCap_token}} to view the token in your console.
+#' \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
+#' @export
+set_REDCap_token <- function(DB,ask = T){
+  DB  <- validate_RosyREDCap(DB)
+  token_name <- get_REDCap_token_name(DB)
+  answer <- 1
+  if(ask){
+    token <- validate_REDCap_token(DB)
+    if(is_valid_REDCap_token(token)){
+      bullet_in_console(paste0("You already have a valid token in your R session (pending test connection) '",token,"'."))
+      answer <- utils::menu(choices = c("Yes", "No"),title = "Are you sure you want to set something else?")
+    }
+  }
+  if(answer == 1){
+    has_valid_REDCap_token <- F
+    if(is_something(DB$links$redcap_API)){
+      if(!ask)bullet_in_console(paste0("You can request/regenerate/delete tokens at --> '",DB$links$redcap_API,"'"))
+    }
+    prompt <- paste0("What is your ",DB$short_name," REDCap API token: ")
+    while (!has_valid_REDCap_token) {
+      token <- readline(prompt)
+      has_valid_REDCap_token <- is_valid_REDCap_token(token,silent = F)
+    }
+    do.call(Sys.setenv, setNames(list(token), token_name))
+  }
+  validate_REDCap_token(DB,silent = F)
+  return(invisible())
+}
+#' @title View the REDCap API Token Stored in the Session
+#' @description
+#' Displays the REDCap API token currently stored in the session as an environment variable. It's essentially a wrapper for Sys.getenv("YOUR_TOKEN_NAME"), but it also validates that the token is formatted like a REDCap token and provides messgaes if not valid.
+#'
+#' @details
+#' This function retrieves the REDCap API token associated with the specified `DB` object and displays it as a message.
+#' The token is not returned as an R object to maintain security.
+#' Use this function to confirm the token currently in use without exposing it unnecessarily.
+#'
+#' @inheritParams setup_RosyREDCap
+#' @return Invisible. Prints a message displaying the stored token.
+#' @seealso
+#' \code{\link[RosyREDCap]{set_REDCap_token}} to set a new token.
+#' \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
 #' @export
 view_REDCap_token <- function(DB){
   DB  <- validate_RosyREDCap(DB)
-  validate_REDCap_token(DB,silent = F,return = T)
+  return(message("🤫 ",validate_REDCap_token(DB,silent = F)))
 }
-#' @title Sets a valid token for this session
-#' @return message for confirmation
-#' @export
-set_REDCap_token <- function(DB){
-  DB <- validate_RosyREDCap(DB)
-  prompt <- paste0("What is your ",DB$short_name," REDCap API token: ")
-  token <- readline(prompt)
-  while (!is_REDCap_token(token,silent = T)) {
-    warning("You set an invalid token. Try going to REDCap --> '",DB$links$redcap_API,"' or run `link_API_token(DB)`",immediate. = T)
-    token <- readline(prompt)
-  }
-  args =list(args =list(token))
-  names(args) = DB$redcap$token_name
-  do.call(Sys.setenv, args)
-  bullet_in_console(paste0("Token was set for this session only using `Sys.getenv('",DB$redcap$token_name,"')` <- 'TheSecretTokenYouJustEntered'"),bullet_type = "v")
-  bullet_in_console(paste0("For higher safety run `usethis::edit_r_environ()` and add `",DB$redcap$token_name,"='YoUrNevErShaReToKeN'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the code, `Sys.getenv('",DB$redcap$token_name,"')` or `Sys.getenv(DB$redcap$token_name)` or `has_redcap_token(DB)`, and see if it returns your token!...'"))
-}
-#' @title Test REDCap API token of DB object
+#' @title Test REDCap API Token linked to a DB Object
+#' @description
+#' Validates the REDCap API token stored in the `DB` object by attempting a connection to the REDCap server.
+#'
+#' @details
+#' This function tests whether the API token stored in the `DB` object is valid by making a request to the REDCap server.
+#' If the token is invalid, the function can optionally open the REDCap login page in a browser (`launch_browser`) and/or reset the token (`set_if_fails`) using the console.
+#'
 #' @inheritParams setup_RosyREDCap
-#' @return TRUE or FALSE based on API token test
+#' @param set_if_fails Logical (TRUE/FALSE). If TRUE and test connection fails, asks user to paster token into consult using `set_REDCap_token(DB)` function. Default is `TRUE`.
+#' @param launch_browser Logical (TRUE/FALSE). If TRUE, launches the REDCap login page in the default web browser when validation fails. Default is `TRUE`.
+#' @return Logical. Returns `TRUE` if the API token is valid, otherwise `FALSE`.
+#' @seealso
+#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object with an API token.
 #' @export
-test_REDCap_token <- function(DB, silent = F){
-  token <- validate_REDCap_token(DB, silent = silent)
-  if(!is_REDCap_token(token,silent = silent))return(FALSE)
-  if(connected){
-    if(!silent)bullet_in_console("Connected to REDCap! 🚀",bullet_type = "v")
+test_REDCap_token <- function(DB, set_if_fails = T, launch_browser = T){
+  token <- validate_REDCap_token(DB, silent = F)
+  version <- get_REDCap_version(DB,show_method_help = F) %>% suppressWarnings()
+  DB$internals$last_test_connection_attempt <- Sys.time()
+  DB$internals$last_test_connection_outcome <- ERROR <- is.na(version)
+  if(!set_if_fails) return(DB)
+  if(ERROR && launch_browser){
+    utils::browseURL(url = ifelse(is_something(DB$redcap$version),DB$links$redcap_API,DB$links$redcap_base))
+    #this will fail to bring you to right URL if redcap version changes at the same time a previously valid token is no longer valid
   }
-  return(connected)
+  while(ERROR){
+    bullet_in_console('Your REDCap API token check failed. Invalid token or API privileges. Contact Admin!`',bullet_type = "x")
+    if(set_if_fails){
+      set_REDCap_token(DB,ask = F)
+      version <- get_REDCap_version(DB,show_method_help = F) %>% suppressWarnings()
+      DB$internals$last_test_connection_attempt <- Sys.time()
+      DB$internals$last_test_connection_outcome <- ERROR <- is.na(version)
+    }
+  }
+  bullet_in_console("Connected to REDCap! 🚀",bullet_type = "v")
+  DB$redcap$version <- version
+  return(DB)
 }
-# test_REDCap_token_console <- function(DB){
-#   ERROR  <- T
-#   while(ERROR){
-#     version <- redcap_api_request(url = DB$links$redcap_uri,token = validate_REDCap_token(DB),additional_args = list(content="version"))
-#     ERROR  <- version %>% httr::http_error()
-#     if(ERROR){
-#       warning('Your REDCap API token check failed. Invalid token or API privileges. Contact Admin! Consider rerunnning `setup_DB()`',immediate. = T)
-#       warning("HTTP error ",version %>% httr::status_code(), ". Check your token, internet connection, and redcap base link.",immediate. = T)
-#       message("Try going to REDCap --> '",DB$links$redcap_API,"' or run `link_API_token(DB)`")
-#       set_REDCap_token(DB)
-#     }
-#   }
-#   message("Connected to REDCap!")
-#   DB$redcap$version <- version %>% httr::content(as="text") %>% as.character()
-#   DB
-# }

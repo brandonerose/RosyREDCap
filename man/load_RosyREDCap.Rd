@@ -7,9 +7,9 @@
 load_RosyREDCap(short_name, dir_path, validate = T)
 }
 \arguments{
-\item{short_name}{character name as a shortcut}
+\item{short_name}{Character string with no spaces or symbols. A short unique name to use as a shortcut for the project such PSDB.}
 
-\item{dir_path}{character file path of the directory}
+\item{dir_path}{Character. File path of the directory where project data is stored.}
 }
 \value{
 DB list object

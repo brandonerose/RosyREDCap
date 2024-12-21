@@ -14,7 +14,7 @@ redcap_api_request <- function(url,token,additional_args=NULL){
     encode = "form"
   )
 }
-process_redcap_response <- function(response,error_action="warn",method){
+process_redcap_response <- function(response,error_action="warn",method,show_method_help = T){
   bind <- T
   if(!missing(method)){
     if(method=="exp_rc_v"){
@@ -27,10 +27,11 @@ process_redcap_response <- function(response,error_action="warn",method){
     if(!error_action%in%c("stop","warn"))stop("error_action must be 'stop' or 'warn'")
     general_error <- response$status_code
     specific_error <- http_errors$Description[which(http_errors$Value==response$status_code)]
-    message <- paste0("HTTP error ",general_error, ". ",specific_error,". ",content[["error"]])
+    message <- paste0("HTTP error ",general_error, ". ",specific_error,". ")
+    if("error" %in% names(content))message <- paste0(message, content[["error"]])
     if(error_action=="stop")stop(message)
     warning(message,immediate. = T)
-    if(!missing(method)){
+    if(!missing(method)&&show_method_help){
       show_redcap_api_method_info(method)
     }
     return(NA)
@@ -67,7 +68,7 @@ show_redcap_api_method_info <- function(method){
     bullet_in_console(paste0("Optional by User: ",method_param_df_opt$Parameter %>% as_comma_string()),bullet_type = ">")
   }
 }
-run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",additional_args=NULL,only_get = F){
+run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",additional_args=NULL,only_get = F, show_method_help = T){
   if(!missing(DB)){
     url <- DB$links$redcap_uri
     token <- validate_REDCap_token(DB)
@@ -90,24 +91,27 @@ run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",addi
       )
     }
   }
-  redcap_api_request(url=url,token = token,additional_args=additional_args) %>% process_redcap_response(error_action=error_action,method=method) %>% return()
+  redcap_api_request(url=url,token = token,additional_args=additional_args) %>% process_redcap_response(error_action=error_action,method=method,show_method_help = show_method_help) %>% return()
 }
-get_REDCap <- function(DB,method,error_action = "warn",additional_args=NULL){
-  run_redcap_api_method(
-    url = DB$links$redcap_uri,
-    token = validate_REDCap_token(DB),
-    method = method,
-    additional_args = additional_args,
-    error_action = error_action,
-    only_get = T
+get_REDCap <- function(DB,method,error_action = "warn",additional_args=NULL,show_method_help = T){
+  return(
+    run_redcap_api_method(
+      url = DB$links$redcap_uri,
+      token = validate_REDCap_token(DB),
+      method = method,
+      additional_args = additional_args,
+      error_action = error_action,
+      only_get = T,
+      show_method_help = show_method_help
+    )
   )
 }
-get_REDCap_version <- function(DB){
+get_REDCap_version <- function(DB,show_method_help = T){
   return(
     get_REDCap(
       DB = DB,
       method = "exp_rc_v",
-      error_action = "stop"
+      show_method_help = show_method_help
     )
   )
 }
@@ -333,6 +337,8 @@ get_REDCap_users <- function(DB){
 }
 get_REDCap_structure <- function(){
 }
+get_REDCap_report <- function(){
+}
 rename_forms_redcap_to_default <- function(forms){
   the_names <- colnames(forms)
   the_names[which(the_names=="instrument_name")] <- "form_name"
@@ -347,13 +353,24 @@ rename_forms_default_to_redcap <- function(forms){
   colnames(forms) <- the_names
   return(forms)
 }
-#' @title Check the REDCap log
-#' @param last numeric paired with units. Default is 24.
-#' @param user optional user filter.
-#' @param units character paired with last. Options are "mins","hours","days". Default is "hours".
-#' @param begin_time character of time where the log should start from. Example 2023-07-11 13:15:06.
-#' @param clean logical for cleaning of API data
-#' @return data.frame of log that has been cleaned and has extra summary columns
+#' @title Check the REDCap Log
+#' @description
+#' Retrieve and analyze the REDCap log to monitor recent activity or filter for specific users and time ranges.
+#'
+#' @details
+#' This function queries the REDCap project log to retrieve recent activity based on the specified time range, user, or starting timestamp.
+#' It optionally cleans the raw API data and adds summary columns to enhance log readability and analysis.
+#'
+#' @param DB A validated `DB` object containing REDCap project data and settings.
+#' @param last Numeric. Specifies the time range paired with `units` to filter the log. Default is `24`.
+#' @param user Character. Optional user filter to retrieve log entries associated with a specific username. Default is an empty string (`""`), which includes all users.
+#' @param units Character. Units paired with `last` to define the time range. Options are `"mins"`, `"hours"`, `"days"`. Default is `"hours"`.
+#' @param begin_time Character. A specific timestamp (e.g., "2023-07-11 13:15:06") to define the start of the log retrieval. Overrides `last` and `units` if provided. Default is an empty string (`""`).
+#' @param clean Logical. If `TRUE`, cleans the API data and adds extra summary columns to the log. Default is `TRUE`.
+#' @param record Character. Optional record filter for retrieving log entries associated with a specific record. Default is an empty string (`""`).
+#' @return A `data.frame` containing the cleaned and summarized REDCap log.
+#' @seealso
+#' \code{\link[RosyREDCap]{update_RosyREDCap}} for updating the `DB` object, including the log.
 #' @export
 check_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clean = T,record = ""){
   if(units=="days"){

@@ -2,16 +2,25 @@
 % Please edit documentation in R/02_token_management.R
 \name{view_REDCap_token}
 \alias{view_REDCap_token}
-\title{View the REDCap API token currently stored in the session}
+\title{View the REDCap API Token Stored in the Session}
 \usage{
 view_REDCap_token(DB)
 }
 \arguments{
-\item{DB}{a list object that contains all metadata, data, log, transformations, and more for one REDCap project.}
+\item{DB}{A validated list object that contains all metadata, data, logs, transformations, and more for one REDCap project.}
 }
 \value{
-REDCap API token currently stored in the session
+Invisible. Prints a message displaying the stored token.
 }
 \description{
-View the REDCap API token currently stored in the session
+Displays the REDCap API token currently stored in the session as an environment variable. It's essentially a wrapper for Sys.getenv("YOUR_TOKEN_NAME"), but it also validates that the token is formatted like a REDCap token and provides messgaes if not valid.
+}
+\details{
+This function retrieves the REDCap API token associated with the specified `DB` object and displays it as a message.
+The token is not returned as an R object to maintain security.
+Use this function to confirm the token currently in use without exposing it unnecessarily.
+}
+\seealso{
+\code{\link[RosyREDCap]{set_REDCap_token}} to set a new token.
+\code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
 }
