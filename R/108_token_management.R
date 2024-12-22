@@ -14,6 +14,7 @@
 #' For more details, see the [pkgdown article on tokens](vignette("Tokens")).
 #' For more details, see the [pkgdown article on tokens](https://brandonerose.github.io/RosyREDCap/articles/Tokens.html).
 #' For more details, see the \code{\link{setup_DB}}.
+#' For more details, see the \code{\link{Tokens}}.
 #' @inheritParams setup_DB
 #' @param ask Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.
 #' @return Invisible. A message is printed to confirm the token is successfully set.
