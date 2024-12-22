@@ -21,9 +21,15 @@ Instead of using this function you should consider setting your token within you
 If a valid token already exists in the R session, the function notifies the user and asks whether they want to replace it.
 The user is guided to provide a new token through the console.
 The token is validated internally and stored using `Sys.setenv()`.
+For more details, see the [pkgdown article on tokens]("../articles/Tokens.html").
+For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
+For more details, see the [pkgdown article on tokens](vignette("Tokens")).
+For more details, see the [pkgdown article on tokens](https://brandonerose.github.io/RosyREDCap/articles/Tokens.html).
+For more details, see the [set_REDCap_token()].
 }
 \seealso{
 For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
+For more details, see the `vignette("Tokens")`.
 
 Other Token Functions: 
 \code{\link{test_REDCap_token}()},

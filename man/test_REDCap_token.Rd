@@ -23,6 +23,7 @@ If the token is invalid, the function can optionally open the REDCap login page 
 }
 \seealso{
 For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
+For more details, see the [pkgdown article on tokens](\link{../articles/Tokens.html}).
 
 Other Token Functions: 
 \code{\link{set_REDCap_token}()},
