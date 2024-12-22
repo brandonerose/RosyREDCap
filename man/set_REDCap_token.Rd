@@ -25,11 +25,13 @@ For more details, see the [pkgdown article on tokens]("../articles/Tokens.html")
 For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
 For more details, see the [pkgdown article on tokens](vignette("Tokens")).
 For more details, see the [pkgdown article on tokens](https://brandonerose.github.io/RosyREDCap/articles/Tokens.html).
-For more details, see the [set_REDCap_token()].
+For more details, see the \code{\link{setup_DB}}.
 }
 \seealso{
 For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
 For more details, see the `vignette("Tokens")`.
+For more details, see the \code{\link{vignette("Tokens")}}.
+For more details, see the \code{vignette("Tokens")}.
 
 Other Token Functions: 
 \code{\link{test_REDCap_token}()},

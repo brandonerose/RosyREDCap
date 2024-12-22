@@ -13,14 +13,15 @@
 #' For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
 #' For more details, see the [pkgdown article on tokens](vignette("Tokens")).
 #' For more details, see the [pkgdown article on tokens](https://brandonerose.github.io/RosyREDCap/articles/Tokens.html).
-#' For more details, see the [set_REDCap_token()].
-
+#' For more details, see the \code{\link{setup_DB}}.
 #' @inheritParams setup_DB
 #' @param ask Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.
 #' @return Invisible. A message is printed to confirm the token is successfully set.
 #' @seealso
 #' For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
 #' For more details, see the `vignette("Tokens")`.
+#' For more details, see the \code{\link{vignette("Tokens")}}.
+#' For more details, see the \code{vignette("Tokens")}.
 #' @family Token Functions
 #' @keywords Token Functions
 #' @export
@@ -59,9 +60,6 @@ set_REDCap_token <- function(DB,ask = T){
 #' Use this function to confirm the token currently in use without exposing it unnecessarily.
 #' @inheritParams setup_DB
 #' @return Invisible. Prints a message displaying the stored token.
-#' @seealso
-#' For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
-#' For more details, see the [set_REDCap_token()].
 #' @family Token Functions
 #' @keywords Token Functions
 #' @export
@@ -80,8 +78,8 @@ view_REDCap_token <- function(DB){
 #' @param launch_browser Logical (TRUE/FALSE). If TRUE, launches the REDCap login page in the default web browser when validation fails. Default is `TRUE`.
 #' @return Logical. Returns `TRUE` if the API token is valid, otherwise `FALSE`.
 #' @seealso
-#' For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
-#' For more details, see the [pkgdown article on tokens](\link{../articles/Tokens.html}).
+#' \href{../articles/Tokens.html}{pkgdown article on tokens}
+#' \href{https://brandonerose.github.io/RosyREDCap/articles/Tokens.htm}{pkgdown article on tokens}
 #' @family Token Functions
 #' @keywords Token Functions
 #' @export
