@@ -25,32 +25,36 @@ projects <- get_projects() # get list of cached projects
 
 View(projects) # show your previously saved projects
 
-DB <- setup_RosyREDCap(
-  short_name = "PROJECT1",
-  token_name = "PROJECT1_token", # see the article on setting your token if needed
+DB <- setup_DB(
+  short_name = "TEST",
   redcap_base_link = "https://redcap.miami.edu/", # change to your institutions link
   dir_path = getwd(), # or change to your intended file path
   # force = T, # use this to force a refresh
   merge_form_name = "patient",
-  use_csv = FALSE # if you don't have Microsoft change to TRUE
+  use_csv = FALSE, # if you don't have Microsoft change to TRUE
+  auto_check_token = TRUE
 )
 ```
 
-You can set your REDCap token in two ways! If you need more help setting your tokens see this article --> placeholder
+You can set your REDCap token in three ways! If you need more help setting your tokens see this article --> placeholder
 
 ```{r example2, eval=FALSE}
 #1. set each time in your session (not recommended in saved/shared scripts!)
-Sys.setenv(PROJECT1_token = "YoUrNevErShaReToken")
+Sys.setenv(RosyREDCap_token_TEST = "YoUrNevErShaReToken")
 
 #2. set to your private R sessions!
 usethis::edit_r_environ() #finds your file
-# Then you add --> PROJECT1_token = 'YoUrNevErShaReToken'
+# Then you add --> RosyREDCap_token_TEST = 'YoUrNevErShaReToken'
 # then save file and restart R
 
 # If it worked you will see your token when you run...
-Sys.getenv("PROJECT1_token")
+Sys.getenv("RosyREDCap_token_TEST")
 #And if your DB object is setup properly...
-view_redcap_token(DB)
+#3. Using the REDCap console
+DB<-load_DB("TEST")
+set_REDCap_token(DB)
+# can see if it's set correctly
+view_REDCap_token(DB)
 ```
 
 ## Run Core Functions
@@ -59,7 +63,7 @@ The following functions represent the core functions of the package.
 
 ```{r , eval=FALSE}
 
-DB <- update_RosyREDCap(DB) # update from redcap by checking log and using saved object 
+DB <- update_DB(DB) # update from redcap by checking log and using saved object 
 
 DB <- add_forms_transformation_to_DB(DB,forms_tranformation = default_forms_transformation(DB))
 

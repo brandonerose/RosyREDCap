@@ -25,9 +25,10 @@ golem_add_external_resources <- function(...) {
 #' @param ... arguments to pass to golem_opts.
 #' See `?golem::get_golem_options` for more details.
 #' @inheritParams shiny::shinyApp
-#' @export
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
+#' @family Shiny
+#' @export
 run_RosyREDCap <- function(
     onStart = NULL,
     enableBookmarking = NULL,

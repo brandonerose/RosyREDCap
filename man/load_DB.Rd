@@ -32,4 +32,11 @@ DB <- load_DB("ABC")
 \seealso{
 \code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
 \code{\link[RosyREDCap]{setup_DB}} for retrieving a list of projects from the directory cache.
+
+Other DB object: 
+\code{\link{delete_DB}()},
+\code{\link{save_DB}()},
+\code{\link{setup_DB}()},
+\code{\link{show_DB}()}
 }
+\concept{DB object}

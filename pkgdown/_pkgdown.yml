@@ -21,72 +21,69 @@ template:
       creator: "@brosemdmph"
       site: "@thecodingdocs"
       card: summary_large_image
+
 reference:
-  - title: "Core"
-  - subtitle: "Shiny Application ✨"
-    desc: "For basic users simply launch the app and explore!"
+  - title: "Shiny Application ✨ (Very Basic)"
+    desc: "For very basic users simply launch the app and explore!"
     contents:
       - run_RosyREDCap
-  - subtitle: "Projects"
-    desc: ""
+  - title: "Other"
+    desc: "Detail Later"
     contents:
-      - setup_RosyREDCap
-      - load_RosyREDCap
-  - subtitle: "Tokens"
-    desc: ""
-    contents:
-      - set_REDCap_token
-      - view_REDCap_token
-      - test_REDCap_token
-  - subtitle: "Exports"
-    desc: ""
-    contents:
-      - drop_REDCap_to_directory
-
-  - subtitle: "Upload/Delete Functions (Be Cautious)"
-    contents:
+      - "%>%"
+      - add_ID_to_DF
+      - add_redcap_folder
+      - add_subset
+      - cache_clear
+      - cache_path
+      - check_REDCap_files
+      - check_REDCap_log
+      - clean_DB
+      - deidentify_DB
+      - delete_DB
       - delete_file_from_REDCap
       - delete_redcap_file
       - delete_redcap_records
-      - read_from_REDCap_upload
-      - upload_DB_to_REDCap
-      - upload_file_to_REDCap
-      - upload_file_to_redcap_fileRepository
-      - upload_form_to_REDCap
-      - upload_transform_to_DB
-  - subtitle: "Supplemental/Components"
-    desc: "Most of these functions are called behind the scenes in `update_RosyREDCap(DB)` but are included here for more advanced users and specific cases."
-    contents:
-      - check_REDCap_files
-      - check_REDCap_log
+      - drop_DB_to_dir
+      - drop_REDCap_to_directory
+      - edit_redcap_while_viewing
+      - filter_DB
+      - find_upload_diff
+      - generate_horizontal_transform
+      - generate_summary_from_subset_name
+      - get_dir
+      - get_projects
       - get_raw_REDCap
       - get_REDCap_files
+      - labelled_to_raw_form
       - link_API_playground
       - link_API_token
       - link_REDCap_home
       - link_REDCap_project
       - link_REDCap_record
-  - title: "Generic Helpers"
-    contents:
-      - add_ID_to_DF
-      - "%>%"
-
-
-      - add_redcap_folder
-
-      - add_subset
-      - deidentify_DB
-
-      - edit_redcap_while_viewing
-      - find_upload_diff
-      - generate_horizontal_transform
-      - generate_summary_from_subset_name
-
-
+      - load_DB
+      - nav_to_dir
+      - project_health_check
       - push_redcap_dictionary
+      - raw_to_labelled_form
+      - read_DB_from_dir
+      - read_from_REDCap_upload
       - REDCap_diagram
+      - rmarkdown_DB
+      - run_quality_checks
+      - save_DB
+      - set_REDCap_token
+      - setup_DB
+      - show_DB
       - summarize_RosyREDCap
-      - update_RosyREDCap
+      - test_REDCap_token
+      - update_DB
+      - upload_DB_to_REDCap
+      - upload_file_to_REDCap
+      - upload_file_to_redcap_fileRepository
+      - upload_form_to_REDCap
+      - upload_transform_to_DB
+      - view_REDCap_token
 
 articles:
   - title: "Feautures by R User Level"
@@ -108,6 +105,8 @@ articles:
       - Upload
   - title: "Shiny Application"
     contents:
+      - Shiny
+    topic:
       - Shiny
   - title: "Security"
     contents:

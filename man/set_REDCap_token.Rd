@@ -26,8 +26,8 @@ The token is validated internally and stored using `Sys.setenv()`.
 \code{\link[RosyREDCap]{view_REDCap_token}} to view the token in your console.
 \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
 
-Other token_functions: 
+Other Tokens: 
 \code{\link{test_REDCap_token}()},
 \code{\link{view_REDCap_token}()}
 }
-\concept{token_functions}
+\concept{Tokens}

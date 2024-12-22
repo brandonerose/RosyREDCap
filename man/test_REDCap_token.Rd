@@ -24,8 +24,8 @@ If the token is invalid, the function can optionally open the REDCap login page 
 \seealso{
 \code{\link[RosyREDCap]{setup_DB}} for initializing the `DB` object with an API token.
 
-Other token_functions: 
+Other Tokens: 
 \code{\link{set_REDCap_token}()},
 \code{\link{view_REDCap_token}()}
 }
-\concept{token_functions}
+\concept{Tokens}

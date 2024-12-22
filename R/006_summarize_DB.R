@@ -24,6 +24,7 @@ filter_DB <- function(DB, filter_field, filter_choices, form_names, field_names,
     )
   )
 }
+#' @title rmarkdown_DB
 #' @export
 rmarkdown_DB <- function (DB,dir_other){
   if(missing(dir_other)){

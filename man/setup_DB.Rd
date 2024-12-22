@@ -49,3 +49,11 @@ DB <- setup_DB(
 )
 }
 }
+\seealso{
+Other DB object: 
+\code{\link{delete_DB}()},
+\code{\link{load_DB}()},
+\code{\link{save_DB}()},
+\code{\link{show_DB}()}
+}
+\concept{DB object}

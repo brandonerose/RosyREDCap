@@ -5,6 +5,7 @@
 }
 #' @title cache_path
 #' @return your path
+#' @family Cache
 #' @export
 cache_path <- function(){
   cache <- get_cache()
@@ -13,6 +14,7 @@ cache_path <- function(){
 }
 #' @title Clear your cached projects
 #' @return message confirmation
+#' @family Cache
 #' @export
 cache_clear <-  function(){
   cache <- get_cache()

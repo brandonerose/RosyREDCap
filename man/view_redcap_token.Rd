@@ -21,8 +21,8 @@ Use this function to confirm the token currently in use without exposing it unne
 \code{\link[RosyREDCap]{set_REDCap_token}} to set a new token.
 \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
 
-Other token_functions: 
+Other Tokens: 
 \code{\link{set_REDCap_token}()},
 \code{\link{test_REDCap_token}()}
 }
-\concept{token_functions}
+\concept{Tokens}

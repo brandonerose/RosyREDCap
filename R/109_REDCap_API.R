@@ -432,6 +432,7 @@ delete_redcap_records <- function(DB, records){
   message("Records deleted!")
 }
 #' @title push_redcap_dictionary
+#' @export
 push_redcap_dictionary <- function(){
   redcap_api_request(
     url,

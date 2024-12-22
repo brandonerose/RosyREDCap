@@ -12,3 +12,8 @@ your path
 \description{
 cache_path
 }
+\seealso{
+Other Cache: 
+\code{\link{cache_clear}()}
+}
+\concept{Cache}

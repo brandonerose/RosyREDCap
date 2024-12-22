@@ -16,7 +16,7 @@
 #' @seealso
 #' \code{\link[RosyREDCap]{view_REDCap_token}} to view the token in your console.
 #' \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
-#' @family token_functions
+#' @family Tokens
 #' @export
 set_REDCap_token <- function(DB,ask = T){
   DB  <- validate_DB(DB)
@@ -58,7 +58,7 @@ set_REDCap_token <- function(DB,ask = T){
 #' @seealso
 #' \code{\link[RosyREDCap]{set_REDCap_token}} to set a new token.
 #' \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
-#' @family token_functions
+#' @family Tokens
 #' @export
 view_REDCap_token <- function(DB){
   DB  <- validate_DB(DB)
@@ -78,7 +78,7 @@ view_REDCap_token <- function(DB){
 #' @return Logical. Returns `TRUE` if the API token is valid, otherwise `FALSE`.
 #' @seealso
 #' \code{\link[RosyREDCap]{setup_DB}} for initializing the `DB` object with an API token.
-#' @family token_functions
+#' @family Tokens
 #' @export
 test_REDCap_token <- function(DB, set_if_fails = T, launch_browser = T){
   token <- validate_REDCap_token(DB, silent = F)

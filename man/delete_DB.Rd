@@ -17,3 +17,11 @@ message
 \description{
 Deletes DB object from directory (solves occasional problems)
 }
+\seealso{
+Other DB object: 
+\code{\link{load_DB}()},
+\code{\link{save_DB}()},
+\code{\link{setup_DB}()},
+\code{\link{show_DB}()}
+}
+\concept{DB object}

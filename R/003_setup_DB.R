@@ -1,50 +1,5 @@
 #' @import RosyUtils
 #' @import RosyApp
-validate_DB <- function(DB,silent = T,warn_only = F,allowed_names = names(blank_DB())){
-  #param check
-  if( ! is.list(DB)) stop("DB must be a list")
-  #function
-  outcome_valid <- T
-  messages <- NULL
-  if( ! all(allowed_names%in%names(DB))){
-    outcome_valid <- F
-    messages <- messages %>% append("`DB` does not have the appropriate names. Did you use `load_DB()` or `setup_DB()` to generate it?")
-  }
-  if(is.null(DB$dir_path)){
-    outcome_valid <- F
-    messages <- messages %>% append("`DB$dir_path` is NULL!, Did you use `setup_DB()`?")
-  }else{
-    if( ! DB$dir_path %>% file.exists()) warning("`DB$dir_path`, '",DB$dir_path,"', does not exist!, Did you use `setup_DB()`?\nThis can also happen with shared directories.",immediate. = T)
-  }
-  if(is.null(DB$short_name)){
-    outcome_valid <- F
-    messages <- messages %>% append("`DB$short_name` is NULL!, Did you use `setup_DB()`?")
-  }else{
-    DB$short_name %>% validate_env_name()
-  }
-  if(!outcome_valid){
-    for(m in messages){
-      if(warn_only){
-        warning(m,immediate. = T)
-      }else{
-        stop(m)
-      }
-    }
-  }
-  if(!silent){
-    if((length(DB$data)==0)>0){
-      warning("Valid list but no data yet!",immediate. = T)
-    }
-    if(outcome_valid){
-      bullet_in_console(DB$short_name," is valid DB object!",bullet_type = "v")
-    }
-    bullet_in_console(DB$short_name %>% paste0(" loaded from: "),url = DB$dir_path,bullet_type = "v")
-    if(DB$internals$is_transformed){
-      bullet_in_console(DB$short_name %>% paste0(" is currently transformed! Can reverse with `untransform_DB(DB)`"),bullet_type = "i")
-    }
-  }
-  DB
-}
 #' @title Setup RosyREDCap
 #' @description
 #' Initializes the `DB` object with the necessary REDCap API token and other configurations.
@@ -70,6 +25,7 @@ validate_DB <- function(DB,silent = T,warn_only = F,allowed_names = names(blank_
 #'   redcap_base = "https://redcap.yourinstitution.edu/"
 #' )
 #' }
+#' @family DB object
 #' @export
 setup_DB <- function (
     short_name,
@@ -135,6 +91,7 @@ setup_DB <- function (
 #' # Load the DB object using the short name and directory path
 #' DB <- load_DB("ABC")
 #' }
+#' @family DB object
 #' @export
 load_DB <- function(short_name,dir_path,validate = T){
   projects <- get_projects()
@@ -155,6 +112,7 @@ load_DB <- function(short_name,dir_path,validate = T){
 #' @title Saves DB in the directory
 #' @param DB object generated using `load_DB()` or `setup_DB()`
 #' @return Message
+#' @family DB object
 #' @export
 save_DB <- function(DB){
   #param check
@@ -173,6 +131,7 @@ save_DB <- function(DB){
 #' @param data_choice whether to use 'data' or 'data'
 #' @param only_dfs logical for including data.frames
 #' @return DB tables
+#' @family DB object
 #' @export
 show_DB <- function(DB,also_metadata=T,only_dfs = T){
   DB <- validate_DB(DB)
@@ -188,6 +147,7 @@ show_DB <- function(DB,also_metadata=T,only_dfs = T){
 #' @inheritParams setup_DB
 #' @param dir_path character file path of the directory
 #' @return message
+#' @family DB object
 #' @export
 delete_DB <- function(DB,dir_path){
   if(!missing(DB)){
@@ -206,6 +166,51 @@ delete_DB <- function(DB,dir_path){
   }else{
     warning("The DB object you wanted to is not there. Did you delete already? ",delete_this)
   }
+}
+validate_DB <- function(DB,silent = T,warn_only = F,allowed_names = names(blank_DB())){
+  #param check
+  if( ! is.list(DB)) stop("DB must be a list")
+  #function
+  outcome_valid <- T
+  messages <- NULL
+  if( ! all(allowed_names%in%names(DB))){
+    outcome_valid <- F
+    messages <- messages %>% append("`DB` does not have the appropriate names. Did you use `load_DB()` or `setup_DB()` to generate it?")
+  }
+  if(is.null(DB$dir_path)){
+    outcome_valid <- F
+    messages <- messages %>% append("`DB$dir_path` is NULL!, Did you use `setup_DB()`?")
+  }else{
+    if( ! DB$dir_path %>% file.exists()) warning("`DB$dir_path`, '",DB$dir_path,"', does not exist!, Did you use `setup_DB()`?\nThis can also happen with shared directories.",immediate. = T)
+  }
+  if(is.null(DB$short_name)){
+    outcome_valid <- F
+    messages <- messages %>% append("`DB$short_name` is NULL!, Did you use `setup_DB()`?")
+  }else{
+    DB$short_name %>% validate_env_name()
+  }
+  if(!outcome_valid){
+    for(m in messages){
+      if(warn_only){
+        warning(m,immediate. = T)
+      }else{
+        stop(m)
+      }
+    }
+  }
+  if(!silent){
+    if((length(DB$data)==0)>0){
+      warning("Valid list but no data yet!",immediate. = T)
+    }
+    if(outcome_valid){
+      bullet_in_console(DB$short_name," is valid DB object!",bullet_type = "v")
+    }
+    bullet_in_console(DB$short_name %>% paste0(" loaded from: "),url = DB$dir_path,bullet_type = "v")
+    if(DB$internals$is_transformed){
+      bullet_in_console(DB$short_name %>% paste0(" is currently transformed! Can reverse with `untransform_DB(DB)`"),bullet_type = "i")
+    }
+  }
+  DB
 }
 blank_DB <-  function(){ # can sort this better in version 3.0.0
   list(
@@ -285,6 +290,7 @@ blank_DB <-  function(){ # can sort this better in version 3.0.0
       redcap_records_dashboard = NULL,
       redcap_api = NULL,
       redcap_api_playground = NULL,
+      pkgdown = "https://brandonerose.github.io/RosyREDCap/",
       github = "https://github.com/brandonerose/RosyREDCap/",
       thecodingdocs = "https://www.thecodingdocs.com/"
     )

@@ -12,3 +12,8 @@ message confirmation
 \description{
 Clear your cached projects
 }
+\seealso{
+Other Cache: 
+\code{\link{cache_path}()}
+}
+\concept{Cache}
