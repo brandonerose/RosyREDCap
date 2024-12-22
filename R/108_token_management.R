@@ -13,8 +13,6 @@
 #' @inheritParams setup_DB
 #' @param ask Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.
 #' @return Invisible. A message is printed to confirm the token is successfully set.
-#' @seealso
-#' \code{\link{Tokens}}
 #' @family Tokens
 #' @export
 set_REDCap_token <- function(DB,ask = T){
@@ -74,8 +72,6 @@ view_REDCap_token <- function(DB){
 #' @param set_if_fails Logical (TRUE/FALSE). If TRUE and test connection fails, asks user to paster token into consult using `set_REDCap_token(DB)` function. Default is `TRUE`.
 #' @param launch_browser Logical (TRUE/FALSE). If TRUE, launches the REDCap login page in the default web browser when validation fails. Default is `TRUE`.
 #' @return Logical. Returns `TRUE` if the API token is valid, otherwise `FALSE`.
-#' @seealso
-#' \code{\link{Tokens}}
 #' @family Tokens
 #' @export
 test_REDCap_token <- function(DB, set_if_fails = T, launch_browser = T){

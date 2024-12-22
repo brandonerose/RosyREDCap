@@ -22,8 +22,6 @@ This function tests whether the API token stored in the `DB` object is valid by 
 If the token is invalid, the function can optionally open the REDCap login page in a browser (`launch_browser`) and/or reset the token (`set_if_fails`) using the console.
 }
 \seealso{
-\code{\link{Tokens}}
-
 Other Tokens: 
 \code{\link{set_REDCap_token}()},
 \code{\link{view_REDCap_token}()}

@@ -23,8 +23,6 @@ The user is guided to provide a new token through the console.
 The token is validated internally and stored using `Sys.setenv()`.
 }
 \seealso{
-\code{\link{Tokens}}
-
 Other Tokens: 
 \code{\link{test_REDCap_token}()},
 \code{\link{view_REDCap_token}()}

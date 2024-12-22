@@ -106,7 +106,7 @@ articles:
   - title: "Shiny Application"
     contents:
       - Shiny
-    topic:
+    topics:
       - Shiny
   - title: "Security"
     contents:

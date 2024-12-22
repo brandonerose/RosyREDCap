@@ -36,14 +36,11 @@ Nothing will be returned in R. Insetad, a browser link
 Opens browser page for a given DB object.
 }
 \details{
-Uses `utils::browseURL()` to open the specified REDCap page.
-In order for the function to work you must have ran `{DB <- update_DB(DB)}` successfully at least once.
+Uses [`utils::browseURL()`](#utils::browseURL to open the specified REDCap page.
+Uses [`load_DB`](#load_DB) to open the specified REDCap page.
+In order for the function to work you must have ran `DB <- update_DB(DB)` successfully at least once.
 If the link brings you to a page that doesn't work check the url. It's possible your institution may have changed redcap versions, which is part of the URL. In that case run `{DB <- update_DB(DB)}` again.
 You may have to be signed into REDCap for it to work properly.
 When in doubt, just seek out the page by navigating on your own in REDCap. Report issues if you can.
-}
-\seealso{
-\code{\link{Tokens}}
-\code{\link{Links}}
 }
 \concept{Links}
