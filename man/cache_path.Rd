@@ -29,5 +29,4 @@ Other Cache Functions:
 \code{\link{cache_clear}()}
 }
 \concept{Cache Functions}
-\keyword{cache,}
-\keyword{internal}
+\keyword{cache}

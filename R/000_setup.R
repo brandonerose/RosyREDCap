@@ -18,7 +18,7 @@
 #' print(path)
 #' }
 #' @family Cache Functions
-#' @keywords cache, internal
+#' @keywords cache
 #' @export
 cache_path <- function(){
   cache <- get_cache()
@@ -39,7 +39,7 @@ cache_path <- function(){
 #' }
 #' @return your path
 #' @family Cache Functions
-#' @keywords cache, internal
+#' @keywords cache
 #' @export
 cache_clear <-  function(){
   cache <- get_cache()
