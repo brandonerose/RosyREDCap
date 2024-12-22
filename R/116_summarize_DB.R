@@ -1,5 +1,4 @@
 #' @import RosyUtils
-#' @import RosyDB
 #' @import RosyApp
 sum_records <- function(DB){
   records <- NULL
@@ -177,13 +176,13 @@ generate_summary_save_list <- function(
     DB <- deidentify_DB(DB)
   }
   if(clean){
-    DB <- DB %>% RosyDB::clean_DB(drop_blanks = drop_blanks,other_drops = other_drops)
+    DB <- DB %>% clean_DB(drop_blanks = drop_blanks,other_drops = other_drops)
   }
   to_save_list <- DB$data
   if(include_metadata){
     if(annotate_metadata&&is_something(DB$data)){
       to_save_list$forms <- annotate_forms(DB)
-      to_save_list$fields <- RosyDB::annotate_fields(DB)
+      to_save_list$fields <- annotate_fields(DB)
       to_save_list$choices <- annotate_choices(DB)
     }else{
       to_save_list$forms <- DB$metadata$forms
@@ -267,7 +266,7 @@ generate_summary_from_subset_name <- function(
   if(subset_list$filter_field==DB$redcap$id_col){
     subset_list$filter_choices <- subset_list$subset_records[[DB$redcap$id_col]]
   }
-  DB$data <- RosyDB::filter_DB(
+  DB$data <- filter_DB(
     DB = DB,
     field_names = subset_list$field_names,
     form_names = subset_list$form_names,
@@ -308,7 +307,7 @@ summarize_RosyREDCap <- function(
     separate = F,
     force = F
 ){
-  DB <- DB %>% validate_RosyREDCap()
+  DB <- DB %>% validate_DB()
   original_data <- DB$data
   do_it <- is.null(DB$internals$last_summary)
   last_data_update <- DB$internals$last_data_update
@@ -364,5 +363,20 @@ summarize_RosyREDCap <- function(
     }
   }
   DB$data <- original_data
+  return(DB)
+}
+#' @title Run Quality Checks
+#' @inheritParams save_DB
+#' @export
+run_quality_checks <- function(DB){
+  DB <- validate_DB(DB)
+  if(is_something(DB$quality_checks)){
+    for (qual_check in names(DB$quality_checks)){
+      the_function <- DB$quality_checks[[qual_check]]
+      if(is.function(the_function)){
+        DB <- the_function(DB)
+      }
+    }
+  }
   return(DB)
 }

@@ -1,11 +1,10 @@
 #' @import RosyUtils
-#' @import RosyDB
 #' @import RosyApp
 #' @title Horizontal Transform
-#' @inheritParams setup_RosyREDCap
+#' @inheritParams setup_DB
 #' @export
 generate_horizontal_transform <- function(DB,records){
-  DB <- validate_RosyREDCap(DB)
+  DB <- validate_DB(DB)
   if(missing(records)) records <- DB$summary$all_records[[DB$redcap$id_col]]
   data <- filter_DB(DB,filter_field = DB$redcap$id_col,filter_choices = records)
   FINAL_out <- NULL
@@ -94,11 +93,8 @@ extract_form_from_merged <- function(DB,form_name){
     return(merged[rows,cols])
   }
 }
-# add_DB_flag <- function(DB,flag_field_name,id_field_name,ids,flag_name,read_split=" [:|:] ",write_split = " | ",remove_previous = T){
-#
-# }
 #' @title upload_transform_to_DB Transform
-#' @inheritParams setup_RosyREDCap
+#' @inheritParams setup_DB
 #' @export
 upload_transform_to_DB <- function(DB){
   if(is_something(DB$transformation$data_updates)){

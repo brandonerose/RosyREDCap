@@ -1,5 +1,4 @@
 #' @import RosyUtils
-#' @import RosyDB
 #' @import RosyApp
 create_node_edge_REDCap <- function(
     DB,
@@ -320,7 +319,7 @@ create_node_edge_REDCap <- function(
 #' @return messages for confirmation
 #' @export
 REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical = F,direction = "LR"){
-  if(is.null(DB$redcap))DB <- update_RosyREDCap(DB, metadata_only = T,save_to_dir = F)
+  if(is.null(DB$redcap))DB <- update_DB(DB, metadata_only = T,save_to_dir = F)
   OUT <- create_node_edge_REDCap(DB,duplicate_forms = duplicate_forms,include_fields = include_fields,include_choices = include_choices)
   if(!clean_names){OUT$node_df$label <- OUT$node_df$entity_name}
   OUT$node_df$physics <- T

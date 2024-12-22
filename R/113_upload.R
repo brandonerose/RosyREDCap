@@ -1,5 +1,4 @@
 #' @import RosyUtils
-#' @import RosyDB
 #' @import RosyApp
 #' @title Upload to REDCap
 #' @description
@@ -34,7 +33,7 @@ upload_form_to_REDCap <- function(to_be_uploaded,DB,batch_size=500){
 #' @export
 upload_DB_to_REDCap <- function(DB,batch_size = 500, ask = T, view_old = T, n_row_view = 20){
   warning("This function is not ready for primetime yet! Use at your own risk!",immediate. = T)
-  DB <- validate_RosyREDCap(DB)
+  DB <- validate_DB(DB)
   # if(ask){
   #   if(count_DB_upload_cells(DB)>5000){
   #     choice  <- utils::menu(choices = c("YES - Move forward with larger upload","NO - I want to stop and double check what I'm about to upload"),title = "This is a large upload. Do you want to proceed?")
@@ -70,7 +69,7 @@ upload_DB_to_REDCap <- function(DB,batch_size = 500, ask = T, view_old = T, n_ro
     }
   }
   if(any_updates){
-    DB <- update_RosyREDCap(DB)
+    DB <- update_DB(DB)
   }
   return(DB)
 }
@@ -80,7 +79,7 @@ upload_DB_to_REDCap <- function(DB,batch_size = 500, ask = T, view_old = T, n_ro
 #' @return upload_list
 #' @export
 find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
-  DB <- validate_RosyREDCap(DB)
+  DB <- validate_DB(DB)
   new_list <- DB$data_update
   old_list <- list()
   if(any(!names(new_list)%in%DB$metadata$forms$form_name))warning("All upload names should ideally match the DB form names, `DB$metadata$forms$form_name`",immediate. = T)
@@ -324,7 +323,7 @@ edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_chan
         }
       }
     }
-    if(record_was_updated)DB <- update_RosyREDCap(DB)
+    if(record_was_updated)DB <- update_DB(DB)
   }
   if(!upload_individually)OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
 }

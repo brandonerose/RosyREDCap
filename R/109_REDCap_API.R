@@ -1,5 +1,4 @@
 #' @import RosyUtils
-#' @import RosyDB
 #' @import RosyApp
 redcap_api_request <- function(url,token,additional_args=NULL){
   body  <- list(
@@ -370,7 +369,7 @@ rename_forms_default_to_redcap <- function(forms){
 #' @param record Character. Optional record filter for retrieving log entries associated with a specific record. Default is an empty string (`""`).
 #' @return A `data.frame` containing the cleaned and summarized REDCap log.
 #' @seealso
-#' \code{\link[RosyREDCap]{update_RosyREDCap}} for updating the `DB` object, including the log.
+#' \code{\link[RosyREDCap]{update_DB}} for updating the `DB` object, including the log.
 #' @export
 check_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clean = T,record = ""){
   if(units=="days"){

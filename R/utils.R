@@ -118,3 +118,37 @@ log_details_that_trigger_refresh <- function(){
     "Tag new identifier fields"
   )
 }
+sidebar_choices <- function(DB,n_threshold=1){
+  choices <- annotate_choices(DB)
+  choices <- choices[which(choices$n>=n_threshold),]
+  sbc <- data.frame(
+    form_name = choices$form_name,
+    field_name = choices$field_name,
+    name = choices$name,
+    label = paste0(choices$label, " (n = ",clean_num(choices$n),")")
+  )
+  return(sbc)
+}
+split_choices <- function(x){
+  oops <- x
+  x <- gsub("\n", " | ",x)  #added this to account for redcap metadata output if not a number
+  x <- x %>% strsplit(" [:|:] ") %>% unlist()
+  check_length <- length(x)
+  # code <- x %>% stringr::str_extract("^[^,]+(?=, )")
+  # name <- x %>% stringr::str_extract("(?<=, ).*$")
+  result <- x %>% stringr::str_match("([^,]+), (.*)")
+  # x <- data.frame(
+  #   code=x %>% strsplit(", ") %>% sapply(`[`, 1),
+  #   name=x %>% strsplit(", ")%>% sapply(`[`, -1) %>% sapply(function(y){paste0(y,collapse = ", ")})
+  # )
+  x <- data.frame(
+    code=result[,2],
+    name=result[,3]
+  )
+  rownames(x) <- NULL
+  if(nrow(x)!=check_length)stop("split choice error: ",oops)
+  x
+}
+redcap_field_types_not_in_data <- c(
+  "descriptive", "checkbox"
+)

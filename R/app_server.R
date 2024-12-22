@@ -1,5 +1,4 @@
 #' @import RosyUtils
-#' @import RosyDB
 #' @import RosyApp
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
@@ -409,7 +408,7 @@ app_server <- function(input, output, session) {
     if(!is.null(input$choose_project)){
       if(is_something(input$choose_project)){
         values$DB <- tryCatch({
-          load_RosyREDCap(short_name=input$choose_project) %>% clean_DB(drop_blanks = F,other_drops = NULL)
+          load_DB(short_name=input$choose_project) %>% clean_DB(drop_blanks = F,other_drops = NULL)
         },error = function(e) {NULL})
         if(is_something(input$choose_project)){
           if(!is.null(input[[paste0("projects_table_state")]])){
@@ -943,7 +942,7 @@ app_server <- function(input, output, session) {
     }
   })
   observeEvent(input$ab_update_redcap,{
-    values$DB <- values$DB %>% update_RosyREDCap()
+    values$DB <- values$DB %>% update_DB()
   })
   observeEvent(input$ab_accept_form_transform,{
     # values$DB$transformation$forms <- values$editable_forms_transformation_table # add check

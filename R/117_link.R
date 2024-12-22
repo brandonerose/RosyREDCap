@@ -1,5 +1,4 @@
 #' @import RosyUtils
-#' @import RosyDB
 #' @import RosyApp
 #' @title Link to get a new API token for your project (if you access)
 #' @return messages for confirmation

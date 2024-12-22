@@ -1,5 +1,4 @@
 #' @import RosyUtils
-#' @import RosyDB
 #' @import RosyApp
 get_key_col_list <- function(DB){
   if(!is_something(DB$metadata$forms))stop("Empty --> `DB$metadata$forms`")
@@ -169,7 +168,7 @@ missing_codes2 <- function(DB){
 #' @title add REDCap ID to any dataframe using a ref_id
 #' @description
 #'  add REDCap ID to any dataframe using a ref_id
-#' @inheritParams setup_RosyREDCap
+#' @inheritParams setup_DB
 #' @param DF dataframe
 #' @param ref_id column name that matches a REDCap variable name that could be an ALT id such as MRN
 #' @return original dataframe with REDCap id_col added as the first column
@@ -194,7 +193,7 @@ add_ID_to_DF <- function(DF,DB,ref_id){
 #' @return DB object that has deidentified forms
 #' @export
 deidentify_DB <- function(DB,identifiers,drop_free_text = F){
-  DB <- validate_RosyREDCap(DB)
+  DB <- validate_DB(DB)
   missing_identifiers <- missing(identifiers)
   if(!missing_identifiers){
     identifiers <- identifiers %>% unique()

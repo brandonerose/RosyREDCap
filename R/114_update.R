@@ -1,8 +1,7 @@
 #' @import RosyUtils
-#' @import RosyDB
 #' @import RosyApp
 #' @title Shows DB in the env
-#' @param DB DB from load_RosyREDCap or setup_DB
+#' @param DB DB from load_DB or setup_DB
 #' @param force logical for force a fresh update
 #' @param day_of_log numbers of days to be checked in the log
 #' @param labelled logical for whether or not to return raw or labelled REDCap. Default is TRUE.
@@ -10,7 +9,7 @@
 #' @param original_file_names logical for whether or not to use original file names.
 #' @return messages for confirmation
 #' @export
-update_RosyREDCap <- function(
+update_DB <- function(
     DB,
     set_token_if_fails = T,
     force = F,
@@ -27,7 +26,7 @@ update_RosyREDCap <- function(
   IDs <- NULL
   will_update <- T
   was_updated <- F
-  DB <- validate_RosyREDCap(DB)
+  DB <- validate_DB(DB)
   if(!is.null(DB$internals$data_extract_labelled)){
     if(DB$internals$data_extract_labelled!=labelled){
       if(!force){
@@ -156,13 +155,13 @@ update_RosyREDCap <- function(
         DB2$metadata$forms <- DB2$transformation$original_forms
         DB2$metadata$fields <- DB2$transformation$original_fields
         DB2$data <- data_list
-        DB2 <- RosyDB::transform_DB(DB2, ask = ask_about_overwrites)
+        DB2 <- transform_DB(DB2, ask = ask_about_overwrites)
         if(!is.null(DB2$data_update$from_transform)){
           DB2 <- upload_transform_to_DB(DB2)
         }
         data_list <- DB2$data %>% process_df_list(silent = T) %>% all_character_cols_list()
       }
-      if(any(!names(data_list)%in%names(DB$data)))stop("Imported data names doesn't match DB$data names. If this happens run `untransform_DB()` or `update_RosyREDCap(DB, force = T)`")
+      if(any(!names(data_list)%in%names(DB$data)))stop("Imported data names doesn't match DB$data names. If this happens run `untransform_DB()` or `update_DB(DB, force = T)`")
       for(TABLE in names(data_list)){
         DB$data[[TABLE]] <- DB$data[[TABLE]] %>% all_character_cols() %>% dplyr::bind_rows(data_list[[TABLE]])
       }
