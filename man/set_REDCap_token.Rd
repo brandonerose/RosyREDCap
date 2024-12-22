@@ -26,7 +26,8 @@ For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
 For more details, see the [pkgdown article on tokens](vignette("Tokens")).
 For more details, see the [pkgdown article on tokens](https://brandonerose.github.io/RosyREDCap/articles/Tokens.html).
 For more details, see the \code{\link{setup_DB}}.
-For more details, see the \code{\link{Tokens}}.
+For more details, see the \code{\link{vignette("Tokens")}}.
+For more details, see the \code{\url{vignette("Tokens")}}.
 }
 \seealso{
 For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
