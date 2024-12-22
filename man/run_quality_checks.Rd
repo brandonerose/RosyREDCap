@@ -6,9 +6,6 @@
 \usage{
 run_quality_checks(DB)
 }
-\arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-}
 \description{
 Run Quality Checks
 }

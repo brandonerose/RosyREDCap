@@ -7,8 +7,6 @@
 delete_DB(DB, dir_path)
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{dir_path}{character file path of the directory}
 }
 \value{

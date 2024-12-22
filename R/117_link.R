@@ -1,35 +1,47 @@
 #' @import RosyUtils
 #' @import RosyApp
-#' @title Link to get a new API token for your project (if you access)
-#' @return messages for confirmation
+#' @title Open Links to REDCap Pages
+#' @description
+#' Opens browser page for a given DB object.
+#'
+#' @details
+#' Uses `utils::browseURL()` to open the specified REDCap page.
+#' In order for the function to work you must have ran `{DB <- update_DB(DB)}` successfully at least once.
+#' If the link brings you to a page that doesn't work check the url. It's possible your institution may have changed redcap versions, which is part of the URL. In that case run `{DB <- update_DB(DB)}` again.
+#' You may have to be signed into REDCap for it to work properly.
+#' When in doubt, just seek out the page by navigating on your own in REDCap. Report issues if you can.
+#'
+#' @param DB A validated `DB` object containing REDCap project data and settings. Generated using `load_DB()` or `setup_DB()`
+#' @return Nothing will be returned in R. Insetad, a browser link
+#' @seealso
+#' \code{\link{Tokens}}
+#' \code{\link{Links}}
+#' @rdname Links
+#' @family Links
 #' @export
 link_API_token <-  function(DB){
   DB$links$redcap_API %>% utils::browseURL()
 }
-#' @title Link view the API playground for your project (if you access)
-#' @return messages for confirmation
+#' @rdname Links
 #' @export
 link_API_playground <- function(DB){
   DB$links$redcap_API_playground %>% utils::browseURL()
 }
-#' @title Link view the REDCap project home page
-#' @return opens browser link
+#' @rdname Links
 #' @export
 link_REDCap_home <- function(DB){
   DB$links$redcap_base %>% utils::browseURL()
 }
-#' @title link_REDCap_project
-#' @return opens browser link
+#' @rdname Links
 #' @export
 link_REDCap_project <- function(DB){
   DB$links$redcap_home %>% utils::browseURL()
 }
-#' @title link_REDCap_record
 #' @param record REDCap record id or study id etc, any column names that match `DB$redcap$id_col`
 #' @param page REDCap page for the record. Must be one of `DB$metadata$forms$form_name`
 #' @param instance REDCap instance if it's a repeating instrument
 #' @param text_only logical for only returning text
-#' @return opens browser link
+#' @rdname Links
 #' @export
 link_REDCap_record <- function(DB,record,page,instance,text_only = F){
   link <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id)

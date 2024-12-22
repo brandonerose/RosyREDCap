@@ -6,9 +6,6 @@
 \usage{
 save_DB(DB)
 }
-\arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-}
 \value{
 Message
 }

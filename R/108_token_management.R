@@ -14,8 +14,7 @@
 #' @param ask Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.
 #' @return Invisible. A message is printed to confirm the token is successfully set.
 #' @seealso
-#' \code{\link[RosyREDCap]{view_REDCap_token}} to view the token in your console.
-#' \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
+#' \code{\link{Tokens}}
 #' @family Tokens
 #' @export
 set_REDCap_token <- function(DB,ask = T){
@@ -56,8 +55,7 @@ set_REDCap_token <- function(DB,ask = T){
 #' @inheritParams setup_DB
 #' @return Invisible. Prints a message displaying the stored token.
 #' @seealso
-#' \code{\link[RosyREDCap]{set_REDCap_token}} to set a new token.
-#' \code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
+#' \code{\link{Tokens}}
 #' @family Tokens
 #' @export
 view_REDCap_token <- function(DB){
@@ -77,7 +75,7 @@ view_REDCap_token <- function(DB){
 #' @param launch_browser Logical (TRUE/FALSE). If TRUE, launches the REDCap login page in the default web browser when validation fails. Default is `TRUE`.
 #' @return Logical. Returns `TRUE` if the API token is valid, otherwise `FALSE`.
 #' @seealso
-#' \code{\link[RosyREDCap]{setup_DB}} for initializing the `DB` object with an API token.
+#' \code{\link{Tokens}}
 #' @family Tokens
 #' @export
 test_REDCap_token <- function(DB, set_if_fails = T, launch_browser = T){

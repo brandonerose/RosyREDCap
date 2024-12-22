@@ -1,7 +1,7 @@
 #' @import RosyUtils
 #' @import RosyApp
 #' @title Shows DB in the env
-#' @param DB DB from load_DB or setup_DB
+#' @param DB A validated `DB` object containing REDCap project data and settings. Generated using `load_DB()` or `setup_DB()`
 #' @param force logical for force a fresh update
 #' @param day_of_log numbers of days to be checked in the log
 #' @param labelled logical for whether or not to return raw or labelled REDCap. Default is TRUE.

@@ -20,7 +20,7 @@ update_DB(
 )
 }
 \arguments{
-\item{DB}{DB from load_DB or setup_DB}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using `load_DB()` or `setup_DB()`}
 
 \item{force}{logical for force a fresh update}
 

@@ -18,8 +18,7 @@ The token is not returned as an R object to maintain security.
 Use this function to confirm the token currently in use without exposing it unnecessarily.
 }
 \seealso{
-\code{\link[RosyREDCap]{set_REDCap_token}} to set a new token.
-\code{\link[RosyREDCap]{test_REDCap_token}} to validate the stored token.
+\code{\link{Tokens}}
 
 Other Tokens: 
 \code{\link{set_REDCap_token}()},

@@ -15,7 +15,7 @@ check_REDCap_log(
 )
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings.}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using `load_DB()` or `setup_DB()`}
 
 \item{last}{Numeric. Specifies the time range paired with `units` to filter the log. Default is `24`.}
 

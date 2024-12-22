@@ -12,8 +12,6 @@ read_DB_from_dir(
 )
 }
 \arguments{
-\item{DB}{object generated using `load_DB()` or `setup_DB()`}
-
 \item{allow_all}{logical TF for allowing DB$data names that are not also form names}
 
 \item{drop_non_form_vars}{logical TF for dropping non-form variable names}

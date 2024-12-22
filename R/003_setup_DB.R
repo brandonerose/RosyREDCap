@@ -110,7 +110,6 @@ load_DB <- function(short_name,dir_path,validate = T){
     return()
 }
 #' @title Saves DB in the directory
-#' @param DB object generated using `load_DB()` or `setup_DB()`
 #' @return Message
 #' @family DB object
 #' @export
