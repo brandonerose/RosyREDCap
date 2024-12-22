@@ -3,18 +3,47 @@
   cache <- get_cache()
   bullet_in_console("RosyREDCap Loaded",bullet_type = "v")
 }
-#' @title cache_path
+#' @title Get your Get Cache Path
+#' @description
+#' Included for transparency and confirmation/testing. This is where the basic information about your projects is cached when you use the RosyREDCap package.
+#' @details
+#' This function checks the location of the cache established by [hoardr::hoard()].
+#' \emph{No project data is stored here. Tokens are not stored here either.}
+#' Key information stored here is `short_name` (primary key for RosyREDCap projects) and other details about project information.
+#' See [RosyREDCap:::blank_project_cols()]
+#' @return The file path of your RosyREDCap cache
+#' @examples
+#' \dontrun{
+#' path <- cache_path()
+#' print(path)
+#' }
 #' @return your path
-#' @family Cache
+#' @family cache
+#' @keywords cache, internal
 #' @export
 cache_path <- function(){
   cache <- get_cache()
   path <- normalizePath(cache$cache_path_get())
   return(path)
 }
-#' @title Clear your cached projects
 #' @return message confirmation
 #' @family Cache
+#' @export
+#'
+#' @title Clear your cached projects
+#' @description
+#' Included for transparency and confirmation/testing.
+#' @details
+#' This function checks the location of the cache established by [hoardr::hoard()].
+#' @return The file path of your RosyREDCap cache
+#' @examples
+#' \dontrun{
+#' path <- cache_path()
+#' print(path)
+#' }
+#' @return your path
+#' @family cache
+#' @keywords cache, internal
 #' @export
 cache_clear <-  function(){
   cache <- get_cache()

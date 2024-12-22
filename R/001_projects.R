@@ -90,7 +90,7 @@ blank_project_cols <- function(){
     "n_records",
     "redcap_base",
     "redcap_home",
-    "redcap_API_playground",
+    "redcap_API_playground"
     # "test_dir"
     # "test_DB",
     # "test_RC"

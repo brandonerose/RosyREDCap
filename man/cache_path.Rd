@@ -2,18 +2,34 @@
 % Please edit documentation in R/000_setup.R
 \name{cache_path}
 \alias{cache_path}
-\title{cache_path}
+\title{Get your Get Cache Path}
 \usage{
 cache_path()
 }
 \value{
+The file path of your RosyREDCap cache
+
 your path
 }
 \description{
-cache_path
+Included for transparency and confirmation/testing. This is where the basic information about your projects is cached when you use the RosyREDCap package.
+}
+\details{
+This function checks the location of the cache established by [hoardr::hoard()].
+\emph{No project data is stored here. Tokens are not stored here either.}
+Key information stored here is `short_name` (primary key for RosyREDCap projects) and other details about project information.
+See [RosyREDCap:::blank_project_cols()]
+}
+\examples{
+\dontrun{
+path <- cache_path()
+print(path)
+}
 }
 \seealso{
-Other Cache: 
+Other cache: 
 \code{\link{cache_clear}()}
 }
-\concept{Cache}
+\concept{cache}
+\keyword{cache,}
+\keyword{internal}

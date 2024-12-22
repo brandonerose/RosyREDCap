@@ -8,12 +8,28 @@ cache_clear()
 }
 \value{
 message confirmation
+
+The file path of your RosyREDCap cache
+
+your path
 }
 \description{
-Clear your cached projects
+Included for transparency and confirmation/testing.
+}
+\details{
+This function checks the location of the cache established by [hoardr::hoard()].
+}
+\examples{
+\dontrun{
+path <- cache_path()
+print(path)
+}
 }
 \seealso{
-Other Cache: 
+Other cache: 
 \code{\link{cache_path}()}
 }
 \concept{Cache}
+\concept{cache}
+\keyword{cache,}
+\keyword{internal}
