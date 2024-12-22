@@ -14,7 +14,7 @@
 #' @param DB A validated `DB` object containing REDCap project data and settings. Generated using [DB <- load_DB("PROJ")] or `setup_DB()`
 #' @return Nothing will be returned in R. Insetad, a browser link
 #' @rdname Links
-#' @family Links
+#' @family Link Functions
 #' @export
 link_API_token <-  function(DB){
   DB$links$redcap_API %>% utils::browseURL()

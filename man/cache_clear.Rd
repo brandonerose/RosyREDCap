@@ -7,8 +7,6 @@
 cache_clear()
 }
 \value{
-message confirmation
-
 The file path of your RosyREDCap cache
 
 your path
@@ -17,19 +15,19 @@ your path
 Included for transparency and confirmation/testing.
 }
 \details{
-This function checks the location of the cache established by [hoardr::hoard()].
+This function checks the location of the cache established by [hoardr::hoard()] and deletes it!
+This will not delete project data, just the packages "memory" of it.
 }
 \examples{
 \dontrun{
-path <- cache_path()
-print(path)
+#warning this will delete the packages cache of project locations
+cache_clear()
 }
 }
 \seealso{
-Other cache: 
+Other Cache Functions: 
 \code{\link{cache_path}()}
 }
-\concept{Cache}
-\concept{cache}
+\concept{Cache Functions}
 \keyword{cache,}
 \keyword{internal}

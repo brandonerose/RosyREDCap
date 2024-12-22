@@ -39,4 +39,4 @@ See `?golem::get_golem_options` for more details.}
 \description{
 run_RosyREDCap
 }
-\concept{Shiny}
+\concept{Shiny Application}

@@ -18,10 +18,12 @@ The token is not returned as an R object to maintain security.
 Use this function to confirm the token currently in use without exposing it unnecessarily.
 }
 \seealso{
-\code{\link{Tokens}}
+For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
 
-Other Tokens: 
+Other Token Functions: 
 \code{\link{set_REDCap_token}()},
 \code{\link{test_REDCap_token}()}
 }
-\concept{Tokens}
+\concept{Token Functions}
+\keyword{Functions}
+\keyword{Token}

@@ -42,4 +42,4 @@ If the link brings you to a page that doesn't work check the url. It's possible 
 You may have to be signed into REDCap for it to work properly.
 When in doubt, just seek out the page by navigating on your own in REDCap. Report issues if you can.
 }
-\concept{Links}
+\concept{Link Functions}

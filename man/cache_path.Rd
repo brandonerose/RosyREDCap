@@ -8,8 +8,6 @@ cache_path()
 }
 \value{
 The file path of your RosyREDCap cache
-
-your path
 }
 \description{
 Included for transparency and confirmation/testing. This is where the basic information about your projects is cached when you use the RosyREDCap package.
@@ -27,9 +25,9 @@ print(path)
 }
 }
 \seealso{
-Other cache: 
+Other Cache Functions: 
 \code{\link{cache_clear}()}
 }
-\concept{cache}
+\concept{Cache Functions}
 \keyword{cache,}
 \keyword{internal}

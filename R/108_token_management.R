@@ -9,11 +9,13 @@
 #' If a valid token already exists in the R session, the function notifies the user and asks whether they want to replace it.
 #' The user is guided to provide a new token through the console.
 #' The token is validated internally and stored using `Sys.setenv()`.
-#'
 #' @inheritParams setup_DB
 #' @param ask Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.
 #' @return Invisible. A message is printed to confirm the token is successfully set.
-#' @family Tokens
+#' @seealso
+#' For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
+#' @family Token Functions
+#' @keywords Token Functions
 #' @export
 set_REDCap_token <- function(DB,ask = T){
   DB  <- validate_DB(DB)
@@ -44,17 +46,16 @@ set_REDCap_token <- function(DB,ask = T){
 #' @title View the REDCap API Token Stored in the Session
 #' @description
 #' Displays the REDCap API token currently stored in the session as an environment variable. It's essentially a wrapper for Sys.getenv("YOUR_TOKEN_NAME"), but it also validates that the token is formatted like a REDCap token and provides messgaes if not valid.
-#'
 #' @details
 #' This function retrieves the REDCap API token associated with the specified `DB` object and displays it as a message.
 #' The token is not returned as an R object to maintain security.
 #' Use this function to confirm the token currently in use without exposing it unnecessarily.
-#'
 #' @inheritParams setup_DB
 #' @return Invisible. Prints a message displaying the stored token.
 #' @seealso
-#' \code{\link{Tokens}}
-#' @family Tokens
+#' For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
+#' @family Token Functions
+#' @keywords Token Functions
 #' @export
 view_REDCap_token <- function(DB){
   DB  <- validate_DB(DB)
@@ -63,16 +64,17 @@ view_REDCap_token <- function(DB){
 #' @title Test REDCap API Token linked to a DB Object
 #' @description
 #' Validates the REDCap API token stored in the `DB` object by attempting a connection to the REDCap server.
-#'
 #' @details
 #' This function tests whether the API token stored in the `DB` object is valid by making a request to the REDCap server.
 #' If the token is invalid, the function can optionally open the REDCap login page in a browser (`launch_browser`) and/or reset the token (`set_if_fails`) using the console.
-#'
 #' @inheritParams setup_DB
 #' @param set_if_fails Logical (TRUE/FALSE). If TRUE and test connection fails, asks user to paster token into consult using `set_REDCap_token(DB)` function. Default is `TRUE`.
 #' @param launch_browser Logical (TRUE/FALSE). If TRUE, launches the REDCap login page in the default web browser when validation fails. Default is `TRUE`.
 #' @return Logical. Returns `TRUE` if the API token is valid, otherwise `FALSE`.
-#' @family Tokens
+#' @seealso
+#' For more details, see the [pkgdown article on tokens](../articles/Tokens.html).
+#' @family Token Functions
+#' @keywords Token Functions
 #' @export
 test_REDCap_token <- function(DB, set_if_fails = T, launch_browser = T){
   token <- validate_REDCap_token(DB, silent = F)

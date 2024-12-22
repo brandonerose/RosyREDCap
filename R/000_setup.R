@@ -17,8 +17,7 @@
 #' path <- cache_path()
 #' print(path)
 #' }
-#' @return your path
-#' @family cache
+#' @family Cache Functions
 #' @keywords cache, internal
 #' @export
 cache_path <- function(){
@@ -26,23 +25,20 @@ cache_path <- function(){
   path <- normalizePath(cache$cache_path_get())
   return(path)
 }
-#' @return message confirmation
-#' @family Cache
-#' @export
-#'
 #' @title Clear your cached projects
 #' @description
 #' Included for transparency and confirmation/testing.
 #' @details
-#' This function checks the location of the cache established by [hoardr::hoard()].
+#' This function checks the location of the cache established by [hoardr::hoard()] and deletes it!
+#' This will not delete project data, just the packages "memory" of it.
 #' @return The file path of your RosyREDCap cache
 #' @examples
 #' \dontrun{
-#' path <- cache_path()
-#' print(path)
+#' #warning this will delete the packages cache of project locations
+#' cache_clear()
 #' }
 #' @return your path
-#' @family cache
+#' @family Cache Functions
 #' @keywords cache, internal
 #' @export
 cache_clear <-  function(){
