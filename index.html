@@ -99,18 +99,18 @@
 <div class="section level2">
 <h2 id="installing-rosyredcap">Installing RosyREDCap<a class="anchor" aria-label="anchor" href="#installing-rosyredcap"></a>
 </h2>
-<p><em>Note: The current version of <a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a> used when writing this book is 1.0.0.9030, and some of the features presented in this book might not be available if you are using an older version, or be a little bit different if you have a newer version. Feel free to browse the package NEWS.</em></p>
+<p><em>Note: The current version of <a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a> used when writing this book is 1.0.0.9032, and some of the features presented in this book might not be available if you are using an older version, or be a little bit different if you have a newer version. Feel free to browse the package NEWS.</em></p>
 <p>The stable release can be found on CRAN and installed with: <strong>PLACEHOLDER NOT SUBMITTED TO CRAN YET</strong></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#install.packages("RosyREDCap") #PLACEHOLDER NOT SUBMITTED TO CRAN YET</span></span></code></pre></div>
 <p>You can install the development version of RosyREDCap from GitHub by using the <a href="https://remotes.r-lib.org" class="external-link">remotes</a> package. Be sure to install <a href="https://remotes.r-lib.org" class="external-link">remotes</a> if you don’t have it already.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#install.packages("remotes)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"brandonerose/RosyREDCap"</span><span class="op">)</span></span></code></pre></div>
-<p>Note that the version used at the time of writing this book is 1.0.0.9030. You can check what version you have installed with the following.</p>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"brandonerose/RosyREDCap"</span>,build_vignettes <span class="op">=</span> <span class="cn">T</span>,build_manual <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<p>Note that the version used at the time of writing this book is 1.0.0.9032. You can check what version you have installed with the following.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RosyREDCap"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] '1.0.0.9030'</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] '1.0.0.9032'</span></span></code></pre></div>
 <p>If you have any issues, try downloading the most recent version of R at RStudtio and update all packages in RStudio. See <a href="https://www.thecodingdocs.com/r/getting-started" title="R Getting Started" class="external-link">thecodingdocs.com/r/getting-started</a>.</p>
 </div>
 <div class="section level2">
