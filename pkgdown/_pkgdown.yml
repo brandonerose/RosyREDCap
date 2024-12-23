@@ -99,6 +99,10 @@ articles:
     contents:
       - API
       - Tokens
+  - title: "Setup"
+    contents:
+      - project_cache
+      - DB_object
   - title: "File Management"
     contents:
       - Download

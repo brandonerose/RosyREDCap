@@ -1,0 +1,31 @@
+---
+title: "The DB Object"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The DB Object}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Setup
+
+```{r setup}
+library(RosyREDCap)
+```
+
+# Update From REDCap 
+
+# Explore Whats Inside
+
+# Generate Outputs
+
+# Advanced/Experimental
+
+# Other Links

@@ -1,0 +1,36 @@
+---
+title: "The Project Cache"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The Project Cache}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The RosyREDCap package benefits from storing/caching key information about your different projects. The two most important pieces of information is the `short_name` and `directory` where it's stored. This is enough information to be able to find where you have chosen to securely store your files, load what has already been collected, and then communicate with R to fetch any new updates. RosyREDCap's ability to store your projects in a standardized directory is what allows for powerful pipeline tasks.
+
+```{r, eval=F}
+library("RosyREDCap") # don't forget to load the package
+```
+
+# The Cache
+
+Using the `hoadr` package, R finds the standard location where R typically stores cahced package data. For example, on Mac the location might look like, "/Users/yourmacname/Library/Caches/R/RosyREDCap". Your exact path can be found with `cache_path()` At the time writing this article, the only thing that RosyREDCap stores in this cache is the projects data.frame, which can be loaded with `projects <- get_projects()`.
+
+```{r, eval=F}
+cache_path()
+```
+
+# Projects
+
+```{r, eval=F}
+projects <- get_projects()
+print.data.frame(projects)
+```

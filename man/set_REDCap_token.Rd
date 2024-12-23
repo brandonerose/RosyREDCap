@@ -14,7 +14,7 @@ Invisible. A message is printed to confirm the token is successfully set.
 }
 \description{
 Prompts the user to input a valid REDCap API token and stores it as an environment variable for the current R session.
-Instead of using this function you should consider setting your token within your REnviron file which can be edited with \code{\link{usethis::edit_r_environ()}}
+Instead of using this function you should consider setting your token within your REnviron file which can be edited with \code{\link{usethis::edit_r_environ}()}
 }
 \details{
 If a valid token already exists in the R session, the function notifies the user and asks whether they want to replace it.
