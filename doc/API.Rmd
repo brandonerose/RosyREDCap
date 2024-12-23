@@ -12,12 +12,20 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+wl <- function(x){length(which(x))}
+REDCap_API <- RosyREDCap:::REDCap_API
 ```
 
-The REDCap API is what truly sets REDCap apart.
+The REDCap API is what truly sets REDCap apart from other methods of data collection.
+Logging, user rights, secure storage, local hosting...
+
+# About the API Methods
+At the time of writting this article `r nrow(REDCap_API$methods)` API methods for redcap. 52 of them are accessible with a regular user token. 1 of them requires a super token. `r wl(REDCap_API$methods$action_type=="export")` methods are exports; `r wl(REDCap_API$methods$action_type=="import")` are imports; `r wl(REDCap_API$methods$action_type=="delete")` are deletes; and `r wl(!REDCap_API$methods$action_type%in%c("delete","import","export"))` are other.
+
+# RosyREDCap API Methods
+
+RosyREDCap intentionally avoids modifying the metadata and user DAGs using the API, choosing instead to focus primarily on exporting all relevant data and for more advanced users, giving access to uploads, files, and the file repository. The current RosyREDCap API coverage is 26 of the 52 available methods (50%). Crucially, these are all standardized and behind wrappers. The user can leverage the methods a handful of key functions. In short the package loads your last save (setup_DB and load_DB), checks the log for updates, and gets any changes for your local object (update_DB). If you have multiple projects you can then toggle between projects and can create custom outputs derived from the feed (run_RosyREDCap).
 
 ```{r}
-library(RosyREDCap)
-
-#REDCap_API$methods %>% knitr::kable()
+knitr::kable(REDCap_API$methods)
 ```

@@ -3,9 +3,9 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+wl <- function(x){length(which(x))}
+REDCap_API <- RosyREDCap:::REDCap_API
 
 ## -----------------------------------------------------------------------------
-library(RosyREDCap)
-
-#REDCap_API$methods %>% knitr::kable()
+knitr::kable(REDCap_API$methods)
 

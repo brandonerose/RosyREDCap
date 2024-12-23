@@ -1,5 +1,8 @@
 ---
 output: github_document
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -13,25 +16,37 @@ knitr::opts_chunk$set(
 )
 ```
 
-# RosyREDCap <img src="man/figures/logo.png" align="right" alt="" width="120" />
+# RosyREDCap <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
+
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
 <!-- badges: end -->
 
-Use your REDCap API tokens to create an updating R list object (DB) which can used downstream for analysis, data exports, shiny apps, and even data imports! We are still in development. At this time this package is **not suited for Multi-Arm projects or massive REDCap projects yet**.  More to come in future versions! 
+Use your REDCap API tokens to create an updating R list object (DB) which can used downstream for analysis, data exports, shiny apps, and data imports!
+Rosy with a capital 'R' evokes the R statistical programming language, the primary developer's last name, and the idea of making something more beautiful and user-friendly.
+This prefix combined with REDCap demonstrates the package's goal of enhancing the REDCap experience by creating data tools that are powerful and pleasant to use, combining the best of R with best REDCap.
 
-Minimum Requirements
-* R (and ideally RStudio) installed on your computer
-* Access to at least one REDCap projects (real or test) with API Token Privileges according to User Rights
-* Permission to export and analyze date for this project
+At this time this package is **not suited for Multi-Arm projects or massive REDCap projects yet**.
+More to come in future versions!
+The core functions are stable but future development and changes are possible.
+
+## Minimum Requirements
+
+-   R (and ideally RStudio) installed on your computer.
+-   Access to at least one REDCap project (real or test) with API Token Privileges according to User Rights.
+-   Permission to export and analyze date for this project.
 
 ![](man/figures/cover.jpg)
 
 # What is `{RosyREDCap}`?
 
-R and REDCap are both widely utilized in medicine, including basic science, clinical research, and clinal trials. Both have independent strengths, but together they can create powerful data pipelines. While several R packages exist for extracting data using the REDCap API, `{RosyREDCap}` stands out by offering comprehensive extraction of all metadata and data from any REDCap project into a standardized R list object, facilitating effortless downstream use in exports, imports, transformation, and applications. This is showcased in the exploratory data analysis shiny app included in the package.
-The three core aims of `{RosyREDCap}` are to... 
+R and REDCap are both widely utilized in medicine, including basic science, clinical research, and clinal trials.
+Both have independent strengths, but together they can create powerful data pipelines.
+While several R packages exist for extracting data using the REDCap API, `{RosyREDCap}` stands out by offering comprehensive extraction of all metadata and data from any REDCap project into a standardized R list object, facilitating effortless downstream use in exports, imports, transformation, and applications.
+This is showcased in the exploratory data analysis shiny app included in the package.
+The three core aims of `{RosyREDCap}` are to...
 
 1.  Maintain a local version of the database (DB) object by only calling recently updated records using the REDCap log.
 2.  Allow imports of non-coded versions of the dataset using R or Excel/CSV.
@@ -44,8 +59,7 @@ RosyREDCap can be used as a base data object and data quality tool for most REDC
 
 *Note: The current version of `{RosyREDCap}` used when writing this book is `r packageVersion("RosyREDCap")`, and some of the features presented in this book might not be available if you are using an older version, or be a little bit different if you have a newer version. Feel free to browse the package NEWS.*
 
-The stable release can be found on CRAN and installed with: 
-**PLACEHOLDER NOT SUBMITTED TO CRAN YET**
+The stable release can be found on CRAN and installed with: **PLACEHOLDER NOT SUBMITTED TO CRAN YET**
 
 ```{r, eval=FALSE}
 #install.packages("RosyREDCap") #PLACEHOLDER NOT SUBMITTED TO CRAN YET
@@ -100,11 +114,11 @@ run_RosyREDCap() # will work with multiple REDCap projects!
 
 ## Links
 
-* The RosyREDCap package is at [github.com/brandonerose/RosyREDCap](https://github.com/brandonerose/RosyREDCap "RosyREDCap R package"). See instructions above.
-* Donate if I helped you out and want more development (anything helps)! [account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
-* For more R coding visit [thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com") 
-* For correspondence/feedback/issues, please email [TheCodingDocs@gmail.com](mailto:TheCodingDocs@gmail.com)!
-* Follow us on Twitter [twitter.com/TheCodingDocs](https://twitter.com/TheCodingDocs "TheCodingDocs Twitter")
-* Follow me on Twitter [twitter.com/BRoseMDMPH](https://twitter.com/BRoseMDMPH "BRoseMDMPH Twitter")
+-   The RosyREDCap package is at [github.com/brandonerose/RosyREDCap](https://github.com/brandonerose/RosyREDCap "RosyREDCap R package"). See instructions above.
+-   Donate if I helped you out and want more development (anything helps)! [account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
+-   For more R coding visit [thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com")
+-   For correspondence/feedback/issues, please email [TheCodingDocs\@gmail.com](mailto:TheCodingDocs@gmail.com)!
+-   Follow us on Twitter [twitter.com/TheCodingDocs](https://twitter.com/TheCodingDocs "TheCodingDocs Twitter")
+-   Follow me on Twitter [twitter.com/BRoseMDMPH](https://twitter.com/BRoseMDMPH "BRoseMDMPH Twitter")
 
 [![TheCodingDocs.com](man/figures/TCD.png)](http://www.thecodingdocs.com)

@@ -1,24 +1,34 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# RosyREDCap <img src="man/figures/logo.png" align="right" alt="" width="120" />
+# RosyREDCap <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
 <!-- badges: end -->
 
 Use your REDCap API tokens to create an updating R list object (DB)
 which can used downstream for analysis, data exports, shiny apps, and
-even data imports! We are still in development. At this time this
-package is **not suited for Multi-Arm projects or massive REDCap
-projects yet**. More to come in future versions!
+data imports! Rosy with a capital ‘R’ evokes the R statistical
+programming language, the primary developer’s last name, and the idea of
+making something more beautiful and user-friendly. This prefix combined
+with REDCap demonstrates the package’s goal of enhancing the REDCap
+experience by creating data tools that are powerful and pleasant to use,
+combining the best of R with best REDCap.
 
-Minimum Requirements \* R (and ideally RStudio) installed on your
-computer \* Access to at least one REDCap projects (real or test) with
-API Token Privileges according to User Rights \* Permission to export
-and analyze date for this project
+At this time this package is **not suited for Multi-Arm projects or
+massive REDCap projects yet**. More to come in future versions! The core
+functions are stable but future development and changes are possible.
+
+## Minimum Requirements
+
+- R (and ideally RStudio) installed on your computer.
+- Access to at least one REDCap project (real or test) with API Token
+  Privileges according to User Rights.
+- Permission to export and analyze date for this project.
 
 ![](man/figures/cover.jpg)
 
