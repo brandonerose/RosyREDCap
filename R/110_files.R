@@ -4,7 +4,7 @@
 #' @param file file location on your PC
 #' @return messages for confirmation
 #' @export
-upload_file_to_redcap_fileRepository <- function(DB,file){
+upload_file_to_REDCap_file_repository <- function(DB,file){
   DB <- validate_DB(DB)
   file <- normalizePath(file)
   if(!file.exists(file)) stop("File does not exist! --> ",file)
@@ -25,7 +25,7 @@ upload_file_to_redcap_fileRepository <- function(DB,file){
 #' @title Checks REDCap for current files
 #' @return data.frame of files
 #' @export
-check_REDCap_files <- function(DB){
+get_REDCap_file_repository <- function(DB){
   DB <- validate_DB(DB)
   response <- httr::POST(
     url = DB$links$redcap_uri,
@@ -67,7 +67,7 @@ add_redcap_folder <- function(DB,name){
   httr::content(response)
 }
 #' @title Uploads a folder name to REDCap
-#' @param doc_id from the file list `check_REDCap_files(DB)`
+#' @param doc_id from the file list `get_REDCap_file_repository(DB)`
 #' @return messages for confirmation
 #' @export
 delete_redcap_file <- function(DB,doc_id){

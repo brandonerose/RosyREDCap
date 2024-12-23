@@ -7,7 +7,7 @@
 delete_redcap_file(DB, doc_id)
 }
 \arguments{
-\item{doc_id}{from the file list `check_REDCap_files(DB)`}
+\item{doc_id}{from the file list `get_REDCap_file_repository(DB)`}
 }
 \value{
 messages for confirmation

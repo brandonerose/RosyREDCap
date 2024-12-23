@@ -58,7 +58,7 @@ update_DB <- function(
     ){
       force <- T
     }else{
-      ilog <- check_REDCap_log(
+      ilog <- get_REDCap_log(
         DB,
         begin_time = as.character(strptime(DB$redcap$log$timestamp[1],format = "%Y-%m-%d %H:%M") - lubridate::days(1))
       ) %>% clean_redcap_log() %>% unique()
@@ -109,11 +109,11 @@ update_DB <- function(
       log <- DB$redcap$log # in case there is a log already
       if(entire_log){
         DB$redcap$log <- log %>% dplyr::bind_rows(
-          DB %>% check_REDCap_log(begin_time = DB$redcap$project_info$creation_time) %>% unique()
+          DB %>% get_REDCap_log(begin_time = DB$redcap$project_info$creation_time) %>% unique()
         )
       }else{
         DB$redcap$log <- log %>% dplyr::bind_rows(
-          DB %>% check_REDCap_log(last = day_of_log,units = "days") %>% unique()
+          DB %>% get_REDCap_log(last = day_of_log,units = "days") %>% unique()
         )
       }
       # DB <- annotate_fields(DB)

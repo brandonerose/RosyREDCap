@@ -23,96 +23,140 @@ template:
       card: summary_large_image
 
 reference:
-  - title: "Shiny Application ✨ (Very Basic)"
-    desc: "For very basic users simply launch the app and explore!"
+  - title: Shiny Application ✨
+    desc: For very basic users simply launch the app and explore!
     contents:
       - run_RosyREDCap
-  - title: "Other"
-    desc: "Detail Later"
+
+  - title: Core/Basic
+    desc: Represents the core functionality. Setup or Load your project. Update from REDCap. Use the outputs.
     contents:
-      - "%>%"
-      - add_ID_to_DF
-      - add_redcap_folder
-      - add_subset
-      - cache_clear
-      - cache_path
-      - check_REDCap_files
-      - check_REDCap_log
-      - clean_DB
-      - deidentify_DB
-      - delete_DB
-      - delete_file_from_REDCap
-      - delete_redcap_file
-      - delete_redcap_records
+      - get_projects
+      - setup_DB
+      - load_DB
+      - update_DB
+      - REDCap_diagram
       - drop_DB_to_dir
       - drop_REDCap_to_directory
-      - edit_redcap_while_viewing
+
+  - title: Components/Intermediate
+    desc: Expands on functionality and breaksdown core feautures into more customizable parts
+  - subtitle: Get from REDCap
+    contents:
+      - get_REDCap_method
+      - get_REDCap_version
+      - get_REDCap_metadata
+      - get_REDCap_data
+      - get_REDCap_structure
+      - get_REDCap_files
+      - get_REDCap_users
+      - get_REDCap_report
+      - get_REDCap_log
+      - get_REDCap_raw_data
+      - get_REDCap_files
+      - get_REDCap_file_repository
+      - delete_redcap_records
+      - show_REDCap_API_methods
+      - show_REDCap_API_methods_table
+  - subtitle: Upload to REDCap
+    contents:
+      - push_redcap_dictionary
+      - add_redcap_folder
+      - delete_redcap_file
+      - delete_redcap_records
+      - delete_file_from_REDCap
+      - upload_DB_to_REDCap
+      - upload_file_to_REDCap
+      - upload_file_to_REDCap_file_repository
+      - upload_form_to_REDCap
+      - upload_transform_to_DB
+  - subtitle: DB object Modifications
+    contents:
+      - clean_DB
+      - deidentify_DB
       - filter_DB
+      - show_DB
+      - add_default_forms_transformation
+      - transform_DB
+      - untransform_DB
+
+  - subtitle: Data Helpers
+    contents:
+      - add_ID_to_DF
       - find_upload_diff
+      - raw_to_labelled_form
+      - labelled_to_raw_form
+      - read_DB_from_dir
+      - read_from_REDCap_upload
+
+  - title: Experimental/Advanced
+    desc: Expands more on what is possible. May be niche, hard to document, and less stable
+    contents:
+      - add_field_transformation
+      - add_subset
+      - run_quality_checks
+      - edit_redcap_while_viewing
       - generate_horizontal_transform
       - generate_summary_from_subset_name
+      - rmarkdown_DB
+      - summarize_RosyREDCap
+
+  - title: Generic Helpers
+    desc: May not be needed by most but included for transparency and testing.
+    contents:
+      - "%>%"
+  - subtitle: Project Cache
+    contents:
+      - cache_clear
+      - cache_path
+      - project_health_check
+  - subtitle: Tokens
+    contents:
+      - set_REDCap_token
+      - view_REDCap_token
+      - test_REDCap_token
+  - subtitle: DB Object
+    contents:
       - get_dir
-      - get_projects
-      - get_raw_REDCap
-      - get_REDCap_files
-      - labelled_to_raw_form
+      - delete_DB
+      - save_DB
+  - subtitle: Launch/Nav
+    contents:
+      - nav_to_dir
       - link_API_playground
       - link_API_token
       - link_REDCap_home
       - link_REDCap_project
       - link_REDCap_record
-      - load_DB
-      - nav_to_dir
-      - project_health_check
-      - push_redcap_dictionary
-      - raw_to_labelled_form
-      - read_DB_from_dir
-      - read_from_REDCap_upload
-      - REDCap_diagram
-      - rmarkdown_DB
-      - run_quality_checks
-      - save_DB
-      - set_REDCap_token
-      - setup_DB
-      - show_DB
-      - summarize_RosyREDCap
-      - test_REDCap_token
-      - update_DB
-      - upload_DB_to_REDCap
-      - upload_file_to_REDCap
-      - upload_file_to_redcap_fileRepository
-      - upload_form_to_REDCap
-      - upload_transform_to_DB
-      - view_REDCap_token
 
 articles:
-  - title: "Feautures by R User Level"
+  - title: Feautures by R User Level
     navbar: ~
     contents:
       - Basic
       - Intermediate
       - Advanced
-  - title: "Using RosyREDCap"
+  - title: Using RosyREDCap
     contents:
       - REDCap
-  - title: "API and Tokens"
+  - title: API and Tokens
     contents:
       - API
       - Tokens
-  - title: "Setup"
+  - title: Setup
     contents:
       - project_cache
       - DB_object
-  - title: "File Management"
+  - title: File Management
     contents:
       - Download
       - Upload
-  - title: "Shiny Application"
+  - title: Shiny Application
     contents:
       - Shiny
     topics:
       - Shiny
-  - title: "Security"
+  - title: Security
     contents:
       - Security
 authors:

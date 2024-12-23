@@ -31,7 +31,10 @@ get_transformed_forms <- function(DB){
   }
   return(forms)
 }
-default_forms_transformation <- function(DB){
+#' @title add_default_forms_transformation
+#' @return DB object
+#' @export
+add_default_forms_transformation <- function(DB){
   forms_transformation <- get_original_forms(DB)
   if("repeating_via_events"%in% colnames(forms_transformation)){
     forms_transformation <- forms_transformation[order(forms_transformation$repeating_via_events),]
@@ -61,7 +64,7 @@ default_forms_transformation <- function(DB){
   forms_transformation$x_first[which(forms_transformation$repeating)] <- T
   return(forms_transformation)
 }
-default_fields_transformation <- function(DB){
+add_default_fields_transformation <- function(DB){
   # DB$transformation <- list(
   #   forms = NULL,
   #   fields = NULL,
@@ -122,7 +125,7 @@ default_fields_transformation <- function(DB){
   return(DB)
 }
 add_forms_transformation <- function(DB,forms_transformation,ask=T){
-  if(missing(forms_transformation))forms_transformation <- default_forms_transformation(DB)
+  if(missing(forms_transformation))forms_transformation <- add_default_forms_transformation(DB)
   forms_tranformation_cols <-c(
     "form_name",
     "form_label",
@@ -138,7 +141,7 @@ add_forms_transformation <- function(DB,forms_transformation,ask=T){
     forms_tranformation_cols <- forms_tranformation_cols %>% append("repeating_via_events")
   }
   if(any(!names(forms_transformation)%in%forms_tranformation_cols)){
-    bullet_in_console("Use `default_forms_transformation(DB)` is an example!")
+    bullet_in_console("Use `add_default_forms_transformation(DB)` is an example!")
     stop("forms_transformation needs the following colnames... ", forms_tranformation_cols %>% as_comma_string())
   }
   choice <- T
@@ -153,6 +156,55 @@ add_forms_transformation <- function(DB,forms_transformation,ask=T){
   DB$transformation$forms <- forms_transformation
   return(DB)
 }
+run_fields_transformation <- function(DB,ask = T){
+  the_names <- DB$transformation$fields$field_name
+  if(is.null(the_names)){
+    bullet_in_console("Nothing to run. Use `add_field_transformation()`",bullet_type = "x")
+    return(DB)
+  }
+  original_fields <- get_original_fields(DB)
+  the_names_existing <- the_names[which(the_names %in% original_fields$field_name)]
+  the_names_new <- the_names[which(!the_names %in% original_fields$field_name)]
+  fields_to_update <- NULL
+  for(field_name in c(the_names_existing,the_names_new)){
+    OUT <- NA
+    row_of_interest <- DB$transformation$fields[which(DB$transformation$fields$field_name==field_name),]
+    form_name <- row_of_interest$form_name
+    field_func <- DB$transformation$field_functions[[field_name]]
+    environment(field_func) <- environment()
+    if(is_something(field_func)){
+      if(form_name %in% names(DB$data)){
+        OUT <- field_func(DB = DB, field_name = field_name,form_name = form_name)
+      }
+    }
+    if(field_name %in% the_names_existing){
+      OLD <- DB$data[[form_name]][[field_name]]
+      if(!identical(OUT,OLD)){
+        ref_cols <- DB$metadata$form_key_cols[[form_name]]
+        new <- old <- DB$data[[form_name]][,c(ref_cols,field_name)]
+        new[[field_name]] <- OUT
+        DF <-  find_df_diff2(
+          new = new,
+          old = old,
+          ref_cols = ref_cols,
+          view_old = ask,
+          message_pass = paste0(form_name," - ",field_name,": ")
+        )
+        if(is_something(DF)){
+          DB$transformation$data_updates[[field_name]] <- DF
+        }
+      }
+    }
+    if (form_name %in% names(DB$data)) {
+      DB$data[[form_name]][[field_name]] <- OUT
+    }
+  }
+  bullet_in_console(paste0("Added new fields to ",DB$short_name," `DB$data`"),bullet_type = "v")
+  return(DB)
+}
+#' @title add_field_transformation
+#' @return DB object
+#' @export
 add_field_transformation <- function(
     DB,
     field_name,
@@ -298,6 +350,9 @@ run_fields_transformation <- function(DB,ask = T){
   bullet_in_console(paste0("Added new fields to ",DB$short_name," `DB$data`"),bullet_type = "v")
   return(DB)
 }
+#' @title transform_DB
+#' @return DB object
+#' @export
 transform_DB <- function(DB,ask = T){
   if(DB$internals$is_transformed){
     bullet_in_console("Already transformed... nothing to do!",bullet_type = "x")
@@ -432,6 +487,9 @@ transform_DB <- function(DB,ask = T){
   DB$internals$last_data_transformation <- Sys.time()
   return(DB)
 }
+#' @title untransform_DB
+#' @return DB object
+#' @export
 untransform_DB <- function(DB,allow_partial = F){
   if(!DB$internals$is_transformed){
     bullet_in_console("Already not transformed... nothing to do!",bullet_type = "x")

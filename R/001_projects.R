@@ -4,6 +4,8 @@
 #' about that project to the cache so the user has a running log of everywhere there project information is stored,
 #' which can be used to find, move, edit, delete that data.
 #' @return data.frame of projects from the cache
+#' @family Project Cache Functions
+#' @keywords Project Cache Functions
 #' @export
 get_projects <- function(){
   does_exist <- cache_projects_exists()
@@ -20,6 +22,8 @@ get_projects <- function(){
 #' @title project_health_check
 #' @description
 #' Check directory, DB object, and REDCap token. Optional update.
+#' @family Project Cache Functions
+#' @keywords Project Cache Functions
 #' @export
 project_health_check <- function(update = F){
   # projects <- projects_old <- get_projects()

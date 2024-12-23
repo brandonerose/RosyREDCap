@@ -176,7 +176,7 @@ generate_summary_save_list <- function(
     DB <- deidentify_DB(DB)
   }
   if(clean){
-    DB <- DB %>% clean_DB(drop_blanks = drop_blanks,other_drops = other_drops)
+    DB <- DB %>% clean_DB(drop_blanks = drop_blanks,other_drops = other_drops)# problematic because setting numeric would delete missing codes
   }
   to_save_list <- DB$data
   if(include_metadata){

@@ -9,3 +9,13 @@ project_health_check(update = F)
 \description{
 Check directory, DB object, and REDCap token. Optional update.
 }
+\seealso{
+Other Project Cache Functions: 
+\code{\link{cache_clear}()},
+\code{\link{cache_path}()},
+\code{\link{get_projects}()}
+}
+\concept{Project Cache Functions}
+\keyword{Cache}
+\keyword{Functions}
+\keyword{Project}

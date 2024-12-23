@@ -14,3 +14,13 @@ Everytime a setup or update is performed RosyREDCap stores the most basic inform
 about that project to the cache so the user has a running log of everywhere there project information is stored,
 which can be used to find, move, edit, delete that data.
 }
+\seealso{
+Other Project Cache Functions: 
+\code{\link{cache_clear}()},
+\code{\link{cache_path}()},
+\code{\link{project_health_check}()}
+}
+\concept{Project Cache Functions}
+\keyword{Cache}
+\keyword{Functions}
+\keyword{Project}

@@ -7,7 +7,7 @@
 #' @param drop_unknowns logical for dropping missing codes
 #' @return DB object cleaned for table or plots
 #' @export
-clean_DB <- function(DB,drop_blanks=F,other_drops=NULL){
+clean_DB <- function(DB,drop_blanks=F,other_drops=NULL){ # problematic because setting numeric would delete missing codes
   # DB <-  DB %>% annotate_fields(skim = F)
   if(!is_something(DB))return(DB)
   if(!is_something(DB$data))return(DB)
@@ -166,7 +166,7 @@ annotate_choices <- function(DB,summarize_data = T){
 fields_with_no_data <- function(DB){
   DB$metadata$fields$field_name[which(is.na(DB$metadata$fields$complete_rate)&!DB$metadata$fields$field_type%in%c("checkbox","descriptive"))]
 }
-reverse_clean_DB <- function(DB){
+reverse_clean_DB <- function(DB){ # problematic because setting numeric would delete missing codes
   DB$data <- all_character_cols_list(DB$data)
   DB$data_update <-DB$data_update %>% all_character_cols_list()
   DB$internals$is_clean <- F

@@ -120,7 +120,7 @@ save_DB <- function(DB){
   if( ! is.list(DB)) stop("DB must be a list")
   #function
   DB <- DB %>% validate_DB()
-  DB <- reverse_clean_DB(DB)
+  # DB <- reverse_clean_DB(DB) # # problematic because setting numeric would delete missing codes
   DB %>% saveRDS(file=file.path(DB$dir_path,"R_objects",paste0(DB$short_name,".rdata")))
   add_project(DB)
   # save_xls_wrapper(DB)

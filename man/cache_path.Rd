@@ -28,8 +28,12 @@ print(path)
 \seealso{
 For more details, see \code{\link[hoardr]{hoard}}.
 
-Other Cache Functions: 
-\code{\link{cache_clear}()}
+Other Project Cache Functions: 
+\code{\link{cache_clear}()},
+\code{\link{get_projects}()},
+\code{\link{project_health_check}()}
 }
-\concept{Cache Functions}
-\keyword{cache}
+\concept{Project Cache Functions}
+\keyword{Cache}
+\keyword{Functions}
+\keyword{Project}

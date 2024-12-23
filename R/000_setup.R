@@ -20,8 +20,8 @@
 #' path <- cache_path()
 #' print(path)
 #' }
-#' @family Cache Functions
-#' @keywords cache
+#' @family Project Cache Functions
+#' @keywords Project Cache Functions
 #' @export
 cache_path <- function(){
   cache <- get_cache()
@@ -42,8 +42,8 @@ cache_path <- function(){
 #' cache_clear()
 #' }
 #' @return your path
-#' @family Cache Functions
-#' @keywords cache
+#' @family Project Cache Functions
+#' @keywords Project Cache Functions
 #' @export
 cache_clear <-  function(){
   cache <- get_cache()

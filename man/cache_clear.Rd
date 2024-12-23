@@ -26,8 +26,12 @@ cache_clear()
 }
 }
 \seealso{
-Other Cache Functions: 
-\code{\link{cache_path}()}
+Other Project Cache Functions: 
+\code{\link{cache_path}()},
+\code{\link{get_projects}()},
+\code{\link{project_health_check}()}
 }
-\concept{Cache Functions}
-\keyword{cache}
+\concept{Project Cache Functions}
+\keyword{Cache}
+\keyword{Functions}
+\keyword{Project}
