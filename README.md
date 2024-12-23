@@ -15,6 +15,11 @@ even data imports! We are still in development. At this time this
 package is **not suited for Multi-Arm projects or massive REDCap
 projects yet**. More to come in future versions!
 
+Minimum Requirements \* R (and ideally RStudio) installed on your
+computer \* Access to at least one REDCap projects (real or test) with
+API Token Privileges according to User Rights \* Permission to export
+and analyze date for this project
+
 ![](man/figures/cover.jpg)
 
 # What is `{RosyREDCap}`?
@@ -46,7 +51,7 @@ collection, monitoring, transformation, and analysis.
 ## Installing RosyREDCap
 
 *Note: The current version of `{RosyREDCap}` used when writing this book
-is 1.0.0.9032, and some of the features presented in this book might not
+is 1.0.0.9034, and some of the features presented in this book might not
 be available if you are using an older version, or be a little bit
 different if you have a newer version. Feel free to browse the package
 NEWS.*
@@ -68,17 +73,46 @@ remotes::install_github("brandonerose/RosyREDCap",build_vignettes = T,build_manu
 ```
 
 Note that the version used at the time of writing this book is
-1.0.0.9032. You can check what version you have installed with the
+1.0.0.9034. You can check what version you have installed with the
 following.
 
 ``` r
 packageVersion("RosyREDCap")
-#> [1] '1.0.0.9032'
+#> [1] '1.0.0.9034'
 ```
 
 If you have any issues, try downloading the most recent version of R at
 RStudtio and update all packages in RStudio. See
 [thecodingdocs.com/r/getting-started](https://www.thecodingdocs.com/r/getting-started "R Getting Started").
+
+## Getting Started
+
+``` r
+library("RosyREDCap")
+
+projects <- get_projects() # get list of cached projects
+print.data.frame(projects) # show your previously saved projects
+
+your_project_path <- getwd()
+print(your_project_path) # confirm this is where you want files saved
+
+DB <- setup_DB(
+  short_name = "TEST",
+  redcap_base_link = "https://redcap.yourinstitution.edu/", # change to your institutions link (stop at ".edu/")
+  dir_path = getwd() # or change to your intended file path
+) #defaults will autocheck for valid token or ask you.
+
+#if you had to set a token above you might need to select the code below again for it to run
+DB <- update_DB(DB) # update from redcap by checking log and using saved object 
+
+DB <- DB %>% deidentify_DB(drop_free_text = F) %>% drop_REDCap_to_directory() # will save DEIDENTIFIED data (assuming this is set up properly on REDCap)
+#use drop_free_text = T to be even safer
+
+# DB <- drop_REDCap_to_directory(DB) # will save IDENTIFIED data (assuming this is set up properly on REDCap)
+
+#run shiny app!
+run_RosyREDCap() # will work with multiple REDCap projects!
+```
 
 ## Links
 

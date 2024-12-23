@@ -7,11 +7,13 @@
 #' @description
 #' Included for transparency and confirmation/testing. This is where the basic information about your projects is cached when you use the RosyREDCap package.
 #' @details
-#' This function checks the location of the cache established by \code{\link{hoardr::hoard}()}.
+#' This function checks the location of the cache established by \code{\link[hoardr]{hoard}}.
 #' \emph{No project data is stored here. Tokens are not stored here either.}
 #' Key information stored here is `short_name` (primary key for RosyREDCap projects) and other details about project information.
 #' See \code{\link{RosyREDCap:::blank_project_cols}()}
 #' @return The file path of your RosyREDCap cache
+#' @seealso
+#' For more details, see \code{\link[hoardr]{hoard}}.
 #' @examples
 #' \dontrun{
 #' path <- cache_path()
@@ -29,7 +31,7 @@ cache_path <- function(){
 #' @description
 #' Included for transparency and confirmation/testing.
 #' @details
-#' This function checks the location of the cache established by \code{\link{hoardr::hoard}()} and deletes it!
+#' This function checks the location of the cache established by \code{\link[hoardr]{hoard}} and deletes it!
 #' This will not delete project data, just the packages "memory" of it.
 #' @return The file path of your RosyREDCap cache
 #' @examples

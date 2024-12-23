@@ -23,9 +23,8 @@ It is strongly discouraged to include API tokens directly within R scripts.
 The token is validated internally and stored using `Sys.setenv()`.
 }
 \seealso{
-For more details, see the `vignette("Tokens")`.
 For more details, see the \code{\link{vignette("Tokens")}}.
-For the function to work you need to have a valid DB object from \code{\link{setup_DB()}}.
+For the function to work you need to have a valid DB object from \code{\link{setup_DB}()}.
 See our \href{https://brandonerose.github.io/RosyREDCap/articles/Tokens.html}{REDCap Tokens Article}
 
 Other Token Functions: 

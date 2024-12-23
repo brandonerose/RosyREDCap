@@ -13,9 +13,8 @@
 #' @param ask Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.
 #' @return Invisible. A message is printed to confirm the token is successfully set.
 #' @seealso
-#' For more details, see the `vignette("Tokens")`.
 #' For more details, see the \code{\link{vignette("Tokens")}}.
-#' For the function to work you need to have a valid DB object from \code{\link{setup_DB()}}.
+#' For the function to work you need to have a valid DB object from \code{\link{setup_DB}()}.
 #' See our \href{https://brandonerose.github.io/RosyREDCap/articles/Tokens.html}{REDCap Tokens Article}
 #' @family Token Functions
 #' @keywords Token Functions
