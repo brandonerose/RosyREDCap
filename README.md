@@ -46,7 +46,7 @@ collection, monitoring, transformation, and analysis.
 ## Installing RosyREDCap
 
 *Note: The current version of `{RosyREDCap}` used when writing this book
-is 1.0.0.9030, and some of the features presented in this book might not
+is 1.0.0.9032, and some of the features presented in this book might not
 be available if you are using an older version, or be a little bit
 different if you have a newer version. Feel free to browse the package
 NEWS.*
@@ -64,16 +64,16 @@ don’t have it already.
 
 ``` r
 #install.packages("remotes)
-remotes::install_github("brandonerose/RosyREDCap")
+remotes::install_github("brandonerose/RosyREDCap",build_vignettes = T,build_manual = T)
 ```
 
 Note that the version used at the time of writing this book is
-1.0.0.9030. You can check what version you have installed with the
+1.0.0.9032. You can check what version you have installed with the
 following.
 
 ``` r
 packageVersion("RosyREDCap")
-#> [1] '1.0.0.9030'
+#> [1] '1.0.0.9032'
 ```
 
 If you have any issues, try downloading the most recent version of R at

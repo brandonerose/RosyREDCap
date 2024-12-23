@@ -12,3 +12,5 @@
 .quarto
 /docs/
 /Meta/
+inst/doc
+/doc/

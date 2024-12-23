@@ -51,7 +51,7 @@ Be sure to install `{remotes}` if you don't have it already.
 
 ```{r, eval=FALSE}
 #install.packages("remotes)
-remotes::install_github("brandonerose/RosyREDCap")
+remotes::install_github("brandonerose/RosyREDCap",build_vignettes = T,build_manual = T)
 ```
 
 Note that the version used at the time of writing this book is `r packageVersion("RosyREDCap")`.
