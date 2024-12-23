@@ -5,15 +5,17 @@ articles:
   Advanced: Advanced.html
   API: API.html
   Basic: Basic.html
+  DB_object: DB_object.html
   Download: Download.html
   Intermediate: Intermediate.html
+  project_cache: project_cache.html
   REDCap: REDCap.html
   RosyREDCap: RosyREDCap.html
   Security: Security.html
   Shiny: Shiny.html
   Tokens: Tokens.html
   Upload: Upload.html
-last_built: 2024-12-23T02:12Z
+last_built: 2024-12-23T02:41Z
 urls:
   reference: https://brandonerose.github.io/RosyREDCap/reference
   article: https://brandonerose.github.io/RosyREDCap/articles
