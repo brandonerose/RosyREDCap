@@ -4,7 +4,6 @@
 dev_history.R
 ^dev$
 ^pkgdown$
-^docs$
 $run_dev.*
 ^LICENSE\.md$
 ^README\.Rmd$

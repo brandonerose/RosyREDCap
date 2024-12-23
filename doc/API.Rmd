@@ -1,0 +1,23 @@
+---
+title: "Using API Tokens"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using API Tokens}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The REDCap API is what truly sets REDCap apart.
+
+```{r}
+library(RosyREDCap)
+
+#REDCap_API$methods %>% knitr::kable()
+```

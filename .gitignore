@@ -11,6 +11,4 @@
 .DS_Store
 .quarto
 /docs/
-inst/doc
 /Meta/
-/doc/
