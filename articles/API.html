@@ -83,13 +83,630 @@
 
     
     
-<p>The REDCap API is what truly sets REDCap apart.</p>
+<p>The REDCap API is what truly sets REDCap apart from other methods of
+data collection. Logging, user rights, secure storage, local
+hosting…</p>
+<div class="section level2">
+<h2 id="about-the-api-methods">About the API Methods<a class="anchor" aria-label="anchor" href="#about-the-api-methods"></a>
+</h2>
+<p>At the time of writting this article 53 API methods for redcap. 52 of
+them are accessible with a regular user token. 1 of them requires a
+super token. 27 methods are exports; 14 are imports; 8 are deletes; and
+4 are other.</p>
+</div>
+<div class="section level2">
+<h2 id="rosyredcap-api-methods">RosyREDCap API Methods<a class="anchor" aria-label="anchor" href="#rosyredcap-api-methods"></a>
+</h2>
+<p>RosyREDCap intentionally avoids modifying the metadata and user DAGs
+using the API, choosing instead to focus primarily on exporting all
+relevant data and for more advanced users, giving access to uploads,
+files, and the file repository. The current RosyREDCap API coverage is
+26 of the 52 available methods (50%). Crucially, these are all
+standardized and behind wrappers. The user can leverage the methods a
+handful of key functions. In short the package loads your last save
+(setup_DB and load_DB), checks the log for updates, and gets any changes
+for your local object (update_DB). If you have multiple projects you can
+then toggle between projects and can create custom outputs derived from
+the feed (run_RosyREDCap).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/brandonerose/RosyREDCap" class="external-link">RosyREDCap</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> RosyREDCap Loaded</span></span>
-<span></span>
-<span><span class="co">#REDCap_API$methods %&gt;% knitr::kable()</span></span></code></pre></div>
-  </main>
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">REDCap_API</span><span class="op">$</span><span class="va">methods</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="0%">
+<col width="2%">
+<col width="0%">
+<col width="0%">
+<col width="0%">
+<col width="26%">
+<col width="0%">
+<col width="2%">
+<col width="0%">
+<col width="38%">
+<col width="11%">
+<col width="3%">
+<col width="10%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">method_short_name</th>
+<th align="left">method_name</th>
+<th align="left">action_type</th>
+<th align="left">content</th>
+<th align="left">action</th>
+<th align="left">description</th>
+<th align="left">url</th>
+<th align="left">help_url</th>
+<th align="left">request_method</th>
+<th align="left">returns</th>
+<th align="left">params</th>
+<th align="left">params_req</th>
+<th align="left">params_opt</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">create_folder_file_repo</td>
+<td align="left">Create a New Folder in the File Repository</td>
+<td align="left">create</td>
+<td align="left">fileRepository</td>
+<td align="left">createFolder</td>
+<td align="left">This method allows you to create a new folder in the
+File Repository. You may optionally provide the folder_id of the parent
+folder under which you wish this folder to be created.</td>
+<td align="left"><a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a></td>
+<td align="left"><a href="https://redcap.miami.edu/api/help/?content=create_folder_file_repo" class="external-link uri">https://redcap.miami.edu/api/help/?content=create_folder_file_repo</a></td>
+<td align="left">POST</td>
+<td align="left">The folder_id of the new folder created in the
+specified format. For example, if using format=json, the output would
+look similar to this: [{folder_id:45}].</td>
+<td align="left">token | content | action | name | format | folder_id |
+dag_id | role_id | returnFormat</td>
+<td align="left">token | content | action | name | format</td>
+<td align="left">folder_id | dag_id | role_id | returnFormat</td>
+</tr>
+<tr class="even">
+<td align="left">del_arms</td>
+<td align="left">Delete Arms</td>
+<td align="left">delete</td>
+<td align="left">arm</td>
+<td align="left">delete</td>
+<td align="left">This method allows you to delete Arms from a project.
+Notice: Because of this method’s destructive nature, it is only
+available for use for projects in Development status. Additionally,
+please be aware that deleting an arm also automatically deletes all
+events that belong to that arm, and will also automatically delete any
+records/data that have been collected under that arm (this is
+non-reversible data loss).</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<p>NOTE: This only works for longitudinal projects. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=del_arms" class="external-link uri">https://redcap.miami.edu/api/help/?content=del_arms</a>
+|POST |Number of Arms deleted |token | content | action | arms |token |
+content | action | arms | | |del_dags |Delete DAGs |delete |dag |delete
+|This method allows you to delete DAGs from a project. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=del_dags" class="external-link uri">https://redcap.miami.edu/api/help/?content=del_dags</a>
+|POST |Number of DAGs deleted |token | content | action | dags |token |
+content | action | dags | | |del_events |Delete Events |delete |event
+|delete |This method allows you to delete Events from a project. Notice:
+Because of this method’s destructive nature, it is only available for
+use for projects in Development status. Additionally, please be aware
+that deleting an event will automatically delete any records/data that
+have been collected under that event (this is non-reversible data
+loss).</p>
+<p>NOTE: This only works for longitudinal projects. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=del_events" class="external-link uri">https://redcap.miami.edu/api/help/?content=del_events</a>
+|POST |Number of Events deleted |token | content | action | events
+|token | content | action | events | | |del_file_repo |Delete a File
+from the File Repository |delete |fileRepository |delete |This method
+allows you to delete a single file in a project’s File Repository. Once
+deleted, the file will remain in the Recycle Bin folder for up to 30
+days. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=del_file_repo" class="external-link uri">https://redcap.miami.edu/api/help/?content=del_file_repo</a>
+|POST |NA |token | content | action | doc_id | returnFormat |token |
+content | action | doc_id |returnFormat | |del_file |Delete a File
+|delete |file |delete |This method allows you to remove a document that
+has been attached to an individual record for a File Upload field.
+Please note that this method may also be used for Signature fields
+(i.e. File Upload fields with ‘signature’ validation type). |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=del_file" class="external-link uri">https://redcap.miami.edu/api/help/?content=del_file</a>
+|POST |NA |token | content | action | record | field | event |
+repeat_instance | returnFormat |token | content | action | record |
+field | event | repeat_instance |returnFormat | |del_records |Delete
+Records |delete |record |delete |This method allows you to delete one or
+more records from a project in a single API request, and also optionally
+allows you to delete parts of a record, such as a single instrument’s
+data for one or more records or a single event’s data for one or more
+records. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=del_records" class="external-link uri">https://redcap.miami.edu/api/help/?content=del_records</a>
+|POST |the number of records deleted or (if instrument, event, and/or
+instance are provided) the number of items deleted over the total
+records specified. |token | content | action | records | arm |
+instrument | event | repeat_instance |token | content | action | records
+|arm | instrument | event | repeat_instance | |del_user_roles |Delete
+User Roles |delete |userRole |delete |This method allows you to delete
+User Roles from a project. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=del_user_roles" class="external-link uri">https://redcap.miami.edu/api/help/?content=del_user_roles</a>
+|POST |Number of User Roles deleted |token | content | action | roles
+|token | content | action | roles | | |del_users |Delete Users |delete
+|user |delete |This method allows you to delete Users from a project.
+|<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=del_users" class="external-link uri">https://redcap.miami.edu/api/help/?content=del_users</a>
+|POST |Number of Users deleted |token | content | action | users |token
+| content | action | users | | |exp_arms |Export Arms |export |arm |NA
+|This method allows you to export the Arms for a project</p>
+<p>NOTE: This only works for longitudinal projects. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_arms" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_arms</a>
+|POST |Arms for the project in the format specified |token | content |
+format | arms | returnFormat |token | content | format |arms |
+returnFormat | |exp_dags |Export DAGs |export |dag |NA |This method
+allows you to export the Data Access Groups for a project |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_dags" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_dags</a>
+|POST |DAGs for the project in the format specified |token | content |
+format | returnFormat |token | content | format |returnFormat |
+|exp_events |Export Events |export |event |NA |This method allows you to
+export the events for a project</p>
+<p>NOTE: This only works for longitudinal projects. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_events" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_events</a>
+|POST |Events for the project in the format specified |token | content |
+format | arms | returnFormat |token | content | format |arms |
+returnFormat | |exp_field_names |Export List of Export Field Names
+(i.e. variables used during exports and imports) |export
+|exportFieldNames |NA |This method returns a list of the
+export/import-specific version of field names for all fields (or for one
+field, if desired) in a project. This is mostly used for checkbox fields
+because during data exports and data imports, checkbox fields have a
+different variable name used than the exact one defined for them in the
+Online Designer and Data Dictionary, in which <em>each checkbox
+option</em> gets represented as its own export field name in the
+following format: field_name + triple underscore + converted coded value
+for the choice. For non-checkbox fields, the export field name will be
+exactly the same as the original field name. Note: The following field
+types will be automatically removed from the list returned by this
+method since they cannot be utilized during the data import process:
+‘calc’, ‘file’, and ‘descriptive’. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_field_names" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_field_names</a>
+|POST |Returns a list of the export/import-specific version of field
+names for all fields (or for one field, if desired) in a project in the
+format specified and ordered by their field order . The list that is
+returned will contain the three following attributes for each
+field/choice: ‘original_field_name’, ‘choice_value’, and
+‘export_field_name’. The choice_value attribute represents the raw coded
+value for a checkbox choice. For non-checkbox fields, the choice_value
+attribute will always be blank/empty. The export_field_name attribute
+represents the export/import-specific version of that field name. |token
+| content | format | field | returnFormat |token | content | format
+|field | returnFormat | |exp_file_repo |Export a File from the File
+Repository |export |fileRepository |export |This method allows you to
+download a single file stored in the File Repository by providing the
+file’s doc_id number. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_file_repo" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_file_repo</a>
+|POST |the contents of the file |token | content | action | doc_id |
+returnFormat |token | content | action | doc_id |returnFormat |
+|exp_file |Export a File |export |file |export |This method allows you
+to download a document that has been attached to an individual record
+for a File Upload field. Please note that this method may also be used
+for Signature fields (i.e. File Upload fields with ‘signature’
+validation type). |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_file" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_file</a>
+|POST |the contents of the fileHow to obtain the filename of the file:
+The MIME type of the file, along with the name of the file and its
+extension, can be found in the header of the returned response. Thus in
+order to determine these attributes of the file being exported, you will
+need to parse the response header. Example: content-type =
+application/vnd.openxmlformats-officedocument.wordprocessingml.document;
+name=‘FILE_NAME.docx’ |token | content | action | record | field | event
+| repeat_instance | returnFormat |token | content | action | record |
+field | event | repeat_instance |returnFormat | |exp_inst_event_maps
+|Export Instrument-Event Mappings |export |formEventMapping |NA |This
+method allows you to export the instrument-event mappings for a project
+(i.e., how the data collection instruments are designated for certain
+events in a longitudinal project).</p>
+<p>NOTE: This only works for longitudinal projects. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_inst_event_maps" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_inst_event_maps</a>
+|POST |Instrument-event mappings for the project in the format specified
+|token | content | format | arms | returnFormat |token | content |
+format |arms | returnFormat | |exp_instr_pdf |Export PDF file of Data
+Collection Instruments (either as blank or with data) |export |pdf |NA
+|This method allows you to export a PDF file for any of the following:
+1) a single data collection instrument (blank), 2) all instruments
+(blank), 3) a single instrument (with data from a single record), 4) all
+instruments (with data from a single record), or 5) all instruments
+(with data from ALL records). This is the exact same PDF file that is
+downloadable from a project’s data entry form in the web interface, and
+additionally, the user’s privileges with regard to data exports will be
+applied here just like they are when downloading the PDF in the web
+interface (e.g., if they have de-identified data export rights, then it
+will remove data from certain fields in the PDF). If the user has ‘No
+Access’ data export rights, they will not be able to use this method,
+and an error will be returned. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_instr_pdf" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_instr_pdf</a>
+|POST |A PDF file containing one or all data collection instruments from
+the project, in which the instruments will be blank (no data), contain
+data from a single record, or contain data from all records in the
+project, depending on the parameters passed in the API request. |token |
+content | record | event | instrument | repeat_instance | allRecords |
+compactDisplay | returnFormat |token | content |record | event |
+instrument | repeat_instance | allRecords | compactDisplay |
+returnFormat | |exp_instr |Export Instruments (Data Entry Forms) |export
+|instrument |NA |This method allows you to export a list of the data
+collection instruments for a project. This includes their unique
+instrument name as seen in the second column of the Data Dictionary, as
+well as each instrument’s corresponding instrument label, which is seen
+on a project’s left-hand menu when entering data. The instruments will
+be ordered according to their order in the project. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_instr" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_instr</a>
+|POST |Instruments for the project in the format specified and will be
+ordered according to their order in the project. |token | content |
+format |token | content | format | | |exp_list_file_repo |Export a List
+of Files/Folders from the File Repository |export |fileRepository |list
+|This method allows you to export a list of all files and sub-folders
+from a specific folder in a project’s File Repository. Each sub-folder
+will have an associated folder_id number, and each file will have an
+associated doc_id number. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_list_file_repo" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_list_file_repo</a>
+|POST |The list of all files and folders within a given sub-folder in
+the File Repository in the format specified. |token | content | action |
+format | folder_id | returnFormat |token | content | action | format
+|folder_id | returnFormat | |exp_logging |Export Logging |export |log
+|NA |This method allows you to export the logging (audit trail) of all
+changes made to this project, including data exports, data changes,
+project metadata changes, modification of user rights, etc. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_logging" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_logging</a>
+|POST |List of all changes made to this project, including data exports,
+data changes, and the creation or deletion of users.KEY:Filter by event
+(logtype): export = Data export, manage = Manage/Design, user = User or
+role created-updated-deleted, record = Record created-updated-deleted,
+record_add = Record created (only), record_edit = Record updated (only),
+record_delete = Record deleted (only), lock_record = Record locking
+&amp; e-signatures, page_view = Page Views |token | content | format |
+returnFormat | logtype | user | record | dag | beginTime | endTime
+|token | content | format |returnFormat | logtype | user | record | dag
+| beginTime | endTime | |exp_metadata |Export Metadata (Data Dictionary)
+|export |metadata |NA |This method allows you to export the metadata for
+a project |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_metadata" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_metadata</a>
+|POST |Metadata from the project (i.e. Data Dictionary values) in the
+format specified ordered by the field order |token | content | format |
+fields | forms | returnFormat |token | content | format |fields | forms
+| returnFormat | |exp_next_id |Generate Next Record Name |export
+|generateNextRecordName |NA |To be used by projects with record
+auto-numbering enabled, this method exports the next potential record ID
+for a project. It generates the next record name by determining the
+current maximum numerical record ID and then incrementing it by one. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_next_id" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_next_id</a>
+|POST |The maximum integer record ID + 1. |token | content |token |
+content | | |exp_proj_xml |Export Entire Project as REDCap XML File
+(containing metadata &amp; data) |export |project_xml |NA |The entire
+project (all records, events, arms, instruments, fields, and project
+attributes) can be downloaded as a single XML file, which is in CDISC
+ODM format (ODM version 1.3.1). This XML file can be used to create a
+clone of the project (including its data, optionally) on this REDCap
+server or on another REDCap server (it can be uploaded on the Create New
+Project page). Because it is in CDISC ODM format, it can also be used to
+import the project into another ODM-compatible system. NOTE: All the
+option paramters listed below ONLY apply to data returned if the
+‘returnMetadataOnly’ parameter is set to FALSE (default). For this API
+method, ALL metadata (all fields, forms, events, and arms) will always
+be exported. Only the data returned can be filtered using the optional
+parameters. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_proj_xml" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_proj_xml</a>
+|POST |The entire REDCap project’s metadata (and data, if specified)
+will be returned in CDISC ODM format as a single XML string. |token |
+content | returnMetadataOnly | records | fields | events | returnFormat
+| exportSurveyFields | exportDataAccessGroups | filterLogic |
+exportFiles |token | content |returnMetadataOnly | records | fields |
+events | returnFormat | exportSurveyFields | exportDataAccessGroups |
+filterLogic | exportFiles | |exp_proj |Export Project Information
+|export |project |NA |This method allows you to export some of the basic
+attributes of a given REDCap project, such as the project’s title, if it
+is longitudinal, if surveys are enabled, the time the project was
+created and moved to production, etc. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_proj" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_proj</a>
+|POST |Attributes for the project in the format specified. For any
+values that are boolean, they will be represented as either a ‘0’
+(no/false) or ‘1’ (yes/true). Also, all date/time values will be
+returned in Y-M-D H:M:S format. The following attributes will be
+returned:project_id, project_title, creation_time, production_time,
+in_production, project_language, purpose, purpose_other, project_notes,
+custom_record_label, secondary_unique_field, is_longitudinal,
+has_repeating_instruments_or_events, surveys_enabled,
+scheduling_enabled, record_autonumbering_enabled, randomization_enabled,
+ddp_enabled, project_irb_number, project_grant_number,
+project_pi_firstname, project_pi_lastname, display_today_now_button,
+missing_data_codes, external_modules,
+bypass_branching_erase_field_prompt |token | content | format |
+returnFormat |token | content | format |returnFormat | |exp_rc_v |Export
+REDCap Version |export |version |NA |This method returns the current
+REDCap version number as plain text (e.g., 4.13.18, 5.12.2, 6.0.0). |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_rc_v" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_rc_v</a>
+|POST |the current REDCap version number (three numbers delimited with
+two periods) as plain text - e.g., 4.13.18, 5.12.2, 6.0.0 |token |
+content | format |token | content | format | | |exp_records |Export
+Records |export |record |NA |This method allows you to export a set of
+records for a project. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_records" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_records</a>
+|POST |Data from the project in the format and type specified ordered by
+the record (primary key of project) and then by event id EAV XML:
+&lt;?xml version="1.0" encoding="UTF-8" ?&gt; &lt;records&gt;
+&lt;item&gt; &lt;record&gt;&lt;/record&gt;
+&lt;field_name&gt;&lt;/field_name&gt; &lt;value&gt;&lt;/value&gt;
+&lt;redcap_event_name&gt;&lt;/redcap_event_name&gt; &lt;/item&gt;
+&lt;/records&gt; Flat XML: &lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;records&gt; &lt;item&gt; each data point as an element …
+&lt;/item&gt; &lt;/records&gt; |token | content | format | records |
+fields | forms | events | rawOrLabel | rawOrLabelHeaders |
+exportCheckboxLabel | returnFormat | exportSurveyFields |
+exportDataAccessGroups | filterLogic | dateRangeBegin | dateRangeEnd |
+csvDelimiter | decimalCharacter | exportBlankForGrayFormStatus |token |
+content | format |records | fields | forms | events | rawOrLabel |
+rawOrLabelHeaders | exportCheckboxLabel | returnFormat |
+exportSurveyFields | exportDataAccessGroups | filterLogic |
+dateRangeBegin | dateRangeEnd | csvDelimiter | decimalCharacter |
+exportBlankForGrayFormStatus | |exp_repeating_forms_events |Export
+Repeating Instruments and Events |export |repeatingFormsEvents |NA |This
+method allows you to export a list of the repeated instruments and
+repeating events for a project. This includes their unique instrument
+name as seen in the second column of the Data Dictionary, as well as
+each repeating instrument’s corresponding custom repeating instrument
+label. For longitudinal projects, the unique event name is also returned
+for each repeating instrument. Additionally, repeating events are
+returned as separate items, in which the instrument name will be
+blank/null to indicate that it is a repeating event (rather than a
+repeating instrument). |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_repeating_forms_events" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_repeating_forms_events</a>
+|POST |Repeated instruments and events for the project in the format
+specified and will be ordered according to their order in the project.
+|token | content | format |token | content | format | | |exp_reports
+|Export Reports |export |report |NA |This method allows you to export
+the data set of a report created on a project’s ‘Data Exports, Reports,
+and Stats’ page. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_reports" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_reports</a>
+|POST |Data from the project in the format and type specified ordered by
+the record (primary key of project) and then by event id |token |
+content | report_id | format | returnFormat | rawOrLabel |
+rawOrLabelHeaders | exportCheckboxLabel | csvDelimiter |
+decimalCharacter |token | content | report_id | format |returnFormat |
+rawOrLabel | rawOrLabelHeaders | exportCheckboxLabel | csvDelimiter |
+decimalCharacter | |exp_surv_link |Export a Survey Link for a
+Participant |export |surveyLink |NA |This method returns a unique survey
+link (i.e., a URL) in plain text format for a specified record and data
+collection instrument (and event, if longitudinal) in a project. If the
+user does not have ‘Survey Distribution Tools’ privileges, they will not
+be able to use this method, and an error will be returned. If the
+specified data collection instrument has not been enabled as a survey in
+the project, an error will be returned. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_surv_link" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_surv_link</a>
+|POST |Returns a unique survey link (i.e., a URL) in plain text format
+for the specified record and instrument (and event, if longitudinal).
+|token | content | record | instrument | event | repeat_instance |
+returnFormat |token | content | record | instrument | event |
+repeat_instance |returnFormat | |exp_surv_parts |Export a Survey
+Participant List |export |participantList |NA |This method returns the
+list of all participants for a specific survey instrument (and for a
+specific event, if a longitudinal project). If the user does not have
+‘Survey Distribution Tools’ privileges, they will not be able to use
+this method, and an error will be returned. If the specified data
+collection instrument has not been enabled as a survey in the project,
+an error will be returned. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_surv_parts" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_surv_parts</a>
+|POST |Returns the list of all participants for the specified survey
+instrument [and event] in the desired format. The following fields are
+returned: email, email_occurrence, identifier, invitation_sent_status,
+invitation_send_time, response_status, survey_access_code, survey_link.
+The attribute ‘email_occurrence’ represents the current count that the
+email address has appeared in the list (because emails can be used more
+than once), thus email + email_occurrence represent a unique value pair.
+‘invitation_sent_status’ is ‘0’ if an invitation has not yet been sent
+to the participant, and is ‘1’ if it has. ‘invitation_send_time’ is the
+date/time in which the next invitation will be sent, and is blank if
+there is no invitation that is scheduled to be sent. ‘response_status’
+represents whether the participant has responded to the survey, in which
+its value is 0, 1, or 2 for ‘No response’, ‘Partial’, or ‘Completed’,
+respectively. Note: If an incorrect event_id or instrument name is used
+or if the instrument has not been enabled as a survey, then an error
+will be returned. |token | content | instrument | event | format |
+returnFormat |token | content | instrument | event | format
+|returnFormat | |exp_surv_queue_link |Export a Survey Queue Link for a
+Participant |export |surveyQueueLink |NA |This method returns a unique
+Survey Queue link (i.e., a URL) in plain text format for the specified
+record in a project that is utilizing the Survey Queue feature. If the
+user does not have ‘Survey Distribution Tools’ privileges, they will not
+be able to use this method, and an error will be returned. If the Survey
+Queue feature has not been enabled in the project, an error will be
+returned. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_surv_queue_link" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_surv_queue_link</a>
+|POST |Returns a unique Survey Queue link (i.e., a URL) in plain text
+format for the specified record in the project. |token | content |
+record | returnFormat |token | content | record |returnFormat |
+|exp_surv_ret_code |Export a Survey Return Code for a Participant
+|export |surveyReturnCode |NA |This method returns a unique Return Code
+in plain text format for a specified record and data collection
+instrument (and event, if longitudinal) in a project. If the user does
+not have ‘Survey Distribution Tools’ privileges, they will not be able
+to use this method, and an error will be returned. If the specified data
+collection instrument has not been enabled as a survey in the project or
+does not have the ‘Save &amp; Return Later’ feature enabled, an error
+will be returned. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_surv_ret_code" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_surv_ret_code</a>
+|POST |Returns a unique Return Code in plain text format for the
+specified record and instrument (and event, if longitudinal). |token |
+content | record | instrument | event | repeat_instance | returnFormat
+|token | content | record | instrument | event | repeat_instance
+|returnFormat | |exp_user_dag_maps |Export User-DAG Assignments |export
+|userDagMapping |NA |This method allows you to export existing User-DAG
+assignments for a project |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_user_dag_maps" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_user_dag_maps</a>
+|POST |User-DAG assignments for the project in the format specified
+|token | content | format | returnFormat |token | content | format
+|returnFormat | |exp_user_role_maps |Export User-Role Assignments
+|export |userRoleMapping |NA |This method allows you to export existing
+User-Role assignments for a project |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_user_role_maps" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_user_role_maps</a>
+|POST |User-Role assignments for the project in the format specified
+|token | content | format | returnFormat |token | content | format
+|returnFormat | |exp_user_roles |Export User Roles |export |userRole |NA
+|This method allows you to export the list of user roles for a project,
+including their user privileges. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_user_roles" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_user_roles</a>
+|POST |The method will return all the attributes below with regard to
+user roles privileges in the format specified. Please note that the
+‘forms’ attribute is the only attribute that contains sub-elements (one
+for each data collection instrument), in which each form will have its
+own Form Rights value (see the key below to learn what each numerical
+value represents). Most user role privilege attributes are boolean (0=No
+Access, 1=Access). Attributes returned:unique_role_name, role_label,
+design, alerts, user_rights, data_access_groups, reports,
+stats_and_charts, manage_survey_participants, calendar,
+data_import_tool, data_comparison_tool, logging, file_repository,
+data_quality_create, data_quality_execute, api_export, api_import,
+api_modules, mobile_app, mobile_app_download_data, record_create,
+record_rename, record_delete, lock_records_customization, lock_records,
+lock_records_all_forms, forms, forms_export KEY:Data Export: 0=No
+Access, 2=De-Identified, 3=Remove Identifier Fields, 1=Full Data SetForm
+Rights: 0=No Access, 2=Read Only, 1=View records/responses and edit
+records (survey responses are read-only), 3=Edit survey responsesOther
+attribute values: 0=No Access, 1=Access. |token | content | format |
+returnFormat |token | content | format |returnFormat | |exp_users
+|Export Users |export |user |NA |This method allows you to export the
+list of users for a project, including their user privileges and also
+email address, first name, and last name. Note: If the user has been
+assigned to a user role, it will return the user with the role’s defined
+privileges. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=exp_users" class="external-link uri">https://redcap.miami.edu/api/help/?content=exp_users</a>
+|POST |The method will return all the attributes below with regard to
+user privileges in the format specified. Please note that the ‘forms’
+attribute is the only attribute that contains sub-elements (one for each
+data collection instrument), in which each form will have its own Form
+Rights value (see the key below to learn what each numerical value
+represents). Most user privilege attributes are boolean (0=No Access,
+1=Access). Attributes returned:username, email, firstname, lastname,
+expiration, data_access_group, design, alerts, user_rights,
+data_access_groups, data_export, reports, stats_and_charts,
+manage_survey_participants, calendar, data_import_tool,
+data_comparison_tool, logging, file_repository, data_quality_create,
+data_quality_execute, api_export, api_import, api_modules, mobile_app,
+mobile_app_download_data, record_create, record_rename, record_delete,
+lock_records_customization, lock_records, lock_records_all_forms, forms,
+forms_export KEY:Data Export: 0=No Access, 2=De-Identified, 3=Remove
+Identifier Fields, 1=Full Data SetForm Rights: 0=No Access, 2=Read Only,
+1=View records/responses and edit records (survey responses are
+read-only), 3=Edit survey responsesOther attribute values: 0=No Access,
+1=Access. |token | content | format | returnFormat |token | content |
+format |returnFormat | |imp_arms |Import Arms |import |arm |import |This
+method allows you to import Arms into a project or to rename existing
+Arms in a project. You may use the parameter override=1 as a ‘delete all
++ import’ action in order to erase all existing Arms in the project
+while importing new Arms. Notice: Because of the ‘override’ parameter’s
+destructive nature, this method may only use override=1 for projects in
+Development status.</p>
+<p>NOTE: This only works for longitudinal projects. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_arms" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_arms</a>
+|POST |Number of Arms imported |token | content | override | action |
+format | data | returnFormat |token | content | override | action |
+format | data |returnFormat | |imp_dags |Import DAGs |import |dag
+|import |This method allows you to import new DAGs (Data Access Groups)
+into a project or update the group name of any existing DAGs.</p>
+<p>NOTE: DAGs can be renamed by simply changing the group name
+(data_access_group_name). DAG can be created by providing group name
+value while unique group name should be set to blank. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_dags" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_dags</a>
+|POST |Number of DAGs added or updated |token | content | action |
+format | data | returnFormat |token | content | action | format | data
+|returnFormat | |imp_events |Import Events |import |event |import |This
+method allows you to import Events into a project or to update existing
+Events’ attributes, such as the event name, days offset, etc. The unique
+event name of an Event cannot be changed because it is auto-generated by
+REDCap. Please note that the only way to update an existing Event is to
+provide the unique_event_name attribute, and if the unique_event_name
+attribute is missing for an Event being imported (when override=0), it
+will assume it to be a new Event that should be created. Notice: Because
+of the ‘override’ parameter’s destructive nature, this method may only
+use override=1 for projects in Development status.</p>
+<p>NOTE: This only works for longitudinal projects. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_events" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_events</a>
+|POST |Number of Events imported |token | content | action | override |
+format | data | returnFormat |token | content | action | override |
+format | data |returnFormat | |imp_file_repo |Import a File into the
+File Repository |import |fileRepository |import |This method allows you
+to import a single file into a project’s File Repository. The file may
+be stored in a specific folder in the File Repository if a folder_id is
+provided. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_file_repo" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_file_repo</a>
+|POST |NA |token | content | action | file | folder_id | returnFormat
+|token | content | action | file |folder_id | returnFormat | |imp_file
+|Import a File |import |file |import |This method allows you to upload a
+document that will be attached to an individual record for a File Upload
+field. Please note that this method may NOT be used for Signature fields
+(i.e. File Upload fields with ‘signature’ validation type) because a
+signature can only be captured and stored using the web interface. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_file" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_file</a>
+|POST |NA |token | content | action | record | field | event |
+repeat_instance | file | returnFormat |token | content | action | record
+| field | event | repeat_instance | file |returnFormat |
+|imp_inst_event_maps |Import Instrument-Event Mappings |import
+|formEventMapping |NA |This method allows you to import Instrument-Event
+Mappings into a project (this corresponds to the ‘Designate Instruments
+for My Events’ page in the project).</p>
+<p>NOTE: This only works for longitudinal projects. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_inst_event_maps" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_inst_event_maps</a>
+|POST |Number of Instrument-Event Mappings imported |token | content |
+format | data | returnFormat |token | content | format | data
+|returnFormat | |imp_metadata |Import Metadata (Data Dictionary) |import
+|metadata |NA |This method allows you to import metadata (i.e., Data
+Dictionary) into a project. Notice: Because of this method’s destructive
+nature, it is only available for use for projects in Development status.
+|<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_metadata" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_metadata</a>
+|POST |Number of fields imported |token | content | format | data |
+returnFormat |token | content | format | data |returnFormat |
+|imp_proj_sett |Import Project Information |import |project_settings |NA
+|This method allows you to update some of the basic attributes of a
+given REDCap project, such as the project’s title, if it is
+longitudinal, if surveys are enabled, etc. Its data format corresponds
+to the format in the API method Export Project Information. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_proj_sett" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_proj_sett</a>
+|POST |Returns the number of values accepted to be updated in the
+project settings (including values which remained the same before and
+after the import). |token | content | format | data |token | content |
+format | data | | |imp_proj |Create A New Project |create |project |NA
+|This method allows you to create a new REDCap project. A 64-character
+Super API Token is required for this method (as opposed to project-level
+API methods that require a regular 32-character token associated with
+the project-user). In the API request, you must minimally provide the
+project attributes ‘project_title’ and ‘purpose’ (with numerical value
+0=Practice/Just for fun, 1=Other, 2=Research, 3=Quality Improvement,
+4=Operational Support) when creating a project. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_proj" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_proj</a>
+|POST |When a project is created, a 32-character project-level API Token
+is returned (associated with both the project and user creating the
+project). This token could then ostensibly be used to make subsequent
+API calls to this project, such as for adding new events, fields,
+records, etc. |token | content | format | returnFormat | odm |token |
+content | format |returnFormat | odm | |imp_records |Import Records
+|import |record |NA |This method allows you to import a set of records
+for a project |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_records" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_records</a>
+|POST |the content specified by returnContent |token | content | format
+| dateFormat | csvDelimiter | returnContent | returnFormat |token |
+content | format |dateFormat | csvDelimiter | returnContent |
+returnFormat | |imp_repeating_forms_events |Import Repeating Instruments
+and Events |import |repeatingFormsEvents |NA |This method allows you to
+import a list of the repeated instruments and repeating events for a
+project. This includes their unique instrument name as seen in the
+second column of the Data Dictionary, as well as each repeating
+instrument’s corresponding custom repeating instrument label. For
+longitudinal projects, the unique event name is also needed for each
+repeating instrument. Additionally, repeating events must be submitted
+as separate items, in which the instrument name will be blank/null to
+indicate that it is a repeating event (rather than a repeating
+instrument). |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_repeating_forms_events" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_repeating_forms_events</a>
+|POST |Number of repeated isntruments or repeated events that have been
+imported |token | content | format | data | returnFormat |token |
+content | format | data |returnFormat | |imp_user_dag_maps |Import
+User-DAG Assignments |import |userDagMapping |import |This method allows
+you to assign users to any data access group.</p>
+<p>NOTE: If you wish to modify an existing mapping, you <em>must</em>
+provide its unique username and group name. If the
+‘redcap_data_access_group’ column is not provided, user will not
+assigned to any group. There should be only one record per username. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_user_dag_maps" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_user_dag_maps</a>
+|POST |Number of User-DAG assignments added or updated |token | content
+| action | format | data | returnFormat |token | content | action |
+format | data |returnFormat | |imp_user_role_maps |Import User-Role
+Assignments |import |userRoleMapping |import |This method allows you to
+assign users to any user role.</p>
+<p>NOTE: If you wish to modify an existing mapping, you <em>must</em>
+provide its unique username and role name. If the ‘unique_role_name’
+column is not provided, user will not assigned to any user role. There
+should be only one record per username. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_user_role_maps" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_user_role_maps</a>
+|POST |Number of User-Role assignments added or updated |token | content
+| action | format | returnFormat |token | content | action | format
+|returnFormat | |imp_user_roles |Import User Roles |import |userRole |NA
+|This method allows you to import new user roles into a project while
+setting their privileges, or update the privileges of existing user
+roles in the project. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_user_roles" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_user_roles</a>
+|POST |Number of user roles added or updated |token | content | format |
+returnFormat |token | content | format |returnFormat | |imp_users
+|Import Users |import |user |NA |This method allows you to import new
+users into a project while setting their user privileges, or update the
+privileges of existing users in the project. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=imp_users" class="external-link uri">https://redcap.miami.edu/api/help/?content=imp_users</a>
+|POST |Number of users added or updated |token | content | format |
+returnFormat |token | content | format |returnFormat | |rename_record
+|Rename Record |rename |record |rename |This method allows you to rename
+a record from a project in a single API request. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=rename_record" class="external-link uri">https://redcap.miami.edu/api/help/?content=rename_record</a>
+|POST |Returns “1” if record is renamed or error message if any. |token
+| content | action | record | new_record_name | arm |token | content |
+action | record | new_record_name |arm | |switch_dag |Switch DAG |switch
+|dag |switch |This method allows the current API user to switch
+(assign/reassign/unassign) their current Data Access Group assignment if
+they have been assigned to multiple DAGs via the DAG Switcher page in
+the project. |<a href="https://redcap.miami.edu/api/" class="external-link uri">https://redcap.miami.edu/api/</a> |<a href="https://redcap.miami.edu/api/help/?content=switch_dag" class="external-link uri">https://redcap.miami.edu/api/help/?content=switch_dag</a>
+|POST |Returns “1” when the current API user is switched to the
+specified Data Access Group, otherwise it returns an error message.
+|token | content | action | dag |token | content | action | dag | |</p>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
