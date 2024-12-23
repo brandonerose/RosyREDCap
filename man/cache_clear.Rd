@@ -19,6 +19,7 @@ This function checks the location of the cache established by \code{\link[hoardr
 This will not delete project data, just the packages "memory" of it.
 }
 \examples{
+
 \dontrun{
 #warning this will delete the packages cache of project locations
 cache_clear()

@@ -17,6 +17,7 @@
 #' @param auto_check_token Logical (TRUE/FALSE). If TRUE, automatically checks the validity of the REDCap API token. Default is `TRUE`.
 #' @return The `DB` object with the REDCap API token and configurations set.
 #' @examples
+#'
 #' \dontrun{
 #' # Initialize the DB object with the REDCap API token and URL
 #' DB <- setup_DB(
@@ -87,6 +88,7 @@ setup_DB <- function (
 #' \code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
 #' \code{\link[RosyREDCap]{setup_DB}} for retrieving a list of projects from the directory cache.
 #' @examples
+#'
 #' \dontrun{
 #' # Load the DB object using the short name and directory path
 #' DB <- load_DB("ABC")

@@ -40,6 +40,7 @@ This function sets up the `DB` object by storing the REDCap API token and other 
 It ensures that the token is valid and ready for use in subsequent API calls.
 }
 \examples{
+
 \dontrun{
 # Initialize the DB object with the REDCap API token and URL
 DB <- setup_DB(

@@ -24,6 +24,7 @@ This function loads the `DB` object from the specified directory using the provi
 Optionally, it can validate the loaded `DB` object. It references a cache that is updated whenever you run `setup_DB()`.
 }
 \examples{
+
 \dontrun{
 # Load the DB object using the short name and directory path
 DB <- load_DB("ABC")
