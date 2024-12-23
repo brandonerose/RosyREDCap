@@ -1,13 +1,13 @@
 #' @import RosyUtils
 #' @import RosyApp
-#' @title Set a REDCap API Token
+#' @title Set a REDCap API Token to Your Current R Session
 #' @description
 #' Prompts the user to input a valid REDCap API token and stores it as an environment variable for the current R session.
-#' This function validates the token before storing it. It is strongly discouraged to include API tokens directly within R scripts.
-#' Instead of using this function you should consider setting your token within your REnviron file which can be edited with `usethis::edit_r_environ()` or [usethis::edit_r_environ()]
+#' Instead of using this function you should consider setting your token within your REnviron file which can be edited with \code{\link{usethis::edit_r_environ()}}
 #' @details
 #' If a valid token already exists in the R session, the function notifies the user and asks whether they want to replace it.
 #' The user is guided to provide a new token through the console.
+#' It is strongly discouraged to include API tokens directly within R scripts.
 #' The token is validated internally and stored using `Sys.setenv()`.
 #' @inheritParams setup_DB
 #' @param ask Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.
@@ -15,12 +15,8 @@
 #' @seealso
 #' For more details, see the `vignette("Tokens")`.
 #' For more details, see the \code{\link{vignette("Tokens")}}.
-#' For more details, see the \code{\link{setup_DB}}.
-#' For more details, see \code{vignette("Tokens")}
-#' For more details, see \code{\link{vignette}}("Tokens").
-#' For more details, see \href{../doc/Tokens.html}{the vignette on Tokens}.
-#' For more details, see \href{../doc/Tokens.html}{Vignette on Tokens} or \code{\link{setup_DB}}.
-#' For more details, see
+#' For the function to work you need to have a valid DB object from \code{\link{setup_DB()}}.
+#' See our \href{https://brandonerose.github.io/RosyREDCap/articles/Tokens.html}{REDCap Tokens Article}
 #' @family Token Functions
 #' @keywords Token Functions
 #' @export
