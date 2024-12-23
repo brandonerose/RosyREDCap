@@ -69,7 +69,7 @@
 
 
 <dl><dt id="arg-db">DB<a class="anchor" aria-label="anchor" href="#arg-db"></a></dt>
-<dd><p>A validated `DB` object containing REDCap project data and settings. Generated using [DB &lt;- load_DB("PROJ")] or `setup_DB()`</p></dd>
+<dd><p>A validated `DB` object containing REDCap project data and settings. Generated using `DB &lt;- load_DB("PROJ"]` or `setup_DB()`</p></dd>
 
 
 <dt id="arg-record">record<a class="anchor" aria-label="anchor" href="#arg-record"></a></dt>
@@ -95,7 +95,7 @@
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Uses [utils::browseURL()] to open the specified REDCap page.
-In order for the function to work you must have ran [DB &lt;- update_DB(DB)] successfully at least once.
+In order for the function to work you must have ran `DB &lt;- update_DB(DB)` successfully at least once.
 If the link brings you to a page that doesn't work check the url. It's possible your institution may have changed redcap versions, which is part of the URL. In that case run `DB &lt;- update_DB(DB)` again.
 You may have to be signed into REDCap for it to work properly.
 When in doubt, just seek out the page by navigating on your own in REDCap. Report issues if you can.</p>
