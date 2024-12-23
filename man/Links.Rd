@@ -19,7 +19,7 @@ link_REDCap_project(DB)
 link_REDCap_record(DB, record, page, instance, text_only = F)
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using [DB <- load_DB("PROJ")] or `setup_DB()`}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using `{DB <- load_DB("PROJ"}]` or `setup_DB()`}
 
 \item{record}{REDCap record id or study id etc, any column names that match `DB$redcap$id_col`}
 
@@ -37,7 +37,7 @@ Opens browser page for a given DB object.
 }
 \details{
 Uses [utils::browseURL()] to open the specified REDCap page.
-In order for the function to work you must have ran [DB <- update_DB(DB)] successfully at least once.
+In order for the function to work you must have ran `{DB <- update_DB(DB)}` successfully at least once.
 If the link brings you to a page that doesn't work check the url. It's possible your institution may have changed redcap versions, which is part of the URL. In that case run `{DB <- update_DB(DB)}` again.
 You may have to be signed into REDCap for it to work properly.
 When in doubt, just seek out the page by navigating on your own in REDCap. Report issues if you can.
