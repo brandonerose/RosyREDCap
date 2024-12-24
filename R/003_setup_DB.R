@@ -1,30 +1,40 @@
 #' @import RosyUtils
 #' @import RosyApp
-#' @title Setup RosyREDCap
+#' @rdname setup-load
+#' @title Setup or Load RosyREDCap Project
 #' @description
-#' Initializes the `DB` object with the necessary REDCap API token and other configurations.
+#' Setup or Load the `DB` object with the necessary REDCap API token and other configurations.
 #'
 #' @details
 #' This function sets up the `DB` object by storing the REDCap API token and other configurations required for interacting with the REDCap server.
 #' It ensures that the token is valid and ready for use in subsequent API calls.
+#' Neither function directly attempts communication with REDCap.
 #'
-#' @param short_name A character string representing the short name for the REDCap project.
+#' `setup_DB` is used the first time you initialize/link a REDCap project. Mainly, it sets your unique `short_name` and your intended directory. Unless you run \code{force = TRUE} the default will first try load_DB. dir_path is technically optional but without it the user cannot save/load/update projects.
+#'
+#' `load_DB` can be used with just the `short_name` parameter after you have already run `setup_DB` in the past with an established directory. `dir_path` is optional for this function but can be used if you relocated the directory.
+#'
+#' @param short_name A character string with no spaces or symbols representing the unique short name for the REDCap project.
 #' @param dir_path Optional character string representing the directory path where you want the REDCap project data to be stored. If missing, DB object will only be in current R session.
 #' @param redcap_base A character string representing the base URL of the REDCap server.
 #' @param force Logical (TRUE/FALSE). If TRUE, forces the setup even if the `DB` object already exists. Default is `FALSE`.
 #' @param merge_form_name A character string representing the name of the merged form. Default is "merged".
 #' @param use_csv Logical (TRUE/FALSE). If TRUE, uses CSV files for data storage. Default is `FALSE`.
 #' @param auto_check_token Logical (TRUE/FALSE). If TRUE, automatically checks the validity of the REDCap API token. Default is `TRUE`.
-#' @return The `DB` object with the REDCap API token and configurations set.
+#' @return RosyREDCap `DB` list object.
+#' @seealso
+#' \code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
 #' @examples
 #'
 #' \dontrun{
 #' # Initialize the DB object with the REDCap API token and URL
 #' DB <- setup_DB(
-#'   short_name = "ABC",
+#'   short_name = "TEST",
 #'   dir_path = "path/to/secure/file/storage",
 #'   redcap_base = "https://redcap.yourinstitution.edu/"
 #' )
+#'
+#' DB <- load_DB("TEST")
 #' }
 #' @family DB object
 #' @export
@@ -72,28 +82,7 @@ setup_DB <- function (
   validate_REDCap_token(DB,silent = F)
   return(DB)
 }
-#' @title Load RosyREDCap Project
-#' @description
-#' Will take your previously chosen `short_name` and load the directory-saved DB object by using the cache. `dir_path` is optional if you already used `setup_DB()`.
-#'
-#' @details
-#' This function loads the `DB` object from the specified directory using the provided `short_name`. If `dir_path` is not provided, it will use the path set during the `setup_DB()` call.
-#' Optionally, it can validate the loaded `DB` object. It references a cache that is updated whenever you run `setup_DB()`.
-#'
-#' @param short_name A character string representing the short name you previously chose for the REDCap project.
-#' @param dir_path A character string representing the directory path where the REDCap project files are stored. Optional if already set by `setup_DB()`.
-#' @param validate Logical (TRUE/FALSE). If TRUE, validates the loaded `DB` object. Default is `TRUE`.
-#' @return The RosyREDCap `DB` list object.
-#' @seealso
-#' \code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
-#' \code{\link[RosyREDCap]{setup_DB}} for retrieving a list of projects from the directory cache.
-#' @examples
-#'
-#' \dontrun{
-#' # Load the DB object using the short name and directory path
-#' DB <- load_DB("ABC")
-#' }
-#' @family DB object
+#' @rdname setup-load
 #' @export
 load_DB <- function(short_name,dir_path,validate = T){
   projects <- get_projects()

@@ -22,7 +22,6 @@ Shows DB in the env
 \seealso{
 Other DB object: 
 \code{\link{delete_DB}()},
-\code{\link{load_DB}()},
 \code{\link{save_DB}()},
 \code{\link{setup_DB}()}
 }

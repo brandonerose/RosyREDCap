@@ -2,7 +2,8 @@
 % Please edit documentation in R/003_setup_DB.R
 \name{setup_DB}
 \alias{setup_DB}
-\title{Setup RosyREDCap}
+\alias{load_DB}
+\title{Setup or Load RosyREDCap Project}
 \usage{
 setup_DB(
   short_name,
@@ -13,9 +14,11 @@ setup_DB(
   use_csv = F,
   auto_check_token = T
 )
+
+load_DB(short_name, dir_path, validate = T)
 }
 \arguments{
-\item{short_name}{A character string representing the short name for the REDCap project.}
+\item{short_name}{A character string with no spaces or symbols representing the unique short name for the REDCap project.}
 
 \item{dir_path}{Optional character string representing the directory path where you want the REDCap project data to be stored. If missing, DB object will only be in current R session.}
 
@@ -30,30 +33,38 @@ setup_DB(
 \item{auto_check_token}{Logical (TRUE/FALSE). If TRUE, automatically checks the validity of the REDCap API token. Default is `TRUE`.}
 }
 \value{
-The `DB` object with the REDCap API token and configurations set.
+RosyREDCap `DB` list object.
 }
 \description{
-Initializes the `DB` object with the necessary REDCap API token and other configurations.
+Setup or Load the `DB` object with the necessary REDCap API token and other configurations.
 }
 \details{
 This function sets up the `DB` object by storing the REDCap API token and other configurations required for interacting with the REDCap server.
 It ensures that the token is valid and ready for use in subsequent API calls.
+Neither function directly attempts communication with REDCap.
+
+`setup_DB` is used the first time you initialize/link a REDCap project. Mainly, it sets your unique `short_name` and your intended directory. Unless you run \code{force = TRUE} the default will first try load_DB. dir_path is technically optional but without it the user cannot save/load/update projects.
+
+`load_DB` can be used with just the `short_name` parameter after you have already run `setup_DB` in the past with an established directory. `dir_path` is optional for this function but can be used if you relocated the directory.
 }
 \examples{
 
 \dontrun{
 # Initialize the DB object with the REDCap API token and URL
 DB <- setup_DB(
-  short_name = "ABC",
+  short_name = "TEST",
   dir_path = "path/to/secure/file/storage",
   redcap_base = "https://redcap.yourinstitution.edu/"
 )
+
+DB <- load_DB("TEST")
 }
 }
 \seealso{
+\code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
+
 Other DB object: 
 \code{\link{delete_DB}()},
-\code{\link{load_DB}()},
 \code{\link{save_DB}()},
 \code{\link{show_DB}()}
 }

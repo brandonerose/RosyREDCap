@@ -55,21 +55,19 @@ reference:
       - get_REDCap_raw_data
       - get_REDCap_files
       - get_REDCap_file_repository
-      - delete_redcap_records
       - show_REDCap_API_methods
       - show_REDCap_API_methods_table
-  - subtitle: Upload to REDCap
+  - subtitle: Upload/Delete to REDCap
     contents:
-      - push_redcap_dictionary
       - add_redcap_folder
-      - delete_redcap_file
-      - delete_redcap_records
-      - delete_file_from_REDCap
       - upload_DB_to_REDCap
       - upload_file_to_REDCap
       - upload_file_to_REDCap_file_repository
       - upload_form_to_REDCap
       - upload_transform_to_DB
+      - delete_redcap_file
+      - delete_redcap_records
+      - delete_file_from_REDCap
   - subtitle: DB object Modifications
     contents:
       - clean_DB

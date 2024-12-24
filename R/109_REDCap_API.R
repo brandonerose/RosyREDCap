@@ -403,16 +403,6 @@ delete_redcap_records <- function(DB, records){
   }
   message("Records deleted!")
 }
-#' @title push_redcap_dictionary
-#' @export
-push_redcap_dictionary <- function(){
-  redcap_api_request(
-    url,
-    token,
-    additional_args=NULL
-  )
-  return()
-}
 rename_forms_redcap_to_default <- function(forms){
   the_names <- colnames(forms)
   the_names[which(the_names=="instrument_name")] <- "form_name"
