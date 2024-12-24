@@ -100,7 +100,7 @@ only reference the name of your token, such as “RosyREDCap_token_TEST”.
 If RosyREDCap ever wants to use the token to make an API call to REDCap,
 it will check <code>Sys.getenv("RosyREDCap_token_TEST")</code>. By
 default are token names start with “RosyREDCap_token_”, followed by the
-<code>short_name</code> you chose in <code><a href="../reference/setup_DB.html">setup_DB()</a></code>.Below
+<code>short_name</code> you chose in <code><a href="../reference/setup-load.html">setup_DB()</a></code>.Below
 demonstrates how to set and check your tokens…</p>
 <div class="section level3">
 <h3 id="setting-your-token-for-one-session">Setting Your Token for One Session<a class="anchor" aria-label="anchor" href="#setting-your-token-for-one-session"></a>
@@ -110,7 +110,7 @@ demonstrates how to set and check your tokens…</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"RosyREDCap_token_TEST"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;[1] ""</span></span>
 <span><span class="co"># Assuming you already setup or loaded a DB object you can set the token like this...</span></span>
-<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_DB.html">load_DB</a></span><span class="op">(</span><span class="st">"TEST"</span><span class="op">)</span></span>
+<span><span class="va">DB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup-load.html">load_DB</a></span><span class="op">(</span><span class="st">"TEST"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/set_REDCap_token.html">set_REDCap_token</a></span><span class="op">(</span><span class="va">DB</span><span class="op">)</span></span></code></pre></div>
 <p>You can also set manually with base R. Unless you specifically set
 the token <code>Sys.getenv("RosyREDCap_token_TEST")</code> will be

@@ -51,11 +51,9 @@
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/get_projects.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/index.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/labelled_to_raw_form.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/load_DB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/nav_to_dir.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/pipe.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/project_health_check.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/push_redcap_dictionary.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/raw_to_labelled_form.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/read_DB_from_dir.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/read_from_REDCap_upload.html</loc></url>
@@ -65,7 +63,7 @@
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/run_quality_checks.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/save_DB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/set_REDCap_token.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/setup_DB.html</loc></url>
+<url><loc>https://brandonerose.github.io/RosyREDCap/reference/setup-load.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/show_DB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/summarize_RosyREDCap.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/test_REDCap_token.html</loc></url>
