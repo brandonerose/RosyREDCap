@@ -24,18 +24,14 @@
 #' @return RosyREDCap `DB` list object.
 #' @seealso
 #' \code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
-#' @examples
-#'
-#' \dontrun{
+#' @examplesIf FALSE
 #' # Initialize the DB object with the REDCap API token and URL
 #' DB <- setup_DB(
 #'   short_name = "TEST",
 #'   dir_path = "path/to/secure/file/storage",
 #'   redcap_base = "https://redcap.yourinstitution.edu/"
 #' )
-#'
 #' DB <- load_DB("TEST")
-#' }
 #' @family DB object
 #' @export
 setup_DB <- function (

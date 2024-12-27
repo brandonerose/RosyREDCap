@@ -48,17 +48,15 @@ Neither function directly attempts communication with REDCap.
 `load_DB` can be used with just the `short_name` parameter after you have already run `setup_DB` in the past with an established directory. `dir_path` is optional for this function but can be used if you relocated the directory.
 }
 \examples{
-
-\dontrun{
+\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Initialize the DB object with the REDCap API token and URL
 DB <- setup_DB(
   short_name = "TEST",
   dir_path = "path/to/secure/file/storage",
   redcap_base = "https://redcap.yourinstitution.edu/"
 )
-
 DB <- load_DB("TEST")
-}
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
