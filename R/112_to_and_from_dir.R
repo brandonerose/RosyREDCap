@@ -31,7 +31,7 @@ drop_REDCap_to_directory <- function(
   DB <- validate_DB(DB)
   root_dir <- get_dir(DB)
   output_dir <- file.path(root_dir,"output")
-  redcap_dir <- file.path(root_dir,"REDCap")
+  redcap_dir <- file.path(root_dir,"REDCap",DB$short_name)
   redcap_metadata_dir <- file.path(redcap_dir,"metadata")
   redcap_other_dir <- file.path(redcap_dir,"other")
   redcap_upload_dir <- file.path(redcap_dir,"upload")
@@ -177,9 +177,15 @@ drop_REDCap_to_directory <- function(
 #' @export
 read_from_REDCap_upload <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_non_form_vars=T,stop_or_warn="warn"){
   DB <- validate_DB(DB)
-  path <- file.path(get_dir(DB),"REDCap","upload")
-  if(!file.exists(path))stop("No REDCap files found at path --> ",path)
-  x <- list.files.real(path) %>% basename()
+  root_dir <- get_dir(DB)
+  output_dir <- file.path(root_dir,"output")
+  redcap_dir <- file.path(root_dir,"REDCap",DB$short_name)
+  redcap_upload_dir <- file.path(redcap_dir,"upload")
+  if(!file.exists(redcap_upload_dir))stop("Did you forget to run `setup_DB()`? No upload folder --> ",path)
+  x <- list.files.real(redcap_upload_dir) %>% basename()
+  if(length(x)==0){
+    stop("No files in folder --> ",redcap_upload_dir)
+  }
   df <- data.frame(
     file_name = basename(x),
     file_name_no_ext = gsub("\\.xlsx|\\.xls","",x),

@@ -36,7 +36,6 @@ reference:
       - load_DB
       - update_DB
       - REDCap_diagram
-      - drop_DB_to_dir
       - drop_REDCap_to_directory
 
   - title: Components/Intermediate
@@ -84,7 +83,6 @@ reference:
       - find_upload_diff
       - raw_to_labelled_form
       - labelled_to_raw_form
-      - read_DB_from_dir
       - read_from_REDCap_upload
 
   - title: Experimental/Advanced
