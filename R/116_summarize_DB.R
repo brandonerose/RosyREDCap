@@ -112,16 +112,16 @@ subset_records_due <- function(DB,subset_name){
 check_subsets <- function(subset_names){
   if(missing(subset_names))subset_names <- DB$summary$subsets %>% names()
   needs_refresh <- NULL
-  if(is.null(subset_names))bullet_in_console("There are no subsets at `DB$summary$subsets` which can be added with `add_subsets()`!")
+  if(is.null(subset_names))bullet_in_console("There are no subsets at `DB$summary$subsets` which can be added with `add_DB_subset()`!")
   for(subset_name in subset_names){
     if(subset_records_due(DB = DB, subset_name=subset_name))needs_refresh <- needs_refresh %>% append(subset_name)
   }
   if(is.null(needs_refresh))bullet_in_console("Refresh of subsets not needed!",bullet_type = "v")
   return(needs_refresh)
 }
-#' @title add_subset
+#' @title add_DB_subset
 #' @export
-add_subset <- function(
+add_DB_subset <- function(
     DB,
     subset_name,
     filter_field,
@@ -289,10 +289,10 @@ generate_summary_from_subset_name <- function(
   }
   return(to_save_list)
 }
-#' @title summarize_RosyREDCap
+#' @title summarize_DB
 #' @param drop_blanks optional logical for dropping blanks
 #' @export
-summarize_RosyREDCap <- function(
+summarize_DB <- function(
     DB,
     with_links = T,
     deidentify = T,

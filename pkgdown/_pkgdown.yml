@@ -89,13 +89,13 @@ reference:
     desc: Expands more on what is possible. May be niche, hard to document, and less stable
     contents:
       - add_field_transformation
-      - add_subset
+      - add_DB_subset
       - run_quality_checks
       - edit_redcap_while_viewing
       - generate_horizontal_transform
       - generate_summary_from_subset_name
       - rmarkdown_DB
-      - summarize_RosyREDCap
+      - summarize_DB
 
   - title: Generic Helpers
     desc: May not be needed by most but included for transparency and testing.
@@ -165,3 +165,5 @@ authors:
     href: https://github.com/Goulett
   Chris Hilsinger-Pate:
     href: https://github.com/chrishilsingerpate
+  Nikola Susic:
+    href: https://github.com/nsusic

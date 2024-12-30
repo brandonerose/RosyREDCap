@@ -263,12 +263,12 @@ get_REDCap_version <- function(DB,show_method_help = T){
 #' @export
 get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
   file_rows <- which(DB$metadata$fields$field_type=="file")
-  out_dir <- file.path(DB$dir_path,"REDCap","files")
+  out_dir <- file.path(DB$dir_path,"REDCap",DB$short_name,"files")
   if(length(file_rows)>0){
-    dir.create(out_dir,showWarnings = F)
+    dir.create(out_dir,showWarnings = F,recursive = T)
     for(field_name in DB$metadata$fields$field_name[file_rows]){
       out_dir_folder <- file.path(out_dir,field_name)
-      dir.create(out_dir_folder,showWarnings = F)
+      dir.create(out_dir_folder,showWarnings = F,recursive = T)
       form_name <- DB$metadata$fields$form_name[which(DB$metadata$fields$field_name == field_name)]
       is_repeating <- DB$metadata$forms$repeating[which(DB$metadata$forms$form_name==form_name)]
       form <- DB$data[[form_name]]
@@ -276,7 +276,6 @@ get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
       for(i in rows_to_save){
         file_name  <- form[[field_name]][i]
         record_id <- form[[DB$redcap$id_col]][i]
-        repeat_instrument = form[["redcap_repeat_instrument"]][i]
         repeat_instance = form[["redcap_repeat_instance"]][i]
         redcap_event_name = form[["redcap_event_name"]][i]
         if(!original_file_names){
@@ -295,16 +294,15 @@ get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
             directory = out_dir_folder,
             file_name = file_name,
             event = redcap_event_name,
-            repeat_instrument = repeat_instrument,
             repeat_instance = repeat_instance,
             verbose = F
           )
-          message("`",file_name,"` saved at --> ",out_dir_folder)
+          bullet_in_console(paste0("`",file_name,"` saved."),bullet_type = ">")
         }
       }
     }
   }
-  message("Checked for files!")
+  bullet_in_console("Checked for files! Stored at ...",file = out_dir,bullet_type = "v")
 }
 #' @rdname redcap_api
 #' @export

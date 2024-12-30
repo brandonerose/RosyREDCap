@@ -26,6 +26,7 @@ Authors:
 \itemize{
   \item Natalie Goulett
   \item Chris Hilsinger-Pate
+  \item Nikola Susic
 }
 
 Other contributors:
