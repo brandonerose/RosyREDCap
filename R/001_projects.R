@@ -82,7 +82,6 @@ blank_project_cols <- function(){
     "last_save",
     "last_metadata_update",
     "last_data_update",
-    "is_REDCap",
     "version",
     "token_name",
     "project_id",
@@ -91,6 +90,8 @@ blank_project_cols <- function(){
     "is_longitudinal",
     "has_repeating_forms_or_events",
     "has_multiple_arms",
+    "R_object_size",
+    "file_size",
     "n_records",
     "redcap_base",
     "redcap_home",
@@ -138,6 +139,8 @@ extract_project_details <- function(DB){
     has_repeating_forms_or_events = DB$redcap$has_repeating_forms_or_events,
     has_multiple_arms = DB$redcap$has_multiple_arms,
     n_records = ifelse(is.null(DB$summary$all_records[[DB$redcap$id_col]]),NA,DB$summary$all_records %>% nrow()),
+    R_object_size = NA,
+    file_size = NA,
     redcap_base = DB$links$redcap_base ,
     redcap_home = DB$links$redcap_home,
     redcap_API_playground =  DB$links$redcap_API_playground
@@ -149,6 +152,8 @@ add_project <- function(DB,silent = T){
   projects <- get_projects()
   projects <- projects[which(projects$short_name!=DB$short_name),]
   OUT <- extract_project_details(DB = DB)
+  OUT$R_object_size <- size(DB)
+  OUT$file_size <- file.path(DB$dir_path,"R_objects",paste0(DB$short_name,"_RosyREDCap.rdata")) %>% file_size_mb()
   projects <- projects %>% dplyr::bind_rows(OUT)
   save_projects_to_cache(projects,silent = silent)
 }
