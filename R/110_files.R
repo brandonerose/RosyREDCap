@@ -50,7 +50,7 @@ get_REDCap_file_repository <- function(DB){
 #' @param name folder name
 #' @return messages for confirmation
 #' @export
-add_redcap_folder <- function(DB,name){
+add_REDCap_folder <- function(DB,name){
   DB <- validate_DB(DB)
   response <- httr::POST(
     url = DB$links$redcap_uri,
@@ -74,7 +74,7 @@ add_redcap_folder <- function(DB,name){
 #' @param doc_id from the file list `get_REDCap_file_repository(DB)`
 #' @return messages for confirmation
 #' @export
-delete_redcap_file <- function(DB,doc_id){
+delete_REDCap_file <- function(DB,doc_id){
   response <- httr::POST(
     url = DB$links$redcap_uri,
     body = list(

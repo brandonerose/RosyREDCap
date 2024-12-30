@@ -58,14 +58,14 @@ reference:
       - show_REDCap_API_methods_table
   - subtitle: Upload/Delete to REDCap
     contents:
-      - add_redcap_folder
+      - add_REDCap_folder
       - upload_DB_to_REDCap
       - upload_file_to_REDCap
       - upload_file_to_REDCap_file_repository
       - upload_form_to_REDCap
       - upload_transform_to_DB
-      - delete_redcap_file
-      - delete_redcap_records
+      - delete_REDCap_file
+      - delete_REDCap_records
       - delete_file_from_REDCap
   - subtitle: DB object Modifications
     contents:
@@ -91,7 +91,7 @@ reference:
       - add_field_transformation
       - add_DB_subset
       - run_quality_checks
-      - edit_redcap_while_viewing
+      - edit_REDCap_while_viewing
       - generate_horizontal_transform
       - generate_summary_from_subset_name
       - rmarkdown_DB

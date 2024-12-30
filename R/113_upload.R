@@ -225,7 +225,7 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
 #' \code{\link{save_DB}} for saving the modified database.
 #'
 #' @export
-edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
+edit_REDCap_while_viewing <- function(DB,optional_DF,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
   change_form <- field_names_to_form_names(DB,field_name_to_change)
   view_forms <- field_names_to_form_names(DB,field_names_to_view)
   field_names_to_view <- c(field_name_to_change,field_names_to_view) %>% unique()
