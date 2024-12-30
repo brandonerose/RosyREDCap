@@ -177,7 +177,7 @@ raw_to_labelled_form <- function(FORM,DB){
 stack_vars <- function(DB,vars,new_name,drop_na=T){
   DB <- validate_DB(DB)
   fields <- DB$metadata$fields
-  if(!all(vars%in%metadata$field_name))stop("all vars must be in metadata.")
+  if(!all(vars%in%fields$field_name))stop("all vars must be in metadata.")
   the_stack <- NULL
   for(var in vars){# var <- vars %>% sample1()
     DF <- filter_DB(DB,field_names = var)[[1]]

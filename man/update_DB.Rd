@@ -20,7 +20,7 @@ update_DB(
 )
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
 
 \item{set_token_if_fails}{Logical (TRUE/FALSE). If TRUE, prompts the user to set the REDCap API token if the update fails. Default is `TRUE`.}
 
@@ -54,7 +54,7 @@ Updates the REDCap database (`DB` object) by fetching the latest data from the R
 This function updates the REDCap database by fetching the latest data from the REDCap server. It supports various options such as forcing a fresh update, checking logs for a specified number of days, and retrieving files from REDCap. The function can also handle metadata-only updates and batch processing.
 }
 \seealso{
-\code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+\link{setup_DB} for initializing the `DB` object.
 
 Other db_functions: 
 \code{\link{get_REDCap_raw_data}()},

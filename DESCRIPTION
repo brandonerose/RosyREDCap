@@ -41,6 +41,7 @@ Imports:
     shinydashboardPlus,
     shinyWidgets,
     skimr,
+    stats,
     stringr,
     tools,
     usethis,

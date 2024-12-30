@@ -21,7 +21,7 @@
 #' @param batch_size Integer. Number of records to process in each batch. Default is `2000`.
 #' @return Messages for confirmation.
 #' @seealso
-#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+#' \link{setup_DB} for initializing the `DB` object.
 #' @family db_functions
 #' @export
 update_DB <- function(

@@ -117,7 +117,7 @@ load_DB_from_path <- function(DB_path,validate = T){
     return()
 }
 #' @title Saves DB in the directory
-#' @param DB A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()
+#' @param DB A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}
 #' @return Message
 #' @family DB object
 #' @export

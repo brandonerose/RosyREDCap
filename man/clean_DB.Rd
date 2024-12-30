@@ -7,7 +7,7 @@
 clean_DB(DB, drop_blanks = F, other_drops = NULL)
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
 
 \item{drop_blanks}{Logical. If TRUE, will drop choice fields with zero occurrences (n = 0). Default is FALSE.}
 

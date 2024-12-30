@@ -1,7 +1,11 @@
 #' @import RosyUtils
 .onLoad <- function(libname, pkgname){
   cache <- get_cache()
-  bullet_in_console("RosyREDCap Loaded",bullet_type = "v")
+}
+.onAttach <- function(libname, pkgname) {
+  if (interactive()) {
+    packageStartupMessage("RosyREDCap Loaded! Check available projects with `get_projects()`")
+  }
 }
 #' @title Get your Get Cache Path
 #' @description
@@ -10,7 +14,6 @@
 #' This function checks the location of the cache established by \code{\link[hoardr]{hoard}}.
 #' \emph{No project data is stored here. Tokens are not stored here either.}
 #' Key information stored here is `short_name` (primary key for RosyREDCap projects) and other details about project information.
-#' See \code{RosyREDCap:::blank_project_cols()}
 #' @return The file path of your RosyREDCap cache
 #' @seealso
 #' For more details, see \code{\link[hoardr]{hoard}}.

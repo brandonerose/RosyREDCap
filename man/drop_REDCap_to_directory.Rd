@@ -21,7 +21,7 @@ drop_REDCap_to_directory(
 )
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
 
 \item{records}{Character vector of records you want dropped to your directory.}
 
@@ -57,6 +57,6 @@ Exports specified records from the REDCap database (`DB` object) to the specifie
 This function exports the specified records from the REDCap database to the specified directory. It supports various options such as deidentification, including metadata, and merging non-repeating instruments. The function can also save the data only when it is new, and it allows for customization of file names and truncation of strings.
 }
 \seealso{
-\code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+\link{setup_DB} for initializing the `DB` object.
 }
 \concept{export_functions}

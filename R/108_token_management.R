@@ -32,14 +32,16 @@ set_REDCap_token <- function(DB,ask = T){
   if(answer == 1){
     has_valid_REDCap_token <- F
     if(is_something(DB$links$redcap_API)){
-      if(!ask)bullet_in_console(paste0("You can request/regenerate/delete tokens at --> '",DB$links$redcap_API,"'"))
+      if(!ask){
+        bullet_in_console(paste0("You can request/regenerate/delete with `link_API_token(DB)` or go here: "),url = DB$links$redcap_API)
+      }
     }
     prompt <- paste0("What is your ",DB$short_name," REDCap API token: ")
     while (!has_valid_REDCap_token) {
       token <- readline(prompt)
       has_valid_REDCap_token <- is_valid_REDCap_token(token,silent = F)
     }
-    do.call(Sys.setenv, setNames(list(token), token_name))
+    do.call(Sys.setenv, stats::setNames(list(token), token_name))
   }
   validate_REDCap_token(DB,silent = F)
   return(invisible())
@@ -58,7 +60,8 @@ set_REDCap_token <- function(DB,ask = T){
 #' @export
 view_REDCap_token <- function(DB){
   DB  <- validate_DB(DB)
-  return(message("🤫 ",validate_REDCap_token(DB,silent = F)))
+  bullet_in_console(paste0("Never share your token: ",validate_REDCap_token(DB,silent = F)),bullet_type = "!")
+  return(invisible())
 }
 #' @title Test REDCap API Token linked to a DB Object
 #' @description
@@ -95,7 +98,7 @@ test_REDCap_token <- function(DB, set_if_fails = T, launch_browser = T){
       DB$internals$last_test_connection_outcome <- ERROR <- is.na(version)
     }
   }
-  bullet_in_console("Connected to REDCap! 🚀",bullet_type = "v")
+  bullet_in_console("Connected to REDCap!",bullet_type = "v")
   DB$redcap$version <- version
   DB$internals$ever_connected <- T
   return(DB)
@@ -135,7 +138,7 @@ validate_REDCap_token <- function(DB,silent=T){
         `",token_name," = 'YoUrNevErShaReToKeNfRoMREDCapWebsiTe'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the
         code, `Sys.getenv('",token_name,"')`"))
     if(is_something(DB$links$redcap_API)){
-      bullet_in_console(paste0("You can request/regenerate/delete tokens at --> '",DB$links$redcap_API,"' or run `link_API_token(DB)` to launch in browser"))
+      bullet_in_console(paste0("You can request/regenerate/delete with `link_API_token(DB)` or go here: "),url = DB$links$redcap_API)
     }
     if(valid){
       bullet_in_console(paste0("Valid token for ",DB$short_name," is set in your R session (pending connection)!"),bullet_type = "v")

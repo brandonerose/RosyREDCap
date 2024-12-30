@@ -52,7 +52,7 @@ nav_to_dir <- function(DB){
 #' It identifies files with the extension `.RData` and names ending in `_RosyREDCap`, filtering out any unrelated files.
 #'
 #' @seealso
-#' \code{\link{setup_DB}} for setting up valid directories.
+#' \link{setup_DB} for setting up valid directories.
 #'
 #' @export
 check_folder_for_projects <- function(file_path,validate = T){

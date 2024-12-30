@@ -23,5 +23,5 @@ This function checks a folder (and optionally validates its setup) for `.RData` 
 It identifies files with the extension `.RData` and names ending in `_RosyREDCap`, filtering out any unrelated files.
 }
 \seealso{
-\code{\link{setup_DB}} for setting up valid directories.
+\link{setup_DB} for setting up valid directories.
 }

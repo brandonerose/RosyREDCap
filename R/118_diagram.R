@@ -333,7 +333,7 @@ create_node_edge_REDCap <- function(
 #' @param direction Character string specifying the direction of the diagram. Options are "LR" (left to right), "TB" (top to bottom), "RL" (right to left), and "BT" (bottom to top). Default is "LR".
 #' @return A diagram object representing the REDCap project structure.
 #' @seealso
-#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+#' \link{setup_DB} for initializing the `DB` object.
 #' @family Visuals
 #' @export
 REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical = F,direction = "LR"){

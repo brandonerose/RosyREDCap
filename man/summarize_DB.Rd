@@ -20,7 +20,7 @@ summarize_DB(
 )
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
 
 \item{with_links}{Logical (TRUE/FALSE). If TRUE, includes links in the summary. Default is `TRUE`.}
 
@@ -54,8 +54,8 @@ Summarizes the REDCap database (`DB` object) by filtering and generating a summa
 This function filters the REDCap database based on the provided parameters and generates a summary list. The summary can include metadata, record summaries, user information, and logs. The function also supports deidentification and cleaning of the data.
 }
 \seealso{
-\code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
-\code{\link[RosyREDCap]{update_DB}} for updating the `DB` object.
+\link{setup_DB} for initializing the `DB` object.
+\link{update_DB} for updating the `DB` object.
 
 Other db_functions: 
 \code{\link{get_REDCap_raw_data}()},

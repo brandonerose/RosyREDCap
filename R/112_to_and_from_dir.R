@@ -22,7 +22,7 @@
 #' @param forms Optional character vector for selecting specific forms to export.
 #' @return Messages for confirmation.
 #' @seealso
-#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+#' \link{setup_DB} for initializing the `DB` object.
 #' @family export_functions
 #' @export
 drop_REDCap_to_directory <- function(
@@ -200,7 +200,7 @@ read_from_REDCap_upload <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_no
   output_dir <- file.path(root_dir,"output")
   redcap_dir <- file.path(root_dir,"REDCap",DB$short_name)
   redcap_upload_dir <- file.path(redcap_dir,"upload")
-  if(!file.exists(redcap_upload_dir))stop("Did you forget to run `setup_DB()`? No upload folder --> ",path)
+  if(!file.exists(redcap_upload_dir))stop("Did you forget to run `setup_DB()`? No upload folder --> ",redcap_upload_dir)
   x <- list.files.real(redcap_upload_dir) %>% basename()
   if(length(x)==0){
     stop("No files in folder --> ",redcap_upload_dir)
@@ -218,7 +218,7 @@ read_from_REDCap_upload <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_no
   if(DB$data_update %>% is_something())stop("Already files in DB$data_update, clear that first")
   DB[["data_update"]] <- list()
   for(i in 1:nrow(df)){#not done yet
-    the_file <- readxl::read_xlsx(file.path(path,df$file_name[i]),col_types = "text") %>% all_character_cols() # would
+    the_file <- readxl::read_xlsx(file.path(redcap_upload_dir,df$file_name[i]),col_types = "text") %>% all_character_cols() # would
     drop_cols <- NULL
     if(drop_nonredcap_vars){
       x <- colnames(the_file)[which(!colnames(the_file)%in%c(DB$redcap$raw_structure_cols,DB$metadata$fields$field_name))]

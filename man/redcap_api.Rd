@@ -40,7 +40,7 @@ show_REDCap_API_methods()
 show_REDCap_API_methods_table()
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
 
 \item{method}{Character. The name of the REDCap API method to be called (e.g., 'exportRecords', 'importRecords', etc.).}
 

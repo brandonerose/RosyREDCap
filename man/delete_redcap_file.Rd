@@ -7,7 +7,7 @@
 delete_REDCap_file(DB, doc_id)
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
 
 \item{doc_id}{from the file list `get_REDCap_file_repository(DB)`}
 }

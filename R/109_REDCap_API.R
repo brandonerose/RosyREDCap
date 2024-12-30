@@ -56,7 +56,7 @@ run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",addi
   for(i in base_rows){
     if(!method_param_df$Parameter[i]%in%names(additional_args)){
       additional_args <- additional_args %>% append(
-        setNames(method_param_df$default[i], method_param_df$Parameter[i]) %>% as.list()
+        stats::setNames(method_param_df$default[i], method_param_df$Parameter[i]) %>% as.list()
       )
     }
   }

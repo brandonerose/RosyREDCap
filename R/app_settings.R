@@ -39,12 +39,6 @@ run_RosyREDCap <- function(
     ),
     ...
 ) {
-  if(golem::app_dev()){
-    message("Is Dev! Make sure to load `Library('rstudioapi')`")
-    options<- options(
-      shiny.launch.browser = .rs.invokeShinyPaneViewer
-    )
-  }
   with_golem_options(
     app = shinyApp(
       ui = app_ui,

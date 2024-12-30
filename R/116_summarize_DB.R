@@ -109,7 +109,7 @@ subset_records_due <- function(DB,subset_name){
   )
   return(!identical(unname(subset_list$subset_records),unname(subset_records)))
 }
-check_subsets <- function(subset_names){
+check_subsets <- function(DB,subset_names){
   if(missing(subset_names))subset_names <- DB$summary$subsets %>% names()
   needs_refresh <- NULL
   if(is.null(subset_names))bullet_in_console("There are no subsets at `DB$summary$subsets` which can be added with `add_DB_subset()`!")
@@ -357,8 +357,8 @@ generate_summary_from_subset_name <- function(
 #' @param force Logical (TRUE/FALSE). If TRUE, forces the summary generation even if there are issues. Default is `FALSE`.
 #' @return List. Returns a list containing the summarized data, including records, metadata, users, logs, and any other specified data.
 #' @seealso
-#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
-#' \code{\link[RosyREDCap]{update_DB}} for updating the `DB` object.
+#' \link{setup_DB} for initializing the `DB` object.
+#' \link{update_DB} for updating the `DB` object.
 #' @family db_functions
 #' @export
 summarize_DB <- function(
@@ -400,7 +400,7 @@ summarize_DB <- function(
     )
     DB$internals$last_summary <- last_data_update
   }
-  subset_names <- check_subsets()
+  subset_names <- check_subsets(DB)
   if(force)subset_names <- DB$summary$subsets %>% names()
   if(is_something(subset_names)){
     for(subset_name in subset_names){

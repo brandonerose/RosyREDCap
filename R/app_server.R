@@ -178,9 +178,9 @@ app_server <- function(input, output, session) {
           form_names = field_names_to_form_names(values$DB, field_names = input$choose_fields_view),
           field_names = input$choose_fields_view,
           no_duplicate_cols = T
-        ) %>% RosyUtils:::process_df_list()
+        ) %>% RosyUtils::process_df_list()
         # print(values$dt_tables_view_list)
-        # values$dt_tables_view_list <- DB %>% filter_DB(records = subset_list$sarcoma$record_id %>% sample1(), data_choice = RosyREDCap:::get_default_data_choice(values$DB),field_names = "sarc_timeline") %>% RosyUtils:::process_df_list()
+        # values$dt_tables_view_list <- DB %>% filter_DB(records = subset_list$sarcoma$record_id %>% sample1(), data_choice = get_default_data_choice(values$DB),field_names = "sarc_timeline") %>% process_df_list()
         # values$subset_list$sarcoma %>% dplyr::filter(sarcoma_id%in%values$chosen_group_sarcoma) %>% make_PSDB_table(DB = values$DB)
         if(!is_something(values$dt_tables_view_list))return(h3("No tables available to display."))
         lapply(seq_along(values$dt_tables_view_list), function(i) {
@@ -397,7 +397,7 @@ app_server <- function(input, output, session) {
       updateSelectizeInput(
         session = session,
         inputId = "choose_form",
-        choices = setNames(
+        choices = stats::setNames(
           object =values$DB$metadata$forms$form_name,
           nm = values$DB$metadata$forms$form_label
         )
@@ -561,8 +561,8 @@ app_server <- function(input, output, session) {
           field_labels_change <- field_names_change %>% field_names_to_field_labels(values$DB)
           if(is_something(field_names_cat)){
             field_choices_cat <- c(
-              setNames("no_choice","None"),
-              setNames(field_names_cat,field_labels_cat)
+              stats::setNames("no_choice","None"),
+              stats::setNames(field_names_cat,field_labels_cat)
             )
             selected <- "no_choice"
             if(is_something(input$choose_split)){
@@ -594,7 +594,7 @@ app_server <- function(input, output, session) {
               session = session,
               inputId = "choose_fields_view",
               selected = selected,
-              choices = setNames(field_names_view,field_labels_view)
+              choices = stats::setNames(field_names_view,field_labels_view)
             )
           }
           if(is_something(field_names_change)){
@@ -606,7 +606,7 @@ app_server <- function(input, output, session) {
               session = session,
               inputId = "choose_fields_change",
               selected = selected,
-              choices =  setNames(field_names_change,field_labels_change)
+              choices =  stats::setNames(field_names_change,field_labels_change)
             )
           }
         }

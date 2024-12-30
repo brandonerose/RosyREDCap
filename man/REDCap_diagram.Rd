@@ -17,7 +17,7 @@ REDCap_diagram(
 )
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
 
 \item{static}{Logical (TRUE/FALSE). If TRUE, generates a static diagram with `DiagrammeR`. If FALSE, generates an interactive diagram with `visnetwork`. Default is `FALSE`.}
 
@@ -45,6 +45,6 @@ Generates a diagram of the REDCap project structure based on the `DB` object.
 This function generates a visual diagram of the REDCap project structure, including forms, fields, and choices. It supports various options such as rendering the diagram, including fields and choices, and specifying the direction of the diagram.
 }
 \seealso{
-\code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+\link{setup_DB} for initializing the `DB` object.
 }
 \concept{Visuals}
