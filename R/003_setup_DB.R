@@ -47,7 +47,7 @@ setup_DB <- function (
   projects <- get_projects()# add cache check
   short_name <- validate_env_name(short_name)
   token_name <- paste0("RosyREDCap_token_",short_name) %>% validate_env_name()
-  in_proj_cache <- DB$short_name %in% projects$short_name
+  in_proj_cache <- short_name %in% projects$short_name
   missing_short_name <- missing(short_name)
   missing_dir_path <- missing(dir_path)
   if(force){
