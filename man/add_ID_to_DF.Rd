@@ -9,6 +9,8 @@ add_ID_to_DF(DF, DB, ref_id)
 \arguments{
 \item{DF}{dataframe}
 
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
 \item{ref_id}{column name that matches a REDCap variable name that could be an ALT id such as MRN}
 }
 \value{

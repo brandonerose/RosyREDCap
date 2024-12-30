@@ -2,7 +2,7 @@
 % Please edit documentation in R/116_summarize_DB.R
 \name{summarize_DB}
 \alias{summarize_DB}
-\title{summarize_DB}
+\title{Summarize REDCap Database}
 \usage{
 summarize_DB(
   DB,
@@ -10,7 +10,6 @@ summarize_DB(
   deidentify = T,
   clean = T,
   drop_blanks = T,
-  other_drops = NULL,
   include_metadata = T,
   annotate_metadata = T,
   include_record_summary = T,
@@ -21,8 +20,38 @@ summarize_DB(
 )
 }
 \arguments{
-\item{drop_blanks}{optional logical for dropping blanks}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{drop_blanks}{Logical (TRUE/FALSE). If TRUE, drops blank entries from the summary. Default is `TRUE`.}
+
+\item{include_metadata}{Logical (TRUE/FALSE). If TRUE, includes metadata in the summary. Default is `TRUE`.}
+
+\item{annotate_metadata}{Logical (TRUE/FALSE). If TRUE, annotates metadata in the summary. Default is `TRUE`.}
+
+\item{include_record_summary}{Logical (TRUE/FALSE). If TRUE, includes a summary of records in the summary. Default is `TRUE`.}
+
+\item{include_users}{Logical (TRUE/FALSE). If TRUE, includes user information in the summary. Default is `TRUE`.}
+
+\item{include_log}{Logical (TRUE/FALSE). If TRUE, includes logs in the summary. Default is `TRUE`.}
+
+\item{separate}{Logical (TRUE/FALSE). If TRUE, separates the summary into different sections. Default is `FALSE`.}
+
+\item{force}{Logical (TRUE/FALSE). If TRUE, forces the summary generation even if there are issues. Default is `FALSE`.}
+}
+\value{
+List. Returns a list containing the summarized data.
 }
 \description{
-summarize_DB
+Summarizes the REDCap database (`DB` object) by filtering and generating a summary list.
 }
+\details{
+This function filters the REDCap database based on the provided parameters and generates a summary list. The summary can include metadata, record summaries, user information, and logs. The function also supports deidentification and cleaning of the data.
+}
+\seealso{
+\code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+\code{\link[RosyREDCap]{update_DB}} for updating the `DB` object.
+
+Other db_functions: 
+\code{\link{update_DB}()}
+}
+\concept{db_functions}

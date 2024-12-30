@@ -7,6 +7,8 @@
 test_REDCap_token(DB, set_if_fails = T, launch_browser = T)
 }
 \arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
 \item{set_if_fails}{Logical (TRUE/FALSE). If TRUE and test connection fails, asks user to paster token into consult using `set_REDCap_token(DB)` function. Default is `TRUE`.}
 
 \item{launch_browser}{Logical (TRUE/FALSE). If TRUE, launches the REDCap login page in the default web browser when validation fails. Default is `TRUE`.}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/112_to_and_from_dir.R
 \name{drop_REDCap_to_directory}
 \alias{drop_REDCap_to_directory}
-\title{Shows DB in the env}
+\title{Drop REDCap Data to Directory}
 \usage{
 drop_REDCap_to_directory(
   DB,
@@ -19,33 +19,42 @@ drop_REDCap_to_directory(
 )
 }
 \arguments{
-\item{records}{character vector of records you want dropped to your directory}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
 
-\item{smart}{logical for whether to only save when data is new}
+\item{records}{Character vector of records you want dropped to your directory.}
 
-\item{include_metadata}{logical for whether to only include redcap and not metadata}
+\item{smart}{Logical (TRUE/FALSE). If TRUE, only saves when data is new. Default is `TRUE`.}
 
-\item{include_other}{logical for whether to only include redcap and not metadata}
+\item{include_metadata}{Logical (TRUE/FALSE). If TRUE, includes metadata in the export. Default is `TRUE`.}
 
-\item{with_links}{optional logical for including links in excel sheets}
+\item{include_other}{Logical (TRUE/FALSE). If TRUE, includes other data in the export. Default is `TRUE`.}
 
-\item{forms}{optional character vector for only selected forms}
+\item{with_links}{Optional logical (TRUE/FALSE) for including links in Excel sheets. Default is `FALSE`.}
 
-\item{merge_non_repeating}{optional logical for merging non-repeating instruments}
+\item{forms}{Optional character vector for selecting specific forms to export.}
 
-\item{str_trunc_length}{optional integer for truncation}
+\item{merge_non_repeating}{Optional logical (TRUE/FALSE) for merging non-repeating instruments. Default is `FALSE`.}
 
-\item{file_name}{optional character string for adding to the front of file names}
+\item{str_trunc_length}{Optional integer for truncation of strings.}
 
-\item{allow_mod}{logical for whether non-instrument names are allowed}
+\item{file_name}{Optional character string for adding to the front of file names.}
 
-\item{deidentify}{logical for deidentification}
+\item{allow_mod}{Logical (TRUE/FALSE). If TRUE, allows non-instrument names. Default is `FALSE`.}
 
-\item{dir_other}{optional character string of another file path where the files should be saved}
+\item{deidentify}{Logical (TRUE/FALSE). If TRUE, deidentifies the data. Default is `FALSE`.}
+
+\item{dir_other}{Optional character string of another file path where the files should be saved.}
 }
 \value{
-messages for confirmation
+Messages for confirmation.
 }
 \description{
-Shows DB in the env
+Exports specified records from the REDCap database (`DB` object) to the specified directory.
 }
+\details{
+This function exports the specified records from the REDCap database to the specified directory. It supports various options such as deidentification, including metadata, and merging non-repeating instruments. The function can also save the data only when it is new, and it allows for customization of file names and truncation of strings.
+}
+\seealso{
+\code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+}
+\concept{export_functions}

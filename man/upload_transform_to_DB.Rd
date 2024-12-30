@@ -6,6 +6,9 @@
 \usage{
 upload_transform_to_DB(DB)
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+}
 \description{
 upload_transform_to_DB Transform
 }

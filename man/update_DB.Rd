@@ -2,7 +2,7 @@
 % Please edit documentation in R/114_update.R
 \name{update_DB}
 \alias{update_DB}
-\title{Shows DB in the env}
+\title{Update REDCap Database}
 \usage{
 update_DB(
   DB,
@@ -20,21 +20,43 @@ update_DB(
 )
 }
 \arguments{
-\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using `load_DB()` or `setup_DB()`}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
 
-\item{force}{logical for force a fresh update}
+\item{set_token_if_fails}{Logical (TRUE/FALSE). If TRUE, prompts the user to set the REDCap API token if the update fails. Default is `TRUE`.}
 
-\item{day_of_log}{numbers of days to be checked in the log}
+\item{force}{Logical (TRUE/FALSE). If TRUE, forces a fresh update. Default is `FALSE`.}
 
-\item{labelled}{logical for whether or not to return raw or labelled REDCap. Default is TRUE.}
+\item{day_of_log}{Integer. Number of days to be checked in the log. Default is `10`.}
 
-\item{get_files}{logical for whether or not to get files from redcap.}
+\item{labelled}{Logical (TRUE/FALSE). If TRUE, returns labelled REDCap data. If FALSE, returns raw data. Default is `TRUE`.}
 
-\item{original_file_names}{logical for whether or not to use original file names.}
+\item{get_files}{Logical (TRUE/FALSE). If TRUE, retrieves files from REDCap. Default is `FALSE`.}
+
+\item{original_file_names}{Logical (TRUE/FALSE). If TRUE, uses original file names for retrieved files. Default is `FALSE`.}
+
+\item{entire_log}{Logical (TRUE/FALSE). If TRUE, retrieves the entire log. Default is `FALSE`.}
+
+\item{metadata_only}{Logical (TRUE/FALSE). If TRUE, updates only the metadata. Default is `FALSE`.}
+
+\item{ask_about_overwrites}{Logical (TRUE/FALSE). If TRUE, prompts the user before overwriting existing data. Default is `TRUE`.}
+
+\item{save_to_dir}{Logical (TRUE/FALSE). If TRUE, saves the updated data to the directory. Default is `TRUE`.}
+
+\item{batch_size}{Integer. Number of records to process in each batch. Default is `2000`.}
 }
 \value{
-messages for confirmation
+Messages for confirmation.
 }
 \description{
-Shows DB in the env
+Updates the REDCap database (`DB` object) by fetching the latest data from the REDCap server.
 }
+\details{
+This function updates the REDCap database by fetching the latest data from the REDCap server. It supports various options such as forcing a fresh update, checking logs for a specified number of days, and retrieving files from REDCap. The function can also handle metadata-only updates and batch processing.
+}
+\seealso{
+\code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+
+Other db_functions: 
+\code{\link{summarize_DB}()}
+}
+\concept{db_functions}

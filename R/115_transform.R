@@ -1,7 +1,7 @@
 #' @import RosyUtils
 #' @import RosyApp
 #' @title Horizontal Transform
-#' @inheritParams setup_DB
+#' @inheritParams save_DB
 #' @export
 generate_horizontal_transform <- function(DB,records){
   DB <- validate_DB(DB)
@@ -94,7 +94,7 @@ extract_form_from_merged <- function(DB,form_name){
   }
 }
 #' @title upload_transform_to_DB Transform
-#' @inheritParams setup_DB
+#' @inheritParams save_DB
 #' @export
 upload_transform_to_DB <- function(DB){
   if(is_something(DB$transformation$data_updates)){

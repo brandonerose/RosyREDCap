@@ -254,7 +254,6 @@ generate_summary_from_subset_name <- function(
     subset_name,
     clean = T,
     drop_blanks = T,
-    other_drops = NULL,
     include_metadata = T,
     annotate_metadata = T,
     include_record_summary = T,
@@ -277,7 +276,6 @@ generate_summary_from_subset_name <- function(
     deidentify = subset_list$deidentify,
     clean = clean,
     drop_blanks = drop_blanks,
-    other_drops = other_drops,
     include_metadata = include_metadata,
     annotate_metadata = annotate_metadata,
     include_record_summary = include_record_summary,
@@ -289,8 +287,27 @@ generate_summary_from_subset_name <- function(
   }
   return(to_save_list)
 }
-#' @title summarize_DB
-#' @param drop_blanks optional logical for dropping blanks
+#' @title Summarize REDCap Database
+#' @description
+#' Summarizes the REDCap database (`DB` object) by filtering and generating a summary list.
+#'
+#' @details
+#' This function filters the REDCap database based on the provided parameters and generates a summary list. The summary can include metadata, record summaries, user information, and logs. The function also supports deidentification and cleaning of the data.
+#'
+#' @inheritParams save_DB
+#' @param drop_blanks Logical (TRUE/FALSE). If TRUE, drops blank entries from the summary. Default is `TRUE`.
+#' @param include_metadata Logical (TRUE/FALSE). If TRUE, includes metadata in the summary. Default is `TRUE`.
+#' @param annotate_metadata Logical (TRUE/FALSE). If TRUE, annotates metadata in the summary. Default is `TRUE`.
+#' @param include_record_summary Logical (TRUE/FALSE). If TRUE, includes a summary of records in the summary. Default is `TRUE`.
+#' @param include_users Logical (TRUE/FALSE). If TRUE, includes user information in the summary. Default is `TRUE`.
+#' @param include_log Logical (TRUE/FALSE). If TRUE, includes logs in the summary. Default is `TRUE`.
+#' @param separate Logical (TRUE/FALSE). If TRUE, separates the summary into different sections. Default is `FALSE`.
+#' @param force Logical (TRUE/FALSE). If TRUE, forces the summary generation even if there are issues. Default is `FALSE`.
+#' @return List. Returns a list containing the summarized data.
+#' @seealso
+#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+#' \code{\link[RosyREDCap]{update_DB}} for updating the `DB` object.
+#' @family db_functions
 #' @export
 summarize_DB <- function(
     DB,
@@ -298,7 +315,6 @@ summarize_DB <- function(
     deidentify = T,
     clean = T,
     drop_blanks = T,
-    other_drops = NULL,
     include_metadata = T,
     annotate_metadata = T,
     include_record_summary = T,
@@ -319,7 +335,6 @@ summarize_DB <- function(
       deidentify = deidentify,
       clean = clean,
       drop_blanks = drop_blanks,
-      other_drops = other_drops,
       include_metadata = include_metadata,
       annotate_metadata = annotate_metadata,
       include_record_summary = include_record_summary,
@@ -345,7 +360,6 @@ summarize_DB <- function(
         subset_name = subset_name,
         clean = clean,
         drop_blanks = drop_blanks,
-        other_drops = other_drops,
         include_metadata = include_metadata,
         annotate_metadata = annotate_metadata,
         include_record_summary = include_record_summary,

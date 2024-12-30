@@ -1,19 +1,29 @@
 #' @import RosyUtils
 #' @import RosyApp
-#' @title Shows DB in the env
-#' @param records character vector of records you want dropped to your directory
-#' @param allow_mod logical for whether non-instrument names are allowed
-#' @param deidentify logical for deidentification
-#' @param dir_other optional character string of another file path where the files should be saved
-#' @param smart logical for whether to only save when data is new
-#' @param include_metadata logical for whether to only include redcap and not metadata
-#' @param include_other logical for whether to only include redcap and not metadata
-#' @param file_name optional character string for adding to the front of file names
-#' @param str_trunc_length optional integer for truncation
-#' @param with_links optional logical for including links in excel sheets
-#' @param merge_non_repeating optional logical for merging non-repeating instruments
-#' @param forms optional character vector for only selected forms
-#' @return messages for confirmation
+#' @title Drop REDCap Data to Directory
+#' @description
+#' Exports specified records from the REDCap database (`DB` object) to the specified directory.
+#'
+#' @details
+#' This function exports the specified records from the REDCap database to the specified directory. It supports various options such as deidentification, including metadata, and merging non-repeating instruments. The function can also save the data only when it is new, and it allows for customization of file names and truncation of strings.
+#'
+#' @inheritParams save_DB
+#' @param records Character vector of records you want dropped to your directory.
+#' @param allow_mod Logical (TRUE/FALSE). If TRUE, allows non-instrument names. Default is `FALSE`.
+#' @param deidentify Logical (TRUE/FALSE). If TRUE, deidentifies the data. Default is `FALSE`.
+#' @param dir_other Optional character string of another file path where the files should be saved.
+#' @param smart Logical (TRUE/FALSE). If TRUE, only saves when data is new. Default is `TRUE`.
+#' @param include_metadata Logical (TRUE/FALSE). If TRUE, includes metadata in the export. Default is `TRUE`.
+#' @param include_other Logical (TRUE/FALSE). If TRUE, includes other data in the export. Default is `TRUE`.
+#' @param file_name Optional character string for adding to the front of file names.
+#' @param str_trunc_length Optional integer for truncation of strings.
+#' @param with_links Optional logical (TRUE/FALSE) for including links in Excel sheets. Default is `FALSE`.
+#' @param merge_non_repeating Optional logical (TRUE/FALSE) for merging non-repeating instruments. Default is `FALSE`.
+#' @param forms Optional character vector for selecting specific forms to export.
+#' @return Messages for confirmation.
+#' @seealso
+#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+#' @family export_functions
 #' @export
 drop_REDCap_to_directory <- function(
     DB,

@@ -6,6 +6,9 @@
 \usage{
 view_REDCap_token(DB)
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+}
 \value{
 Invisible. Prints a message displaying the stored token.
 }

@@ -330,7 +330,7 @@ get_REDCap_report <- function(DB){
 #' This function queries the REDCap project log to retrieve recent activity based on the specified time range, user, or starting timestamp.
 #' It optionally cleans the raw API data and adds summary columns to enhance log readability and analysis.
 #'
-#' @param DB A validated `DB` object containing REDCap project data and settings. Generated using `load_DB()` or `setup_DB()`
+#' @inheritParams save_DB
 #' @param last Numeric. Specifies the time range paired with `units` to filter the log. Default is `24`.
 #' @param user Character. Optional user filter to retrieve log entries associated with a specific username. Default is an empty string (`""`), which includes all users.
 #' @param units Character. Units paired with `last` to define the time range. Options are `"mins"`, `"hours"`, `"days"`. Default is `"hours"`.

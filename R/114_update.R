@@ -1,13 +1,28 @@
 #' @import RosyUtils
 #' @import RosyApp
-#' @title Shows DB in the env
-#' @param DB A validated `DB` object containing REDCap project data and settings. Generated using `load_DB()` or `setup_DB()`
-#' @param force logical for force a fresh update
-#' @param day_of_log numbers of days to be checked in the log
-#' @param labelled logical for whether or not to return raw or labelled REDCap. Default is TRUE.
-#' @param get_files logical for whether or not to get files from redcap.
-#' @param original_file_names logical for whether or not to use original file names.
-#' @return messages for confirmation
+#' @title Update REDCap Database
+#' @description
+#' Updates the REDCap database (`DB` object) by fetching the latest data from the REDCap server.
+#'
+#' @details
+#' This function updates the REDCap database by fetching the latest data from the REDCap server. It supports various options such as forcing a fresh update, checking logs for a specified number of days, and retrieving files from REDCap. The function can also handle metadata-only updates and batch processing.
+#'
+#' @inheritParams save_DB
+#' @param set_token_if_fails Logical (TRUE/FALSE). If TRUE, prompts the user to set the REDCap API token if the update fails. Default is `TRUE`.
+#' @param force Logical (TRUE/FALSE). If TRUE, forces a fresh update. Default is `FALSE`.
+#' @param day_of_log Integer. Number of days to be checked in the log. Default is `10`.
+#' @param labelled Logical (TRUE/FALSE). If TRUE, returns labelled REDCap data. If FALSE, returns raw data. Default is `TRUE`.
+#' @param get_files Logical (TRUE/FALSE). If TRUE, retrieves files from REDCap. Default is `FALSE`.
+#' @param original_file_names Logical (TRUE/FALSE). If TRUE, uses original file names for retrieved files. Default is `FALSE`.
+#' @param entire_log Logical (TRUE/FALSE). If TRUE, retrieves the entire log. Default is `FALSE`.
+#' @param metadata_only Logical (TRUE/FALSE). If TRUE, updates only the metadata. Default is `FALSE`.
+#' @param ask_about_overwrites Logical (TRUE/FALSE). If TRUE, prompts the user before overwriting existing data. Default is `TRUE`.
+#' @param save_to_dir Logical (TRUE/FALSE). If TRUE, saves the updated data to the directory. Default is `TRUE`.
+#' @param batch_size Integer. Number of records to process in each batch. Default is `2000`.
+#' @return Messages for confirmation.
+#' @seealso
+#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+#' @family db_functions
 #' @export
 update_DB <- function(
     DB,

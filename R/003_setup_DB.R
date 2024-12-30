@@ -115,6 +115,7 @@ load_DB_from_path <- function(DB_path,validate = T){
     return()
 }
 #' @title Saves DB in the directory
+#' @param DB A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()
 #' @return Message
 #' @family DB object
 #' @export
@@ -154,7 +155,6 @@ show_DB <- function(DB,also_metadata=T,only_dfs = T){
 }
 #' @title Deletes DB object from directory (solves occasional problems)
 #' @inheritParams save_DB
-#' @inheritParams setup_DB
 #' @param dir_path character file path of the directory
 #' @return message
 #' @family DB object
