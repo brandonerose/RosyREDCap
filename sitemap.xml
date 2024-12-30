@@ -24,11 +24,11 @@
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/Links.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/REDCap_diagram.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/RosyREDCap-package.html</loc></url>
+<url><loc>https://brandonerose.github.io/RosyREDCap/reference/add_DB_subset.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/add_ID_to_DF.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/add_default_forms_transformation.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/add_field_transformation.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/add_redcap_folder.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/add_subset.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/cache_clear.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/cache_path.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/check_folder_for_projects.html</loc></url>
@@ -64,7 +64,7 @@
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/set_REDCap_token.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/setup-load.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/show_DB.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/summarize_RosyREDCap.html</loc></url>
+<url><loc>https://brandonerose.github.io/RosyREDCap/reference/summarize_DB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/test_REDCap_token.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/transform_DB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/untransform_DB.html</loc></url>
