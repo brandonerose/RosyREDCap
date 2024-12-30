@@ -7,13 +7,20 @@
 find_upload_diff(DB, view_old = F, n_row_view = 20)
 }
 \arguments{
-\item{compare}{what data_choice to be compare}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
 
-\item{to}{what data_choice to be compared to}
+\item{view_old}{Logical. If TRUE, it will display a preview of the old data (default is FALSE).}
+
+\item{n_row_view}{Numeric. Defines how many rows of the old data to view (default is 20).}
 }
 \value{
-upload_list
+A list of differences between the new and old data (`upload_list`).
 }
 \description{
-Find the DB_import and DB differences
+This function compares the data in the `DB` object (new data) with the previous or reference data to identify differences. It returns a list of differences for upload. The function ensures that the new data matches the structure defined by the metadata and provides warnings when discrepancies are found.
+}
+\details{
+The function compares the data in `DB$data_update` (new data) with the current data in the database (`DB$data`). If the form names in the new data do not match the `DB$metadata$forms$form_name`, a warning is issued. The function goes through each table in the new data and compares it with the old data, recording the differences.
+
+The `compare` and `to` parameters allow users to specify specific data choices to compare, though their exact usage will depend on how the function is fully implemented.
 }

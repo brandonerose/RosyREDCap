@@ -25,7 +25,7 @@ get_projects <- function(){
 #' @family Project Cache Functions
 #' @keywords Project Cache Functions
 #' @export
-project_health_check <- function(update = F){
+project_health_check <- function(){
   # projects <- projects_old <- get_projects()
   # DROPS <- NULL
   # projects_old$test_dir <- F

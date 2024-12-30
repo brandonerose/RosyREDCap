@@ -11,7 +11,7 @@
 \alias{get_REDCap_report}
 \alias{show_REDCap_API_methods}
 \alias{show_REDCap_API_methods_table}
-\title{REDCap API}
+\title{REDCap API Method Wrapper}
 \usage{
 get_REDCap_method(
   DB,
@@ -40,13 +40,35 @@ show_REDCap_API_methods()
 show_REDCap_API_methods_table()
 }
 \arguments{
-\item{original_file_names}{logical for using original uploaded filenames vs system defined}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
 
-\item{overwrite}{logical rewriting over the downloaded files in your directory. A better alternative is deleting files you want to update.}
+\item{method}{Character. The name of the REDCap API method to be called (e.g., 'exportRecords', 'importRecords', etc.).}
+
+\item{error_action}{Character. The action to take when an error occurs during the API call. Default is `"warn"`, which generates a warning. You can also specify `"stop"` to stop execution, or `"ignore"` to ignore errors.}
+
+\item{additional_args}{List. Additional arguments to pass to the API method (if any). Default is `NULL`.}
+
+\item{show_method_help}{Logical. If `TRUE`, the function will display method-specific help information. Default is `TRUE`.}
+
+\item{include_users}{Logical. Whether to include user information in the data. Default is FALSE.}
+
+\item{labelled}{Logical. Whether to include labelled data (e.g., with labels instead of raw codes). Default is FALSE.}
+
+\item{records}{Character vector of record identifiers. Used in methods that filter by specific records. Default is NULL.}
+
+\item{batch_size}{Numeric. The batch size for uploading or processing data. Default is 2,000.}
+
+\item{original_file_names}{Logical. Whether to use the original uploaded filenames or system-defined filenames. Default is TRUE.}
+
+\item{overwrite}{Logical. Whether to overwrite existing records when uploading data. Default is FALSE.}
 }
 \value{
-DB object
+A `DB` object with the results from the REDCap API method. The object may contain data or metadata depending on the method invoked.
 }
 \description{
-REDCap API
+A wrapper function for interacting with the REDCap API. This function allows you to execute various REDCap API methods and return results in the form of a `DB` object.
+It is designed to simplify access to the REDCap API by abstracting common method invocation patterns.
+}
+\details{
+This function calls a specified REDCap API method using the provided database (`DB`) object, token, and additional arguments. The function then returns the results in the form of a `DB` object. If an error occurs, the behavior is determined by the `error_action` parameter. By default, warnings will be issued for errors.
 }

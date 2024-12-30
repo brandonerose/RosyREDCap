@@ -1,11 +1,20 @@
 #' @import RosyUtils
 #' @import RosyApp
-#' @title clean DB columns for plotting using the metadata
+#' @title Clean DB columns for plotting using the metadata
 #' @description
-#'  Turns choices into factors and integers to integer for table processing such as with table1 and plots
-#' @param drop_blanks logical for dropping n=0 choices
-#' @param drop_unknowns logical for dropping missing codes
-#' @return DB object cleaned for table or plots
+#' This function cleans the columns of a `DB` object, transforming choice fields into factors and ensuring numeric columns are set correctly for table processing or plotting (e.g., using `table1`). It handles the transformation of missing values and optional removal of certain codes based on user input.
+#'
+#' @inheritParams save_DB
+#' @param drop_blanks Logical. If TRUE, will drop choice fields with zero occurrences (n = 0). Default is FALSE.
+#' @param other_drops A list of additional fields or choices to drop from the data. Defaults to NULL.
+#'
+#' @return A cleaned `DB` object ready for table or plot processing.
+#'
+#' @details
+#' The function works by cleaning up the data frame list (`DB$data`) according to the metadata (`DB$metadata$fields`). It converts choice fields into factors, numeric fields are treated appropriately, and any unwanted or missing codes can be dropped based on the parameters provided. The function also ensures that the data is only cleaned once by checking the internal `is_clean` flag.
+#'
+#' @note
+#' The function will not proceed with cleaning if `DB$internals$is_clean` is already TRUE, signaling that the DB has already been cleaned.
 #' @export
 clean_DB <- function(DB,drop_blanks=F,other_drops=NULL){ # problematic because setting numeric would delete missing codes
   # DB <-  DB %>% annotate_fields(skim = F)

@@ -5,6 +5,7 @@
 #' This will only overwrite and new data. It will not directly delete and data.
 #' Because this is the only function that can mess up your data, use it at your own risk.
 #' Remember all changes are saved in the redcap log if there's an issue. Missing rows and columns are fine!
+#' @inheritParams save_DB
 #' @param to_be_uploaded data.frame in raw coded form. If you worked with clean data pass your data to `labelled_to_raw_form(FORM,DB)` first.
 #' @param batch_size numeric of how big the REDCap batch upload is. Default 500.
 #' @return messages
@@ -22,14 +23,23 @@ upload_form_to_REDCap <- function(to_be_uploaded,DB,batch_size=500){
 }
 #' @title Upload from your directory to REDCap
 #' @description
-#' This function is meant to be run after `DB_import <- read_from_REDCap_upload(DB)`.
-#' It compares DB_import to DB and only uploads the changes.
-#' This will only overwrite and new data. It will not directly delete and data.
-#' Because this is the only function that can mess up your data, use it at your own risk.
-#' Remember all changes are saved in the redcap log if there's an issue.
-#' @param batch_size numeric of how big the REDCap batch upload is. Default 500.
-#' @param ask logical for if you want to preview uploads first
-#' @return messages
+#' This function is designed to upload changes from a locally modified `DB` object to REDCap. It should be run after using `DB_import <- read_from_REDCap_upload(DB)`.
+#' The function compares the imported data (`DB_import`) to the existing data in `DB` and only uploads new or changed data. It will not directly delete any data.
+#' This function has the potential to modify your data, so it should be used cautiously. Any changes made through this function will be logged in the REDCap log.
+#'
+#' @inheritParams save_DB
+#' @param batch_size Numeric. The number of records to upload in each batch. Default is 500.
+#' @param ask Logical. If TRUE, the function will prompt you to preview the data that will be uploaded before proceeding. Defaults to TRUE.
+#' @param view_old Logical. If TRUE, the function will show a preview of the old records before upload. Defaults to TRUE.
+#' @param n_row_view Numeric. The number of rows to display when previewing old data. Default is 20.
+#'
+#' @return A series of messages indicating the progress and status of the upload.
+#'
+#' @details
+#' This function uploads changes to a REDCap project, based on the differences between the locally imported data (`DB_import`) and the existing data (`DB`).
+#' It uploads changes in batches as specified by `batch_size` and allows you to preview the changes before the upload if `ask` is set to TRUE.
+#' It will not delete any data from REDCap, and it is intended to only upload new or modified records.
+#' This function is not fully ready for production use and should be used with caution. Any issues during the upload will be logged in the REDCap system log.
 #' @export
 upload_DB_to_REDCap <- function(DB,batch_size = 500, ask = T, view_old = T, n_row_view = 20){
   warning("This function is not ready for primetime yet! Use at your own risk!",immediate. = T)
@@ -74,9 +84,19 @@ upload_DB_to_REDCap <- function(DB,batch_size = 500, ask = T, view_old = T, n_ro
   return(DB)
 }
 #' @title Find the DB_import and DB differences
-#' @param compare what data_choice to be compare
-#' @param to what data_choice to be compared to
-#' @return upload_list
+#' @description
+#' This function compares the data in the `DB` object (new data) with the previous or reference data to identify differences. It returns a list of differences for upload. The function ensures that the new data matches the structure defined by the metadata and provides warnings when discrepancies are found.
+#'
+#' @inheritParams save_DB
+#' @param view_old Logical. If TRUE, it will display a preview of the old data (default is FALSE).
+#' @param n_row_view Numeric. Defines how many rows of the old data to view (default is 20).
+#'
+#' @return A list of differences between the new and old data (`upload_list`).
+#'
+#' @details
+#' The function compares the data in `DB$data_update` (new data) with the current data in the database (`DB$data`). If the form names in the new data do not match the `DB$metadata$forms$form_name`, a warning is issued. The function goes through each table in the new data and compares it with the old data, recording the differences.
+#'
+#' The `compare` and `to` parameters allow users to specify specific data choices to compare, though their exact usage will depend on how the function is fully implemented.
 #' @export
 find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
   DB <- validate_DB(DB)
@@ -184,7 +204,26 @@ check_field <- function(DB,DF, field_name,autofill_new=T){
     }
   }
 }
-#' @title edit_redcap_while_viewing
+#' @title Edit REDCap Data While Viewing
+#' @description
+#' Allows for editing a specific field in a REDCap project while simultaneously viewing the corresponding records and fields from other forms. Supports viewing and updating records individually, with flexible field selection.
+#'
+#' @inheritParams save_DB
+#' @param optional_DF Optional data frame. A data frame containing the data to be edited. If not provided, the function will pull the data from the REDCap database using the specified `field_name_to_change`.
+#' @param records Character or numeric vector. The records to be edited. If not provided, the function will use the unique values from the specified forms.
+#' @param field_name_to_change Character. The field name to be changed in the REDCap database.
+#' @param field_names_to_view Optional character vector. A list of field names to view alongside the field being edited. Defaults to `NULL`, in which case only the field being changed will be viewed.
+#' @param upload_individually Logical. If `TRUE`, each change is uploaded individually. Default is `TRUE`.
+#'
+#' @return
+#' A modified `DB` object with changes to the specified field(s) in the REDCap project.
+#'
+#' @details
+#' This function is useful when you want to edit specific fields in a REDCap project while also reviewing related data from other forms in the project. The `field_name_to_change` must be provided, and you can also specify additional fields to view while editing. The data is either passed through `optional_DF` or pulled from the project based on the provided field names.
+#'
+#' @seealso
+#' \code{\link{save_DB}} for saving the modified database.
+#'
 #' @export
 edit_redcap_while_viewing <- function(DB,optional_DF,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
   change_form <- field_names_to_form_names(DB,field_name_to_change)

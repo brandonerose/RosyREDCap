@@ -13,17 +13,27 @@ upload_DB_to_REDCap(
 )
 }
 \arguments{
-\item{batch_size}{numeric of how big the REDCap batch upload is. Default 500.}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
 
-\item{ask}{logical for if you want to preview uploads first}
+\item{batch_size}{Numeric. The number of records to upload in each batch. Default is 500.}
+
+\item{ask}{Logical. If TRUE, the function will prompt you to preview the data that will be uploaded before proceeding. Defaults to TRUE.}
+
+\item{view_old}{Logical. If TRUE, the function will show a preview of the old records before upload. Defaults to TRUE.}
+
+\item{n_row_view}{Numeric. The number of rows to display when previewing old data. Default is 20.}
 }
 \value{
-messages
+A series of messages indicating the progress and status of the upload.
 }
 \description{
-This function is meant to be run after `DB_import <- read_from_REDCap_upload(DB)`.
-It compares DB_import to DB and only uploads the changes.
-This will only overwrite and new data. It will not directly delete and data.
-Because this is the only function that can mess up your data, use it at your own risk.
-Remember all changes are saved in the redcap log if there's an issue.
+This function is designed to upload changes from a locally modified `DB` object to REDCap. It should be run after using `DB_import <- read_from_REDCap_upload(DB)`.
+The function compares the imported data (`DB_import`) to the existing data in `DB` and only uploads new or changed data. It will not directly delete any data.
+This function has the potential to modify your data, so it should be used cautiously. Any changes made through this function will be logged in the REDCap log.
+}
+\details{
+This function uploads changes to a REDCap project, based on the differences between the locally imported data (`DB_import`) and the existing data (`DB`).
+It uploads changes in batches as specified by `batch_size` and allows you to preview the changes before the upload if `ask` is set to TRUE.
+It will not delete any data from REDCap, and it is intended to only upload new or modified records.
+This function is not fully ready for production use and should be used with caution. Any issues during the upload will be logged in the REDCap system log.
 }

@@ -6,9 +6,29 @@
 \usage{
 transform_DB(DB, ask = T)
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{ask}{Logical (TRUE/FALSE). If TRUE, prompts the user for confirmation before proceeding with the transformation. Default is `TRUE`.}
+}
 \value{
-DB object
+The transformed `DB` object.
 }
 \description{
-transform_DB
+Transforms the REDCap database (`DB` object) by applying the necessary field transformations.
+This function modifies the structure of the data and records according to the transformation rules specified.
 }
+\details{
+This function checks if the database has already been transformed and applies the transformation if not. It stores the original column names before transforming the data. The transformation process can include modifying field values and renaming columns based on predefined transformation rules.
+}
+\seealso{
+\code{\link[RosyREDCap]{save_DB}} for saving the transformed database object.
+\code{\link[RosyREDCap]{untransform_DB}} for reverting the transformation.
+
+Other db_functions: 
+\code{\link{get_REDCap_raw_data}()},
+\code{\link{rmarkdown_DB}()},
+\code{\link{summarize_DB}()},
+\code{\link{update_DB}()}
+}
+\concept{db_functions}

@@ -1,7 +1,16 @@
 #' @import RosyUtils
 #' @import RosyApp
 #' @title Horizontal Transform
+#' @description
+#' This function performs a horizontal transformation on the data in the `DB` object, transforming the data format so that each record is represented in a horizontal layout. It is useful when you want to reshape or pivot the data for further analysis or presentation.
+#'
 #' @inheritParams save_DB
+#' @param records A vector of records to be transformed. The transformation applies only to the specified records from the `DB` object.
+#'
+#' @return A transformed version of the `DB` object, where the data is rearranged horizontally, typically in a format where columns represent different variables or field values for each record.
+#'
+#' @details
+#' The function begins by validating the `DB` object and checking that the records to be transformed exist. It then reshapes the data from a vertical to a horizontal format, allowing for easier access and analysis, especially when dealing with wide datasets.
 #' @export
 generate_horizontal_transform <- function(DB,records){
   DB <- validate_DB(DB)

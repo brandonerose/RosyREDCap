@@ -2,16 +2,26 @@
 % Please edit documentation in R/002_directories.R
 \name{check_folder_for_projects}
 \alias{check_folder_for_projects}
-\title{list file paths of any RosyREDCap in a folder}
+\title{List File Paths of RosyREDCap Projects in a Folder}
 \usage{
 check_folder_for_projects(file_path, validate = T)
 }
 \arguments{
-\item{validate}{logical T/F. If T function will only accept valid directories previously setup with `setup_DB()`}
+\item{file_path}{Character. The path to the folder to search.}
+
+\item{validate}{Logical. If `TRUE`, the function will only accept valid directories previously set up with `setup_DB()`. Default is `TRUE`.}
 }
 \value{
-character vector file paths
+A character vector of file paths for valid RosyREDCap project files in the folder. Returns an empty character vector if no valid files are found.
 }
 \description{
-list file paths of any RosyREDCap in a folder
+Searches a specified folder for files related to RosyREDCap projects and returns their file paths.
+Optionally validates the folder to ensure it was previously set up using `setup_DB()`.
+}
+\details{
+This function checks a folder (and optionally validates its setup) for `.RData` files that correspond to RosyREDCap projects.
+It identifies files with the extension `.RData` and names ending in `_RosyREDCap`, filtering out any unrelated files.
+}
+\seealso{
+\code{\link{setup_DB}} for setting up valid directories.
 }

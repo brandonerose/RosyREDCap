@@ -8,6 +8,7 @@ drop_REDCap_to_directory(
   DB,
   records,
   smart = T,
+  deidentify = F,
   include_metadata = T,
   include_other = T,
   with_links = T,
@@ -15,7 +16,8 @@ drop_REDCap_to_directory(
   merge_non_repeating = T,
   separate = F,
   str_trunc_length = 32000,
-  file_name
+  file_name,
+  dir_other
 )
 }
 \arguments{
@@ -24,6 +26,8 @@ drop_REDCap_to_directory(
 \item{records}{Character vector of records you want dropped to your directory.}
 
 \item{smart}{Logical (TRUE/FALSE). If TRUE, only saves when data is new. Default is `TRUE`.}
+
+\item{deidentify}{Logical (TRUE/FALSE). If TRUE, deidentifies the data. Default is `FALSE`.}
 
 \item{include_metadata}{Logical (TRUE/FALSE). If TRUE, includes metadata in the export. Default is `TRUE`.}
 
@@ -35,15 +39,13 @@ drop_REDCap_to_directory(
 
 \item{merge_non_repeating}{Optional logical (TRUE/FALSE) for merging non-repeating instruments. Default is `FALSE`.}
 
+\item{separate}{Optional logical (TRUE/FALSE) separating each form into separate files as opposed to multi-tab Excel. Default is `FALSE`.}
+
 \item{str_trunc_length}{Optional integer for truncation of strings.}
 
 \item{file_name}{Optional character string for adding to the front of file names.}
 
-\item{allow_mod}{Logical (TRUE/FALSE). If TRUE, allows non-instrument names. Default is `FALSE`.}
-
-\item{deidentify}{Logical (TRUE/FALSE). If TRUE, deidentifies the data. Default is `FALSE`.}
-
-\item{dir_other}{Optional character string of another file path where the files should be saved.}
+\item{dir_other}{Optional character string a different folder than DB$dir_path.}
 }
 \value{
 Messages for confirmation.

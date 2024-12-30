@@ -2,7 +2,7 @@
 % Please edit documentation in R/004_transform_DB.R
 \name{add_field_transformation}
 \alias{add_field_transformation}
-\title{add_field_transformation}
+\title{Add Field Transformation to the Database}
 \usage{
 add_field_transformation(
   DB,
@@ -18,9 +18,38 @@ add_field_transformation(
   data_func = NA
 )
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{field_name}{Character. The name of the field to which the transformation will be applied.}
+
+\item{form_name}{Character. The name of the form containing the field.}
+
+\item{field_type}{Character. The type of the field in REDCap (e.g., "text", "checkbox", "dropdown").}
+
+\item{field_type_R}{Character. The corresponding R data type for the field. Default is `NA`.}
+
+\item{field_label}{Character. The label for the field. Default is `NA`.}
+
+\item{select_choices_or_calculations}{Character. A string specifying the choices (for dropdown, radio, or checkbox fields) or calculations (for calculated fields). Default is `NA`.}
+
+\item{field_note}{Character. An optional note or comment for the field. Default is `NA`.}
+
+\item{identifier}{Character. A string indicating whether the field is an identifier (e.g., "Y" for yes). Default is an empty string (`""`).}
+
+\item{units}{Character. The units of measurement for the field, if applicable. Default is `NA`.}
+
+\item{data_func}{Function or NA. An optional function to transform or validate the data in the field. Default is `NA`.}
+}
 \value{
-DB object
+The updated `DB` object with the field transformation added.
 }
 \description{
-add_field_transformation
+Adds a new field transformation to the REDCap database (`DB`). This allows users to define custom transformations for a specific field in a form, including its type, label, choices, and associated function for data manipulation.
+}
+\details{
+This function facilitates the addition of a new field transformation to a REDCap database. The transformation includes metadata such as the field's type, label, and choices, along with an optional function to process the data. This is particularly useful for customizing or extending the functionality of existing REDCap forms and fields.
+}
+\seealso{
+\code{\link{save_DB}} for saving the database or subsets.
 }

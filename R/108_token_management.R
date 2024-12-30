@@ -3,7 +3,7 @@
 #' @title Set a REDCap API Token to Your Current R Session
 #' @description
 #' Prompts the user to input a valid REDCap API token and stores it as an environment variable for the current R session.
-#' Instead of using this function you should consider setting your token within your REnviron file which can be edited with \code{\link{usethis::edit_r_environ}()}
+#' Instead of using this function you should consider setting your token within your REnviron file which can be edited with \code{\link[usethis]{edit_r_environ}}.
 #' @details
 #' If a valid token already exists in the R session, the function notifies the user and asks whether they want to replace it.
 #' The user is guided to provide a new token through the console.
@@ -13,7 +13,6 @@
 #' @param ask Logical (TRUE/FALSE). If TRUE, asks the user for confirmation before overwriting an existing valid token. Default is `TRUE`.
 #' @return Invisible. A message is printed to confirm the token is successfully set.
 #' @seealso
-#' For more details, see the \code{\link{vignette("Tokens")}}.
 #' For the function to work you need to have a valid DB object from \code{\link{setup_DB}()}.
 #' See our \href{https://brandonerose.github.io/RosyREDCap/articles/Tokens.html}{REDCap Tokens Article}
 #' @family Token Functions

@@ -2,7 +2,7 @@
 % Please edit documentation in R/110_files.R
 \name{upload_file_to_REDCap}
 \alias{upload_file_to_REDCap}
-\title{upload_file_to_REDCap}
+\title{Upload File to REDCap}
 \usage{
 upload_file_to_REDCap(
   DB,
@@ -13,6 +13,25 @@ upload_file_to_REDCap(
   event = NULL
 )
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{file}{A character string specifying the file path of the file to be uploaded.}
+
+\item{record}{A character string specifying the record ID to which the file will be uploaded.}
+
+\item{field}{A character string specifying the field name to which the file will be associated.}
+
+\item{repeat_instance}{Optional. A numeric or character string specifying the repeat instance of the record. Defaults to NULL.}
+
+\item{event}{Optional. A character string specifying the event name to which the file will be uploaded. Defaults to NULL.}
+}
+\value{
+A message indicating the file upload status.
+}
 \description{
-upload_file_to_REDCap
+This function uploads a file to a specific record and field in a REDCap project. It allows you to specify optional parameters like repeat instance and event to upload the file to a particular instance or event within a record.
+}
+\details{
+This function uploads a specified file to a particular record and field in a REDCap project using the REDCap API. The file is uploaded as multipart data, and the function will automatically handle file existence checks. If provided, the `event` and `repeat_instance` parameters will be used to specify the precise location for the upload.
 }

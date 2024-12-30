@@ -34,6 +34,10 @@ load_DB_from_path(DB_path, validate = T)
 \item{use_csv}{Logical (TRUE/FALSE). If TRUE, uses CSV files for data storage. Default is `FALSE`.}
 
 \item{auto_check_token}{Logical (TRUE/FALSE). If TRUE, automatically checks the validity of the REDCap API token. Default is `TRUE`.}
+
+\item{validate}{Logical (TRUE/FALSE). If TRUE, validates DB object based on current rules. Default is `TRUE`.}
+
+\item{DB_path}{A character string representing the file path of the exact `<short_name>_RosyREDCap.rdata` file to be loaded.}
 }
 \value{
 RosyREDCap `DB` list object.

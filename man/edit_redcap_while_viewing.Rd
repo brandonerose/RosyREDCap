@@ -2,7 +2,7 @@
 % Please edit documentation in R/113_upload.R
 \name{edit_redcap_while_viewing}
 \alias{edit_redcap_while_viewing}
-\title{edit_redcap_while_viewing}
+\title{Edit REDCap Data While Viewing}
 \usage{
 edit_redcap_while_viewing(
   DB,
@@ -13,6 +13,28 @@ edit_redcap_while_viewing(
   upload_individually = T
 )
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{optional_DF}{Optional data frame. A data frame containing the data to be edited. If not provided, the function will pull the data from the REDCap database using the specified `field_name_to_change`.}
+
+\item{records}{Character or numeric vector. The records to be edited. If not provided, the function will use the unique values from the specified forms.}
+
+\item{field_name_to_change}{Character. The field name to be changed in the REDCap database.}
+
+\item{field_names_to_view}{Optional character vector. A list of field names to view alongside the field being edited. Defaults to `NULL`, in which case only the field being changed will be viewed.}
+
+\item{upload_individually}{Logical. If `TRUE`, each change is uploaded individually. Default is `TRUE`.}
+}
+\value{
+A modified `DB` object with changes to the specified field(s) in the REDCap project.
+}
 \description{
-edit_redcap_while_viewing
+Allows for editing a specific field in a REDCap project while simultaneously viewing the corresponding records and fields from other forms. Supports viewing and updating records individually, with flexible field selection.
+}
+\details{
+This function is useful when you want to edit specific fields in a REDCap project while also reviewing related data from other forms in the project. The `field_name_to_change` must be provided, and you can also specify additional fields to view while editing. The data is either passed through `optional_DF` or pulled from the project based on the provided field names.
+}
+\seealso{
+\code{\link{save_DB}} for saving the modified database.
 }

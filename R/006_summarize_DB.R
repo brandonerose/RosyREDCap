@@ -1,10 +1,21 @@
-#' @title Select REDCap records from DB
-#' @param field_names character vector of field_names to be included
-#' @param form_names character vector of form_names to be included
-#' @param filter_field character string of extra variable name to be filtered by if present in a data.frame
-#' @param filter_choices character vector of extra variable values to be filtered by if present in a data.frame
-#' @param warn_only logical for warn_only or stop
-#' @return DB object that has been filtered to only include the specified records
+#' @title Select REDCap Records from DB
+#' @description
+#' This function filters the records in the `DB` object by specified criteria, such as field names, form names, and optional filtering based on a specific field and its values. It returns a modified `DB` object containing only the records that match the filter criteria.
+#'
+#' @inheritParams save_DB
+#' @param field_names A character vector of field names to be included in the filtered data. If missing, all fields are included.
+#' @param form_names A character vector of form names to be included in the filtered data. If missing, all forms are included.
+#' @param filter_field A character string representing an extra variable name to be filtered by. This field must be present in the data frame.
+#' @param filter_choices A character vector of values to filter by for the `filter_field`. Only records with these values in the specified field will be included.
+#' @param warn_only A logical flag (`TRUE` or `FALSE`). If `TRUE`, the function will issue a warning instead of stopping if the filtering criteria do not match any records. Defaults to `FALSE`.
+#' @param no_duplicate_cols A logical flag (`TRUE` or `FALSE`). If `TRUE`, the function will avoid including duplicate columns in the output. Defaults to `FALSE`.
+#'
+#' @return A modified `DB` object with filtered records and columns based on the provided criteria.
+#'
+#' @details
+#' This function filters the data in the `DB` object according to the specified form and field names and optional filter criteria. If no field names or form names are provided, it defaults to using all fields and forms in the database.
+#' The function uses the helper `filter_DF_list` to apply the filtering logic to the `DB$data` list.
+#'
 #' @export
 filter_DB <- function(DB, filter_field, filter_choices, form_names, field_names, warn_only = F, no_duplicate_cols = F){#, ignore_incomplete=F, ignore_unverified = F
   if(missing(field_names))field_names <- DB %>% get_all_field_names()
@@ -25,6 +36,23 @@ filter_DB <- function(DB, filter_field, filter_choices, form_names, field_names,
   )
 }
 #' @title rmarkdown_DB
+#' @description
+#' Generates an RMarkdown report for the given REDCap database (`DB` object).
+#' This function creates an RMarkdown file in the specified directory or default directory,
+#' allowing users to create custom reports based on the database content.
+#'
+#' @details
+#' This function checks if a directory is specified, and if not, defaults to the `output` folder
+#' within the project's directory. It generates the RMarkdown file that can then be used for further
+#' processing or rendering into HTML, PDF, or other formats.
+#'
+#' @inheritParams save_DB
+#' @param dir_other Character string specifying the directory where the RMarkdown report will be saved.
+#' If not provided, it defaults to the `output` directory inside the project's main directory.
+#' @return A message indicating the creation of the RMarkdown report and the path to the generated file.
+#' @seealso
+#' \code{\link[RosyREDCap]{save_DB}} for saving the `DB` object.
+#' @family db_functions
 #' @export
 rmarkdown_DB <- function (DB,dir_other){
   if(missing(dir_other)){
@@ -42,6 +70,7 @@ rmarkdown_DB <- function (DB,dir_other){
   )
 }
 #' @title Clean to Raw REDCap forms
+#' @inheritParams save_DB
 #' @param FORM data.frame of labelled REDCap to be converted to raw REDCap (for uploads)
 #' @return DB object that has been filtered to only include the specified records
 #' @export
@@ -93,6 +122,7 @@ labelled_to_raw_form <- function(FORM,DB){
 }
 #' @title Raw to Labelled REDCap forms
 #' @param FORM data.frame of raw REDCap to be converted to labelled REDCap
+#' @inheritParams save_DB
 #' @return DB object
 #' @export
 raw_to_labelled_form <- function(FORM,DB){

@@ -18,9 +18,11 @@
 #' @param dir_path Optional character string representing the directory path where you want the REDCap project data to be stored. If missing, DB object will only be in current R session.
 #' @param redcap_base A character string representing the base URL of the REDCap server.
 #' @param force Logical (TRUE/FALSE). If TRUE, forces the setup even if the `DB` object already exists. Default is `FALSE`.
+#' @param validate Logical (TRUE/FALSE). If TRUE, validates DB object based on current rules. Default is `TRUE`.
 #' @param merge_form_name A character string representing the name of the merged form. Default is "merged".
 #' @param use_csv Logical (TRUE/FALSE). If TRUE, uses CSV files for data storage. Default is `FALSE`.
 #' @param auto_check_token Logical (TRUE/FALSE). If TRUE, automatically checks the validity of the REDCap API token. Default is `TRUE`.
+#' @param DB_path A character string representing the file path of the exact `<short_name>_RosyREDCap.rdata` file to be loaded.
 #' @return RosyREDCap `DB` list object.
 #' @seealso
 #' \code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
@@ -139,7 +141,6 @@ save_DB <- function(DB){
 #' @title Shows DB in the env
 #' @inheritParams save_DB
 #' @param also_metadata logical for including metadata
-#' @param data_choice whether to use 'data' or 'data'
 #' @param only_dfs logical for including data.frames
 #' @return DB tables
 #' @family DB object

@@ -119,7 +119,37 @@ check_subsets <- function(subset_names){
   if(is.null(needs_refresh))bullet_in_console("Refresh of subsets not needed!",bullet_type = "v")
   return(needs_refresh)
 }
-#' @title add_DB_subset
+#' @title Add a Subset to a REDCap Database
+#' @description
+#' Creates a subset of the main REDCap database (`DB`) based on specific filter criteria
+#' and saves it to a specified directory. The subset can be further customized with
+#' additional forms, fields, and deidentification options.
+#'
+#' @inheritParams save_DB
+#' @param subset_name Character. The name of the subset to create.
+#' @param filter_field Character. The name of the field in the database to filter on.
+#' @param filter_choices Vector. The values of `filter_field` used to define the subset.
+#' @param dir_other Character. The directory where the subset file will be saved.
+#' Default is the `output` folder within the database directory.
+#' @param file_name Character. The base name of the file where the subset will be saved.
+#' Default is `<DB$short_name>_<subset_name>`.
+#' @param form_names Character vector. Names of forms to include in the subset. Default is `NULL`, which includes all forms.
+#' @param field_names Character vector. Names of specific fields to include in the subset. Default is `NULL`, which includes all fields.
+#' @param deidentify Logical. Whether to deidentify the data in the subset. Default is `TRUE`.
+#' @param force Logical. If `TRUE`, overwrite existing subset files with the same name. Default is `FALSE`.
+#'
+#' @return
+#' A modified `DB` object that includes the newly created subset.
+#' The subset is also saved as a file in the specified directory.
+#'
+#' @details
+#' This function filters the main REDCap database using the specified `filter_field`
+#' and `filter_choices`, then creates a new subset with optional deidentification.
+#' It can be customized to include only specific forms or fields. The resulting subset
+#' is saved to a file for future use.
+#'
+#' @seealso
+#' \code{\link{save_DB}} for saving the main database or subsets.
 #' @export
 add_DB_subset <- function(
     DB,
@@ -127,7 +157,7 @@ add_DB_subset <- function(
     filter_field,
     filter_choices,
     dir_other = file.path(DB$dir_path,"output"),
-    file_name = paste0("PSDB_",subset_name),
+    file_name = paste0(DB$short_name,"_",subset_name),
     form_names = NULL,
     field_names = NULL,
     deidentify = T,
@@ -247,7 +277,26 @@ save_RosyREDCap_list <- function(
     )
   }
 }
-#' @title generate_summary_from_subset_name
+#' @title Generate a Summary from a Subset Name
+#' @description
+#' Generates a summary from a predefined subset of data within a REDCap project. The summary can be customized based on various options, such as cleaning the data, including metadata, and annotating metadata.
+#'
+#' @inheritParams save_DB
+#' @param subset_name Character. The name of the subset from which to generate the summary.
+#' @param clean Logical. If `TRUE`, the data will be cleaned before summarizing. Default is `TRUE`.
+#' @param drop_blanks Logical. If `TRUE`, records with blank fields will be dropped. Default is `TRUE`.
+#' @param include_metadata Logical. If `TRUE`, metadata will be included in the summary. Default is `TRUE`.
+#' @param annotate_metadata Logical. If `TRUE`, metadata will be annotated in the summary. Default is `TRUE`.
+#' @param include_record_summary Logical. If `TRUE`, a record summary will be included in the generated summary. Default is `TRUE`.
+#' @param include_users Logical. If `TRUE`, user-related information will be included in the summary. Default is `TRUE`.
+#' @param include_log Logical. If `TRUE`, the log of changes will be included in the summary. Default is `TRUE`.
+#' @param add_to_global Logical. If `TRUE`, the generated summary will be added to the global environment. Default is `TRUE`.
+#'
+#' @return
+#' A list containing the generated summary based on the specified options. The list includes filtered and cleaned data, metadata, and other summary details.
+#'
+#' @details
+#' This function allows you to generate a summary of data from a specific subset of records within the REDCap project. The function provides flexible options for cleaning, annotating, and including metadata, as well as controlling whether to include record summaries, user information, and logs. The summary can be added to the global environment for further use, depending on the `add_to_global` flag.
 #' @export
 generate_summary_from_subset_name <- function(
     DB,
@@ -295,6 +344,9 @@ generate_summary_from_subset_name <- function(
 #' This function filters the REDCap database based on the provided parameters and generates a summary list. The summary can include metadata, record summaries, user information, and logs. The function also supports deidentification and cleaning of the data.
 #'
 #' @inheritParams save_DB
+#' @param with_links Logical (TRUE/FALSE). If TRUE, includes links in the summary. Default is `TRUE`.
+#' @param deidentify Logical (TRUE/FALSE). If TRUE, deidentifies the summary data. Default is `TRUE`.
+#' @param clean Logical (TRUE/FALSE). If TRUE, cleans the summary data. Default is `TRUE`.
 #' @param drop_blanks Logical (TRUE/FALSE). If TRUE, drops blank entries from the summary. Default is `TRUE`.
 #' @param include_metadata Logical (TRUE/FALSE). If TRUE, includes metadata in the summary. Default is `TRUE`.
 #' @param annotate_metadata Logical (TRUE/FALSE). If TRUE, annotates metadata in the summary. Default is `TRUE`.
@@ -303,7 +355,7 @@ generate_summary_from_subset_name <- function(
 #' @param include_log Logical (TRUE/FALSE). If TRUE, includes logs in the summary. Default is `TRUE`.
 #' @param separate Logical (TRUE/FALSE). If TRUE, separates the summary into different sections. Default is `FALSE`.
 #' @param force Logical (TRUE/FALSE). If TRUE, forces the summary generation even if there are issues. Default is `FALSE`.
-#' @return List. Returns a list containing the summarized data.
+#' @return List. Returns a list containing the summarized data, including records, metadata, users, logs, and any other specified data.
 #' @seealso
 #' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
 #' \code{\link[RosyREDCap]{update_DB}} for updating the `DB` object.

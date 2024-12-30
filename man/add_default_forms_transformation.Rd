@@ -2,13 +2,26 @@
 % Please edit documentation in R/004_transform_DB.R
 \name{add_default_forms_transformation}
 \alias{add_default_forms_transformation}
-\title{add_default_forms_transformation}
+\title{Add Default Forms Transformation to the Database}
 \usage{
 add_default_forms_transformation(DB)
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+}
 \value{
-DB object
+The updated `DB` object with default transformations applied to the specified forms.
 }
 \description{
-add_default_forms_transformation
+Applies default transformations to specific forms within the REDCap database (`DB`).
+This function modifies the `DB` object to include default transformations, which may
+involve adjustments, calculations, or reformatting of data in predefined forms.
+}
+\details{
+This function is designed to streamline and standardize data processing by applying
+default transformations to the database forms. The transformations are predefined
+within the function and ensure consistency across datasets.
+}
+\seealso{
+\code{\link{save_DB}} for saving the database or subsets.
 }

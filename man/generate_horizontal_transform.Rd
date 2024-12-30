@@ -8,7 +8,15 @@ generate_horizontal_transform(DB, records)
 }
 \arguments{
 \item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{records}{A vector of records to be transformed. The transformation applies only to the specified records from the `DB` object.}
+}
+\value{
+A transformed version of the `DB` object, where the data is rearranged horizontally, typically in a format where columns represent different variables or field values for each record.
 }
 \description{
-Horizontal Transform
+This function performs a horizontal transformation on the data in the `DB` object, transforming the data format so that each record is represented in a horizontal layout. It is useful when you want to reshape or pivot the data for further analysis or presentation.
+}
+\details{
+The function begins by validating the `DB` object and checking that the records to be transformed exist. It then reshapes the data from a vertical to a horizontal format, allowing for easier access and analysis, especially when dealing with wide datasets.
 }

@@ -12,8 +12,6 @@ show_DB(DB, also_metadata = T, only_dfs = T)
 \item{also_metadata}{logical for including metadata}
 
 \item{only_dfs}{logical for including data.frames}
-
-\item{data_choice}{whether to use 'data' or 'data'}
 }
 \value{
 DB tables

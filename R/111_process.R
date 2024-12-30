@@ -188,9 +188,23 @@ add_ID_to_DF <- function(DF,DB,ref_id){
   DF <- cbind(id_col,DF)
   DF
 }
-#' @title Deidentify the REDCap DB according to REDCap or your choices
-#' @param identifiers optional character vector of column names that should be excluded from DB. Otherwise `DB$metadata$fields$identifier =="y` will be used.
-#' @return DB object that has deidentified forms
+#' @title Deidentify the REDCap Database
+#' @description
+#' Removes or masks identifying information from the REDCap database (`DB`). This can be done either based on the `identifier` field in the metadata or by specifying custom identifiers.
+#'
+#' @inheritParams save_DB
+#' @param identifiers Optional character vector of column names that should be excluded from the `DB`. If not provided, fields where `DB$metadata$fields$identifier == "y"` will be used as the default.
+#' @param drop_free_text Logical. If `TRUE`, columns containing free text will also be excluded from the `DB`. Default is `FALSE`.
+#'
+#' @return
+#' A `DB` object with deidentified forms.
+#'
+#' @details
+#' This function modifies the `DB` object to exclude specified identifiers or any columns flagged as identifiers in the metadata. Free-text fields can also be optionally removed, ensuring the resulting dataset complies with deidentification standards.
+#'
+#' @seealso
+#' \code{\link{save_DB}} for saving the modified database.
+#'
 #' @export
 deidentify_DB <- function(DB,identifiers,drop_free_text = F){
   DB <- validate_DB(DB)

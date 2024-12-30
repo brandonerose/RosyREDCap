@@ -57,6 +57,9 @@ This function updates the REDCap database by fetching the latest data from the R
 \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
 
 Other db_functions: 
-\code{\link{summarize_DB}()}
+\code{\link{get_REDCap_raw_data}()},
+\code{\link{rmarkdown_DB}()},
+\code{\link{summarize_DB}()},
+\code{\link{transform_DB}()}
 }
 \concept{db_functions}

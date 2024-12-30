@@ -31,8 +31,23 @@ get_transformed_forms <- function(DB){
   }
   return(forms)
 }
-#' @title add_default_forms_transformation
-#' @return DB object
+#' @title Add Default Forms Transformation to the Database
+#' @description
+#' Applies default transformations to specific forms within the REDCap database (`DB`).
+#' This function modifies the `DB` object to include default transformations, which may
+#' involve adjustments, calculations, or reformatting of data in predefined forms.
+#'
+#' @inheritParams save_DB
+#' @return
+#' The updated `DB` object with default transformations applied to the specified forms.
+#'
+#' @details
+#' This function is designed to streamline and standardize data processing by applying
+#' default transformations to the database forms. The transformations are predefined
+#' within the function and ensure consistency across datasets.
+#'
+#' @seealso
+#' \code{\link{save_DB}} for saving the database or subsets.
 #' @export
 add_default_forms_transformation <- function(DB){
   forms_transformation <- get_original_forms(DB)
@@ -202,8 +217,31 @@ run_fields_transformation <- function(DB,ask = T){
   bullet_in_console(paste0("Added new fields to ",DB$short_name," `DB$data`"),bullet_type = "v")
   return(DB)
 }
-#' @title add_field_transformation
-#' @return DB object
+#' @title Add Field Transformation to the Database
+#' @description
+#' Adds a new field transformation to the REDCap database (`DB`). This allows users to define custom transformations for a specific field in a form, including its type, label, choices, and associated function for data manipulation.
+#'
+#' @inheritParams save_DB
+#' @param field_name Character. The name of the field to which the transformation will be applied.
+#' @param form_name Character. The name of the form containing the field.
+#' @param field_type Character. The type of the field in REDCap (e.g., "text", "checkbox", "dropdown").
+#' @param field_type_R Character. The corresponding R data type for the field. Default is `NA`.
+#' @param field_label Character. The label for the field. Default is `NA`.
+#' @param select_choices_or_calculations Character. A string specifying the choices (for dropdown, radio, or checkbox fields) or calculations (for calculated fields). Default is `NA`.
+#' @param field_note Character. An optional note or comment for the field. Default is `NA`.
+#' @param identifier Character. A string indicating whether the field is an identifier (e.g., "Y" for yes). Default is an empty string (`""`).
+#' @param units Character. The units of measurement for the field, if applicable. Default is `NA`.
+#' @param data_func Function or NA. An optional function to transform or validate the data in the field. Default is `NA`.
+#'
+#' @return
+#' The updated `DB` object with the field transformation added.
+#'
+#' @details
+#' This function facilitates the addition of a new field transformation to a REDCap database. The transformation includes metadata such as the field's type, label, and choices, along with an optional function to process the data. This is particularly useful for customizing or extending the functionality of existing REDCap forms and fields.
+#'
+#' @seealso
+#' \code{\link{save_DB}} for saving the database or subsets.
+#'
 #' @export
 add_field_transformation <- function(
     DB,
@@ -351,7 +389,20 @@ run_fields_transformation <- function(DB,ask = T){
   return(DB)
 }
 #' @title transform_DB
-#' @return DB object
+#' @description
+#' Transforms the REDCap database (`DB` object) by applying the necessary field transformations.
+#' This function modifies the structure of the data and records according to the transformation rules specified.
+#'
+#' @details
+#' This function checks if the database has already been transformed and applies the transformation if not. It stores the original column names before transforming the data. The transformation process can include modifying field values and renaming columns based on predefined transformation rules.
+#'
+#' @inheritParams save_DB
+#' @param ask Logical (TRUE/FALSE). If TRUE, prompts the user for confirmation before proceeding with the transformation. Default is `TRUE`.
+#' @return The transformed `DB` object.
+#' @seealso
+#' \code{\link[RosyREDCap]{save_DB}} for saving the transformed database object.
+#' \code{\link[RosyREDCap]{untransform_DB}} for reverting the transformation.
+#' @family db_functions
 #' @export
 transform_DB <- function(DB,ask = T){
   if(DB$internals$is_transformed){
@@ -487,8 +538,17 @@ transform_DB <- function(DB,ask = T){
   DB$internals$last_data_transformation <- Sys.time()
   return(DB)
 }
-#' @title untransform_DB
-#' @return DB object
+#' @title Untransform DB
+#' @description
+#' This function reverses any transformations applied to a REDCap database object.
+#' If the database is not transformed, it will return the original DB without changes.
+#' The function can optionally allow partial transformations if specified.
+#'
+#' @inheritParams save_DB
+#' @param allow_partial Logical. If TRUE, allows filtered DBs with less than original field names. Default is FALSE.
+#'
+#' @return The original, untransformed DB object.
+#'
 #' @export
 untransform_DB <- function(DB,allow_partial = F){
   if(!DB$internals$is_transformed){

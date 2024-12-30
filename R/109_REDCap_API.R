@@ -63,10 +63,28 @@ run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",addi
   redcap_api_request(url=url,token = token,additional_args=additional_args) %>% process_redcap_response(error_action=error_action,method=method,show_method_help = show_method_help) %>% return()
 }
 #' @rdname redcap_api
-#' @title REDCap API
-#' @param original_file_names logical for using original uploaded filenames vs system defined
-#' @param overwrite logical rewriting over the downloaded files in your directory. A better alternative is deleting files you want to update.
-#' @return DB object
+#' @title REDCap API Method Wrapper
+#' @description
+#' A wrapper function for interacting with the REDCap API. This function allows you to execute various REDCap API methods and return results in the form of a `DB` object.
+#' It is designed to simplify access to the REDCap API by abstracting common method invocation patterns.
+#'
+#' @inheritParams save_DB
+#' @param method Character. The name of the REDCap API method to be called (e.g., 'exportRecords', 'importRecords', etc.).
+#' @param error_action Character. The action to take when an error occurs during the API call. Default is `"warn"`, which generates a warning. You can also specify `"stop"` to stop execution, or `"ignore"` to ignore errors.
+#' @param additional_args List. Additional arguments to pass to the API method (if any). Default is `NULL`.
+#' @param show_method_help Logical. If `TRUE`, the function will display method-specific help information. Default is `TRUE`.
+#' @param include_users Logical. Whether to include user information in the data. Default is FALSE.
+#' @param labelled Logical. Whether to include labelled data (e.g., with labels instead of raw codes). Default is FALSE.
+#' @param records Character vector of record identifiers. Used in methods that filter by specific records. Default is NULL.
+#' @param batch_size Numeric. The batch size for uploading or processing data. Default is 2,000.
+#' @param original_file_names Logical. Whether to use the original uploaded filenames or system-defined filenames. Default is TRUE.
+#' @param overwrite Logical. Whether to overwrite existing records when uploading data. Default is FALSE.
+#'
+#' @return A `DB` object with the results from the REDCap API method. The object may contain data or metadata depending on the method invoked.
+#'
+#' @details
+#' This function calls a specified REDCap API method using the provided database (`DB`) object, token, and additional arguments. The function then returns the results in the form of a `DB` object. If an error occurs, the behavior is determined by the `error_action` parameter. By default, warnings will be issued for errors.
+#'
 #' @export
 get_REDCap_method <- function(DB,method,error_action = "warn",additional_args=NULL,show_method_help = T){
   return(
@@ -364,9 +382,26 @@ get_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clea
   log # deal with if NA if user does not have log privelages.
 }
 #' @title Check the REDCap log
-#' @param labelled T/F for clean vs raw labels
-#' @param records optional records
-#' @return data.frame of raw_redcap
+#' @description
+#' Retrieves raw or labeled data from a REDCap database based on the provided parameters.
+#' The function connects to a REDCap project using the REDCap API, fetches the raw or labeled data
+#' (depending on the `labelled` parameter), and returns the data as a `data.frame`. Optionally,
+#' specific records can be retrieved.
+#'
+#' @details
+#' This function uses the \code{\link[REDCapR]{redcap_read}} function to fetch data from a REDCap project.
+#' The function allows for batch retrieval, and the `labelled` argument determines whether the
+#' data is returned with raw values or with labels. By default, the function retrieves raw data.
+#' It also supports filtering for specific records if provided.
+#'
+#' @inheritParams save_DB
+#' @param labelled Logical. If `TRUE`, the function retrieves labeled data; if `FALSE`, it retrieves raw data. Default is `FALSE`.
+#' @param records Optional character vector of record IDs to retrieve. If `NULL`, all records are fetched.
+#' @param batch_size Numeric. The batch size for the retrieval process. Default is `1000`.
+#' @return A `data.frame` containing the raw or labeled REDCap data.
+#' @seealso
+#' \code{\link[REDCapR]{redcap_read}} for details on the REDCap API function used to fetch data.
+#' @family db_functions
 #' @export
 get_REDCap_raw_data <- function(DB,labelled=F,records=NULL,batch_size = 1000){
   raw <- REDCapR::redcap_read(
@@ -381,9 +416,20 @@ get_REDCap_raw_data <- function(DB,labelled=F,records=NULL,batch_size = 1000){
   )$data %>% all_character_cols()
   return(raw)
 }
-#' @title Check the REDCap log
+#' @title Delete Records from REDCap
+#' @description
+#' This function deletes one or more records from a REDCap project using the REDCap API. It sends a `delete` action request for each specified record and ensures that only records present in the database are processed.
+#'
+#' @inheritParams save_DB
+#' @param records A character vector of record IDs to be deleted from the REDCap project.
+#' @return NULL. The function does not return a value but will print a message confirming deletion.
+#'
+#' @details
+#' The function checks whether the records to be deleted are included in the `DB$summary$all_records` list. If any records are not found, an error is thrown. Otherwise, the function proceeds to delete each specified record from the REDCap project via the REDCap API.
+#' The `delete` action is executed using the `httr::POST` method, sending the necessary request to the REDCap server.
+#'
 #' @export
-delete_redcap_records <- function(DB, records){
+delete_REDCap_records <- function(DB, records){
   BAD<-records[which(!records%in%DB$summary$all_records[[DB$redcap$id_col]])]
   if(length(BAD)>0)stop("Records not included in DB: ",records %>% paste0(collapse = ", "))
   for (record in records){

@@ -4,7 +4,7 @@
 \alias{project_health_check}
 \title{project_health_check}
 \usage{
-project_health_check(update = F)
+project_health_check()
 }
 \description{
 Check directory, DB object, and REDCap token. Optional update.

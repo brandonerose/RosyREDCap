@@ -2,18 +2,26 @@
 % Please edit documentation in R/005_annotate_DB.R
 \name{clean_DB}
 \alias{clean_DB}
-\title{clean DB columns for plotting using the metadata}
+\title{Clean DB columns for plotting using the metadata}
 \usage{
 clean_DB(DB, drop_blanks = F, other_drops = NULL)
 }
 \arguments{
-\item{drop_blanks}{logical for dropping n=0 choices}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
 
-\item{drop_unknowns}{logical for dropping missing codes}
+\item{drop_blanks}{Logical. If TRUE, will drop choice fields with zero occurrences (n = 0). Default is FALSE.}
+
+\item{other_drops}{A list of additional fields or choices to drop from the data. Defaults to NULL.}
 }
 \value{
-DB object cleaned for table or plots
+A cleaned `DB` object ready for table or plot processing.
 }
 \description{
-Turns choices into factors and integers to integer for table processing such as with table1 and plots
+This function cleans the columns of a `DB` object, transforming choice fields into factors and ensuring numeric columns are set correctly for table processing or plotting (e.g., using `table1`). It handles the transformation of missing values and optional removal of certain codes based on user input.
+}
+\details{
+The function works by cleaning up the data frame list (`DB$data`) according to the metadata (`DB$metadata$fields`). It converts choice fields into factors, numeric fields are treated appropriately, and any unwanted or missing codes can be dropped based on the parameters provided. The function also ensures that the data is only cleaned once by checking the internal `is_clean` flag.
+}
+\note{
+The function will not proceed with cleaning if `DB$internals$is_clean` is already TRUE, signaling that the DB has already been cleaned.
 }

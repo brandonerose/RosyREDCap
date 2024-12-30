@@ -22,6 +22,12 @@ summarize_DB(
 \arguments{
 \item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
 
+\item{with_links}{Logical (TRUE/FALSE). If TRUE, includes links in the summary. Default is `TRUE`.}
+
+\item{deidentify}{Logical (TRUE/FALSE). If TRUE, deidentifies the summary data. Default is `TRUE`.}
+
+\item{clean}{Logical (TRUE/FALSE). If TRUE, cleans the summary data. Default is `TRUE`.}
+
 \item{drop_blanks}{Logical (TRUE/FALSE). If TRUE, drops blank entries from the summary. Default is `TRUE`.}
 
 \item{include_metadata}{Logical (TRUE/FALSE). If TRUE, includes metadata in the summary. Default is `TRUE`.}
@@ -39,7 +45,7 @@ summarize_DB(
 \item{force}{Logical (TRUE/FALSE). If TRUE, forces the summary generation even if there are issues. Default is `FALSE`.}
 }
 \value{
-List. Returns a list containing the summarized data.
+List. Returns a list containing the summarized data, including records, metadata, users, logs, and any other specified data.
 }
 \description{
 Summarizes the REDCap database (`DB` object) by filtering and generating a summary list.
@@ -52,6 +58,9 @@ This function filters the REDCap database based on the provided parameters and g
 \code{\link[RosyREDCap]{update_DB}} for updating the `DB` object.
 
 Other db_functions: 
+\code{\link{get_REDCap_raw_data}()},
+\code{\link{rmarkdown_DB}()},
+\code{\link{transform_DB}()},
 \code{\link{update_DB}()}
 }
 \concept{db_functions}

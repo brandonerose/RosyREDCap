@@ -9,16 +9,16 @@
 #'
 #' @inheritParams save_DB
 #' @param records Character vector of records you want dropped to your directory.
-#' @param allow_mod Logical (TRUE/FALSE). If TRUE, allows non-instrument names. Default is `FALSE`.
 #' @param deidentify Logical (TRUE/FALSE). If TRUE, deidentifies the data. Default is `FALSE`.
-#' @param dir_other Optional character string of another file path where the files should be saved.
 #' @param smart Logical (TRUE/FALSE). If TRUE, only saves when data is new. Default is `TRUE`.
 #' @param include_metadata Logical (TRUE/FALSE). If TRUE, includes metadata in the export. Default is `TRUE`.
 #' @param include_other Logical (TRUE/FALSE). If TRUE, includes other data in the export. Default is `TRUE`.
 #' @param file_name Optional character string for adding to the front of file names.
 #' @param str_trunc_length Optional integer for truncation of strings.
 #' @param with_links Optional logical (TRUE/FALSE) for including links in Excel sheets. Default is `FALSE`.
+#' @param separate Optional logical (TRUE/FALSE) separating each form into separate files as opposed to multi-tab Excel. Default is `FALSE`.
 #' @param merge_non_repeating Optional logical (TRUE/FALSE) for merging non-repeating instruments. Default is `FALSE`.
+#' @param dir_other Optional character string a different folder than DB$dir_path.
 #' @param forms Optional character vector for selecting specific forms to export.
 #' @return Messages for confirmation.
 #' @seealso
@@ -29,6 +29,7 @@ drop_REDCap_to_directory <- function(
     DB,
     records,
     smart = T,
+    deidentify = F,
     include_metadata = T,
     include_other = T,
     with_links = T,
@@ -36,15 +37,23 @@ drop_REDCap_to_directory <- function(
     merge_non_repeating = T,
     separate = F,
     str_trunc_length = 32000,
-    file_name
+    file_name,
+    dir_other
 ) {
   DB <- validate_DB(DB)
-  root_dir <- get_dir(DB)
-  output_dir <- file.path(root_dir,"output")
-  redcap_dir <- file.path(root_dir,"REDCap",DB$short_name)
+  if(deidentify){
+    DB <- deidentify_DB(DB)# will not drop free text
+  }
+  if(missing(dir_other)){
+    root_dir <- get_dir(DB)
+    output_dir <- file.path(root_dir,"output")
+    redcap_dir <- file.path(root_dir,"REDCap",DB$short_name)
+  }else{
+    redcap_dir  <- dir_other
+    bullet_in_console("Be careful setting your own directories",file =redcap_dir,bullet_type = "!")
+  }
   redcap_metadata_dir <- file.path(redcap_dir,"metadata")
   redcap_other_dir <- file.path(redcap_dir,"other")
-  redcap_upload_dir <- file.path(redcap_dir,"upload")
   due_for_save_metadata <- T
   due_for_save_data <- T
   if(smart){
@@ -54,7 +63,6 @@ drop_REDCap_to_directory <- function(
   redcap_dir %>% dir.create(showWarnings = F)
   redcap_metadata_dir %>% dir.create(showWarnings = F)
   redcap_other_dir %>% dir.create(showWarnings = F)
-  redcap_upload_dir %>% dir.create(showWarnings = F)
   if(due_for_save_metadata){
     if(include_metadata){
       DB$internals$last_metadata_dir_save <- DB$internals$last_metadata_update
@@ -179,6 +187,7 @@ drop_REDCap_to_directory <- function(
   return(DB)
 }
 #' @title Reads DB from the dropped REDCap files in dir/REDCap/upload
+#' @inheritParams save_DB
 #' @param allow_all logical TF for allowing DB$data names that are not also form names
 #' @param drop_nonredcap_vars logical TF for dropping non-redcap variable names
 #' @param drop_non_form_vars logical TF for dropping non-form variable names

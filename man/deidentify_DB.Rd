@@ -2,16 +2,26 @@
 % Please edit documentation in R/111_process.R
 \name{deidentify_DB}
 \alias{deidentify_DB}
-\title{Deidentify the REDCap DB according to REDCap or your choices}
+\title{Deidentify the REDCap Database}
 \usage{
 deidentify_DB(DB, identifiers, drop_free_text = F)
 }
 \arguments{
-\item{identifiers}{optional character vector of column names that should be excluded from DB. Otherwise `DB$metadata$fields$identifier =="y` will be used.}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{identifiers}{Optional character vector of column names that should be excluded from the `DB`. If not provided, fields where `DB$metadata$fields$identifier == "y"` will be used as the default.}
+
+\item{drop_free_text}{Logical. If `TRUE`, columns containing free text will also be excluded from the `DB`. Default is `FALSE`.}
 }
 \value{
-DB object that has deidentified forms
+A `DB` object with deidentified forms.
 }
 \description{
-Deidentify the REDCap DB according to REDCap or your choices
+Removes or masks identifying information from the REDCap database (`DB`). This can be done either based on the `identifier` field in the metadata or by specifying custom identifiers.
+}
+\details{
+This function modifies the `DB` object to exclude specified identifiers or any columns flagged as identifiers in the metadata. Free-text fields can also be optionally removed, ensuring the resulting dataset complies with deidentification standards.
+}
+\seealso{
+\code{\link{save_DB}} for saving the modified database.
 }

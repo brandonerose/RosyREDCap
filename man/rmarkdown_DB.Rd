@@ -6,6 +6,32 @@
 \usage{
 rmarkdown_DB(DB, dir_other)
 }
-\description{
-rmarkdown_DB
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{dir_other}{Character string specifying the directory where the RMarkdown report will be saved.
+If not provided, it defaults to the `output` directory inside the project's main directory.}
 }
+\value{
+A message indicating the creation of the RMarkdown report and the path to the generated file.
+}
+\description{
+Generates an RMarkdown report for the given REDCap database (`DB` object).
+This function creates an RMarkdown file in the specified directory or default directory,
+allowing users to create custom reports based on the database content.
+}
+\details{
+This function checks if a directory is specified, and if not, defaults to the `output` folder
+within the project's directory. It generates the RMarkdown file that can then be used for further
+processing or rendering into HTML, PDF, or other formats.
+}
+\seealso{
+\code{\link[RosyREDCap]{save_DB}} for saving the `DB` object.
+
+Other db_functions: 
+\code{\link{get_REDCap_raw_data}()},
+\code{\link{summarize_DB}()},
+\code{\link{transform_DB}()},
+\code{\link{update_DB}()}
+}
+\concept{db_functions}

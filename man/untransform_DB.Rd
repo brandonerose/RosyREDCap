@@ -2,13 +2,20 @@
 % Please edit documentation in R/004_transform_DB.R
 \name{untransform_DB}
 \alias{untransform_DB}
-\title{untransform_DB}
+\title{Untransform DB}
 \usage{
 untransform_DB(DB, allow_partial = F)
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{allow_partial}{Logical. If TRUE, allows filtered DBs with less than original field names. Default is FALSE.}
+}
 \value{
-DB object
+The original, untransformed DB object.
 }
 \description{
-untransform_DB
+This function reverses any transformations applied to a REDCap database object.
+If the database is not transformed, it will return the original DB without changes.
+The function can optionally allow partial transformations if specified.
 }

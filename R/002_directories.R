@@ -29,15 +29,31 @@ get_dir <- function(DB){
   return(validate_dir(dir_path,silent=T))
 }
 #' @title nav_to_dir
+#' @inheritParams save_DB
 #' @return opens browser link
 #' @export
 nav_to_dir <- function(DB){
   rstudioapi::filesPaneNavigate(DB$dir_path)
   utils::browseURL(DB$dir_path)
 }
-#' @title list file paths of any RosyREDCap in a folder
-#' @param validate logical T/F. If T function will only accept valid directories previously setup with `setup_DB()`
-#' @return character vector file paths
+#' @title List File Paths of RosyREDCap Projects in a Folder
+#' @description
+#' Searches a specified folder for files related to RosyREDCap projects and returns their file paths.
+#' Optionally validates the folder to ensure it was previously set up using `setup_DB()`.
+#'
+#' @param file_path Character. The path to the folder to search.
+#' @param validate Logical. If `TRUE`, the function will only accept valid directories previously set up with `setup_DB()`. Default is `TRUE`.
+#'
+#' @return
+#' A character vector of file paths for valid RosyREDCap project files in the folder. Returns an empty character vector if no valid files are found.
+#'
+#' @details
+#' This function checks a folder (and optionally validates its setup) for `.RData` files that correspond to RosyREDCap projects.
+#' It identifies files with the extension `.RData` and names ending in `_RosyREDCap`, filtering out any unrelated files.
+#'
+#' @seealso
+#' \code{\link{setup_DB}} for setting up valid directories.
+#'
 #' @export
 check_folder_for_projects <- function(file_path,validate = T){
   check_path <- file_path

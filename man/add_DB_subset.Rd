@@ -2,7 +2,7 @@
 % Please edit documentation in R/116_summarize_DB.R
 \name{add_DB_subset}
 \alias{add_DB_subset}
-\title{add_DB_subset}
+\title{Add a Subset to a REDCap Database}
 \usage{
 add_DB_subset(
   DB,
@@ -10,13 +10,51 @@ add_DB_subset(
   filter_field,
   filter_choices,
   dir_other = file.path(DB$dir_path, "output"),
-  file_name = paste0("PSDB_", subset_name),
+  file_name = paste0(DB$short_name, "_", subset_name),
   form_names = NULL,
   field_names = NULL,
   deidentify = T,
   force = F
 )
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
+
+\item{subset_name}{Character. The name of the subset to create.}
+
+\item{filter_field}{Character. The name of the field in the database to filter on.}
+
+\item{filter_choices}{Vector. The values of `filter_field` used to define the subset.}
+
+\item{dir_other}{Character. The directory where the subset file will be saved.
+Default is the `output` folder within the database directory.}
+
+\item{file_name}{Character. The base name of the file where the subset will be saved.
+Default is `<DB$short_name>_<subset_name>`.}
+
+\item{form_names}{Character vector. Names of forms to include in the subset. Default is `NULL`, which includes all forms.}
+
+\item{field_names}{Character vector. Names of specific fields to include in the subset. Default is `NULL`, which includes all fields.}
+
+\item{deidentify}{Logical. Whether to deidentify the data in the subset. Default is `TRUE`.}
+
+\item{force}{Logical. If `TRUE`, overwrite existing subset files with the same name. Default is `FALSE`.}
+}
+\value{
+A modified `DB` object that includes the newly created subset.
+The subset is also saved as a file in the specified directory.
+}
 \description{
-add_DB_subset
+Creates a subset of the main REDCap database (`DB`) based on specific filter criteria
+and saves it to a specified directory. The subset can be further customized with
+additional forms, fields, and deidentification options.
+}
+\details{
+This function filters the main REDCap database using the specified `filter_field`
+and `filter_choices`, then creates a new subset with optional deidentification.
+It can be customized to include only specific forms or fields. The resulting subset
+is saved to a file for future use.
+}
+\seealso{
+\code{\link{save_DB}} for saving the main database or subsets.
 }

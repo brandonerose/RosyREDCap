@@ -2,7 +2,7 @@
 % Please edit documentation in R/006_summarize_DB.R
 \name{filter_DB}
 \alias{filter_DB}
-\title{Select REDCap records from DB}
+\title{Select REDCap Records from DB}
 \usage{
 filter_DB(
   DB,
@@ -15,19 +15,27 @@ filter_DB(
 )
 }
 \arguments{
-\item{filter_field}{character string of extra variable name to be filtered by if present in a data.frame}
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \code{DB <- \link{load_DB}("PROJ")} or \link{setup_DB}()}
 
-\item{filter_choices}{character vector of extra variable values to be filtered by if present in a data.frame}
+\item{filter_field}{A character string representing an extra variable name to be filtered by. This field must be present in the data frame.}
 
-\item{form_names}{character vector of form_names to be included}
+\item{filter_choices}{A character vector of values to filter by for the `filter_field`. Only records with these values in the specified field will be included.}
 
-\item{field_names}{character vector of field_names to be included}
+\item{form_names}{A character vector of form names to be included in the filtered data. If missing, all forms are included.}
 
-\item{warn_only}{logical for warn_only or stop}
+\item{field_names}{A character vector of field names to be included in the filtered data. If missing, all fields are included.}
+
+\item{warn_only}{A logical flag (`TRUE` or `FALSE`). If `TRUE`, the function will issue a warning instead of stopping if the filtering criteria do not match any records. Defaults to `FALSE`.}
+
+\item{no_duplicate_cols}{A logical flag (`TRUE` or `FALSE`). If `TRUE`, the function will avoid including duplicate columns in the output. Defaults to `FALSE`.}
 }
 \value{
-DB object that has been filtered to only include the specified records
+A modified `DB` object with filtered records and columns based on the provided criteria.
 }
 \description{
-Select REDCap records from DB
+This function filters the records in the `DB` object by specified criteria, such as field names, form names, and optional filtering based on a specific field and its values. It returns a modified `DB` object containing only the records that match the filter criteria.
+}
+\details{
+This function filters the data in the `DB` object according to the specified form and field names and optional filter criteria. If no field names or form names are provided, it defaults to using all fields and forms in the database.
+The function uses the helper `filter_DF_list` to apply the filtering logic to the `DB$data` list.
 }
