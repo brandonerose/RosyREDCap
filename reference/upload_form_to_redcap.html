@@ -70,6 +70,10 @@ Remember all changes are saved in the redcap log if there's an issue. Missing ro
 <dd><p>data.frame in raw coded form. If you worked with clean data pass your data to `labelled_to_raw_form(FORM,DB)` first.</p></dd>
 
 
+<dt id="arg-db">DB<a class="anchor" aria-label="anchor" href="#arg-db"></a></dt>
+<dd><p>A validated `DB` object containing REDCap project data and settings. Generated using <code>DB &lt;- <a href="setup-load.html">load_DB</a>("PROJ")</code> or <a href="setup-load.html">setup_DB</a>()</p></dd>
+
+
 <dt id="arg-batch-size">batch_size<a class="anchor" aria-label="anchor" href="#arg-batch-size"></a></dt>
 <dd><p>numeric of how big the REDCap batch upload is. Default 500.</p></dd>
 

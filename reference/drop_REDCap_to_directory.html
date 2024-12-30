@@ -57,6 +57,7 @@
 <span>  <span class="va">DB</span>,</span>
 <span>  <span class="va">records</span>,</span>
 <span>  smart <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  deidentify <span class="op">=</span> <span class="cn">F</span>,</span>
 <span>  include_metadata <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>  include_other <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>  with_links <span class="op">=</span> <span class="cn">T</span>,</span>
@@ -64,7 +65,8 @@
 <span>  merge_non_repeating <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>  separate <span class="op">=</span> <span class="cn">F</span>,</span>
 <span>  str_trunc_length <span class="op">=</span> <span class="fl">32000</span>,</span>
-<span>  <span class="va">file_name</span></span>
+<span>  <span class="va">file_name</span>,</span>
+<span>  <span class="va">dir_other</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -82,6 +84,10 @@
 
 <dt id="arg-smart">smart<a class="anchor" aria-label="anchor" href="#arg-smart"></a></dt>
 <dd><p>Logical (TRUE/FALSE). If TRUE, only saves when data is new. Default is `TRUE`.</p></dd>
+
+
+<dt id="arg-deidentify">deidentify<a class="anchor" aria-label="anchor" href="#arg-deidentify"></a></dt>
+<dd><p>Logical (TRUE/FALSE). If TRUE, deidentifies the data. Default is `FALSE`.</p></dd>
 
 
 <dt id="arg-include-metadata">include_metadata<a class="anchor" aria-label="anchor" href="#arg-include-metadata"></a></dt>
@@ -104,6 +110,10 @@
 <dd><p>Optional logical (TRUE/FALSE) for merging non-repeating instruments. Default is `FALSE`.</p></dd>
 
 
+<dt id="arg-separate">separate<a class="anchor" aria-label="anchor" href="#arg-separate"></a></dt>
+<dd><p>Optional logical (TRUE/FALSE) separating each form into separate files as opposed to multi-tab Excel. Default is `FALSE`.</p></dd>
+
+
 <dt id="arg-str-trunc-length">str_trunc_length<a class="anchor" aria-label="anchor" href="#arg-str-trunc-length"></a></dt>
 <dd><p>Optional integer for truncation of strings.</p></dd>
 
@@ -112,16 +122,8 @@
 <dd><p>Optional character string for adding to the front of file names.</p></dd>
 
 
-<dt id="arg-allow-mod">allow_mod<a class="anchor" aria-label="anchor" href="#arg-allow-mod"></a></dt>
-<dd><p>Logical (TRUE/FALSE). If TRUE, allows non-instrument names. Default is `FALSE`.</p></dd>
-
-
-<dt id="arg-deidentify">deidentify<a class="anchor" aria-label="anchor" href="#arg-deidentify"></a></dt>
-<dd><p>Logical (TRUE/FALSE). If TRUE, deidentifies the data. Default is `FALSE`.</p></dd>
-
-
 <dt id="arg-dir-other">dir_other<a class="anchor" aria-label="anchor" href="#arg-dir-other"></a></dt>
-<dd><p>Optional character string of another file path where the files should be saved.</p></dd>
+<dd><p>Optional character string a different folder than DB$dir_path.</p></dd>
 
 </dl></div>
     <div class="section level2">

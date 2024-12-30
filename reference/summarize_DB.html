@@ -77,6 +77,18 @@
 <dd><p>A validated `DB` object containing REDCap project data and settings. Generated using <code>DB &lt;- <a href="setup-load.html">load_DB</a>("PROJ")</code> or <a href="setup-load.html">setup_DB</a>()</p></dd>
 
 
+<dt id="arg-with-links">with_links<a class="anchor" aria-label="anchor" href="#arg-with-links"></a></dt>
+<dd><p>Logical (TRUE/FALSE). If TRUE, includes links in the summary. Default is `TRUE`.</p></dd>
+
+
+<dt id="arg-deidentify">deidentify<a class="anchor" aria-label="anchor" href="#arg-deidentify"></a></dt>
+<dd><p>Logical (TRUE/FALSE). If TRUE, deidentifies the summary data. Default is `TRUE`.</p></dd>
+
+
+<dt id="arg-clean">clean<a class="anchor" aria-label="anchor" href="#arg-clean"></a></dt>
+<dd><p>Logical (TRUE/FALSE). If TRUE, cleans the summary data. Default is `TRUE`.</p></dd>
+
+
 <dt id="arg-drop-blanks">drop_blanks<a class="anchor" aria-label="anchor" href="#arg-drop-blanks"></a></dt>
 <dd><p>Logical (TRUE/FALSE). If TRUE, drops blank entries from the summary. Default is `TRUE`.</p></dd>
 
@@ -111,7 +123,7 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>List. Returns a list containing the summarized data.</p>
+    <p>List. Returns a list containing the summarized data, including records, metadata, users, logs, and any other specified data.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -122,6 +134,9 @@
     <div class="dont-index"><p><code>setup_RosyREDCap</code> for initializing the `DB` object.
 <code><a href="update_DB.html">update_DB</a></code> for updating the `DB` object.</p>
 <p>Other db_functions:
+<code><a href="get_REDCap_raw_data.html">get_REDCap_raw_data</a>()</code>,
+<code><a href="rmarkdown_DB.html">rmarkdown_DB</a>()</code>,
+<code><a href="transform_DB.html">transform_DB</a>()</code>,
 <code><a href="update_DB.html">update_DB</a>()</code></p></div>
     </div>
 
