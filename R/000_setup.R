@@ -64,7 +64,7 @@ cache_projects_exists <-  function(){
 }
 get_cache <- function(){
   cache <- hoardr::hoard()
-  cache$cache_path_set(path=.packageName,type="user_cache_dir")
+  cache$cache_path_set(path="RosyREDCap",type="user_cache_dir")
   cache$mkdir()
   return(cache)
 }

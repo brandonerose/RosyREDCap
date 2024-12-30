@@ -128,10 +128,10 @@ save_DB <- function(DB){
     return(invisible())
   }
   # DB <- reverse_clean_DB(DB) # # problematic because setting numeric would delete missing codes
-  DB %>% saveRDS(file=file.path(DB$dir_path,"R_objects",paste0(DB$short_name,".rdata")))
+  DB %>% saveRDS(file=file.path(DB$dir_path,"R_objects",paste0(DB$short_name,"_RosyREDCap.rdata")))
   add_project(DB)
   # save_xls_wrapper(DB)
-  bullet_in_console(paste0("Saved ",DB$short_name," to directory!"),url = DB$dir_path,bullet_type = "v")
+  # nav_to_dir(DB)
   return(invisible())
 }
 #' @title Shows DB in the env

@@ -89,7 +89,7 @@ blank_project_cols <- function(){
     "project_title",
     "id_col",
     "is_longitudinal",
-    "has_repeating_instruments_or_events",
+    "has_repeating_forms_or_events",
     "has_multiple_arms",
     "n_records",
     "redcap_base",
@@ -110,7 +110,7 @@ save_projects_to_cache <- function(projects,silent=T){
   # projects$test_dir <- projects$test_dir %>% as.logical()
   # projects$test_DB <- projects$test_DB %>% as.logical()
   # projects$test_RC <- projects$test_RC %>% as.logical()
-  saveRDS(projects, file = cache$cache_path_get() %>% normalizePath() %>% file.path("projects.rds"))
+  saveRDS(projects, file = cache_path() %>% file.path("projects.rds"))
   if(!silent){
     bullet_in_console(
       bullet_type = "v",
@@ -125,21 +125,22 @@ save_projects_to_cache <- function(projects,silent=T){
 extract_project_details <- function(DB){
   OUT <- data.frame(
     short_name = DB$short_name,
-    dir_path = DB$dir_path %>% is.null() %>% ifelse(NA,DB$dir_path)
-    # token_name = DB$token_name,
-    # project_id = DB$redcap$project_id,
-    # version = DB$redcap$version,
-    # project_title = DB$redcap$project_title,
-    # id_col = DB$redcap$id_col,
-    # is_longitudinal = DB$redcap$is_longitudinal,
-    # has_multiple_arms = DB$redcap$has_multiple_arms,
-    # has_repeating_forms_or_events = DB$redcap$has_repeating_forms_or_events,
-    # n_records = ifelse(is.null(DB$summary$all_records[[DB$redcap$id_col]]),NA,DB$summary$all_records %>% nrow()),
-    # last_metadata_update = DB$internals$last_metadata_update,
-    # last_data_update = DB$internals$last_data_update,
-    # redcap_base = DB$links$redcap_base ,
-    # redcap_home = DB$links$redcap_home,
-    # redcap_API_playground =  DB$links$redcap_API_playground
+    dir_path = DB$dir_path %>% is.null() %>% ifelse(NA,DB$dir_path),
+    last_save = DB$internals$last_data_dir_save %>% is.null() %>% ifelse(NA,DB$internals$last_data_dir_save),
+    last_metadata_update = DB$internals$last_metadata_update,
+    last_data_update = DB$internals$last_data_update,
+    version = DB$redcap$version,
+    token_name = DB$redcap$token_name,
+    project_id = DB$redcap$project_id,
+    project_title = DB$redcap$project_title,
+    id_col = DB$redcap$id_col,
+    is_longitudinal = DB$redcap$is_longitudinal,
+    has_repeating_forms_or_events = DB$redcap$has_repeating_forms_or_events,
+    has_multiple_arms = DB$redcap$has_multiple_arms,
+    n_records = ifelse(is.null(DB$summary$all_records[[DB$redcap$id_col]]),NA,DB$summary$all_records %>% nrow()),
+    redcap_base = DB$links$redcap_base ,
+    redcap_home = DB$links$redcap_home,
+    redcap_API_playground =  DB$links$redcap_API_playground
   ) %>% all_character_cols()
   rownames(OUT) <- NULL
   return(OUT)
