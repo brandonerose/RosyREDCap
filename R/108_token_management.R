@@ -134,7 +134,7 @@ validate_REDCap_token <- function(DB,silent=T){
   token <- DB %>% get_REDCap_token_name() %>% Sys.getenv()
   valid <- token %>% is_valid_REDCap_token(silent=silent)
   if(!silent){
-    bullet_in_console(paste0("You can set REDCap tokens each session with `set_REDCap_token(DB)` or `Sys.setenv(",token_name,"='YoUrNevErShaReToKeNfRoMREDCapWebsiTe')`... or for higher security run `usethis::edit_r_environ()` and add
+    bullet_in_console(paste0("You can set REDCap tokens each session with `set_REDCap_token(DB)` or `Sys.setenv(",token_name,"='YoUrNevErShaReToKeNfRoMREDCapWebsiTe')`... or for higher security run `edit_r_environ()` from `usethis` package and add
         `",token_name," = 'YoUrNevErShaReToKeNfRoMREDCapWebsiTe'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the
         code, `Sys.getenv('",token_name,"')`"))
     if(is_something(DB$links$redcap_API)){
