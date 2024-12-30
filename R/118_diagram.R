@@ -315,8 +315,26 @@ create_node_edge_REDCap <- function(
   )
   return(OUT)
 }
-#' @title REDCap_diagram
-#' @return messages for confirmation
+#' @title Generate REDCap Project Diagram
+#' @description
+#' Generates a diagram of the REDCap project structure based on the `DB` object.
+#'
+#' @details
+#' This function generates a visual diagram of the REDCap project structure, including forms, fields, and choices. It supports various options such as rendering the diagram, including fields and choices, and specifying the direction of the diagram.
+#'
+#' @inheritParams save_DB
+#' @param static Logical (TRUE/FALSE). If TRUE, generates a static diagram with `DiagrammeR`. If FALSE, generates an interactive diagram with `visnetwork`. Default is `FALSE`.
+#' @param render Logical (TRUE/FALSE). If TRUE, renders the diagram. Default is `TRUE`.
+#' @param duplicate_forms Logical (TRUE/FALSE). If TRUE, includes duplicate form nodes in the diagram. Default is `TRUE`.
+#' @param clean_names Logical (TRUE/FALSE). If TRUE, cleans the names of the forms and fields in the diagram. Default is `TRUE`.
+#' @param include_fields Logical (TRUE/FALSE). If TRUE, includes fields in the diagram. Default is `FALSE`.
+#' @param include_choices Logical (TRUE/FALSE). If TRUE, includes choices in the diagram. Default is `FALSE`.
+#' @param hierarchical Logical (TRUE/FALSE). If TRUE, generates a hierarchical diagram. Default is `FALSE`.
+#' @param direction Character string specifying the direction of the diagram. Options are "LR" (left to right), "TB" (top to bottom), "RL" (right to left), and "BT" (bottom to top). Default is "LR".
+#' @return A diagram object representing the REDCap project structure.
+#' @seealso
+#' \code{\link[RosyREDCap]{setup_RosyREDCap}} for initializing the `DB` object.
+#' @family Visuals
 #' @export
 REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical = F,direction = "LR"){
   if(is.null(DB$redcap))DB <- update_DB(DB, metadata_only = T,save_to_dir = F)
