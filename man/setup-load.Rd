@@ -3,6 +3,7 @@
 \name{setup_DB}
 \alias{setup_DB}
 \alias{load_DB}
+\alias{load_DB_from_path}
 \title{Setup or Load RosyREDCap Project}
 \usage{
 setup_DB(
@@ -15,7 +16,9 @@ setup_DB(
   auto_check_token = T
 )
 
-load_DB(short_name, dir_path, validate = T)
+load_DB(short_name, validate = T)
+
+load_DB_from_path(DB_path, validate = T)
 }
 \arguments{
 \item{short_name}{A character string with no spaces or symbols representing the unique short name for the REDCap project.}

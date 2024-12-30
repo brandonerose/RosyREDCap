@@ -98,6 +98,7 @@ test_REDCap_token <- function(DB, set_if_fails = T, launch_browser = T){
   }
   bullet_in_console("Connected to REDCap! 🚀",bullet_type = "v")
   DB$redcap$version <- version
+  DB$internals$ever_connected <- T
   return(DB)
 }
 is_valid_REDCap_token <- function(token, silent = T){

@@ -105,6 +105,7 @@ reference:
     contents:
       - cache_clear
       - cache_path
+      - check_folder_for_projects
       - project_health_check
   - subtitle: Tokens
     contents:
@@ -113,6 +114,7 @@ reference:
       - test_REDCap_token
   - subtitle: DB Object
     contents:
+      - load_DB_from_path
       - get_dir
       - delete_DB
       - save_DB

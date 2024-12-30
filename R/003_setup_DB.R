@@ -45,21 +45,31 @@ setup_DB <- function (
 )
 {
   projects <- get_projects()# add cache check
-  if(missing(short_name))stop("`short_name` is required for DBs that haven't been validated")
   short_name <- validate_env_name(short_name)
   token_name <- paste0("RosyREDCap_token_",short_name) %>% validate_env_name()
+  in_proj_cache <- DB$short_name %in% projects$short_name
+  missing_short_name <- missing(short_name)
   missing_dir_path <- missing(dir_path)
-  if(missing_dir_path){
-    warning("If you don't supply a directory, RosyREDCap will only run in R session. Package is best with a directory.",immediate. = T)
+  if(force){
     DB <- blank_DB()
+    bullet_in_console(paste0("Setup Blank DB Object because `force = T`"))
   }
-  if( ! missing_dir_path){
-    if(force){
-      DB <- blank_DB()
-    }else{
+  if(!force){
+    if(in_proj_cache){
       DB <- load_DB(short_name)
     }
-    DB$dir_path <-set_dir(dir_path)
+    if(!in_proj_cache){
+      DB <- blank_DB()
+      bullet_in_console("Setup Blank DB Object because nothing found in cache.",bullet_type = "!")
+    }
+  }
+  if(missing_dir_path){
+    if(!is_something(DB$dir_path)){
+      bullet_in_console("If you don't supply a directory, RosyREDCap will only run in R session. Package is best with a directory.",bullet_type = "!")
+    }
+  }
+  if(!missing_dir_path){
+    DB$dir_path <- set_dir(dir_path)
   }
   DB$short_name <- short_name
   DB$internals$use_csv <- use_csv
@@ -68,6 +78,7 @@ setup_DB <- function (
   DB$links$redcap_uri <- DB$links$redcap_base %>% paste0("api/")
   DB$internals$merge_form_name <- validate_env_name(merge_form_name)
   DB$internals$use_csv <- use_csv
+  DB$internals$is_blank <- F
   DB$data <- DB$data %>% all_character_cols_list()
   bullet_in_console(paste0("Token name: '",token_name,"'"))
   if(auto_check_token){
@@ -80,20 +91,27 @@ setup_DB <- function (
 }
 #' @rdname setup-load
 #' @export
-load_DB <- function(short_name,dir_path,validate = T){
+load_DB <- function(short_name,validate = T){
   projects <- get_projects()
-  if(missing(dir_path)){
-    if(nrow(projects)==0)return(blank_DB())
-    if(!short_name%in%projects$short_name)return(blank_DB())
-    dir_path <- projects$dir_path[which(projects$short_name==short_name)]
-  }else{
-    if(!file.exists(dir_path))stop("`dir_path` doesn't exist")
-    #consider search feature by saving all rdata files with suffix "_RosyREDCap.Rdata"
-  }
-  DB_path <- file.path(dir_path,"R_objects",paste0(short_name,".rdata"))
-  if(!file.exists(DB_path))return(blank_DB())
+  if(nrow(projects)==0)stop("No projects in cache")
+  if(!short_name%in%projects$short_name)stop("No project named ",short_name," in cache. Did you use `setup_DB()` and `update_DB()`?")
+  dir_path <- projects$dir_path[which(projects$short_name==short_name)]
+  if(!file.exists(dir_path))stop("`dir_path` doesn't exist: '",dir_path,"'")
+  DB_path <- file.path(dir_path,"R_objects",paste0(short_name,"_RosyREDCap.rdata"))
+  load_DB_from_path(
+    DB_path = DB_path,
+    validate = validate
+  ) %>% return()
+}
+#' @rdname setup-load
+#' @export
+load_DB_from_path <- function(DB_path,validate = T){
+  if(!file.exists(DB_path))stop("No file at path '",DB_path,"'. Did you use `setup_DB()` and `update_DB()`?")
   readRDS(file=DB_path) %>%
-    validate_DB(silent = F, warn_only = !validate) %>%
+    validate_DB(
+      silent = F,
+      warn_only = !validate
+    ) %>%
     return()
 }
 #' @title Saves DB in the directory
@@ -105,11 +123,16 @@ save_DB <- function(DB){
   if( ! is.list(DB)) stop("DB must be a list")
   #function
   DB <- DB %>% validate_DB()
+  if(!DB$internals$ever_connected){
+    bullet_in_console(paste0("Did not save ",DB$short_name," because there has never been a REDCap connection! You must use `setup_DB()` and `update_DB()`"),bullet_type = "x")
+    return(invisible())
+  }
   # DB <- reverse_clean_DB(DB) # # problematic because setting numeric would delete missing codes
   DB %>% saveRDS(file=file.path(DB$dir_path,"R_objects",paste0(DB$short_name,".rdata")))
   add_project(DB)
   # save_xls_wrapper(DB)
   bullet_in_console(paste0("Saved ",DB$short_name," to directory!"),url = DB$dir_path,bullet_type = "v")
+  return(invisible())
 }
 #' @title Shows DB in the env
 #' @inheritParams save_DB
@@ -263,6 +286,8 @@ blank_DB <-  function(){ # can sort this better in version 3.0.0
       data_extract_merged = NULL,
       merge_form_name = "merged",
       DB_type = "redcap",
+      is_blank = T,
+      ever_connected = F,
       is_transformed = F,
       is_clean = F,
       use_csv = F

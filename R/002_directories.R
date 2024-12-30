@@ -35,13 +35,36 @@ nav_to_dir <- function(DB){
   rstudioapi::filesPaneNavigate(DB$dir_path)
   utils::browseURL(DB$dir_path)
 }
+#' @title list file paths of any RosyREDCap in a folder
+#' @param validate logical T/F. If T function will only accept valid directories previously setup with `setup_DB()`
+#' @return character vector file paths
+#' @export
+check_folder_for_projects <- function(file_path,validate = T){
+  check_path <- file_path
+  if(validate){
+    file_path <- validate_dir(file_path)
+    check_path <- file.path(file_path,"R_objects")
+  }
+  files <- list.files.real(check_path,full.names = T,recursive = T)
+  if(length(file)==0)return(character(0))
+  file_name <- tools::file_path_sans_ext(basename(files))
+  file_ext <- tools::file_ext(files) %>% tolower()
+  df <- data.frame(
+    file_path = files,
+    file_name = file_name,
+    file_ext = file_ext
+  )
+  df <- df[which((df$file_ext == "rdata")&(endsWith(df$file_name,"_RosyREDCap"))),]
+  if(nrow(df)==0)return(character(0))
+  return(df$file_path)
+}
 dir_folders <- c("R_objects","output","scripts","input")
 validate_dir <- function(dir_path,silent=T){
   #param check
   dir_path <- clean_dir_path(dir_path)
   if ( ! file.exists(dir_path)) stop("dir_path does not exist")
   if ( ! is.logical(silent)) stop("silent parameter must be T/F")
-  stop_mes <- "Did you use `set_dir()`?"
+  stop_mes <- "Did you use `setup_DB()`?"
   for(folder in dir_folders){
     if ( ! file.exists(file.path(dir_path,folder))) stop("'",dir_path,"/",folder,"' missing! ",stop_mes)
   }
