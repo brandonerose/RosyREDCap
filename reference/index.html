@@ -63,9 +63,9 @@
         </dt>
         <dd>run_RosyREDCap</dd>
       </dl></div><div class="section level2">
-      <h2 id="core-basic">Core/Basic<a class="anchor" aria-label="anchor" href="#core-basic"></a></h2>
+      <h2 id="core-pipeline-functions-basic-">Core Pipeline Functions (Basic)<a class="anchor" aria-label="anchor" href="#core-pipeline-functions-basic-"></a></h2>
 
-      <div class="section-desc"><p>Represents the core functionality. Setup or Load your project. Update from REDCap. Use the outputs.</p></div>
+      <div class="section-desc"><p>For basic users use these core functions to maintain REDCap data pipelines. Setup or Load your project. Update from REDCap using what is already saved. Save the outputs to a directory.</p></div>
 
 
     </div><div class="section level2">
@@ -103,16 +103,22 @@
 
         </dt>
         <dd>Drop REDCap Data to Directory</dd>
+      </dl><dl><dt>
+
+          <code><a href="summarize_DB.html">summarize_DB()</a></code>
+
+        </dt>
+        <dd>Summarize REDCap Database</dd>
       </dl></div><div class="section level2">
-      <h2 id="components-intermediate">Components/Intermediate<a class="anchor" aria-label="anchor" href="#components-intermediate"></a></h2>
+      <h2 id="everything-by-topic-intermediate-advanced-">Everything by Topic (Intermediate/Advanced)<a class="anchor" aria-label="anchor" href="#everything-by-topic-intermediate-advanced-"></a></h2>
 
       <div class="section-desc"><p>Expands on functionality and breaksdown core feautures into more customizable parts</p></div>
 
 
     </div><div class="section level2">
 
-      <h3 id="get-from-redcap">Get from REDCap<a class="anchor" aria-label="anchor" href="#get-from-redcap"></a></h3>
-
+      <h3 id="project-cache">Project Cache<a class="anchor" aria-label="anchor" href="#project-cache"></a></h3>
+      <div class="section-desc"><p>RosyREDCap cahces user-level project metadata (name, directory, links, last update and other details). Tokens and data are NOT stored here.</p></div>
 
 
     </div><div class="section level2">
@@ -122,38 +128,178 @@
 
       <dl><dt>
 
-          <code><a href="redcap_api.html">get_REDCap_method()</a></code> <code><a href="redcap_api.html">get_REDCap_metadata()</a></code> <code><a href="redcap_api.html">get_REDCap_data()</a></code> <code><a href="redcap_api.html">get_REDCap_version()</a></code> <code><a href="redcap_api.html">get_REDCap_files()</a></code> <code><a href="redcap_api.html">get_REDCap_users()</a></code> <code><a href="redcap_api.html">get_REDCap_structure()</a></code> <code><a href="redcap_api.html">show_REDCap_API_methods()</a></code> <code><a href="redcap_api.html">show_REDCap_API_methods_table()</a></code>
+          <code><a href="get_projects.html">get_projects()</a></code>
 
         </dt>
-        <dd>REDCap API Method Wrapper</dd>
+        <dd>Get your REDCap projects used by RosyREDCap</dd>
+      </dl><dl><dt>
+
+          <code><a href="cache_clear.html">cache_clear()</a></code>
+
+        </dt>
+        <dd>Clear your cached projects</dd>
+      </dl><dl><dt>
+
+          <code><a href="cache_path.html">cache_path()</a></code>
+
+        </dt>
+        <dd>Get your Get Cache Path</dd>
+      </dl><dl><dt>
+
+          <code><a href="check_folder_for_projects.html">check_folder_for_projects()</a></code>
+
+        </dt>
+        <dd>List File Paths of RosyREDCap Projects in a Folder</dd>
+      </dl><dl><dt>
+
+          <code><a href="project_health_check.html">project_health_check()</a></code>
+
+        </dt>
+        <dd>project_health_check</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="tokens">Tokens<a class="anchor" aria-label="anchor" href="#tokens"></a></h3>
+      <div class="section-desc"><p>Tokens are required to use the REDCap API. Never share your tokens.</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="set_REDCap_token.html">set_REDCap_token()</a></code>
+
+        </dt>
+        <dd>Set a REDCap API Token to Your Current R Session</dd>
+      </dl><dl><dt>
+
+          <code><a href="view_redcap_token.html">view_REDCap_token()</a></code>
+
+        </dt>
+        <dd>View the REDCap API Token Stored in the Session</dd>
+      </dl><dl><dt>
+
+          <code><a href="test_REDCap_token.html">test_REDCap_token()</a></code>
+
+        </dt>
+        <dd>Test REDCap API Token linked to a DB Object</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="setup-load-save-delete-db-object">Setup/Load/Save/Delete DB Object<a class="anchor" aria-label="anchor" href="#setup-load-save-delete-db-object"></a></h3>
+      <div class="section-desc"><p>DB objects are R lists meant to store all metadata and data for a single REDCap project. They utilize the REDCap log to only fetch recent updates. The can be “mirrored” to a local/cloud directory to maintain file pipelines and/or used for an exploratory data analysis shiny app via <code>run_RosyREDCap</code>.</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="setup-load.html">setup_DB()</a></code> <code><a href="setup-load.html">load_DB()</a></code> <code><a href="setup-load.html">load_DB_from_path()</a></code>
+
+        </dt>
+        <dd>Setup or Load RosyREDCap Project</dd>
+      </dl><dl><dt>
+
+          <code><a href="delete_DB.html">delete_DB()</a></code>
+
+        </dt>
+        <dd>Deletes DB object from directory (solves occasional problems)</dd>
+      </dl><dl><dt>
+
+          <code><a href="save_DB.html">save_DB()</a></code>
+
+        </dt>
+        <dd>Saves DB in the directory</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_dir.html">get_dir()</a></code>
+
+        </dt>
+        <dd>get your directory</dd>
+      </dl><dl><dt>
+
+          <code><a href="update_DB.html">update_DB()</a></code>
+
+        </dt>
+        <dd>Update REDCap Database</dd>
+      </dl><dl><dt>
+
+          <code><a href="show_DB.html">show_DB()</a></code>
+
+        </dt>
+        <dd>Shows DB in the env</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="get-from-redcap">Get from REDCap<a class="anchor" aria-label="anchor" href="#get-from-redcap"></a></h3>
+      <div class="section-desc"><p>For most project, even with tens-of-thousands records and hundreds of variables, this can be handeled with update_DB. This package is not presently intended for massive REDCap projects.</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="update_DB.html">update_DB()</a></code>
+
+        </dt>
+        <dd>Update REDCap Database</dd>
       </dl><dl><dt>
 
           <code><a href="get_REDCap_report.html">get_REDCap_report()</a></code>
 
         </dt>
         <dd>Get REDCap Report</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_REDCap_log.html">get_REDCap_log()</a></code>
-
-        </dt>
-        <dd>Check the REDCap Log</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_REDCap_raw_data.html">get_REDCap_raw_data()</a></code>
-
-        </dt>
-        <dd>Check the REDCap log</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_REDCap_file_repository.html">get_REDCap_file_repository()</a></code>
-
-        </dt>
-        <dd>Checks REDCap for current files</dd>
       </dl></div><div class="section level2">
 
-      <h3 id="upload-delete-to-redcap">Upload/Delete to REDCap<a class="anchor" aria-label="anchor" href="#upload-delete-to-redcap"></a></h3>
+      <h3 id="data-helpers">Data Helpers<a class="anchor" aria-label="anchor" href="#data-helpers"></a></h3>
+      <div class="section-desc"><p>Used for managing to-be-upload data</p></div>
 
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="add_ID_to_DF.html">add_ID_to_DF()</a></code>
+
+        </dt>
+        <dd>add REDCap ID to any dataframe using a ref_id</dd>
+      </dl><dl><dt>
+
+          <code><a href="find_upload_diff.html">find_upload_diff()</a></code>
+
+        </dt>
+        <dd>Find the DB_import and DB differences</dd>
+      </dl><dl><dt>
+
+          <code><a href="raw_to_labelled_form.html">raw_to_labelled_form()</a></code>
+
+        </dt>
+        <dd>Raw to Labelled REDCap forms</dd>
+      </dl><dl><dt>
+
+          <code><a href="labelled_to_raw_form.html">labelled_to_raw_form()</a></code>
+
+        </dt>
+        <dd>Clean to Raw REDCap forms</dd>
+      </dl><dl><dt>
+
+          <code><a href="read_from_REDCap_upload.html">read_from_REDCap_upload()</a></code>
+
+        </dt>
+        <dd>Reads DB from the dropped REDCap files in dir/REDCap/upload</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="upload-to-and-delete-from-redcap">Upload to and Delete from REDCap<a class="anchor" aria-label="anchor" href="#upload-to-and-delete-from-redcap"></a></h3>
+      <div class="section-desc"><p>Always use with caution! Package takes several steps to test and confirm uploads but ultimately the user is responsible for data changes. Remember REDCap always keeps a log of changes.</p></div>
 
 
     </div><div class="section level2">
@@ -217,8 +363,8 @@
         <dd>Delete a File from REDCap</dd>
       </dl></div><div class="section level2">
 
-      <h3 id="db-object-modifications">DB object Modifications<a class="anchor" aria-label="anchor" href="#db-object-modifications"></a></h3>
-
+      <h3 id="db-object-modifications">DB Object Modifications<a class="anchor" aria-label="anchor" href="#db-object-modifications"></a></h3>
+      <div class="section-desc"><p>One of the core internal motivations for RosyREDCap development was to have REDCap-project-agnositic functions that perform key transformations such as deidentify, derive fields, and transform (merge). However, these functions might not be utilized by the average user.</p></div>
 
 
     </div><div class="section level2">
@@ -246,16 +392,22 @@
         <dd>Select REDCap Records from DB</dd>
       </dl><dl><dt>
 
-          <code><a href="show_DB.html">show_DB()</a></code>
-
-        </dt>
-        <dd>Shows DB in the env</dd>
-      </dl><dl><dt>
-
           <code><a href="add_default_forms_transformation.html">add_default_forms_transformation()</a></code>
 
         </dt>
         <dd>Add Default Forms Transformation to the Database</dd>
+      </dl><dl><dt>
+
+          <code><a href="add_DB_subset.html">add_DB_subset()</a></code>
+
+        </dt>
+        <dd>Add a Subset to a REDCap Database</dd>
+      </dl><dl><dt>
+
+          <code><a href="add_field_transformation.html">add_field_transformation()</a></code>
+
+        </dt>
+        <dd>Add Field Transformation to the Database</dd>
       </dl><dl><dt>
 
           <code><a href="transform_DB.html">transform_DB()</a></code>
@@ -270,49 +422,8 @@
         <dd>Untransform DB</dd>
       </dl></div><div class="section level2">
 
-      <h3 id="data-helpers">Data Helpers<a class="anchor" aria-label="anchor" href="#data-helpers"></a></h3>
-
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="add_ID_to_DF.html">add_ID_to_DF()</a></code>
-
-        </dt>
-        <dd>add REDCap ID to any dataframe using a ref_id</dd>
-      </dl><dl><dt>
-
-          <code><a href="find_upload_diff.html">find_upload_diff()</a></code>
-
-        </dt>
-        <dd>Find the DB_import and DB differences</dd>
-      </dl><dl><dt>
-
-          <code><a href="raw_to_labelled_form.html">raw_to_labelled_form()</a></code>
-
-        </dt>
-        <dd>Raw to Labelled REDCap forms</dd>
-      </dl><dl><dt>
-
-          <code><a href="labelled_to_raw_form.html">labelled_to_raw_form()</a></code>
-
-        </dt>
-        <dd>Clean to Raw REDCap forms</dd>
-      </dl><dl><dt>
-
-          <code><a href="read_from_REDCap_upload.html">read_from_REDCap_upload()</a></code>
-
-        </dt>
-        <dd>Reads DB from the dropped REDCap files in dir/REDCap/upload</dd>
-      </dl></div><div class="section level2">
-      <h2 id="experimental-advanced">Experimental/Advanced<a class="anchor" aria-label="anchor" href="#experimental-advanced"></a></h2>
-
-      <div class="section-desc"><p>Expands more on what is possible. May be niche, hard to document, and less stable</p></div>
+      <h3 id="db-object-outputs">DB Object Outputs<a class="anchor" aria-label="anchor" href="#db-object-outputs"></a></h3>
+      <div class="section-desc"><p>Mirror your DB object to a local/cloud file system. If you have subsets, will only update file if record beloning to that subset was updated.</p></div>
 
 
     </div><div class="section level2">
@@ -322,28 +433,16 @@
 
       <dl><dt>
 
-          <code><a href="add_field_transformation.html">add_field_transformation()</a></code>
+          <code><a href="REDCap_diagram.html">REDCap_diagram()</a></code>
 
         </dt>
-        <dd>Add Field Transformation to the Database</dd>
+        <dd>Generate REDCap Project Diagram</dd>
       </dl><dl><dt>
 
-          <code><a href="add_DB_subset.html">add_DB_subset()</a></code>
+          <code><a href="drop_REDCap_to_directory.html">drop_REDCap_to_directory()</a></code>
 
         </dt>
-        <dd>Add a Subset to a REDCap Database</dd>
-      </dl><dl><dt>
-
-          <code><a href="run_quality_checks.html">run_quality_checks()</a></code>
-
-        </dt>
-        <dd>Run Quality Checks</dd>
-      </dl><dl><dt>
-
-          <code><a href="edit_redcap_while_viewing.html">edit_REDCap_while_viewing()</a></code>
-
-        </dt>
-        <dd>Edit REDCap Data While Viewing</dd>
+        <dd>Drop REDCap Data to Directory</dd>
       </dl><dl><dt>
 
           <code><a href="generate_horizontal_transform.html">generate_horizontal_transform()</a></code>
@@ -358,20 +457,78 @@
         <dd>Generate a Summary from a Subset Name</dd>
       </dl><dl><dt>
 
+          <code><a href="summarize_DB.html">summarize_DB()</a></code>
+
+        </dt>
+        <dd>Summarize REDCap Database</dd>
+      </dl><dl><dt>
+
+          <code><a href="run_RosyREDCap.html">run_RosyREDCap()</a></code>
+
+        </dt>
+        <dd>run_RosyREDCap</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="experimental-dev-functions">Experimental/Dev Functions<a class="anchor" aria-label="anchor" href="#experimental-dev-functions"></a></h3>
+      <div class="section-desc"><p>These functions are still in development and is subject to changes.</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
           <code><a href="rmarkdown_DB.html">rmarkdown_DB()</a></code>
 
         </dt>
         <dd>rmarkdown_DB</dd>
       </dl><dl><dt>
 
-          <code><a href="summarize_DB.html">summarize_DB()</a></code>
+          <code><a href="run_quality_checks.html">run_quality_checks()</a></code>
 
         </dt>
-        <dd>Summarize REDCap Database</dd>
-      </dl></div><div class="section level2">
-      <h2 id="generic-helpers">Generic Helpers<a class="anchor" aria-label="anchor" href="#generic-helpers"></a></h2>
+        <dd>Run Quality Checks</dd>
+      </dl><dl><dt>
 
-      <div class="section-desc"><p>May not be needed by most but included for transparency and testing.</p></div>
+          <code><a href="edit_redcap_while_viewing.html">edit_REDCap_while_viewing()</a></code>
+
+        </dt>
+        <dd>Edit REDCap Data While Viewing</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="other-helpers">Other Helpers<a class="anchor" aria-label="anchor" href="#other-helpers"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="get_dir.html">get_dir()</a></code>
+
+        </dt>
+        <dd>get your directory</dd>
+      </dl><dl><dt>
+
+          <code><a href="nav_to_dir.html">nav_to_dir()</a></code>
+
+        </dt>
+        <dd>nav_to_dir</dd>
+      </dl><dl><dt>
+
+          <code><a href="Links.html">link_API_token()</a></code> <code><a href="Links.html">link_API_playground()</a></code> <code><a href="Links.html">link_REDCap_home()</a></code> <code><a href="Links.html">link_REDCap_project()</a></code> <code><a href="Links.html">link_REDCap_record()</a></code>
+
+        </dt>
+        <dd>Open Links to REDCap Pages</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="generic-helpers">Generic Helpers<a class="anchor" aria-label="anchor" href="#generic-helpers"></a></h3>
+
 
 
     </div><div class="section level2">
@@ -385,128 +542,6 @@
 
         </dt>
         <dd>Pipe operator</dd>
-      </dl></div><div class="section level2">
-
-      <h3 id="project-cache">Project Cache<a class="anchor" aria-label="anchor" href="#project-cache"></a></h3>
-
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="cache_clear.html">cache_clear()</a></code>
-
-        </dt>
-        <dd>Clear your cached projects</dd>
-      </dl><dl><dt>
-
-          <code><a href="cache_path.html">cache_path()</a></code>
-
-        </dt>
-        <dd>Get your Get Cache Path</dd>
-      </dl><dl><dt>
-
-          <code><a href="check_folder_for_projects.html">check_folder_for_projects()</a></code>
-
-        </dt>
-        <dd>List File Paths of RosyREDCap Projects in a Folder</dd>
-      </dl><dl><dt>
-
-          <code><a href="project_health_check.html">project_health_check()</a></code>
-
-        </dt>
-        <dd>project_health_check</dd>
-      </dl></div><div class="section level2">
-
-      <h3 id="tokens">Tokens<a class="anchor" aria-label="anchor" href="#tokens"></a></h3>
-
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="set_REDCap_token.html">set_REDCap_token()</a></code>
-
-        </dt>
-        <dd>Set a REDCap API Token to Your Current R Session</dd>
-      </dl><dl><dt>
-
-          <code><a href="view_redcap_token.html">view_REDCap_token()</a></code>
-
-        </dt>
-        <dd>View the REDCap API Token Stored in the Session</dd>
-      </dl><dl><dt>
-
-          <code><a href="test_REDCap_token.html">test_REDCap_token()</a></code>
-
-        </dt>
-        <dd>Test REDCap API Token linked to a DB Object</dd>
-      </dl></div><div class="section level2">
-
-      <h3 id="db-object">DB Object<a class="anchor" aria-label="anchor" href="#db-object"></a></h3>
-
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="setup-load.html">setup_DB()</a></code> <code><a href="setup-load.html">load_DB()</a></code> <code><a href="setup-load.html">load_DB_from_path()</a></code>
-
-        </dt>
-        <dd>Setup or Load RosyREDCap Project</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_dir.html">get_dir()</a></code>
-
-        </dt>
-        <dd>get your directory</dd>
-      </dl><dl><dt>
-
-          <code><a href="delete_DB.html">delete_DB()</a></code>
-
-        </dt>
-        <dd>Deletes DB object from directory (solves occasional problems)</dd>
-      </dl><dl><dt>
-
-          <code><a href="save_DB.html">save_DB()</a></code>
-
-        </dt>
-        <dd>Saves DB in the directory</dd>
-      </dl></div><div class="section level2">
-
-      <h3 id="launch-nav">Launch/Nav<a class="anchor" aria-label="anchor" href="#launch-nav"></a></h3>
-
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="nav_to_dir.html">nav_to_dir()</a></code>
-
-        </dt>
-        <dd>nav_to_dir</dd>
-      </dl><dl><dt>
-
-          <code><a href="Links.html">link_API_token()</a></code> <code><a href="Links.html">link_API_playground()</a></code> <code><a href="Links.html">link_REDCap_home()</a></code> <code><a href="Links.html">link_REDCap_project()</a></code> <code><a href="Links.html">link_REDCap_record()</a></code>
-
-        </dt>
-        <dd>Open Links to REDCap Pages</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
