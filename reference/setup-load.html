@@ -65,7 +65,9 @@
 <span></span>
 <span><span class="fu">load_DB</span><span class="op">(</span><span class="va">short_name</span>, validate <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">load_DB_from_path</span><span class="op">(</span><span class="va">DB_path</span>, validate <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">load_DB_from_path</span><span class="op">(</span><span class="va">DB_path</span>, validate <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">load_test_DB</span><span class="op">(</span>short_name <span class="op">=</span> <span class="st">"TEST_repeating"</span>, with_data <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -106,6 +108,10 @@
 
 <dt id="arg-db-path">DB_path<a class="anchor" aria-label="anchor" href="#arg-db-path"></a></dt>
 <dd><p>A character string representing the file path of the exact `&lt;short_name&gt;_RosyREDCap.rdata` file to be loaded.</p></dd>
+
+
+<dt id="arg-with-data">with_data<a class="anchor" aria-label="anchor" href="#arg-with-data"></a></dt>
+<dd><p>Logical (TRUE/FALSE). If TRUE, loads the test DB object with data as if user ran `update_DB`. Default is `FALSE`.</p></dd>
 
 </dl></div>
     <div class="section level2">
