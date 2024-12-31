@@ -9,7 +9,7 @@ set_dir <- function(dir_path){
       stop("Path not found. Use absolute path or choose one within R project working directory.")
     }
   }
-  for(folder in dir_folders){
+  for(folder in internal_dir_folders){
     if ( ! file.exists(file.path(dir_path,folder))) {
       dir.create(file.path(dir_path,folder),showWarnings = F)
     }
@@ -76,14 +76,14 @@ check_folder_for_projects <- function(file_path,validate = T){
   if(nrow(df)==0)return(character(0))
   return(df$file_path)
 }
-dir_folders <- c("R_objects","output","scripts","input")
+internal_dir_folders <- c("R_objects","output","scripts","input")
 validate_dir <- function(dir_path,silent=T){
   #param check
   dir_path <- clean_dir_path(dir_path)
   if ( ! file.exists(dir_path)) stop("dir_path does not exist")
   if ( ! is.logical(silent)) stop("silent parameter must be T/F")
   stop_mes <- "Did you use `setup_DB()`?"
-  for(folder in dir_folders){
+  for(folder in internal_dir_folders){
     if ( ! file.exists(file.path(dir_path,folder))) stop("'",dir_path,"/",folder,"' missing! ",stop_mes)
   }
   # if ( ! file.exists(file.path(dir_path,"ref_tables"))) stop("'",dir_path,"/ref_tables' missing! ",stop_mes)

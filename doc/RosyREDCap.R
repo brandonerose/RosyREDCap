@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 # View(projects) # show your previously saved projects
 # 
 # DB <- setup_DB(
-#   short_name = "TEST",
+#   short_name = "TEST_repeating",
 #   redcap_base_link = "https://redcap.miami.edu/", # change to your institutions link
 #   dir_path = getwd(), # or change to your intended file path
 #   # force = T, # use this to force a refresh

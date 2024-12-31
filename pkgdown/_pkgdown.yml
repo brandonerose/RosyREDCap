@@ -63,10 +63,6 @@ reference:
       - load_DB_from_path
       - delete_DB
       - save_DB
-      - get_dir
-      - update_DB
-      - show_DB
-
   - subtitle: Get from REDCap
     desc: For most project, even with tens-of-thousands records and hundreds of variables, this can be handeled with update_DB. This package is not presently intended for massive REDCap projects.
     contents:
@@ -112,8 +108,6 @@ reference:
       - generate_summary_from_subset_name
       - summarize_DB
       - run_RosyREDCap
-
-
   - subtitle: Experimental/Dev Functions
     desc: These functions are still in development and is subject to changes.
     contents:
@@ -122,6 +116,8 @@ reference:
       - edit_REDCap_while_viewing
   - subtitle: Other Helpers
     contents:
+      - "%>%"
+      - show_DB
       - get_dir
       - nav_to_dir
       - link_API_playground
@@ -129,9 +125,6 @@ reference:
       - link_REDCap_home
       - link_REDCap_project
       - link_REDCap_record
-  - subtitle: Generic Helpers
-    contents:
-      - "%>%"
 
 articles:
   - title: Feautures by R User Level

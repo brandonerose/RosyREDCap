@@ -4,6 +4,7 @@
 \alias{setup_DB}
 \alias{load_DB}
 \alias{load_DB_from_path}
+\alias{load_test_DB}
 \title{Setup or Load RosyREDCap Project}
 \usage{
 setup_DB(
@@ -19,6 +20,8 @@ setup_DB(
 load_DB(short_name, validate = T)
 
 load_DB_from_path(DB_path, validate = T)
+
+load_test_DB(short_name = "TEST_repeating", with_data = F)
 }
 \arguments{
 \item{short_name}{A character string with no spaces or symbols representing the unique short name for the REDCap project.}
@@ -38,6 +41,8 @@ load_DB_from_path(DB_path, validate = T)
 \item{validate}{Logical (TRUE/FALSE). If TRUE, validates DB object based on current rules. Default is `TRUE`.}
 
 \item{DB_path}{A character string representing the file path of the exact `<short_name>_RosyREDCap.rdata` file to be loaded.}
+
+\item{with_data}{Logical (TRUE/FALSE). If TRUE, loads the test DB object with data as if user ran `update_DB`. Default is `FALSE`.}
 }
 \value{
 RosyREDCap `DB` list object.

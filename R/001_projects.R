@@ -75,35 +75,33 @@ project_health_check <- function(){
   #   save_projects_to_cache(projects,silent = F)
   # }
 }
-blank_project_cols <- function(){
-  c(
-    "short_name",
-    "dir_path",
-    "last_save",
-    "last_metadata_update",
-    "last_data_update",
-    "version",
-    "token_name",
-    "project_id",
-    "project_title",
-    "id_col",
-    "is_longitudinal",
-    "has_repeating_forms_or_events",
-    "has_multiple_arms",
-    "R_object_size",
-    "file_size",
-    "n_records",
-    "redcap_base",
-    "redcap_home",
-    "redcap_API_playground"
-    # "test_dir"
-    # "test_DB",
-    # "test_RC"
-  )
-}
+internal_blank_project_cols <- c(
+  "short_name",
+  "dir_path",
+  "last_save",
+  "last_metadata_update",
+  "last_data_update",
+  "version",
+  "token_name",
+  "project_id",
+  "project_title",
+  "id_col",
+  "is_longitudinal",
+  "has_repeating_forms_or_events",
+  "has_multiple_arms",
+  "R_object_size",
+  "file_size",
+  "n_records",
+  "redcap_base",
+  "redcap_home",
+  "redcap_API_playground"
+  # "test_dir"
+  # "test_DB",
+  # "test_RC"
+)
 blank_project <- function(){
-  x <- matrix(data = character(0),ncol = length(blank_project_cols())) %>% as.data.frame()
-  colnames(x) <- blank_project_cols()
+  x <- matrix(data = character(0),ncol = length(internal_blank_project_cols)) %>% as.data.frame()
+  colnames(x) <- internal_blank_project_cols
   return(x)
 }
 save_projects_to_cache <- function(projects,silent=T){
@@ -167,28 +165,26 @@ delete_project <- function(short_name){
   save_projects_to_cache(projects)
   return(projects)
 }
-field_colnames <- function(){
-  c(
-    "field_name",
-    "form_name",
-    "section_header",
-    "field_type",
-    "field_label",
-    "select_choices_or_calculations",
-    "field_note",
-    "text_validation_type_or_show_slider_number",
-    "text_validation_min",
-    "text_validation_max",
-    "identifier",
-    "branching_logic",
-    "required_field",
-    "custom_alignment",
-    "question_number",
-    "matrix_group_name",
-    "matrix_ranking",
-    "field_annotation"
-  )
-}
+internal_field_colnames <-c(
+  "field_name",
+  "form_name",
+  "section_header",
+  "field_type",
+  "field_label",
+  "select_choices_or_calculations",
+  "field_note",
+  "text_validation_type_or_show_slider_number",
+  "text_validation_min",
+  "text_validation_max",
+  "identifier",
+  "branching_logic",
+  "required_field",
+  "custom_alignment",
+  "question_number",
+  "matrix_group_name",
+  "matrix_ranking",
+  "field_annotation"
+)
 form_colnames <- function(type){
   if(missing(type))type<- "default"
   if(type =="default"){

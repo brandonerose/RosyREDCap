@@ -15,7 +15,7 @@ delete_DB(DB, dir_path)
 message
 }
 \description{
-Deletes DB object from directory (solves occasional problems)
+This will delete the "PROJ_RosyREDCap.rdata" file in the given DB directories R_objects folder. It will NOT delete any other files from that directory. The user must delete any other files manually.
 }
 \seealso{
 Other DB object: 

@@ -45,19 +45,22 @@ cache_path <- function(){
 #' #warning this will delete the packages cache of project locations
 #' cache_clear()
 #' }
-#' @return your path
+#' @return messages confirming deleted cache
 #' @family Project Cache Functions
 #' @keywords Project Cache Functions
 #' @export
 cache_clear <-  function(){
   cache <- get_cache()
   cache$delete_all()
-  bullet_in_console(paste0(pkg_name," cache cleared!"),bullet_type = "v")
+  bullet_in_console("If you intend to delete any/all files, that must be done manually from the directory/directories.",bullet_type = "!")
+  bullet_in_console("RosyREDCap cache cleared!",file = cache$cache_path_get(),bullet_type = "v")
 }
+#' @noRd
 cache_exists <-  function(){
   cache <- get_cache()
   return(file.exists(cache_path()))
 }
+#' @noRd
 cache_projects_exists <-  function(){
   if(cache_exists()){
     cache_path() %>% file.path("projects.rds") %>% file.exists() %>% return()
@@ -66,6 +69,7 @@ cache_projects_exists <-  function(){
     return(FALSE)
   }
 }
+#' @noRd
 get_cache <- function(){
   cache <- hoardr::hoard()
   cache$cache_path_set(path="RosyREDCap",type="user_cache_dir")

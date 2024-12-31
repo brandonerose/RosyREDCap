@@ -23,6 +23,7 @@
 #' @param use_csv Logical (TRUE/FALSE). If TRUE, uses CSV files for data storage. Default is `FALSE`.
 #' @param auto_check_token Logical (TRUE/FALSE). If TRUE, automatically checks the validity of the REDCap API token. Default is `TRUE`.
 #' @param DB_path A character string representing the file path of the exact `<short_name>_RosyREDCap.rdata` file to be loaded.
+#' @param with_data Logical (TRUE/FALSE). If TRUE, loads the test DB object with data as if user ran `update_DB`. Default is `FALSE`.
 #' @return RosyREDCap `DB` list object.
 #' @seealso
 #' \code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
@@ -46,38 +47,48 @@ setup_DB <- function (
     auto_check_token = T
 )
 {
-  projects <- get_projects()# add cache check
+  em <- '`short_name` must be character string of length 1'
+  if(!is.character(short_name))stop(em)
+  if(length(short_name)!=1)stop(em)
+  projects <- get_projects() # add short_name conflict check if id and base url differs
   short_name <- validate_env_name(short_name)
+  is_a_test <- is_test_short_name(short_name = short_name)
+  if(is_a_test){
+    DB <- load_test_DB(short_name = short_name, with_data = F)
+  }
   token_name <- paste0("RosyREDCap_token_",short_name) %>% validate_env_name()
   in_proj_cache <- short_name %in% projects$short_name
-  missing_short_name <- missing(short_name)
   missing_dir_path <- missing(dir_path)
-  if(force){
-    DB <- blank_DB()
+  if(force){ # load blank if force = T
+    DB <- internal_blank_DB
     bullet_in_console(paste0("Setup Blank DB Object because `force = T`"))
   }
   if(!force){
-    if(in_proj_cache){
+    if(in_proj_cache){ # if its seen in cache the load from there
       DB <- load_DB(short_name)
     }
-    if(!in_proj_cache){
-      DB <- blank_DB()
+    if(!in_proj_cache){ # if it's not in the cache start from blank
+      DB <- internal_blank_DB
       bullet_in_console("Setup Blank DB Object because nothing found in cache.",bullet_type = "!")
     }
   }
-  if(missing_dir_path){
-    if(!is_something(DB$dir_path)){
+  if(missing_dir_path){ # if missing the directory path from setup or load then let user know nothing will be stored
+    if(!is_something(DB$dir_path)){ # only show message if load_DB wasn't used internally (that has a directory)
       bullet_in_console("If you don't supply a directory, RosyREDCap will only run in R session. Package is best with a directory.",bullet_type = "!")
     }
   }
   if(!missing_dir_path){
-    DB$dir_path <- set_dir(dir_path)
+    DB$dir_path <- set_dir(dir_path) # will also ask user if provided dir is new or different (will load from original but start using new dir)
   }
   DB$short_name <- short_name
   DB$internals$use_csv <- use_csv
   DB$redcap$token_name <- token_name
-  DB$links$redcap_base <- validate_web_link(redcap_base)
-  DB$links$redcap_uri <- DB$links$redcap_base %>% paste0("api/")
+  if(!is_a_test){
+    DB$links$redcap_base <- validate_web_link(redcap_base)
+    DB$links$redcap_uri <- DB$links$redcap_base %>% paste0("api/")
+  }else{
+    bullet_in_console("Test objects ignore the `redcap_base` url argument and do not communicate with any API.")
+  }
   DB$internals$merge_form_name <- validate_env_name(merge_form_name)
   DB$internals$use_csv <- use_csv
   DB$internals$is_blank <- F
@@ -115,6 +126,34 @@ load_DB_from_path <- function(DB_path,validate = T){
       warn_only = !validate
     ) %>%
     return()
+}
+#' @rdname setup-load
+#' @export
+load_test_DB <- function(short_name="TEST_repeating",with_data = F){
+  em <- '`short_name` must be character string of length 1 equal to one of the following: ' %>% paste0(as_comma_string(internal_allowed_test_short_names))
+  if(!is.character(short_name))stop(em)
+  if(length(short_name)!=1)stop(em)
+  if(!is_test_short_name(short_name = short_name))stop(em)
+  DB <- internal_blank_DB
+  DB$short_name <- short_name
+  DB$internals$is_test <- T
+  if(with_data){
+    if(short_name == "TEST_classic"){
+    }
+    if(short_name == "TEST_repeating"){
+    }
+    if(short_name == "TEST_longitudinal"){
+    }
+    if(short_name == "TEST_multiarm"){
+    }
+  }
+  return(DB)
+}
+is_test_short_name <- function(short_name){
+  return(short_name%in%internal_allowed_test_short_names)
+}
+is_test_DB <- function(DB){
+  return((DB$short_name %in% internal_allowed_test_short_names)&&DB$internals$is_test)
 }
 #' @title Saves DB in the directory
 #' @param DB A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}
@@ -155,6 +194,9 @@ show_DB <- function(DB,also_metadata=T,only_dfs = T){
   data_list %>% list2env(envir = .GlobalEnv)
 }
 #' @title Deletes DB object from directory (solves occasional problems)
+#' @description
+#' This will delete the "PROJ_RosyREDCap.rdata" file in the given DB directories R_objects folder. It will NOT delete any other files from that directory. The user must delete any other files manually.
+#'
 #' @inheritParams save_DB
 #' @param dir_path character file path of the directory
 #' @return message
@@ -178,21 +220,15 @@ delete_DB <- function(DB,dir_path){
     warning("The DB object you wanted to is not there. Did you delete already? ",delete_this)
   }
 }
-validate_DB <- function(DB,silent = T,warn_only = F,allowed_names = names(blank_DB())){
+validate_DB <- function(DB,silent = T,warn_only = F){
   #param check
   if( ! is.list(DB)) stop("DB must be a list")
   #function
   outcome_valid <- T
   messages <- NULL
-  if( ! all(allowed_names%in%names(DB))){
+  if( ! all(names(internal_blank_DB)%in%names(DB))){
     outcome_valid <- F
     messages <- messages %>% append("`DB` does not have the appropriate names. Did you use `load_DB()` or `setup_DB()` to generate it?")
-  }
-  if(is.null(DB$dir_path)){
-    outcome_valid <- F
-    messages <- messages %>% append("`DB$dir_path` is NULL!, Did you use `setup_DB()`?")
-  }else{
-    if( ! DB$dir_path %>% file.exists()) warning("`DB$dir_path`, '",DB$dir_path,"', does not exist!, Did you use `setup_DB()`?\nThis can also happen with shared directories.",immediate. = T)
   }
   if(is.null(DB$short_name)){
     outcome_valid <- F
@@ -211,101 +247,137 @@ validate_DB <- function(DB,silent = T,warn_only = F,allowed_names = names(blank_
   }
   if(!silent){
     if((length(DB$data)==0)>0){
-      warning("Valid list but no data yet!",immediate. = T)
+      bullet_in_console("Valid DB object but no data yet!",bullet_type = "!")
+    }
+    if(is.null(DB$dir_path)){
+      bullet_in_console("`DB$dir_path` is NULL!, Did you use `setup_DB()`?",bullet_type = "!")
+    }else{
+      if( ! DB$dir_path %>% file.exists()) {
+        bullet_in_console(paste0("`DB$dir_path`, '",DB$dir_path,"', does not exist!, Did you use `setup_DB()`?\nThis can also happen with shared directories."),bullet_type = "!")
+      }else{
+        bullet_in_console(DB$short_name %>% paste0(" loaded from: "),url = DB$dir_path,bullet_type = "v")
+      }
+    }
+    if(DB$internals$is_test){
+      bullet_in_console(DB$short_name %>% paste0(" is a test DB object that doesn't actually communicate with any REDCap API!"),bullet_type = "i")
     }
     if(outcome_valid){
       bullet_in_console(DB$short_name," is valid DB object!",bullet_type = "v")
     }
-    bullet_in_console(DB$short_name %>% paste0(" loaded from: "),url = DB$dir_path,bullet_type = "v")
     if(DB$internals$is_transformed){
       bullet_in_console(DB$short_name %>% paste0(" is currently transformed! Can reverse with `untransform_DB(DB)`"),bullet_type = "i")
     }
+    bullet_in_console("To get data/updates from REDCap run `DB <- update_DB(DB)`")
   }
   DB
 }
-blank_DB <-  function(){ # can sort this better in version 3.0.0
-  list(
-    short_name=NULL,
-    dir_path=NULL,
-    redcap = list(
-      token_name=NULL,
-      project_id=NULL,
-      project_title= NULL,
-      id_col=NULL,
-      version=NULL,
-      project_info=NULL,
-      log=NULL,
-      users=NULL,
-      current_user=NULL,
-      choices=NULL,
-      raw_structure_cols = NULL,
-      is_longitudinal = NULL,
-      has_arms = NULL,
-      has_multiple_arms = NULL,
-      has_arms_that_matter = NULL,
-      has_repeating_forms_or_events = NULL,
-      has_repeating_forms = NULL,
-      has_repeating_events = NULL
-    ),
-    metadata = list(# model
-      forms=NULL,
-      fields=NULL,
-      choices=NULL,
-      form_key_cols = NULL,
-      arms=NULL,
-      events=NULL,
-      event_mapping = NULL,
-      missing_codes=NULL
-    ),
-    data = NULL, #model
-    data_update = NULL,
-    quality_checks = NULL,
-    transformation = list(
-      forms = NULL,
-      fields = NULL,
-      field_functions = NULL,
-      original_forms = NULL,
-      original_fields = NULL,
-      data_updates = NULL
-    ),
-    summary = list(
-      subsets=NULL
-    ),
-    internals = list(
-      last_test_connection_attempt = NULL,
-      last_test_connection_outcome = NULL,
-      last_metadata_update=NULL,
-      last_metadata_dir_save=NULL,
-      last_full_update=NULL,
-      last_data_update=NULL,
-      last_data_dir_save = NULL,
-      last_data_transformation = NULL,
-      last_summary = NULL,
-      last_quality_check = NULL,
-      last_clean = NULL,
-      last_directory_save=NULL,
-      data_extract_labelled = NULL,
-      data_extract_merged = NULL,
-      merge_form_name = "merged",
-      DB_type = "redcap",
-      is_blank = T,
-      ever_connected = F,
-      is_transformed = F,
-      is_clean = F,
-      use_csv = F
-    ),
-    links = list(
-      redcap_base = NULL,
-      redcap_uri = NULL,
-      redcap_home = NULL,
-      redcap_record_home = NULL,
-      redcap_record_subpage = NULL,
-      redcap_records_dashboard = NULL,
-      redcap_api = NULL,
-      redcap_api_playground = NULL,
-      pkgdown = "https://brandonerose.github.io/RosyREDCap/",
-      github = "https://github.com/brandonerose/RosyREDCap/",
-      thecodingdocs = "https://www.thecodingdocs.com/"
-    )
-  )
+internal_allowed_test_short_names <- c("TEST_classic","TEST_repeating","TEST_longitudinal","TEST_multiarm")
+internal_TEST_classic_token <- "FAKE32TESTTOKENCLASSIC1111111111"
+internal_TEST_repeating_token <- "FAKE32TESTTOKENREPEATING22222222"
+internal_TEST_longitudinal_token <- "FAKE32TESTTOKENLONGITUDINAL33333"
+internal_TEST_multiarm_token <- "FAKE32TESTTOKENMULTIARM444444444"
+get_test_token <- function(short_name){
+  em <- '`short_name` must be character string of length 1 equal to one of the following: ' %>% paste0(as_comma_string(internal_allowed_test_short_names))
+  if(!is.character(short_name))stop(em)
+  if(length(short_name)!=1)stop(em)
+  if(!is_test_short_name(short_name = short_name))stop(em)
+  token <- NA
+  if(short_name == "TEST_classic"){
+    token <- internal_TEST_classic_token
+  }
+  if(short_name == "TEST_repeating"){
+    token <- internal_TEST_repeating_token
+  }
+  if(short_name == "TEST_longitudinal"){
+    token <- internal_TEST_longitudinal_token
+  }
+  if(short_name == "TEST_multiarm"){
+    token <- internal_TEST_multiarm_token
+  }
+  return(token)
 }
+internal_blank_DB <- list(
+  short_name=NULL,
+  dir_path=NULL,
+  redcap = list(
+    token_name=NULL,
+    project_id=NULL,
+    project_title= NULL,
+    id_col=NULL,
+    version=NULL,
+    project_info=NULL,
+    log=NULL,
+    users=NULL,
+    current_user=NULL,
+    choices=NULL,
+    raw_structure_cols = NULL,
+    is_longitudinal = NULL,
+    has_arms = NULL,
+    has_multiple_arms = NULL,
+    has_arms_that_matter = NULL,
+    has_repeating_forms_or_events = NULL,
+    has_repeating_forms = NULL,
+    has_repeating_events = NULL
+  ),
+  metadata = list(# model
+    forms=NULL,
+    fields=NULL,
+    choices=NULL,
+    form_key_cols = NULL,
+    arms=NULL,
+    events=NULL,
+    event_mapping = NULL,
+    missing_codes=NULL
+  ),
+  data = NULL, #model
+  data_update = NULL,
+  quality_checks = NULL,
+  transformation = list(
+    forms = NULL,
+    fields = NULL,
+    field_functions = NULL,
+    original_forms = NULL,
+    original_fields = NULL,
+    data_updates = NULL
+  ),
+  summary = list(
+    subsets=NULL
+  ),
+  internals = list(
+    last_test_connection_attempt = NULL,
+    last_test_connection_outcome = NULL,
+    last_metadata_update=NULL,
+    last_metadata_dir_save=NULL,
+    last_full_update=NULL,
+    last_data_update=NULL,
+    last_data_dir_save = NULL,
+    last_data_transformation = NULL,
+    last_summary = NULL,
+    last_quality_check = NULL,
+    last_clean = NULL,
+    last_directory_save=NULL,
+    data_extract_labelled = NULL,
+    data_extract_merged = NULL,
+    merge_form_name = "merged",
+    DB_type = "redcap",
+    is_blank = T,
+    is_test = F,
+    ever_connected = F,
+    is_transformed = F,
+    is_clean = F,
+    use_csv = F
+  ),
+  links = list(
+    redcap_base = NULL,
+    redcap_uri = NULL,
+    redcap_home = NULL,
+    redcap_record_home = NULL,
+    redcap_record_subpage = NULL,
+    redcap_records_dashboard = NULL,
+    redcap_api = NULL,
+    redcap_api_playground = NULL,
+    pkgdown = "https://brandonerose.github.io/RosyREDCap/",
+    github = "https://github.com/brandonerose/RosyREDCap/",
+    thecodingdocs = "https://www.thecodingdocs.com/"
+  )
+)

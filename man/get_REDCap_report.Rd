@@ -6,6 +6,11 @@
 \usage{
 get_REDCap_report(DB, report_id)
 }
+\arguments{
+\item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
+
+\item{report_id}{character or integer of REDCap report ID. This can be found at the end of the URL of the report.}
+}
 \description{
 Get REDCap Report
 }

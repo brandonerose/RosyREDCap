@@ -36,6 +36,9 @@ set_REDCap_token <- function(DB,ask = T){
         bullet_in_console(paste0("You can request/regenerate/delete with `link_API_token(DB)` or go here: "),url = DB$links$redcap_API)
       }
     }
+    if(is_test_DB(DB)){
+      bullet_in_console(paste0("This is only a test so the token is: ",get_test_token(DB$short_name)),bullet_type = ">")
+    }
     prompt <- paste0("What is your ",DB$short_name," REDCap API token: ")
     while (!has_valid_REDCap_token) {
       token <- readline(prompt)
@@ -60,7 +63,8 @@ set_REDCap_token <- function(DB,ask = T){
 #' @export
 view_REDCap_token <- function(DB){
   DB  <- validate_DB(DB)
-  bullet_in_console(paste0("Never share your token: ",validate_REDCap_token(DB,silent = F)),bullet_type = "!")
+  token <- validate_REDCap_token(DB,silent = F)
+  bullet_in_console(paste0("Never share your token: ",),bullet_type = "!")
   return(invisible())
 }
 #' @title Test REDCap API Token linked to a DB Object
@@ -125,6 +129,33 @@ is_valid_REDCap_token <- function(token, silent = T){
   }
   return(T)
 }
+is_valid_test_token <- function(token, silent = T){
+  allowed <- c(
+    internal_TEST_classic_token,
+    internal_TEST_repeating_token,
+    internal_TEST_longitudinal_token,
+    internal_TEST_multiarm_token
+  )
+  trimmed_token <-  token %>% trimws(whitespace = "[\\h\\v]")
+  end_message <- "not a valid test token."
+  if(is.null(token)){
+    if(!silent)bullet_in_console(paste0("The token is `NULL`, ",end_message),bullet_type = "x")
+    return(F)
+  }else if (is.na(token)) {
+    if(!silent)bullet_in_console(paste0("The token is `NA`, ",end_message),bullet_type = "x")
+    return(F)
+  }else if (nchar(token) == 0L) {
+    if(!silent)bullet_in_console(paste0("The token is `` (empty), ",end_message),bullet_type = "x")
+    return(F)
+  }else if(token != trimmed_token){
+    if(!silent)bullet_in_console(paste0("The token contains whitespace (extra lines) and is therefore ",end_message),bullet_type = "x")
+    return(F)
+  }else if (!token %in% allowed) {
+    if(!silent)bullet_in_console(paste0("The token is ",end_message),bullet_type = "x")
+    return(F)
+  }
+  return(T)
+}
 get_REDCap_token_name <- function(DB){
   token_name <- paste0("RosyREDCap_token_",validate_env_name(DB$short_name))
   return(token_name)
@@ -132,10 +163,16 @@ get_REDCap_token_name <- function(DB){
 validate_REDCap_token <- function(DB,silent=T){
   token_name <- DB %>% get_REDCap_token_name()
   token <- DB %>% get_REDCap_token_name() %>% Sys.getenv()
-  valid <- token %>% is_valid_REDCap_token(silent=silent)
+  if(is_test_DB(DB)){
+    valid <- token %>% is_valid_test_token(silent=silent)
+    message_about_token <- get_test_token(DB$short_name)
+  }else{
+    valid <- token %>% is_valid_REDCap_token(silent=silent)
+    message_about_token <- "YoUrNevErShaReToKeNfRoMREDCapWebsiTe"
+  }
   if(!silent){
-    bullet_in_console(paste0("You can set REDCap tokens each session with `set_REDCap_token(DB)` or `Sys.setenv(",token_name,"='YoUrNevErShaReToKeNfRoMREDCapWebsiTe')`... or for higher security run `edit_r_environ()` from `usethis` package and add
-        `",token_name," = 'YoUrNevErShaReToKeNfRoMREDCapWebsiTe'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the
+    bullet_in_console(paste0("You can set REDCap tokens each session with `set_REDCap_token(DB)` or `Sys.setenv(",token_name,"='",message_about_token,"')`... or for higher security run `edit_r_environ()` from `usethis` package and add
+        `",token_name," = '",message_about_token,"'` to that file...(then restart R under session tab after saving file)... The way to tell it worked is to run the
         code, `Sys.getenv('",token_name,"')`"))
     if(is_something(DB$links$redcap_API)){
       bullet_in_console(paste0("You can request/regenerate/delete with `link_API_token(DB)` or go here: "),url = DB$links$redcap_API)

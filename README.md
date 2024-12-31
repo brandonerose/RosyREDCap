@@ -109,7 +109,7 @@ your_project_path <- getwd()
 print(your_project_path) # confirm this is where you want files saved
 
 DB <- setup_DB(
-  short_name = "TEST",
+  short_name = "TEST_repeating",
   redcap_base_link = "https://redcap.yourinstitution.edu/", # change to your institutions link (stop at ".edu/")
   dir_path = getwd() # or change to your intended file path
 ) #defaults will autocheck for valid token or ask you.

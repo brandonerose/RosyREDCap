@@ -9,7 +9,7 @@ cache_clear()
 \value{
 The file path of your RosyREDCap cache
 
-your path
+messages confirming deleted cache
 }
 \description{
 Included for transparency and confirmation/testing.
