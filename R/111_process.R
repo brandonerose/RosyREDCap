@@ -1,170 +1,5 @@
 #' @import RosyUtils
 #' @import RosyApp
-get_key_col_list <- function(DB){
-  if(!is_something(DB$metadata$forms))stop("Empty --> `DB$metadata$forms`")
-  out_list <- 1:nrow(DB$metadata$forms) %>% lapply(function(i){
-    out <- DB$redcap$id_col
-    if(DB$redcap$is_longitudinal)out <- append(out,"redcap_event_name")
-    if(DB$metadata$forms$repeating[i]){
-      out <- append(out,"redcap_repeat_instrument")
-      out <- append(out,"redcap_repeat_instance")
-    }
-    return(out)
-  })
-  names(out_list) <- DB$metadata$forms$form_name
-  return(out_list)
-}
-raw_process_redcap <- function(raw,DB, labelled){
-  # key_cols <-DB$redcap$raw_structure_cols
-  # key_cols <- key_cols[which(!key_cols%in%c("arm_num","event_name"))]
-  # paste0(raw[[DB$redcap$id_col]],"_",raw$redcap_event_name,"_",raw$redcap_repeat_instrument,"_",raw$redcap_repeat_instance)
-  forms <- get_original_forms(DB)
-  fields <- get_original_fields(DB)
-  # arms <- DB$metadata$arms
-  events <- DB$metadata$events
-  event_mapping <- DB$metadata$event_mapping
-  data_list <- list()
-  if(nrow(raw)>0){
-    raw  <- raw %>% all_character_cols()
-    add_ons <- c(DB$redcap$id_col,"arm_num","event_name","redcap_event_name","redcap_repeat_instrument","redcap_repeat_instance")
-    if(DB$redcap$is_longitudinal){
-      raw$id_temp <- 1:nrow(raw)
-      raw <-  merge(raw,DB$metadata$events[,c("arm_num","event_name","unique_event_name")],by.x="redcap_event_name",by.y="unique_event_name",sort = F,all.x = T)
-      add_ons  <- add_ons[which(add_ons%in%colnames(raw))]
-      cols <- c(add_ons, colnames(raw)) %>% unique()
-      raw <- raw[order(raw$id_temp),cols%>% sapply(function(c){which(colnames(raw)==c)}) %>% as.integer()]
-      raw$id_temp <- NULL
-    }
-    add_ons  <- add_ons[which(add_ons%in%colnames(raw))]
-    if(any(!DB$redcap$raw_structure_cols %in% colnames(raw)))stop("raw is missing one of the following... and that's weird: ", DB$redcap$raw_structure_cols %>% paste0(collapse = ", "))
-    form_names <- forms$form_name[which(forms$form_name%in%unique(fields$form_name))]
-    # form_name <- form_names %>% sample1()
-    has_repeating_forms <- DB$redcap$has_repeating_forms
-    for(form_name in form_names){
-      add_ons_x <- add_ons
-      #form_name <-  forms$form_name %>% sample(1)
-      is_repeating_form <- form_name%in%forms$form_name[which(forms$repeating)]
-      is_longitudinal <- DB$redcap$is_longitudinal
-      rows  <- 1:nrow(raw)
-      if(is_repeating_form){
-        if(!"redcap_repeat_instrument"%in%colnames(raw))stop("redcap_repeat_instrument not in colnames(raw)")
-        if(is_longitudinal){
-          # rows <- which(raw$redcap_repeat_instrument==form_name)
-          rows <- which(raw$redcap_repeat_instrument==form_name|raw$redcap_event_name%in%event_mapping$unique_event_name[which(!event_mapping$repeating&event_mapping$form==form_name)])
-        }else{
-          rows <- which(raw$redcap_repeat_instrument==form_name)
-        }
-      }else{
-        add_ons_x <- add_ons_x[which(!add_ons_x%in%c("redcap_repeat_instrument","redcap_repeat_instance"))]
-        if(is_longitudinal){
-          rows <- which(raw$redcap_event_name%in%unique(event_mapping$unique_event_name[which(event_mapping$form==form_name)]))
-        }else{
-          if(has_repeating_forms) rows <- which(is.na(raw$redcap_repeat_instrument))
-        }
-      }
-      if(is_something(rows)){
-        cols <- unique(c(add_ons_x,fields$field_name[which(fields$form_name==form_name&fields$field_name%in%colnames(raw))]))
-        raw_subset <- raw[rows,cols]
-        if(labelled){
-          raw_subset <- raw_to_labelled_form(FORM = raw_subset, DB=DB)
-        }
-        data_list[[form_name]] <- raw_subset
-      }
-    }
-  }
-  return(data_list)
-}
-sort_redcap_log <- function(log){
-  log[order(log$timestamp,decreasing = T),]
-}
-clean_redcap_log <- function(log,purge_api=T){
-  log$record_id <- log$action %>% sapply(function(A){ifelse(grepl("Update record |Delete record |Create record ",A),gsub("Update record|Delete record|Create record|[:(:]API[:):]|Auto|calculation| |[:):]|[:(:]","",A),NA)})
-  log$action_type <- log$action %>% sapply(function(A){ifelse(grepl("Update record |Delete record |Create record ",A),(A %>% strsplit(" ") %>% unlist())[1],NA)})
-  comments <- which(log$action=="Manage/Design"&grepl("Add field comment|Edit field comment|Delete field comment",log$details))
-  if(length(comments)>0){
-    log$record_id[comments] <- stringr::str_extract(log$details[comments], "(?<=Record: )[^,]+")
-    log$action_type[comments] <- "Comment"
-  }
-  rows <- which(is.na(log$record)&!is.na(log$record_id))
-  log$record[rows] <- log$record_id[rows]
-  rows <- which(!is.na(log$record)&is.na(log$record_id))
-  log$action_type[rows] <- "Users"
-  log$record_id <- NULL
-  # rows <- which(!is.na(log$record)&is.na(log$record_id))
-  # log$record_id[rows] <- log$record[rows]
-  log$details <- gsub("[[:cntrl:]]", "", log$details)
-  if(purge_api){
-    log <- log[which(!log$details%in%c("Export Logging (API)","Export REDCap version (API)","export_format: CSV, rawOrLabel: raw", "Download data dictionary (API)")),]
-    log <- log[which(!startsWith(log$details,"Export ")),]
-    log <- log[which(!startsWith(log$details,"Delete file from ")),]
-    log <- log[which(!startsWith(log$details,"Upload file to ")),]
-    log <- log[which(!startsWith(log$details,"export_format")),]
-    log <- log[which(!startsWith(log$details,"Switch DAG ")),]
-    log <- log[which(!startsWith(log$details,"Reorder project fields")),]
-    log <- log[which(!startsWith(log$details,"Download ")),]
-  }
-  log <- sort_redcap_log(log)
-  return(log)
-}
-all_missing_codes <- function(){
-  data.frame(
-    code = c(
-      'NI',
-      'INV',
-      'UNK',
-      'NASK',
-      'ASKU',
-      'NAV',
-      'MSK',
-      'NA',
-      'NAVU',
-      'NP',
-      'QS',
-      'QI',
-      'TRC',
-      'UNC',
-      'DER',
-      'PINF',
-      'NINF',
-      'OTH'
-    ),
-    name = c(
-      'No information',
-      'Invalid',
-      'Unknown',
-      'Not asked',
-      'Asked but unknown',
-      'Temporarily unavailable',
-      'Masked',
-      'Not applicable',
-      'Not available',
-      'Not present',
-      'Sufficient quantity',
-      'Insufficient quantity',
-      'Trace',
-      'Unencoded',
-      'Derived',
-      'Positive infinity',
-      'Negative infinity',
-      'Other'
-    )
-  )
-}
-missing_codes2 <- function(DB){
-  included <- "missing_data_codes"%in%colnames(DB$redcap$project_info)
-  if(included){
-    is_na  <- is.na(DB$redcap$project_info$missing_data_codes)
-    if(!is_na){
-      return(DB$redcap$project_info$missing_data_codes %>% split_choices())
-    }
-    if(is_na){
-      return(NA)
-    }
-  }
-  if(!included){
-    return(NA)
-  }
-}
 #' @title add REDCap ID to any dataframe using a ref_id
 #' @description
 #'  add REDCap ID to any dataframe using a ref_id
@@ -242,6 +77,7 @@ deidentify_DB <- function(DB,identifiers,drop_free_text = F){
   }
   return(DB)
 }
+#' @noRd
 construct_key_col_list <- function(DB){
   # fields <- DB$metadata$fields
   df_list <- DB$data
@@ -252,4 +88,175 @@ construct_key_col_list <- function(DB){
   })
   names(key_cols_list)<- forms
   return(key_cols_list)
+}
+#' @noRd
+get_key_col_list <- function(DB){
+  if(!is_something(DB$metadata$forms))stop("Empty --> `DB$metadata$forms`")
+  out_list <- 1:nrow(DB$metadata$forms) %>% lapply(function(i){
+    out <- DB$redcap$id_col
+    if(DB$redcap$is_longitudinal)out <- append(out,"redcap_event_name")
+    if(DB$metadata$forms$repeating[i]){
+      out <- append(out,"redcap_repeat_instrument")
+      out <- append(out,"redcap_repeat_instance")
+    }
+    return(out)
+  })
+  names(out_list) <- DB$metadata$forms$form_name
+  return(out_list)
+}
+#' @noRd
+raw_process_redcap <- function(raw,DB, labelled){
+  # key_cols <-DB$redcap$raw_structure_cols
+  # key_cols <- key_cols[which(!key_cols%in%c("arm_num","event_name"))]
+  # paste0(raw[[DB$redcap$id_col]],"_",raw$redcap_event_name,"_",raw$redcap_repeat_instrument,"_",raw$redcap_repeat_instance)
+  forms <- get_original_forms(DB)
+  fields <- get_original_fields(DB)
+  # arms <- DB$metadata$arms
+  events <- DB$metadata$events
+  event_mapping <- DB$metadata$event_mapping
+  data_list <- list()
+  if(nrow(raw)>0){
+    raw  <- raw %>% all_character_cols()
+    add_ons <- c(DB$redcap$id_col,"arm_num","event_name","redcap_event_name","redcap_repeat_instrument","redcap_repeat_instance")
+    if(DB$redcap$is_longitudinal){
+      raw$id_temp <- 1:nrow(raw)
+      raw <-  merge(raw,DB$metadata$events[,c("arm_num","event_name","unique_event_name")],by.x="redcap_event_name",by.y="unique_event_name",sort = F,all.x = T)
+      add_ons  <- add_ons[which(add_ons%in%colnames(raw))]
+      cols <- c(add_ons, colnames(raw)) %>% unique()
+      raw <- raw[order(raw$id_temp),cols%>% sapply(function(c){which(colnames(raw)==c)}) %>% as.integer()]
+      raw$id_temp <- NULL
+    }
+    add_ons  <- add_ons[which(add_ons%in%colnames(raw))]
+    if(any(!DB$redcap$raw_structure_cols %in% colnames(raw)))stop("raw is missing one of the following... and that's weird: ", DB$redcap$raw_structure_cols %>% paste0(collapse = ", "))
+    form_names <- forms$form_name[which(forms$form_name%in%unique(fields$form_name))]
+    # form_name <- form_names %>% sample1()
+    has_repeating_forms <- DB$redcap$has_repeating_forms
+    for(form_name in form_names){
+      add_ons_x <- add_ons
+      #form_name <-  forms$form_name %>% sample(1)
+      is_repeating_form <- form_name%in%forms$form_name[which(forms$repeating)]
+      is_longitudinal <- DB$redcap$is_longitudinal
+      rows  <- 1:nrow(raw)
+      if(is_repeating_form){
+        if(!"redcap_repeat_instrument"%in%colnames(raw))stop("redcap_repeat_instrument not in colnames(raw)")
+        if(is_longitudinal){
+          # rows <- which(raw$redcap_repeat_instrument==form_name)
+          rows <- which(raw$redcap_repeat_instrument==form_name|raw$redcap_event_name%in%event_mapping$unique_event_name[which(!event_mapping$repeating&event_mapping$form==form_name)])
+        }else{
+          rows <- which(raw$redcap_repeat_instrument==form_name)
+        }
+      }else{
+        add_ons_x <- add_ons_x[which(!add_ons_x%in%c("redcap_repeat_instrument","redcap_repeat_instance"))]
+        if(is_longitudinal){
+          rows <- which(raw$redcap_event_name%in%unique(event_mapping$unique_event_name[which(event_mapping$form==form_name)]))
+        }else{
+          if(has_repeating_forms) rows <- which(is.na(raw$redcap_repeat_instrument))
+        }
+      }
+      if(is_something(rows)){
+        cols <- unique(c(add_ons_x,fields$field_name[which(fields$form_name==form_name&fields$field_name%in%colnames(raw))]))
+        raw_subset <- raw[rows,cols]
+        if(labelled){
+          raw_subset <- raw_to_labelled_form(FORM = raw_subset, DB=DB)
+        }
+        data_list[[form_name]] <- raw_subset
+      }
+    }
+  }
+  return(data_list)
+}
+#' @noRd
+sort_redcap_log <- function(log){
+  log[order(log$timestamp,decreasing = T),]
+}
+#' @noRd
+clean_redcap_log <- function(log,purge_api=T){
+  log$record_id <- log$action %>% sapply(function(A){ifelse(grepl("Update record |Delete record |Create record ",A),gsub("Update record|Delete record|Create record|[:(:]API[:):]|Auto|calculation| |[:):]|[:(:]","",A),NA)})
+  log$action_type <- log$action %>% sapply(function(A){ifelse(grepl("Update record |Delete record |Create record ",A),(A %>% strsplit(" ") %>% unlist())[1],NA)})
+  comments <- which(log$action=="Manage/Design"&grepl("Add field comment|Edit field comment|Delete field comment",log$details))
+  if(length(comments)>0){
+    log$record_id[comments] <- stringr::str_extract(log$details[comments], "(?<=Record: )[^,]+")
+    log$action_type[comments] <- "Comment"
+  }
+  rows <- which(is.na(log$record)&!is.na(log$record_id))
+  log$record[rows] <- log$record_id[rows]
+  rows <- which(!is.na(log$record)&is.na(log$record_id))
+  log$action_type[rows] <- "Users"
+  log$record_id <- NULL
+  # rows <- which(!is.na(log$record)&is.na(log$record_id))
+  # log$record_id[rows] <- log$record[rows]
+  log$details <- gsub("[[:cntrl:]]", "", log$details)
+  if(purge_api){
+    log <- log[which(!log$details%in%c("Export Logging (API)","Export REDCap version (API)","export_format: CSV, rawOrLabel: raw", "Download data dictionary (API)")),]
+    log <- log[which(!startsWith(log$details,"Export ")),]
+    log <- log[which(!startsWith(log$details,"Delete file from ")),]
+    log <- log[which(!startsWith(log$details,"Upload file to ")),]
+    log <- log[which(!startsWith(log$details,"export_format")),]
+    log <- log[which(!startsWith(log$details,"Switch DAG ")),]
+    log <- log[which(!startsWith(log$details,"Reorder project fields")),]
+    log <- log[which(!startsWith(log$details,"Download ")),]
+  }
+  log <- sort_redcap_log(log)
+  return(log)
+}
+#' @noRd
+all_missing_codes <- function(){
+  data.frame(
+    code = c(
+      'NI',
+      'INV',
+      'UNK',
+      'NASK',
+      'ASKU',
+      'NAV',
+      'MSK',
+      'NA',
+      'NAVU',
+      'NP',
+      'QS',
+      'QI',
+      'TRC',
+      'UNC',
+      'DER',
+      'PINF',
+      'NINF',
+      'OTH'
+    ),
+    name = c(
+      'No information',
+      'Invalid',
+      'Unknown',
+      'Not asked',
+      'Asked but unknown',
+      'Temporarily unavailable',
+      'Masked',
+      'Not applicable',
+      'Not available',
+      'Not present',
+      'Sufficient quantity',
+      'Insufficient quantity',
+      'Trace',
+      'Unencoded',
+      'Derived',
+      'Positive infinity',
+      'Negative infinity',
+      'Other'
+    )
+  )
+}
+#' @noRd
+missing_codes2 <- function(DB){
+  included <- "missing_data_codes"%in%colnames(DB$redcap$project_info)
+  if(included){
+    is_na  <- is.na(DB$redcap$project_info$missing_data_codes)
+    if(!is_na){
+      return(DB$redcap$project_info$missing_data_codes %>% split_choices())
+    }
+    if(is_na){
+      return(NA)
+    }
+  }
+  if(!included){
+    return(NA)
+  }
 }

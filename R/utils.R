@@ -1,4 +1,5 @@
 #' @import RosyUtils
+#' @noRd
 add_redcap_links_to_DF <- function(DF,DB){# add instance links
   if(DB$redcap$id_col%in%colnames(DF)){
     DF_structure_cols <- DB$redcap$raw_structure_cols[which(DB$redcap$raw_structure_cols%in%colnames(DF))]
@@ -20,9 +21,11 @@ add_redcap_links_to_DF <- function(DF,DB){# add instance links
   }
   return(DF)
 }
+#' @noRd
 count_DB_upload_cells <- function(DB){
   DB$data_update %>% lapply(function(x){nrow(x)*ncol(x)}) %>% unlist() %>% sum()
 }
+#' @noRd
 husk_of_form <- function (DB,FORM,field_names) {
   DF <- DB$data[[FORM]]
   cols<- colnames(DF)[which(colnames(DF)%in%DB$redcap$raw_structure_cols)]
@@ -33,17 +36,20 @@ husk_of_form <- function (DB,FORM,field_names) {
   DF2 <-as.data.frame(DF2)
   return(DF2)
 }
+#' @noRd
 all_DB_to_char_cols <- function(DB){
   DB$data <-DB$data %>% all_character_cols_list()
   DB$data_update <-DB$data_update %>% all_character_cols_list()
   return(DB)
 }
+#' @noRd
 add_redcap_links_table<-function(DF,DB){
   if(nrow(DF)>0){
     DF[[DB$redcap$id_col]] <- paste0("<a href='",paste0("https://redcap.miami.edu/redcap_v",DB$redcap$version,"/DataEntry/record_home.php?pid=",DB$redcap$project_id,"&id=",DF[[DB$redcap$id_col]],"&arm=1"),"' target='_blank'>",DF[[DB$redcap$id_col]],"</a>")
   }
   DF
 }
+#' @noRd
 clean_RC_col_names <- function(DF, DB){
   colnames(DF)<-colnames(DF) %>% sapply(function(COL){
     x<-DB$metadata$fields$field_label[which(DB$metadata$fields$field_name==COL)]
@@ -54,11 +60,13 @@ clean_RC_col_names <- function(DF, DB){
   }) %>% unlist() %>% return()
   DF
 }
+#' @noRd
 clean_RC_df_for_DT <- function(DF, DB){
   DF %>%
     add_redcap_links_table(DB) %>%
     clean_RC_col_names(DB) %>% return()
 }
+#' @noRd
 remove_records_from_list <- function(DB,records,silent=F){
   data_list <- DB$data
   if(!is_df_list(data_list))stop("data_list is not a list of data.frames as expected.")
@@ -76,6 +84,7 @@ remove_records_from_list <- function(DB,records,silent=F){
   if(!silent)message("Removed: ",paste0(records,collapse = ", "))
   return(data_list)
 }
+#' @noRd
 other_drops <- function(ignore = F){
   if(ignore)return(NULL)
   c(
@@ -89,6 +98,7 @@ other_drops <- function(ignore = F){
     "Pediatric"
   ) %>% return()
 }
+#' @noRd
 ignore_redcap_log <- function(collapse = T){
   ignores <- c(
     'export',
@@ -106,6 +116,7 @@ ignore_redcap_log <- function(collapse = T){
   if(collapse)return(paste0(ignores,collapse = "|"))
   return(ignores)
 }
+#' @noRd
 log_details_that_trigger_refresh <- function(){
   c(
     "Edit project field",
@@ -118,6 +129,7 @@ log_details_that_trigger_refresh <- function(){
     "Tag new identifier fields"
   )
 }
+#' @noRd
 sidebar_choices <- function(DB,n_threshold=1){
   choices <- annotate_choices(DB)
   choices <- choices[which(choices$n>=n_threshold),]
@@ -129,6 +141,7 @@ sidebar_choices <- function(DB,n_threshold=1){
   )
   return(sbc)
 }
+#' @noRd
 split_choices <- function(x){
   oops <- x
   x <- gsub("\n", " | ",x)  #added this to account for redcap metadata output if not a number
@@ -149,6 +162,7 @@ split_choices <- function(x){
   if(nrow(x)!=check_length)stop("split choice error: ",oops)
   x
 }
+#' @noRd
 redcap_field_types_not_in_data <- c(
   "descriptive", "checkbox"
 )

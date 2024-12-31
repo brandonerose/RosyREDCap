@@ -1,5 +1,6 @@
 #' @import RosyUtils
 #' @import RosyApp
+#' @noRd
 create_node_edge_REDCap <- function(
     DB,
     duplicate_forms = T,

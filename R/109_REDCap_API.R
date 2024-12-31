@@ -1,5 +1,10 @@
 #' @import RosyUtils
 #' @import RosyApp
+#' @title Get REDCap Report
+#' @export
+get_REDCap_report <- function(DB,report_id){
+}
+#' @noRd
 redcap_api_request <- function(url,token,additional_args=NULL){
   body  <- list(
     "token"= token
@@ -13,6 +18,7 @@ redcap_api_request <- function(url,token,additional_args=NULL){
     encode = "form"
   )
 }
+#' @noRd
 process_redcap_response <- function(response,error_action="warn",method,show_method_help = T){
   bind <- T
   if(!missing(method)){
@@ -37,6 +43,7 @@ process_redcap_response <- function(response,error_action="warn",method,show_met
   }
   return(content)
 }
+#' @noRd
 run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",additional_args=NULL,only_get = F, show_method_help = T){
   if(!missing(DB)){
     url <- DB$links$redcap_uri
@@ -85,7 +92,7 @@ run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",addi
 #' @details
 #' This function calls a specified REDCap API method using the provided database (`DB`) object, token, and additional arguments. The function then returns the results in the form of a `DB` object. If an error occurs, the behavior is determined by the `error_action` parameter. By default, warnings will be issued for errors.
 #'
-#' @export
+#' @keywords internal
 get_REDCap_method <- function(DB,method,error_action = "warn",additional_args=NULL,show_method_help = T){
   return(
     run_redcap_api_method(
@@ -100,7 +107,7 @@ get_REDCap_method <- function(DB,method,error_action = "warn",additional_args=NU
   )
 }
 #' @rdname redcap_api
-#' @export
+#' @keywords internal
 get_REDCap_metadata <- function(DB,include_users = T){
   DB$internals$last_metadata_update <- Sys.time()
   DB$metadata <- list()
@@ -253,7 +260,7 @@ get_REDCap_metadata <- function(DB,include_users = T){
   return(DB)
 }
 #' @rdname redcap_api
-#' @export
+#' @keywords internal
 get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   forms <- get_original_forms(DB)
   data_list <- list()
@@ -267,7 +274,7 @@ get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   return(data_list)
 }
 #' @rdname redcap_api
-#' @export
+#' @keywords internal
 get_REDCap_version <- function(DB,show_method_help = T){
   return(
     get_REDCap_method(
@@ -278,7 +285,7 @@ get_REDCap_version <- function(DB,show_method_help = T){
   )
 }
 #' @rdname redcap_api
-#' @export
+#' @keywords internal
 get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
   file_rows <- which(DB$metadata$fields$field_type=="file")
   out_dir <- file.path(DB$dir_path,"REDCap",DB$short_name,"files")
@@ -323,7 +330,7 @@ get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
   bullet_in_console("Checked for files! Stored at ...",file = out_dir,bullet_type = "v")
 }
 #' @rdname redcap_api
-#' @export
+#' @keywords internal
 get_REDCap_users <- function(DB){
   users  <- get_REDCap_method(DB,method = "exp_users")
   userRole  <- get_REDCap_method(DB,method = "exp_user_roles") %>% dplyr::select("unique_role_name","role_label")
@@ -332,13 +339,9 @@ get_REDCap_users <- function(DB){
   return(final)
 }
 #' @rdname redcap_api
-#' @export
+#' @keywords internal
 get_REDCap_structure <- function(DB){
   get_REDCap_metadata(DB,include_users = F)
-}
-#' @rdname redcap_api
-#' @export
-get_REDCap_report <- function(DB){
 }
 #' @title Check the REDCap Log
 #' @description
@@ -358,7 +361,7 @@ get_REDCap_report <- function(DB){
 #' @return A `data.frame` containing the cleaned and summarized REDCap log.
 #' @seealso
 #' \code{\link[RosyREDCap]{update_DB}} for updating the `DB` object, including the log.
-#' @export
+#' @keywords internal
 get_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clean = T,record = ""){
   if(units=="days"){
     x <- (Sys.time()-lubridate::days(last)) %>% format( "%Y-%m-%d %H:%M") %>% as.character()
@@ -402,7 +405,7 @@ get_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clea
 #' @seealso
 #' \code{\link[REDCapR]{redcap_read}} for details on the REDCap API function used to fetch data.
 #' @family db_functions
-#' @export
+#' @keywords internal
 get_REDCap_raw_data <- function(DB,labelled=F,records=NULL,batch_size = 1000){
   raw <- REDCapR::redcap_read(
     redcap_uri = DB$links$redcap_uri,
@@ -447,30 +450,17 @@ delete_REDCap_records <- function(DB, records){
   }
   message("Records deleted!")
 }
-rename_forms_redcap_to_default <- function(forms){
-  the_names <- colnames(forms)
-  the_names[which(the_names=="instrument_name")] <- "form_name"
-  the_names[which(the_names=="instrument_label")] <- "form_label"
-  colnames(forms) <- the_names
-  return(forms)
-}
-rename_forms_default_to_redcap <- function(forms){
-  the_names <- colnames(forms)
-  the_names[which(the_names=="form_name")] <- "instrument_name"
-  the_names[which(the_names=="form_label")] <- "instrument_label"
-  colnames(forms) <- the_names
-  return(forms)
-}
 #' @rdname redcap_api
-#' @export
+#' @keywords internal
 show_REDCap_API_methods <- function(){
   show_REDCap_API_methods_table()[["method_short_name"]] %>% sort()
 }
 #' @rdname redcap_api
-#' @export
+#' @keywords internal
 show_REDCap_API_methods_table <- function(){
   return(REDCap_API$methods)
 }
+#' @noRd
 show_redcap_api_method_info <- function(method){
   if(missing(method)){
     bullet_in_console("Missing method, so one will be chosen at random!",bullet_type = "x")
@@ -497,4 +487,20 @@ show_redcap_api_method_info <- function(method){
   if(nrow(method_param_df_opt)>0){
     bullet_in_console(paste0("Optional by User: ",method_param_df_opt$Parameter %>% as_comma_string()),bullet_type = ">")
   }
+}
+#' @noRd
+rename_forms_redcap_to_default <- function(forms){
+  the_names <- colnames(forms)
+  the_names[which(the_names=="instrument_name")] <- "form_name"
+  the_names[which(the_names=="instrument_label")] <- "form_label"
+  colnames(forms) <- the_names
+  return(forms)
+}
+#' @noRd
+rename_forms_default_to_redcap <- function(forms){
+  the_names <- colnames(forms)
+  the_names[which(the_names=="form_name")] <- "instrument_name"
+  the_names[which(the_names=="form_label")] <- "instrument_label"
+  colnames(forms) <- the_names
+  return(forms)
 }

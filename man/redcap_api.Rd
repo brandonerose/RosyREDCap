@@ -8,7 +8,6 @@
 \alias{get_REDCap_files}
 \alias{get_REDCap_users}
 \alias{get_REDCap_structure}
-\alias{get_REDCap_report}
 \alias{show_REDCap_API_methods}
 \alias{show_REDCap_API_methods_table}
 \title{REDCap API Method Wrapper}
@@ -32,8 +31,6 @@ get_REDCap_files(DB, original_file_names = F, overwrite = F)
 get_REDCap_users(DB)
 
 get_REDCap_structure(DB)
-
-get_REDCap_report(DB)
 
 show_REDCap_API_methods()
 
@@ -72,3 +69,4 @@ It is designed to simplify access to the REDCap API by abstracting common method
 \details{
 This function calls a specified REDCap API method using the provided database (`DB`) object, token, and additional arguments. The function then returns the results in the form of a `DB` object. If an error occurs, the behavior is determined by the `error_action` parameter. By default, warnings will be issued for errors.
 }
+\keyword{internal}

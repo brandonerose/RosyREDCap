@@ -65,6 +65,22 @@ generate_horizontal_transform <- function(DB,records){
   FINAL_out <-col_names2 %>%  dplyr::bind_rows(FINAL_out)
   return(FINAL_out)
 }
+#' @title upload_transform_to_DB Transform
+#' @inheritParams save_DB
+#' @export
+upload_transform_to_DB <- function(DB){
+  if(is_something(DB$transformation$data_updates)){
+    for(i in 1:length(DB$transformation$data_updates)){
+      DB$transformation$data_updates[[i]] %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
+    }
+    bullet_in_console("Successfully uploaded to REDCap!",bullet_type = "v")
+    DB$transformation$data_updates<- NULL
+  }else{
+    bullet_in_console("Nothing to upload!")
+  }
+  return(DB)
+}
+#' @noRd
 extract_form_from_merged <- function(DB,form_name){
   merged <- DB$data[[DB$internals$merge_form_name]]
   if(nrow(merged)>0){
@@ -101,19 +117,4 @@ extract_form_from_merged <- function(DB,form_name){
     cols <- unique(c(add_ons,DB$metadata$fields$field_name[which(DB$metadata$fields$form_name==form_name&DB$metadata$fields$field_name%in%colnames(merged))]))
     return(merged[rows,cols])
   }
-}
-#' @title upload_transform_to_DB Transform
-#' @inheritParams save_DB
-#' @export
-upload_transform_to_DB <- function(DB){
-  if(is_something(DB$transformation$data_updates)){
-    for(i in 1:length(DB$transformation$data_updates)){
-      DB$transformation$data_updates[[i]] %>% labelled_to_raw_form(DB) %>% upload_form_to_REDCap(DB)
-    }
-    bullet_in_console("Successfully uploaded to REDCap!",bullet_type = "v")
-    DB$transformation$data_updates<- NULL
-  }else{
-    bullet_in_console("Nothing to upload!")
-  }
-  return(DB)
 }

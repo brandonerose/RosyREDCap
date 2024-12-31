@@ -40,3 +40,4 @@ Other db_functions:
 \code{\link{update_DB}()}
 }
 \concept{db_functions}
+\keyword{internal}

@@ -244,9 +244,11 @@ read_from_REDCap_upload <- function(DB,allow_all=T,drop_nonredcap_vars=T,drop_no
   }
   DB
 }
+#' @noRd
 default_sheet_drops <- function(DB){
   DB$summary  %>% process_df_list() %>% names()
 }
+#' @noRd
 read_xl_to_DB_for_upload <- function(DB,file_path,drop_sheets = default_sheet_drops(DB)){
   #add data_update check
   if(!endsWith(file_path,".xlsx"))stop("File type must be '.xlsx' --> ",file_path)

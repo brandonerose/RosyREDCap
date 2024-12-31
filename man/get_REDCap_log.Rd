@@ -42,3 +42,4 @@ It optionally cleans the raw API data and adds summary columns to enhance log re
 \seealso{
 \code{\link[RosyREDCap]{update_DB}} for updating the `DB` object, including the log.
 }
+\keyword{internal}
