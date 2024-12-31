@@ -15,3 +15,4 @@ data.frame of files
 \description{
 Checks REDCap for current files
 }
+\keyword{internal}

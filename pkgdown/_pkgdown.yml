@@ -28,8 +28,8 @@ reference:
     contents:
       - run_RosyREDCap
 
-  - title: Core/Basic
-    desc: Represents the core functionality. Setup or Load your project. Update from REDCap. Use the outputs.
+  - title: Core Pipeline Functions (Basic)
+    desc: For basic users use these core functions to maintain REDCap data pipelines. Setup or Load your project. Update from REDCap using what is already saved. Save the outputs to a directory.
     contents:
       - get_projects
       - setup_DB
@@ -37,26 +37,51 @@ reference:
       - update_DB
       - REDCap_diagram
       - drop_REDCap_to_directory
+      - summarize_DB
 
-  - title: Components/Intermediate
+  - title: Everything by Topic (Intermediate/Advanced)
     desc: Expands on functionality and breaksdown core feautures into more customizable parts
-  - subtitle: Get from REDCap
+  - subtitle: Project Cache
+    desc: RosyREDCap cahces user-level project metadata (name, directory, links, last update and other details). Tokens and data are NOT stored here.
     contents:
-      - get_REDCap_method
-      - get_REDCap_version
-      - get_REDCap_metadata
-      - get_REDCap_data
-      - get_REDCap_structure
-      - get_REDCap_files
-      - get_REDCap_users
+      - get_projects
+      - cache_clear
+      - cache_path
+      - check_folder_for_projects
+      - project_health_check
+  - subtitle: Tokens
+    desc: Tokens are required to use the REDCap API. Never share your tokens.
+    contents:
+      - set_REDCap_token
+      - view_REDCap_token
+      - test_REDCap_token
+  - subtitle: Setup/Load/Save/Delete DB Object
+    desc: DB objects are R lists meant to store all metadata and data for a single REDCap project. They utilize the REDCap log to only fetch recent updates. The can be "mirrored" to a local/cloud directory to maintain file pipelines and/or used for an exploratory data analysis shiny app via `run_RosyREDCap`.
+    contents:
+      - setup_DB
+      - load_DB
+      - load_DB_from_path
+      - delete_DB
+      - save_DB
+      - get_dir
+      - update_DB
+      - show_DB
+
+  - subtitle: Get from REDCap
+    desc: For most project, even with tens-of-thousands records and hundreds of variables, this can be handeled with update_DB. This package is not presently intended for massive REDCap projects.
+    contents:
+      - update_DB
       - get_REDCap_report
-      - get_REDCap_log
-      - get_REDCap_raw_data
-      - get_REDCap_files
-      - get_REDCap_file_repository
-      - show_REDCap_API_methods
-      - show_REDCap_API_methods_table
-  - subtitle: Upload/Delete to REDCap
+  - subtitle: Data Helpers
+    desc: Used for managing to-be-upload data
+    contents:
+      - add_ID_to_DF
+      - find_upload_diff
+      - raw_to_labelled_form
+      - labelled_to_raw_form
+      - read_from_REDCap_upload
+  - subtitle: Upload to and Delete from REDCap
+    desc: Always use with caution! Package takes several steps to test and confirm uploads but ultimately the user is responsible for data changes. Remember REDCap always keeps a log of changes.
     contents:
       - add_REDCap_folder
       - upload_DB_to_REDCap
@@ -67,65 +92,46 @@ reference:
       - delete_REDCap_file
       - delete_REDCap_records
       - delete_file_from_REDCap
-  - subtitle: DB object Modifications
+  - subtitle: DB Object Modifications
+    desc: One of the core internal motivations for RosyREDCap development was to have REDCap-project-agnositic functions that perform key transformations such as deidentify, derive fields, and transform (merge). However, these functions might not be utilized by the average user.
     contents:
       - clean_DB
       - deidentify_DB
       - filter_DB
-      - show_DB
       - add_default_forms_transformation
+      - add_DB_subset
+      - add_field_transformation
       - transform_DB
       - untransform_DB
-
-  - subtitle: Data Helpers
+  - subtitle: DB Object Outputs
+    desc: Mirror your DB object to a local/cloud file system. If you have subsets, will only update file if record beloning to that subset was updated.
     contents:
-      - add_ID_to_DF
-      - find_upload_diff
-      - raw_to_labelled_form
-      - labelled_to_raw_form
-      - read_from_REDCap_upload
-
-  - title: Experimental/Advanced
-    desc: Expands more on what is possible. May be niche, hard to document, and less stable
-    contents:
-      - add_field_transformation
-      - add_DB_subset
-      - run_quality_checks
-      - edit_REDCap_while_viewing
+      - REDCap_diagram
+      - drop_REDCap_to_directory
       - generate_horizontal_transform
       - generate_summary_from_subset_name
-      - rmarkdown_DB
       - summarize_DB
+      - run_RosyREDCap
 
-  - title: Generic Helpers
-    desc: May not be needed by most but included for transparency and testing.
+
+  - subtitle: Experimental/Dev Functions
+    desc: These functions are still in development and is subject to changes.
     contents:
-      - "%>%"
-  - subtitle: Project Cache
+      - rmarkdown_DB
+      - run_quality_checks
+      - edit_REDCap_while_viewing
+  - subtitle: Other Helpers
     contents:
-      - cache_clear
-      - cache_path
-      - check_folder_for_projects
-      - project_health_check
-  - subtitle: Tokens
-    contents:
-      - set_REDCap_token
-      - view_REDCap_token
-      - test_REDCap_token
-  - subtitle: DB Object
-    contents:
-      - load_DB_from_path
       - get_dir
-      - delete_DB
-      - save_DB
-  - subtitle: Launch/Nav
-    contents:
       - nav_to_dir
       - link_API_playground
       - link_API_token
       - link_REDCap_home
       - link_REDCap_project
       - link_REDCap_record
+  - subtitle: Generic Helpers
+    contents:
+      - "%>%"
 
 articles:
   - title: Feautures by R User Level

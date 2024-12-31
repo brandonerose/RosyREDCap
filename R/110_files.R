@@ -26,7 +26,7 @@ upload_file_to_REDCap_file_repository <- function(DB,file){
 #' @title Checks REDCap for current files
 #' @inheritParams save_DB
 #' @return data.frame of files
-#' @export
+#' @keywords internal
 get_REDCap_file_repository <- function(DB){
   DB <- validate_DB(DB)
   response <- httr::POST(
