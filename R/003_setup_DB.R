@@ -52,9 +52,10 @@ setup_DB <- function (
   if(length(short_name)!=1)stop(em)
   projects <- get_projects() # add short_name conflict check if id and base url differs
   short_name <- validate_env_name(short_name)
-  token_name <- paste0("RosyREDCap_token_",short_name) %>% validate_env_name()
+  token_name <- paste0(internal_RosyREDCap_token_prefix,short_name) %>% validate_env_name()
   in_proj_cache <- short_name %in% projects$short_name
   missing_dir_path <- missing(dir_path)
+  is_a_test <- is_test_short_name(short_name = short_name)
   if(force){ # load blank if force = T
     DB <- internal_blank_DB
     bullet_in_console(paste0("Setup blank DB object because `force = T`"))
@@ -64,7 +65,6 @@ setup_DB <- function (
       DB <- load_DB(short_name)
     }
     if(!in_proj_cache){ # if it's not in the cache start from blank
-      is_a_test <- is_test_short_name(short_name = short_name)
       if(is_a_test){
         DB <- load_test_DB(short_name = short_name, with_data = F)
       }else{
@@ -100,7 +100,7 @@ setup_DB <- function (
       set_REDCap_token(DB,ask = F)
     }
   }
-  validate_REDCap_token(DB,silent = F)
+  DB <- validate_DB(DB,silent = F)
   return(DB)
 }
 #' @rdname setup-load
@@ -263,7 +263,7 @@ validate_DB <- function(DB,silent = T,warn_only = F){
       bullet_in_console(DB$short_name %>% paste0(" is a test DB object that doesn't actually communicate with any REDCap API!"),bullet_type = "i")
     }
     if(outcome_valid){
-      bullet_in_console(DB$short_name," is valid DB object!",bullet_type = "v")
+      bullet_in_console(paste0(DB$short_name," is valid DB object!"),bullet_type = "v")
     }
     if(DB$internals$is_transformed){
       bullet_in_console(DB$short_name %>% paste0(" is currently transformed! Can reverse with `untransform_DB(DB)`"),bullet_type = "i")

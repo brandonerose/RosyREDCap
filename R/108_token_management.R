@@ -152,7 +152,7 @@ is_valid_REDCap_token <- function(token, silent = T,is_a_test = F){
 }
 #' @noRd
 get_REDCap_token_name <- function(DB){
-  token_name <- paste0("RosyREDCap_token_",validate_env_name(DB$short_name))
+  token_name <- paste0(internal_RosyREDCap_token_prefix,validate_env_name(DB$short_name))
   return(token_name)
 }
 #' @noRd
@@ -175,3 +175,17 @@ validate_REDCap_token <- function(DB,silent=T){
   }
   return(token)
 }
+check_saved_RosyREDCap_tokens <- function(){
+  the_names <- Sys.getenv() %>% names()
+  the_names <- the_names[which(startsWith(the_names,internal_RosyREDCap_token_prefix))]
+  if(length(the_names)==0){
+    bullet_in_console("No known REDCap tokens saved in session...",bullet_type = "x")
+    return(invisible())
+  }
+  the_names <- gsub(internal_RosyREDCap_token_prefix,"",the_names)
+  ltn <- length(the_names)
+  bullet_in_console(paste0("There are ",ltn," known REDCap tokens saved in the session: ",as_comma_string(the_names)),bullet_type = "x")
+  return(invisible())
+}
+internal_RosyREDCap_token_prefix <- "RosyREDCap_token_"
+

@@ -2,7 +2,7 @@
 set_dir <- function(dir_path){
   dir_path <- clean_dir_path(dir_path)
   if( ! file.exists(dir_path)){
-    if(utils::menu(choices = c("Yes","No"),title = "No file path found, create?")==1){
+    if(utils::menu(choices = c("Yes","No"),title = paste0("No file path found for chosen directory, create? (",dir_path,")"))==1){
       dir.create(file.path(dir_path))
     }
     if ( ! file.exists(dir_path)) {
@@ -76,7 +76,7 @@ check_folder_for_projects <- function(file_path,validate = T){
   if(nrow(df)==0)return(character(0))
   return(df$file_path)
 }
-internal_dir_folders <- c("R_objects","output","scripts","input")
+internal_dir_folders <- c("R_objects","output","scripts","input","REDCap")
 validate_dir <- function(dir_path,silent=T){
   #param check
   dir_path <- clean_dir_path(dir_path)
