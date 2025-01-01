@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @import RosyApp
 #' @title Get REDCap Report
 #' @inheritParams save_DB

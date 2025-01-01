@@ -20,7 +20,6 @@ This will delete the "PROJ_RosyREDCap.rdata" file in the given DB directories R_
 \seealso{
 Other DB object: 
 \code{\link{save_DB}()},
-\code{\link{setup_DB}()},
-\code{\link{show_DB}()}
+\code{\link{setup_DB}()}
 }
 \concept{DB object}

@@ -13,8 +13,7 @@ generate_summary_from_subset_name(
   annotate_metadata = T,
   include_record_summary = T,
   include_users = T,
-  include_log = T,
-  add_to_global = T
+  include_log = T
 )
 }
 \arguments{
@@ -35,8 +34,6 @@ generate_summary_from_subset_name(
 \item{include_users}{Logical. If `TRUE`, user-related information will be included in the summary. Default is `TRUE`.}
 
 \item{include_log}{Logical. If `TRUE`, the log of changes will be included in the summary. Default is `TRUE`.}
-
-\item{add_to_global}{Logical. If `TRUE`, the generated summary will be added to the global environment. Default is `TRUE`.}
 }
 \value{
 A list containing the generated summary based on the specified options. The list includes filtered and cleaned data, metadata, and other summary details.

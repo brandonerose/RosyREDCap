@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @import RosyApp
 #' @title Clean DB columns for plotting using the metadata
 #' @description

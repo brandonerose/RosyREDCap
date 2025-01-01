@@ -75,7 +75,6 @@ DB <- load_DB("TEST")
 
 Other DB object: 
 \code{\link{delete_DB}()},
-\code{\link{save_DB}()},
-\code{\link{show_DB}()}
+\code{\link{save_DB}()}
 }
 \concept{DB object}

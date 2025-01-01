@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @import RosyApp
 #' @title Add a Subset to a REDCap Database
 #' @description
@@ -148,7 +147,7 @@ save_RosyREDCap_list <- function(
       overwrite = TRUE
     )
   }else{
-    to_save_list %>% RosyUtils::list_to_excel(
+    to_save_list %>% list_to_excel(
       dir = dir_other,
       separate = separate,
       link_col_list = link_col_list,
@@ -173,7 +172,6 @@ save_RosyREDCap_list <- function(
 #' @param include_record_summary Logical. If `TRUE`, a record summary will be included in the generated summary. Default is `TRUE`.
 #' @param include_users Logical. If `TRUE`, user-related information will be included in the summary. Default is `TRUE`.
 #' @param include_log Logical. If `TRUE`, the log of changes will be included in the summary. Default is `TRUE`.
-#' @param add_to_global Logical. If `TRUE`, the generated summary will be added to the global environment. Default is `TRUE`.
 #'
 #' @return
 #' A list containing the generated summary based on the specified options. The list includes filtered and cleaned data, metadata, and other summary details.
@@ -190,8 +188,7 @@ generate_summary_from_subset_name <- function(
     annotate_metadata = T,
     include_record_summary = T,
     include_users = T,
-    include_log = T,
-    add_to_global = T
+    include_log = T
 ){
   subset_list <- DB$summary$subsets[[subset_name]]
   if(subset_list$filter_field==DB$redcap$id_col){
@@ -214,9 +211,6 @@ generate_summary_from_subset_name <- function(
     include_users = include_users,
     include_log = include_log
   )
-  if(add_to_global){
-    add_list_to_global(to_save_list)
-  }
   return(to_save_list)
 }
 #' @title Summarize REDCap Database

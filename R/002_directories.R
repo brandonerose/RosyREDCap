@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @noRd
 set_dir <- function(dir_path){
   dir_path <- clean_dir_path(dir_path)
@@ -35,9 +34,6 @@ get_dir <- function(DB){
 #' @return opens browser link
 #' @export
 nav_to_dir <- function(DB){
-  if (requireNamespace("rstudioapi", quietly = TRUE)) {
-    rstudioapi::filesPaneNavigate(DB$dir_path)
-  }
   utils::browseURL(DB$dir_path)
 }
 #' @title List File Paths of RosyREDCap Projects in a Folder

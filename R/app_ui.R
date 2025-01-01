@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @import RosyApp
 #' @import shiny
 #' @import shinydashboard

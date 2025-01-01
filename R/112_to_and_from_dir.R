@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @import RosyApp
 #' @title Drop REDCap Data to Directory
 #' @description

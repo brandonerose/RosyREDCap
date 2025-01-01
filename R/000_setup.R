@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @noRd
 .onLoad <- function(libname, pkgname){
   cache <- get_cache()

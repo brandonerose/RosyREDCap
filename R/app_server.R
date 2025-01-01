@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @import RosyApp
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
@@ -178,7 +177,7 @@ app_server <- function(input, output, session) {
           form_names = field_names_to_form_names(values$DB, field_names = input$choose_fields_view),
           field_names = input$choose_fields_view,
           no_duplicate_cols = T
-        ) %>% RosyUtils::process_df_list()
+        ) %>% process_df_list()
         # print(values$dt_tables_view_list)
         # values$dt_tables_view_list <- DB %>% filter_DB(records = subset_list$sarcoma$record_id %>% sample1(), data_choice = get_default_data_choice(values$DB),field_names = "sarc_timeline") %>% process_df_list()
         # values$subset_list$sarcoma %>% dplyr::filter(sarcoma_id%in%values$chosen_group_sarcoma) %>% make_PSDB_table(DB = values$DB)

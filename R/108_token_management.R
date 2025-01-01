@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @import RosyApp
 #' @title Set a REDCap API Token to Your Current R Session
 #' @description

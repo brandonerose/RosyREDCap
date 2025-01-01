@@ -18,7 +18,6 @@ Saves DB in the directory
 \seealso{
 Other DB object: 
 \code{\link{delete_DB}()},
-\code{\link{setup_DB}()},
-\code{\link{show_DB}()}
+\code{\link{setup_DB}()}
 }
 \concept{DB object}

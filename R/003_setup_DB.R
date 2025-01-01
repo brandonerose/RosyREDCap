@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @import RosyApp
 #' @rdname setup-load
 #' @title Setup or Load RosyREDCap Project
@@ -177,22 +176,6 @@ save_DB <- function(DB){
   # save_xls_wrapper(DB)
   # nav_to_dir(DB)
   return(invisible())
-}
-#' @title Shows DB in the env
-#' @inheritParams save_DB
-#' @param also_metadata logical for including metadata
-#' @param only_dfs logical for including data.frames
-#' @return DB tables
-#' @family DB object
-#' @export
-show_DB <- function(DB,also_metadata=T,only_dfs = T){
-  DB <- validate_DB(DB)
-  data_list <- list()
-  DB$data %>% add_list_to_global(only_dfs = only_dfs)
-  if(also_metadata){
-    DB$metadata %>% add_list_to_global(only_dfs = only_dfs)
-  }
-  data_list %>% list2env(envir = .GlobalEnv)
 }
 #' @title Deletes DB object from directory (solves occasional problems)
 #' @description

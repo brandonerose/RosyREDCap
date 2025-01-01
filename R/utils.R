@@ -1,4 +1,3 @@
-#' @import RosyUtils
 #' @noRd
 add_redcap_links_to_DF <- function(DF,DB){# add instance links
   if(DB$redcap$id_col%in%colnames(DF)){
@@ -166,3 +165,4 @@ split_choices <- function(x){
 redcap_field_types_not_in_data <- c(
   "descriptive", "checkbox"
 )
+
