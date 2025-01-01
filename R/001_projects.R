@@ -24,6 +24,7 @@ get_projects <- function(){
 #' Check directory, DB object, and REDCap token. Optional update.
 #' @family Project Cache Functions
 #' @keywords Project Cache Functions
+#' @return project cache data.frame
 #' @export
 project_health_check <- function(){
   # projects <- projects_old <- get_projects()

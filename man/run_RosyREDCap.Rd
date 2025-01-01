@@ -36,6 +36,9 @@ about the ideal height/width for the app.}
 \item{...}{arguments to pass to golem_opts.
 See `?golem::get_golem_options` for more details.}
 }
+\value{
+shiny application
+}
 \description{
 run_RosyREDCap
 }

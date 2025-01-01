@@ -9,6 +9,9 @@ run_quality_checks(DB)
 \arguments{
 \item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
 }
+\value{
+DB object
+}
 \description{
 Run Quality Checks
 }

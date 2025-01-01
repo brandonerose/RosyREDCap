@@ -67,6 +67,7 @@ generate_horizontal_transform <- function(DB,records){
 }
 #' @title upload_transform_to_DB Transform
 #' @inheritParams save_DB
+#' @return DB object
 #' @export
 upload_transform_to_DB <- function(DB){
   if(is_something(DB$transformation$data_updates)){

@@ -27,5 +27,5 @@ At the time of writting this article `r nrow(REDCap_API$methods)` API methods fo
 RosyREDCap intentionally avoids modifying the metadata and user DAGs using the API, choosing instead to focus primarily on exporting all relevant data and for more advanced users, giving access to uploads, files, and the file repository. The current RosyREDCap API coverage is 26 of the 52 available methods (50%). Crucially, these are all standardized and behind wrappers. The user can leverage the methods a handful of key functions. In short the package loads your last save (setup_DB and load_DB), checks the log for updates, and gets any changes for your local object (update_DB). If you have multiple projects you can then toggle between projects and can create custom outputs derived from the feed (run_RosyREDCap).
 
 ```{r}
-knitr::kable(REDCap_API$methods)
+#knitr::kable(REDCap_API$methods)
 ```

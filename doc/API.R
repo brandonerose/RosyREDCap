@@ -7,5 +7,5 @@ wl <- function(x){length(which(x))}
 REDCap_API <- RosyREDCap:::REDCap_API
 
 ## -----------------------------------------------------------------------------
-knitr::kable(REDCap_API$methods)
+#knitr::kable(REDCap_API$methods)
 

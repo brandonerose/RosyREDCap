@@ -1,4 +1,5 @@
 #' @import RosyUtils
+#' @noRd
 set_dir <- function(dir_path){
   dir_path <- clean_dir_path(dir_path)
   if( ! file.exists(dir_path)){
@@ -18,6 +19,7 @@ set_dir <- function(dir_path){
 }
 #' @title get your directory
 #' @inheritParams save_DB
+#' @return file path of directory
 #' @export
 get_dir <- function(DB){
   dir_path <- DB$dir_path

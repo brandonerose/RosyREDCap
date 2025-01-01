@@ -188,4 +188,3 @@ check_saved_RosyREDCap_tokens <- function(){
   return(invisible())
 }
 internal_RosyREDCap_token_prefix <- "RosyREDCap_token_"
-

@@ -11,6 +11,9 @@ get_REDCap_report(DB, report_id)
 
 \item{report_id}{character or integer of REDCap report ID. This can be found at the end of the URL of the report.}
 }
+\value{
+data.frame of REDCap report
+}
 \description{
 Get REDCap Report
 }

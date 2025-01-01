@@ -9,6 +9,9 @@ upload_transform_to_DB(DB)
 \arguments{
 \item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
 }
+\value{
+DB object
+}
 \description{
 upload_transform_to_DB Transform
 }

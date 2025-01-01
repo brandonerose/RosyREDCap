@@ -27,6 +27,7 @@ upload_file_to_REDCap_file_repository <- function(DB,file){
 #' @inheritParams save_DB
 #' @return data.frame of files
 #' @keywords internal
+#' @noRd
 get_REDCap_file_repository <- function(DB){
   DB <- validate_DB(DB)
   response <- httr::POST(

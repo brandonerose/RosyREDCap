@@ -28,6 +28,7 @@ golem_add_external_resources <- function(...) {
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
 #' @family Shiny Application
+#' @return shiny application
 #' @export
 run_RosyREDCap <- function(
     onStart = NULL,

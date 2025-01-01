@@ -316,6 +316,7 @@ summarize_DB <- function(
 }
 #' @title Run Quality Checks
 #' @inheritParams save_DB
+#' @return DB object
 #' @export
 run_quality_checks <- function(DB){
   DB <- validate_DB(DB)

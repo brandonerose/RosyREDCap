@@ -6,6 +6,9 @@
 \usage{
 project_health_check()
 }
+\value{
+project cache data.frame
+}
 \description{
 Check directory, DB object, and REDCap token. Optional update.
 }
