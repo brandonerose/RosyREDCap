@@ -1,5 +1,6 @@
 #' @import RosyUtils
 #' @import RosyApp
+#' @noRd
 get_original_forms <- function(DB){
   forms <- DB$metadata$forms
   if(DB$internals$is_transformed){
@@ -7,6 +8,7 @@ get_original_forms <- function(DB){
   }
   return(forms)
 }
+#' @noRd
 get_original_fields <- function(DB){
   fields <- DB$metadata$fields
   if(DB$internals$is_transformed){
@@ -14,6 +16,7 @@ get_original_fields <- function(DB){
   }
   return(fields)
 }
+#' @noRd
 get_transformed_fields <- function(DB){
   fields <- NULL
   if(DB$internals$is_transformed){
@@ -21,6 +24,7 @@ get_transformed_fields <- function(DB){
   }
   return(fields)
 }
+#' @noRd
 get_transformed_forms <- function(DB){
   forms <- NULL
   if(DB$internals$is_transformed){
@@ -79,6 +83,7 @@ add_default_forms_transformation <- function(DB){
   forms_transformation$x_first[which(forms_transformation$repeating)] <- T
   return(forms_transformation)
 }
+#' @noRd
 add_default_fields_transformation <- function(DB){
   # DB$transformation <- list(
   #   forms = NULL,
@@ -139,6 +144,7 @@ add_default_fields_transformation <- function(DB){
   }
   return(DB)
 }
+#' @noRd
 add_forms_transformation <- function(DB,forms_transformation,ask=T){
   if(missing(forms_transformation))forms_transformation <- add_default_forms_transformation(DB)
   forms_tranformation_cols <-c(
@@ -171,6 +177,7 @@ add_forms_transformation <- function(DB,forms_transformation,ask=T){
   DB$transformation$forms <- forms_transformation
   return(DB)
 }
+#' @noRd
 run_fields_transformation <- function(DB,ask = T){
   the_names <- DB$transformation$fields$field_name
   if(is.null(the_names)){
@@ -303,6 +310,7 @@ add_field_transformation <- function(
   message("added '",field_name,"' column")
   return(DB)
 }
+#' @noRd
 combine_original_transformed_fields <- function(DB){
   the_names <- DB$transformation$fields$field_name
   fields <- get_original_fields(DB)
@@ -342,6 +350,7 @@ combine_original_transformed_fields <- function(DB){
   }
   return(fields)
 }
+#' @noRd
 run_fields_transformation <- function(DB,ask = T){
   the_names <- DB$transformation$fields$field_name
   if(is.null(the_names)){

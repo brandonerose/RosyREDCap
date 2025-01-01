@@ -52,24 +52,25 @@ setup_DB <- function (
   if(length(short_name)!=1)stop(em)
   projects <- get_projects() # add short_name conflict check if id and base url differs
   short_name <- validate_env_name(short_name)
-  is_a_test <- is_test_short_name(short_name = short_name)
-  if(is_a_test){
-    DB <- load_test_DB(short_name = short_name, with_data = F)
-  }
   token_name <- paste0("RosyREDCap_token_",short_name) %>% validate_env_name()
   in_proj_cache <- short_name %in% projects$short_name
   missing_dir_path <- missing(dir_path)
   if(force){ # load blank if force = T
     DB <- internal_blank_DB
-    bullet_in_console(paste0("Setup Blank DB Object because `force = T`"))
+    bullet_in_console(paste0("Setup blank DB object because `force = T`"))
   }
   if(!force){
     if(in_proj_cache){ # if its seen in cache the load from there
       DB <- load_DB(short_name)
     }
     if(!in_proj_cache){ # if it's not in the cache start from blank
-      DB <- internal_blank_DB
-      bullet_in_console("Setup Blank DB Object because nothing found in cache.",bullet_type = "!")
+      is_a_test <- is_test_short_name(short_name = short_name)
+      if(is_a_test){
+        DB <- load_test_DB(short_name = short_name, with_data = F)
+      }else{
+        DB <- internal_blank_DB
+      }
+      bullet_in_console("Setup blank DB object because nothing found in cache.",bullet_type = "!")
     }
   }
   if(missing_dir_path){ # if missing the directory path from setup or load then let user know nothing will be stored
@@ -272,10 +273,15 @@ validate_DB <- function(DB,silent = T,warn_only = F){
   DB
 }
 internal_allowed_test_short_names <- c("TEST_classic","TEST_repeating","TEST_longitudinal","TEST_multiarm")
+#' @noRd
 internal_TEST_classic_token <- "FAKE32TESTTOKENCLASSIC1111111111"
+#' @noRd
 internal_TEST_repeating_token <- "FAKE32TESTTOKENREPEATING22222222"
+#' @noRd
 internal_TEST_longitudinal_token <- "FAKE32TESTTOKENLONGITUDINAL33333"
+#' @noRd
 internal_TEST_multiarm_token <- "FAKE32TESTTOKENMULTIARM444444444"
+#' @noRd
 get_test_token <- function(short_name){
   em <- '`short_name` must be character string of length 1 equal to one of the following: ' %>% paste0(as_comma_string(internal_allowed_test_short_names))
   if(!is.character(short_name))stop(em)
@@ -296,6 +302,7 @@ get_test_token <- function(short_name){
   }
   return(token)
 }
+#' @noRd
 internal_blank_DB <- list(
   short_name=NULL,
   dir_path=NULL,

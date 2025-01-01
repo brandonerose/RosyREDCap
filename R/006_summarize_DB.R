@@ -174,6 +174,7 @@ raw_to_labelled_form <- function(FORM,DB){
   }
   FORM
 }
+#' @noRd
 stack_vars <- function(DB,vars,new_name,drop_na=T){
   DB <- validate_DB(DB)
   fields <- DB$metadata$fields
@@ -189,13 +190,16 @@ stack_vars <- function(DB,vars,new_name,drop_na=T){
   }
   return(the_stack)
 }
+#' @noRd
 get_original_field_names <- function(DB){
   if(DB$internals$is_transformed)return(DB$transformation$original_fields$field_name)
   return(DB$metadata$fields$field_name)
 }
+#' @noRd
 get_all_field_names <- function(DB){
   return(DB$data %>% sapply(colnames) %>% unlist() %>% unique())
 }
+#' @noRd
 field_names_to_form_names <- function(DB,field_names){
   form_key_cols <- DB$metadata$form_key_cols %>% unlist() %>% unique()
   field_names_keys <- field_names[which(field_names%in%form_key_cols)]
@@ -211,6 +215,7 @@ field_names_to_form_names <- function(DB,field_names){
   form_names <- c(form_names_not_keys,form_names_keys) %>% unique()
   return(form_names)
 }
+#' @noRd
 form_names_to_field_names <- function(form_names,DB,original_only = F){
   field_names <- NULL
   if(original_only){
@@ -223,6 +228,7 @@ form_names_to_field_names <- function(form_names,DB,original_only = F){
   }
   return(unique(field_names))
 }
+#' @noRd
 form_names_to_form_labels <- function(form_names,DB){
   return(
     DB$metadata$forms$form_label[
@@ -233,6 +239,7 @@ form_names_to_form_labels <- function(form_names,DB){
     ]
   )
 }
+#' @noRd
 form_labels_to_form_names <- function(form_labels,DB){
   return(
     DB$metadata$forms$form_name[
@@ -243,6 +250,7 @@ form_labels_to_form_names <- function(form_labels,DB){
     ]
   )
 }
+#' @noRd
 field_names_to_field_labels <- function(field_names,DB){
   return(
     DB$metadata$fields$field_label[
@@ -253,6 +261,7 @@ field_names_to_field_labels <- function(field_names,DB){
     ]
   )
 }
+#' @noRd
 construct_header_list <- function(DF_list,md_elements = c("form_name","field_type","field_label"),fields){
   if(anyDuplicated(fields$field_name)>0)stop("dup names not allowed in fields")
   df_col_list <- DF_list %>% lapply(colnames)
@@ -271,12 +280,14 @@ construct_header_list <- function(DF_list,md_elements = c("form_name","field_typ
   })
   return(header_df_list)
 }
+#' @noRd
 stripped_DB <- function (DB) {
   DB$redcap$log <- list()
   DB$data <- list()
   DB$data_update <- list()
   return(DB)
 }
+#' @noRd
 filter_DF_list <- function(DF_list,DB,filter_field, filter_choices, form_names, field_names, warn_only = F, no_duplicate_cols = F){
   if(missing(field_names))field_names <- DB %>% get_all_field_names()
   if(is.null(field_names))field_names <- DB %>% get_all_field_names()
@@ -315,6 +326,7 @@ filter_DF_list <- function(DF_list,DB,filter_field, filter_choices, form_names, 
   }
   return(out_list)
 }
+#' @noRd
 field_names_metadata <- function(DB,field_names,col_names){
   fields <- get_original_fields(DB) #DB$metadata$fields
   # if(!deparse(substitute(FORM))%in%DB$metadata$forms$form_name)stop("To avoid potential issues the form name should match one of the instrument names" )
@@ -328,6 +340,7 @@ field_names_metadata <- function(DB,field_names,col_names){
   }
   return(fields)
 }
+#' @noRd
 filter_fields_from_form <- function(FORM,DB){
   forms <- DB %>% field_names_to_form_names(field_names = colnames(FORM))
   if(any(forms%in%get_original_forms(DB)$repeating))stop("All column names in your form must match only one form in your metadata, `DB$metadata$forms$form_name`, unless they are all non-repeating")
@@ -336,6 +349,7 @@ filter_fields_from_form <- function(FORM,DB){
   fields$has_choices <- !is.na(fields$select_choices_or_calculations)
   return(fields)
 }
+#' @noRd
 labelled_to_raw_DB <- function(DB){
   DB <- validate_DB(DB)
   if(!DB$internals$data_extract_labelled)stop("DB is already raw/coded (not labelled values)")
@@ -345,6 +359,7 @@ labelled_to_raw_DB <- function(DB){
   DB$internals$data_extract_labelled <- F
   DB
 }
+#' @noRd
 DF_list_to_text <- function(DF_list, DB,drop_nas = T,clean_names= T){
   output_list <- c()
   for (i in seq_along(DF_list)) {
@@ -373,6 +388,7 @@ DF_list_to_text <- function(DF_list, DB,drop_nas = T,clean_names= T){
   }
   return(output_list)
 }
+#' @noRd
 check_DB_for_IDs <- function(DB,required_percent_filled = 0.7){
   cols <- NULL
   if(is_something(DB)){

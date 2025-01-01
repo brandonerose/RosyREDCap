@@ -33,6 +33,7 @@ clean_DB <- function(DB,drop_blanks=F,other_drops=NULL){ # problematic because s
   DB$internals$is_clean <- T
   return(DB)
 }
+#' @noRd
 fields_to_choices <- function(fields){
   fields <- fields[which(fields$field_type%in%c("radio","dropdown","checkbox_choice","yesno")),]
   # fields$field_name[which(fields$field_type=="checkbox_choice")] <- fields$field_name[which(fields$field_type=="checkbox_choice")] %>% strsplit("___") %>% sapply(function(X){X[[1]]})
@@ -62,6 +63,7 @@ fields_to_choices <- function(fields){
   rownames(choices) <- NULL
   return(choices)
 }
+#' @noRd
 add_labels_to_checkbox <- function (fields){
   rows <- which(fields$field_type=="checkbox_choice")
   x <- fields$field_name[rows] %>% strsplit("___") %>% sapply(function(x){x[[1]]})
@@ -70,6 +72,7 @@ add_labels_to_checkbox <- function (fields){
   fields$field_label[rows] <- z
   return(fields)
 }
+#' @noRd
 annotate_fields <- function(DB,summarize_data = T){
   fields <- DB$metadata$fields#[,colnames(get_original_fields(DB))]
   fields <- fields[which(fields$field_type!="descriptive"),]
@@ -113,6 +116,7 @@ annotate_fields <- function(DB,summarize_data = T){
   # bullet_in_console("Annotated `DB$metadata$fields`",bullet_type = "v")
   return(fields)
 }
+#' @noRd
 annotate_forms <- function(DB,summarize_data = T){
   forms <- DB$metadata$forms
   # forms <- get_original_forms(DB)
@@ -138,6 +142,7 @@ annotate_forms <- function(DB,summarize_data = T){
   }
   return(forms)
 }
+#' @noRd
 annotate_choices <- function(DB,summarize_data = T){
   forms <- DB$metadata$forms
   fields <- DB$metadata$fields
@@ -172,15 +177,18 @@ annotate_choices <- function(DB,summarize_data = T){
   }
   return(choices)
 }
+#' @noRd
 fields_with_no_data <- function(DB){
   DB$metadata$fields$field_name[which(is.na(DB$metadata$fields$complete_rate)&!DB$metadata$fields$field_type%in%c("checkbox","descriptive"))]
 }
+#' @noRd
 reverse_clean_DB <- function(DB){ # problematic because setting numeric would delete missing codes
   DB$data <- all_character_cols_list(DB$data)
   DB$data_update <-DB$data_update %>% all_character_cols_list()
   DB$internals$is_clean <- F
   return(DB)
 }
+#' @noRd
 clean_DF_list <- function(DF_list,fields,drop_blanks = T,other_drops = NULL){
   #add check for DF_list#
   for(TABLE in names(DF_list)){
@@ -193,6 +201,7 @@ clean_DF_list <- function(DF_list,fields,drop_blanks = T,other_drops = NULL){
   }
   return(DF_list)
 }
+#' @noRd
 clean_DF <- function(DF,fields,drop_blanks = T,other_drops = NULL){
   for(COLUMN in colnames(DF)){
     if(COLUMN %in% fields$field_name){
@@ -242,6 +251,7 @@ clean_DF <- function(DF,fields,drop_blanks = T,other_drops = NULL){
   }
   return(DF)
 }
+#' @noRd
 clean_column_for_table <- function(col,class,label,units,levels){
   if(!missing(class)){
     if(!is.null(class)){
