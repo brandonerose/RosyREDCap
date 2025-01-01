@@ -88,7 +88,7 @@ setup_DB <- function (
     DB$links$redcap_base <- validate_web_link(redcap_base)
     DB$links$redcap_uri <- DB$links$redcap_base %>% paste0("api/")
   }else{
-    bullet_in_console("Test objects ignore the `redcap_base` url argument and do not communicate with any API.")
+    bullet_in_console("Test objects ignore the `redcap_base` url argument and will not communicate with the REDCap API.")
   }
   DB$internals$merge_form_name <- validate_env_name(merge_form_name)
   DB$internals$use_csv <- use_csv

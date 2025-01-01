@@ -65,7 +65,7 @@ set_REDCap_token <- function(DB,ask = T){
 view_REDCap_token <- function(DB){
   DB  <- validate_DB(DB)
   token <- validate_REDCap_token(DB,silent = F)
-  bullet_in_console(paste0("Never share your token: ",),bullet_type = "!")
+  bullet_in_console(paste0("Never share your token: ",token),bullet_type = "!")
   return(invisible())
 }
 #' @title Test REDCap API Token linked to a DB Object
