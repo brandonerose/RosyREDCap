@@ -263,3 +263,416 @@ all_character_cols <- function(DF){
 all_character_cols_list <- function(list){
   lapply(list,all_character_cols)
 }
+as_comma_string <- function(vec){
+  paste0(vec,collapse = ", ")
+}
+vec1_in_vec2 <- function(vec1,vec2){
+  vec1[which(vec1 %in% vec2)]
+}
+vec1_not_in_vec2 <- function(vec1,vec2){
+  vec1[which(!vec1 %in% vec2)]
+}
+validate_web_link <- function(link) {
+  if(is.null(link)) stop("link is NULL")
+  # Check if the link starts with "https://" or "http://"
+  if (!grepl("^https?://", link)) {
+    stop("Invalid web link. It must start with 'http://' or 'https://'.")
+  }
+  # Remove trailing slash if present
+  link <- gsub("/$", "", link)
+  # Check if the link ends with one of the specified web endings
+  if (!grepl("\\.(edu|com|org|net|gov|io|xyz|info|co|uk)$", link)) {
+    stop("Invalid web link. It must end with a valid web ending (.edu, .com, etc.).")
+  }
+  # Add a trailing slash
+  link <- paste0(link, "/")
+  return(link)
+}
+validate_env_name <- function(env_name) {
+  # Check if the name is empty
+  if(is.null(env_name)) stop("env_name is NULL")
+  if (nchar(env_name) == 0) {
+    stop("Short name cannot be empty.")
+  }
+  # Check if the name starts with a number
+  if (grepl("^\\d", env_name)) {
+    stop("Short name cannot start with a number.")
+  }
+  # Check if the name contains any invalid characters
+  if (grepl("[^A-Za-z0-9_]", env_name)) {
+    stop("Short name can only contain letters, numbers, and underscores.")
+  }
+  return(env_name)
+}
+ul <- function(x){
+  length(unique(x))
+}
+wl <- function(x){
+  length(which(x))
+}
+drop_nas <- function(x) {
+  x[!sapply(x, is.na)]
+}
+excel_to_list <- function(path){
+  sheets <- readxl::excel_sheets(path)
+  clean_sheets <- clean_env_names(sheets)
+  out <- list()
+  for (i in 1:length(sheets)){
+    out[[i]]<- rio::import(path,col_types="text",sheet = i)
+  }
+  names(out) <- clean_sheets
+  return(out)
+}
+csv_to_list <- function(paths){
+  paths <- normalizePath(paths)
+  OUT <- list()
+  clean_names <- paths %>% basename() %>% tools::file_path_sans_ext() %>% clean_env_names()
+  for (i in 1:length(paths)){
+    OUT[[i]]<- read.csv(paths[i],stringsAsFactors = F,na.strings = c("","NA"))
+  }
+  names(OUT) <- clean_names
+  return(OUT)
+}
+csv_folder_to_list <- function(folder){
+  folder <- normalizePath(folder)
+  if(!dir.exists(folder))stop("Folder does not exist: ",folder)
+  paths <- list.files.real(folder)
+  paths <- paths[which(paths %>% endsWith(".csv"))]
+  return(csv_to_list(paths = paths))
+}
+is_named_list <- function(x,silent =T,recursive = F) {
+  if (!is.list(x))return(FALSE)
+  if (is.null(names(x)))return(FALSE)
+  named_all <- TRUE
+  if(recursive){
+    for (n in names(x)) {
+      element <- x[[n]]
+      if (is.list(element)) {
+        named_all <- named_all && is_named_list_all(element)
+        if(!silent&&!named_all)message("'",n, "' is not named")
+      }
+    }
+  }
+  return(named_all)  # Return the result
+}
+wb_to_list <- function(wb){
+  # wb <- openxlsx::loadWorkbook(file = path)
+  # test for if user does not have excel
+  sheets <- openxlsx::sheets(wb)
+  clean_sheets <- clean_env_names(sheets)
+  out <- list()
+  for (i in 1:length(sheets)){
+    col_row <- 1
+    x <- openxlsx::getTables(wb,sheet = i)
+    if(length(x)>0){
+      col_row <- as.integer(gsub("[A-Za-z]", "", unlist(x %>% attr("refs") %>% strsplit(":"))[[1]]))# test for xlsx without letters for cols
+    }
+    out[[i]]<- openxlsx::read.xlsx(wb,sheet = i,startRow = col_row)
+  }
+  names(out) <- clean_sheets
+  return(out)
+}
+DF_to_wb <- function(
+    DF,
+    DF_name,
+    wb = openxlsx::createWorkbook(),
+    link_col_list = list(),
+    str_trunc_length = 32000,
+    header_df = NULL,
+    tableStyle = "none",
+    header_style = default_header_style,
+    body_style = default_body_style,
+    freeze_header = T,
+    pad_rows = 0,
+    pad_cols = 0,
+    freeze_keys = T,
+    key_cols = NULL
+) {
+  if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
+  DF <- DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
+  hyperlink_col <- NULL
+  if(freeze_keys){
+    all_cols <- colnames(DF)
+    if(any(!key_cols%in%all_cols))stop("all key_cols must be in the DFs")
+    freeze_key_cols <- which(all_cols%in%key_cols)
+    if(length(freeze_key_cols)>0){
+      if(!is_consecutive_srt_1(freeze_key_cols)){
+        warning("please keep your key cols on the left consecutively. Fixing ",DF_name,": ",paste0(key_cols,collapse = ", "),".",immediate. = T)
+        non_key_cols <- 1:ncol(DF)
+        non_key_cols <- non_key_cols[which(!non_key_cols%in%freeze_key_cols)]
+        new_col_order <- c(freeze_key_cols,non_key_cols)
+        if(is_something(header_df)){
+          header_df <- header_df[,new_col_order]
+        }
+        DF <- DF[,new_col_order]
+      }
+    }
+  }
+  if (nrow(DF)>0){
+    openxlsx::addWorksheet(wb, DF_name)
+    startRow_header <-pad_rows + 1
+    startRow_table <- startRow_header
+    startCol <-pad_cols + 1
+    if(is_something(header_df)){
+      openxlsx::writeData(wb, sheet = DF_name, x = header_df,startRow = startRow_header,startCol = startCol,colNames = F)
+      startRow_table <- startRow_header + nrow(header_df)
+    }
+    if(length(link_col_list)>0){
+      has_names <- !is.null(names(link_col_list))
+      for(i in seq_along(link_col_list)){
+        if(link_col_list[[i]]%in%colnames(DF)){
+          class (DF[[link_col_list[[i]]]]) <- "hyperlink"
+        }else{
+          # warning("",immediate. = T)
+        }
+        if(has_names){
+          if(names(link_col_list)[i]%in%colnames(DF)){
+            hyperlink_col <- which(colnames(DF)==names(link_col_list)[i])
+            openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = startRow_table+1,startCol = hyperlink_col + pad_cols)
+            DF[[link_col_list[[i]]]] <- NULL
+          }else{
+            # warning("",immediate. = T)
+          }
+        }
+      }
+    }
+    openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow_table,startCol = startCol, tableStyle = tableStyle)
+    style_cols <- seq(ncol(DF))+pad_cols
+    openxlsx::addStyle(
+      wb,
+      sheet = DF_name,
+      style = header_style,
+      rows = seq(from=startRow_header,to=startRow_table),
+      cols = style_cols,
+      gridExpand = T,
+      stack = T
+    )
+    openxlsx::addStyle(
+      wb,
+      sheet = DF_name,
+      style = body_style,
+      rows = seq(nrow(DF))+startRow_table,
+      cols = style_cols,
+      gridExpand = T,
+      stack = T
+    )
+    if(freeze_header||freeze_keys){
+      firstActiveRow <- NULL
+      if(freeze_header){
+        firstActiveRow <- startRow_table+1
+      }
+      firstActiveCol <- NULL
+      if(freeze_keys){
+        firstActiveCol <- startCol
+        freeze_key_cols <- which(colnames(DF)%in%key_cols)
+        if(length(freeze_key_cols)>0){
+          if (is_consecutive_srt_1(freeze_key_cols)){
+            firstActiveCol <- firstActiveCol + freeze_key_cols[length(freeze_key_cols)]
+          }else{
+            warning("key_cols must be consecutive and start from the left most column.",immediate. = T)
+          }
+        }
+        openxlsx::freezePane(wb, DF_name, firstActiveRow = firstActiveRow, firstActiveCol = firstActiveCol)
+      }
+    }
+    return(wb)
+  }
+}
+list_to_wb <- function(
+    list,
+    link_col_list = list(),
+    str_trunc_length = 32000,
+    header_df_list = NULL,
+    tableStyle = "none",
+    header_style = default_header_style,
+    body_style = default_body_style,
+    freeze_header = T,
+    pad_rows = 0,
+    pad_cols = 0,
+    freeze_keys = T,
+    key_cols_list = NULL,
+    drop_empty = T
+){
+  wb <- openxlsx::createWorkbook()
+  list <- process_df_list(list,drop_empty = drop_empty)
+  list_names <- names(list)
+  list_link_names <- list()
+  if(length(link_col_list)>0){
+    if(is_named_list(link_col_list)){
+      if(!all(names(link_col_list)%in%list_names)){
+        for(list_name in list_names){
+          list_link_names[[list_name]] <- link_col_list
+        }
+      }
+    }
+  }
+  list_names_rename <- stringr::str_trunc(list_names,width = 31,side = "right",ellipsis = "")
+  BAD <- dw(list_names_rename)
+  if(length(BAD)>0){
+    warning("Duplicated names when trimmed from right 31 max in Excel: ",list_names[BAD] %>% paste0(collapse = ", "),immediate. = T)
+    message("Use CSV or shorten the names and make sure they are unique if they are trimmed to 31 char. For now will make unique by adding number.")
+    list_names_rename <- unique_trimmed_strings(list_names_rename, max_length = 31)
+  }
+  for(i in seq_along(list_names)){
+    header_df <- header_df_list[[list_names[i]]]
+    key_cols <- key_cols_list[[list_names[i]]]
+    wb <- DF_to_wb(
+      DF = list[[list_names[i]]],
+      DF_name = list_names_rename[i],
+      wb = wb,
+      link_col_list = list_link_names[[list_names[i]]],
+      str_trunc_length = str_trunc_length,
+      header_df = header_df,
+      tableStyle = tableStyle,
+      header_style = header_style,
+      body_style = body_style,
+      freeze_header = freeze_header,
+      pad_rows = pad_rows,
+      pad_cols = pad_cols,
+      freeze_keys = freeze_keys,
+      key_cols = key_cols
+    )
+  }
+  return(wb)
+}
+list_to_excel <- function(
+    list,
+    dir,
+    file_name = NULL,
+    separate = FALSE,
+    overwrite = TRUE,
+    link_col_list = list(),
+    str_trunc_length = 32000,
+    header_df_list = NULL,
+    tableStyle = "none",
+    header_style = default_header_style,
+    body_style = default_body_style,
+    freeze_header = T,
+    pad_rows = 0,
+    pad_cols = 0,
+    freeze_keys = T,
+    key_cols_list = NULL,
+    drop_empty = T
+) {
+  wb <- openxlsx::createWorkbook()
+  list <- process_df_list(list,drop_empty = drop_empty)
+  list_names <- names(list)
+  if(length(list)==0)return(warning("empty list cannot be saved",immediate. = T))
+  if(separate){
+    for(i in seq_along(list)){
+      sub_list <- list[i]
+      file_name2 <- names(sub_list)
+      if(!is.null(file_name)){
+        file_name2 <- paste0(file_name,"_",file_name2)
+      }
+      save_wb(
+        wb = list_to_wb(
+          list = sub_list,
+          link_col_list = link_col_list,
+          str_trunc_length = str_trunc_length,
+          header_df_list = header_df_list,
+          tableStyle = tableStyle,
+          header_style = header_style,
+          body_style = body_style,
+          freeze_header = freeze_header,
+          pad_rows = pad_rows,
+          pad_cols = pad_cols,
+          freeze_keys = freeze_keys,
+          key_cols_list = key_cols_list[[list_names[i]]],
+          drop_empty = drop_empty
+        ),
+        dir = dir,
+        file_name = file_name2,
+        overwrite = overwrite
+      )
+    }
+  }else{
+    save_wb(
+      wb = list_to_wb(
+        list = list,
+        link_col_list = link_col_list,
+        str_trunc_length = str_trunc_length,
+        header_df_list = header_df_list,
+        tableStyle = tableStyle,
+        header_style = header_style,
+        body_style = body_style,
+        freeze_header = freeze_header,
+        pad_rows = pad_rows,
+        pad_cols = pad_cols,
+        freeze_keys = freeze_keys,
+        key_cols_list = key_cols_list,
+        drop_empty = drop_empty
+      ),
+      dir = dir,
+      file_name = file_name,
+      overwrite = overwrite
+    )
+  }
+}
+list_to_csv <- function(list,dir,file_name=NULL,overwrite = TRUE, drop_empty = T){
+  list <- process_df_list(list,drop_empty = drop_empty)
+  list_names <- names(list)
+  for(i in seq_along(list)){
+    sub_list <- list[i]
+    file_name2 <- names(sub_list)
+    if(!is.null(file_name)){
+      file_name2 <- paste0(file_name,"_",file_name2)
+    }
+    save_csv(
+      DF = sub_list[[1]],
+      dir = dir,
+      file_name = file_name2,
+      overwrite = overwrite
+    )
+  }
+}
+save_wb <- function(wb,dir,file_name,overwrite =TRUE){
+  if(!dir.exists(dir))stop("dir doesn't exist")
+  path <- file.path(dir,paste0(file_name,".xlsx"))
+  openxlsx::saveWorkbook(
+    wb = wb,
+    file = path,
+    overwrite = overwrite
+  )
+  bullet_in_console(paste0("Saved '", basename(path),"'!"),file = path)
+}
+save_csv <- function(DF,dir,file_name,overwrite =TRUE){
+  if(!dir.exists(dir))stop("dir doesn't exist")
+  path <- file.path(dir,paste0(file_name,".csv"))
+  write_it <- T
+  if(!overwrite){
+    if(file.exists(path)){
+      write_it <- F
+      bullet_in_console(paste0("Already a file!"),file = path)
+    }
+  }
+  if(write_it){
+    write.csv(
+      x = DF,
+      file = path
+    )
+    bullet_in_console(paste0("Saved '", basename(path),"'!"),file = path)
+  }
+}
+default_header_style <-
+  openxlsx::createStyle(
+    fgFill = "#74DFFF",
+    halign = "center",
+    valign = "center",
+    textDecoration = "Bold",
+    fontSize = 14,
+    fontColour = "black",
+    border = "TopBottomLeftRight",
+    # borderColour = "black"
+  )
+default_body_style <-
+  openxlsx::createStyle(
+    halign = "left",
+    valign = "center",
+    # border = "Bottom",
+    # fontColour = "black",
+    fontSize = 12
+  )
+dw <- function(x){
+  which(duplicated(x))
+}

@@ -33,6 +33,7 @@ Imports:
     plotly,
     readxl,
     REDCapR,
+    rio,
     rmarkdown,
     RosyApp,
     shiny (>= 1.8.1.1),
