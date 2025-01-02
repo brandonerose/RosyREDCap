@@ -177,7 +177,7 @@ save_RosyREDCap_list <- function(
 #' A list containing the generated summary based on the specified options. The list includes filtered and cleaned data, metadata, and other summary details.
 #'
 #' @details
-#' This function allows you to generate a summary of data from a specific subset of records within the REDCap project. The function provides flexible options for cleaning, annotating, and including metadata, as well as controlling whether to include record summaries, user information, and logs. The summary can be added to the global environment for further use, depending on the `add_to_global` flag.
+#' This function allows you to generate a summary of data from a specific subset of records within the REDCap project. The function provides flexible options for cleaning, annotating, and including metadata, as well as controlling whether to include record summaries, user information, and logs.
 #' @export
 generate_summary_from_subset_name <- function(
     DB,
@@ -293,8 +293,7 @@ summarize_DB <- function(
         annotate_metadata = annotate_metadata,
         include_record_summary = include_record_summary,
         include_users = include_users,
-        include_log = include_log,
-        add_to_global = F
+        include_log = include_log
       )
       DB %>% save_RosyREDCap_list(
         to_save_list = to_save_list,
