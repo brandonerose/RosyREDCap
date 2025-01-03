@@ -120,12 +120,11 @@ load_DB <- function(short_name,validate = T){
 #' @export
 load_DB_from_path <- function(DB_path,validate = T){
   if(!file.exists(DB_path))stop("No file at path '",DB_path,"'. Did you use `setup_DB()` and `update_DB()`?")
-  readRDS(file=DB_path) %>%
-    validate_DB(
-      silent = F,
-      warn_only = !validate
-    ) %>%
-    return()
+  DB <- readRDS(file=DB_path)
+  if(validate){
+    DB <- DB %>% validate_DB(silent = F)
+  }
+  return(DB)
 }
 #' @rdname setup-load
 #' @export
@@ -220,15 +219,6 @@ validate_DB <- function(DB,silent = T,warn_only = F){
   }else{
     DB$short_name %>% validate_env_name()
   }
-  if(!outcome_valid){
-    for(m in messages){
-      if(warn_only){
-        warning(m,immediate. = T)
-      }else{
-        stop(m)
-      }
-    }
-  }
   if(!silent){
     if((length(DB$data)==0)>0){
       bullet_in_console("Valid DB object but no data yet!",bullet_type = "!")
@@ -242,18 +232,27 @@ validate_DB <- function(DB,silent = T,warn_only = F){
         bullet_in_console(DB$short_name %>% paste0(" loaded from: "),url = DB$dir_path,bullet_type = "v")
       }
     }
-    if(DB$internals$is_test){
+    if((DB$internals$is_test)){
       bullet_in_console(DB$short_name %>% paste0(" is a test DB object that doesn't actually communicate with any REDCap API!"),bullet_type = "i")
-    }
-    if(outcome_valid){
-      bullet_in_console(paste0(DB$short_name," is valid DB object!"),bullet_type = "v")
     }
     if(DB$internals$is_transformed){
       bullet_in_console(DB$short_name %>% paste0(" is currently transformed! Can reverse with `untransform_DB(DB)`"),bullet_type = "i")
     }
     bullet_in_console("To get data/updates from REDCap run `DB <- update_DB(DB)`")
   }
-  DB
+  if(outcome_valid){
+    bullet_in_console(paste0(DB$short_name," is valid DB object!"),bullet_type = "v")
+  }
+  if(!outcome_valid){
+    for(m in messages){
+      if(warn_only){
+        warning(m,immediate. = T)
+      }else{
+        stop(m)
+      }
+    }
+  }
+  return(DB)
 }
 internal_allowed_test_short_names <- c("TEST_classic","TEST_repeating","TEST_longitudinal","TEST_multiarm")
 #' @noRd
