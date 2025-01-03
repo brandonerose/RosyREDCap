@@ -156,9 +156,6 @@ articles:
   - title: Security
     contents:
       - Security
-  - title: pkgnet Report
-    contents:
-      - pkgnet-report
 authors:
   Brandon Rose:
     href: https://github.com/brandonerose
