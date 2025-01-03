@@ -126,7 +126,7 @@ extract_project_details <- function(DB){
   OUT <- data.frame(
     short_name = DB$short_name,
     dir_path = DB$dir_path %>% is.null() %>% ifelse(NA,DB$dir_path),
-    last_save = DB$internals$last_data_dir_save %>% is.null() %>% ifelse(NA,DB$internals$last_data_dir_save),
+    last_save = DB$internals$last_data_dir_save %>% is.null() %>% ifelse(NA,DB$internals$last_data_dir_save) %>% as.POSIXct(),
     last_metadata_update = DB$internals$last_metadata_update,
     last_data_update = DB$internals$last_data_update,
     version = DB$redcap$version,
@@ -140,7 +140,7 @@ extract_project_details <- function(DB){
     n_records = ifelse(is.null(DB$summary$all_records[[DB$redcap$id_col]]),NA,DB$summary$all_records %>% nrow()),
     R_object_size = NA,
     file_size = NA,
-    redcap_base = DB$links$redcap_base ,
+    redcap_base = DB$links$redcap_base,
     redcap_home = DB$links$redcap_home,
     redcap_API_playground =  DB$links$redcap_API_playground
   ) %>% all_character_cols()
