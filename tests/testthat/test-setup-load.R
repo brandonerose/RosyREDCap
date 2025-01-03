@@ -19,6 +19,7 @@ test_that("setup_DB creates a valid DB object and valid directory", {
   expect_equal(DB$short_name, short_name)
   test_dir_files <- list.files(test_dir)
   expect_true(all(internal_dir_folders %in% test_dir_files))
+  cache_clear()
 })
 test_that("save_DB doesn't save if it's blank", {
   test_dir <- local_tempdir()
@@ -50,6 +51,7 @@ test_that("save_DB doesn't save if it's blank", {
   DB$links$redcap_API_playground <- DB$links$redcap_base
   save_DB(DB)
   expect_true(file.exists(file.path(DB$dir_path,"R_objects",paste0(short_name,"_RosyREDCap.rdata"))))
+  cache_clear()
 })
 # unlink(test_dir, recursive = TRUE)
 #
