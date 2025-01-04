@@ -95,7 +95,7 @@ setup_DB <- function (
   DB$data <- DB$data %>% all_character_cols_list()
   bullet_in_console(paste0("Token name: '",token_name,"'"))
   if(auto_check_token){
-    if(!is_valid_REDCap_token(validate_REDCap_token(DB))){
+    if(!is_valid_REDCap_token(validate_REDCap_token(DB),is_a_test = is_a_test)){
       set_REDCap_token(DB,ask = F)
     }
   }

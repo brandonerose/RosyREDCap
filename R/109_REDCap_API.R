@@ -71,6 +71,7 @@ run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",addi
   }
   redcap_api_request(url=url,token = token,additional_args=additional_args) %>% process_redcap_response(error_action=error_action,method=method,show_method_help = show_method_help) %>% return()
 }
+#' @noRd
 get_REDCap_method <- function(DB,method,error_action = "warn",additional_args=NULL,show_method_help = T){
   return(
     run_redcap_api_method(
@@ -84,6 +85,7 @@ get_REDCap_method <- function(DB,method,error_action = "warn",additional_args=NU
     )
   )
 }
+#' @noRd
 get_REDCap_metadata <- function(DB,include_users = T){
   DB$internals$last_metadata_update <- Sys.time()
   DB$metadata <- list()
@@ -235,6 +237,7 @@ get_REDCap_metadata <- function(DB,include_users = T){
   DB$links$redcap_API_playground <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/playground.php?pid=",DB$redcap$project_id)
   return(DB)
 }
+#' @noRd
 get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   forms <- get_original_forms(DB)
   data_list <- list()
@@ -247,6 +250,7 @@ get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   data_list <- raw %>% raw_process_redcap(DB=DB,labelled=labelled)
   return(data_list)
 }
+#' @noRd
 get_REDCap_version <- function(DB,show_method_help = T){
   return(
     get_REDCap_method(
@@ -256,6 +260,7 @@ get_REDCap_version <- function(DB,show_method_help = T){
     )
   )
 }
+#' @noRd
 get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
   file_rows <- which(DB$metadata$fields$field_type=="file")
   out_dir <- file.path(DB$dir_path,"REDCap",DB$short_name,"files")
@@ -299,6 +304,7 @@ get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
   }
   bullet_in_console("Checked for files! Stored at ...",file = out_dir,bullet_type = "v")
 }
+#' @noRd
 get_REDCap_users <- function(DB){
   users  <- get_REDCap_method(DB,method = "exp_users")
   userRole  <- get_REDCap_method(DB,method = "exp_user_roles") %>% dplyr::select("unique_role_name","role_label")
@@ -306,9 +312,11 @@ get_REDCap_users <- function(DB){
   final <- merge(merge(userRole,userRoleMapping,by="unique_role_name"),users, by="username",all.y = T)
   return(final)
 }
+#' @noRd
 get_REDCap_structure <- function(DB){
   get_REDCap_metadata(DB,include_users = F)
 }
+#' @noRd
 get_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clean = T,record = ""){
   if(units=="days"){
     x <- (Sys.time()-lubridate::days(last)) %>% format( "%Y-%m-%d %H:%M") %>% as.character()
@@ -331,6 +339,7 @@ get_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clea
   }
   log # deal with if NA if user does not have log privelages.
 }
+#' @noRd
 get_REDCap_raw_data <- function(DB,labelled=F,records=NULL,batch_size = 1000){
   raw <- REDCapR::redcap_read(
     redcap_uri = DB$links$redcap_uri,
@@ -375,9 +384,11 @@ delete_REDCap_records <- function(DB, records){
   }
   message("Records deleted!")
 }
+#' @noRd
 show_REDCap_API_methods <- function(){
   show_REDCap_API_methods_table()[["method_short_name"]] %>% sort()
 }
+#' @noRd
 show_REDCap_API_methods_table <- function(){
   return(REDCap_API$methods)
 }
