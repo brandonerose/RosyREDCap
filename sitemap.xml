@@ -44,8 +44,6 @@
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/find_upload_diff.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/generate_horizontal_transform.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/generate_summary_from_subset_name.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/get_REDCap_log.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/get_REDCap_raw_data.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/get_REDCap_report.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/get_dir.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/get_projects.html</loc></url>
@@ -56,7 +54,6 @@
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/project_health_check.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/raw_to_labelled_form.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/read_from_REDCap_upload.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/redcap_api.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/rmarkdown_DB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/run_RosyREDCap.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/run_quality_checks.html</loc></url>
