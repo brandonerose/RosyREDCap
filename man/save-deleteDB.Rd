@@ -7,12 +7,10 @@
 \usage{
 save_DB(DB)
 
-delete_DB(DB, dir_path)
+delete_DB(DB)
 }
 \arguments{
 \item{DB}{A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}}
-
-\item{dir_path}{character file path of the directory}
 }
 \value{
 Message

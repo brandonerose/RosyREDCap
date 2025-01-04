@@ -174,6 +174,7 @@ validate_REDCap_token <- function(DB,silent=T){
   }
   return(token)
 }
+#' @noRd
 check_saved_RosyREDCap_tokens <- function(){
   the_names <- Sys.getenv() %>% names()
   the_names <- the_names[which(startsWith(the_names,internal_RosyREDCap_token_prefix))]
@@ -186,4 +187,34 @@ check_saved_RosyREDCap_tokens <- function(){
   bullet_in_console(paste0("There are ",ltn," known REDCap tokens saved in the session: ",as_comma_string(the_names)),bullet_type = "x")
   return(invisible())
 }
+#' @noRd
 internal_RosyREDCap_token_prefix <- "RosyREDCap_token_"
+#' @noRd
+internal_TEST_classic_token <- "FAKE32TESTTOKENCLASSIC1111111111"
+#' @noRd
+internal_TEST_repeating_token <- "FAKE32TESTTOKENREPEATING22222222"
+#' @noRd
+internal_TEST_longitudinal_token <- "FAKE32TESTTOKENLONGITUDINAL33333"
+#' @noRd
+internal_TEST_multiarm_token <- "FAKE32TESTTOKENMULTIARM444444444"
+#' @noRd
+get_test_token <- function(short_name){
+  em <- '`short_name` must be character string of length 1 equal to one of the following: ' %>% paste0(as_comma_string(internal_allowed_test_short_names))
+  if(!is.character(short_name))stop(em)
+  if(length(short_name)!=1)stop(em)
+  if(!is_test_short_name(short_name = short_name))stop(em)
+  token <- NA
+  if(short_name == "TEST_classic"){
+    token <- internal_TEST_classic_token
+  }
+  if(short_name == "TEST_repeating"){
+    token <- internal_TEST_repeating_token
+  }
+  if(short_name == "TEST_longitudinal"){
+    token <- internal_TEST_longitudinal_token
+  }
+  if(short_name == "TEST_multiarm"){
+    token <- internal_TEST_multiarm_token
+  }
+  return(token)
+}

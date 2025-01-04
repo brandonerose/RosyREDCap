@@ -162,8 +162,6 @@ is_test_DB <- function(DB){
 #' @description
 #' This will save/delete the "<short_name>_RosyREDCap.rdata" file in the given DB directories R_objects folder. These are optional functions given that `save_DB` is a also handled by a default parameter in `update_DB.`
 #'
-#' @inheritParams save_DB
-#' @param dir_path character file path of the directory
 #' @details delete_DB will not delete any other files from that directory. The user must delete any other files manually.
 #' @return Message
 #' @family DB object
@@ -187,17 +185,11 @@ save_DB <- function(DB){
 }
 #' @rdname save-deleteDB
 #' @export
-delete_DB <- function(DB,dir_path){
-  if(!missing(DB)){
-    DB <- validate_DB(DB)
-    DIR <- DB$dir_path
-    if(!missing(dir_path))warning("You only need to provide a directory path using a DB object OR dir_path. DB will be used by default.",immediate. = T)
-  } else {
-    if(missing(dir_path))stop("You must provide a directory path using a DB object or dir_path")
-    DIR <- dir_path
-  }
-  DIR  <- validate_dir(DIR,silent = F)
-  delete_this <- file.path(DIR,"R_objects","DB.Rdata")
+delete_DB <- function(DB){
+  DB <- validate_DB(DB)
+  dir_path <- DB$dir_path
+  dir_path  <- validate_dir(dir_path,silent = F)
+  delete_this <- file.path(dir_path,"R_objects",paste0(DB$short_name,"_RosyREDCap.rdata"))
   if(file.exists(delete_this)){
     unlink(delete_this) %>%
       message("Deleted saved DB")
@@ -259,35 +251,6 @@ validate_DB <- function(DB,silent = T,warn_only = F){
 }
 #' @noRd
 internal_allowed_test_short_names <- c("TEST_classic","TEST_repeating","TEST_longitudinal","TEST_multiarm")
-#' @noRd
-internal_TEST_classic_token <- "FAKE32TESTTOKENCLASSIC1111111111"
-#' @noRd
-internal_TEST_repeating_token <- "FAKE32TESTTOKENREPEATING22222222"
-#' @noRd
-internal_TEST_longitudinal_token <- "FAKE32TESTTOKENLONGITUDINAL33333"
-#' @noRd
-internal_TEST_multiarm_token <- "FAKE32TESTTOKENMULTIARM444444444"
-#' @noRd
-get_test_token <- function(short_name){
-  em <- '`short_name` must be character string of length 1 equal to one of the following: ' %>% paste0(as_comma_string(internal_allowed_test_short_names))
-  if(!is.character(short_name))stop(em)
-  if(length(short_name)!=1)stop(em)
-  if(!is_test_short_name(short_name = short_name))stop(em)
-  token <- NA
-  if(short_name == "TEST_classic"){
-    token <- internal_TEST_classic_token
-  }
-  if(short_name == "TEST_repeating"){
-    token <- internal_TEST_repeating_token
-  }
-  if(short_name == "TEST_longitudinal"){
-    token <- internal_TEST_longitudinal_token
-  }
-  if(short_name == "TEST_multiarm"){
-    token <- internal_TEST_multiarm_token
-  }
-  return(token)
-}
 #' @noRd
 internal_blank_DB <- list(
   short_name=NULL,
