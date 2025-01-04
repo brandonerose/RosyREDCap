@@ -36,14 +36,7 @@ cache_path <- function(){
 #' Included for transparency and confirmation/testing.
 #' @details
 #' This function checks the location of the cache established by \code{\link[hoardr]{hoard}} and deletes it!
-#' This will not delete project data, just the packages "memory" of it.
-#' @return The file path of your RosyREDCap cache
-#' @examples
-#'
-#' \dontrun{
-#' #warning this will delete the packages cache of project locations
-#' cache_clear()
-#' }
+#' This will not delete project data, just the packages stored "memory" of it.
 #' @return messages confirming deleted cache
 #' @family Project Cache Functions
 #' @keywords Project Cache Functions

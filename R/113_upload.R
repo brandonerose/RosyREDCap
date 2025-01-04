@@ -128,6 +128,7 @@ find_upload_diff <- function(DB, view_old = F, n_row_view = 20){
   DB$data_update <- list()
   return(DB)
 }
+#' @noRd
 check_field <- function(DB,DF, field_name,autofill_new=T){
   form <- field_names_to_form_names(DB,field_name)
   records <- DF[[DB$redcap$id_col]] %>% unique()

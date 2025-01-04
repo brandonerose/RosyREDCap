@@ -29,7 +29,6 @@ processing or rendering into HTML, PDF, or other formats.
 \code{\link[RosyREDCap]{save_DB}} for saving the `DB` object.
 
 Other db_functions: 
-\code{\link{get_REDCap_raw_data}()},
 \code{\link{summarize_DB}()},
 \code{\link{transform_DB}()},
 \code{\link{update_DB}()}

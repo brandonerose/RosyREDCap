@@ -26,7 +26,6 @@ This function checks if the database has already been transformed and applies th
 \code{\link[RosyREDCap]{untransform_DB}} for reverting the transformation.
 
 Other db_functions: 
-\code{\link{get_REDCap_raw_data}()},
 \code{\link{rmarkdown_DB}()},
 \code{\link{summarize_DB}()},
 \code{\link{update_DB}()}

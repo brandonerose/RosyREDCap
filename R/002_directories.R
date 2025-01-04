@@ -1,21 +1,3 @@
-#' @noRd
-set_dir <- function(dir_path){
-  dir_path <- clean_dir_path(dir_path)
-  if( ! file.exists(dir_path)){
-    if(utils::menu(choices = c("Yes","No"),title = paste0("No file path found for chosen directory, create? (",dir_path,")"))==1){
-      dir.create(file.path(dir_path))
-    }
-    if ( ! file.exists(dir_path)) {
-      stop("Path not found. Use absolute path or choose one within R project working directory.")
-    }
-  }
-  for(folder in internal_dir_folders){
-    if ( ! file.exists(file.path(dir_path,folder))) {
-      dir.create(file.path(dir_path,folder),showWarnings = F)
-    }
-  }
-  return(validate_dir(dir_path,silent=F))
-}
 #' @title get your directory
 #' @inheritParams save_DB
 #' @return file path of directory
@@ -74,7 +56,27 @@ check_folder_for_projects <- function(file_path,validate = T){
   if(nrow(df)==0)return(character(0))
   return(df$file_path)
 }
+#' @noRd
+set_dir <- function(dir_path){
+  dir_path <- clean_dir_path(dir_path)
+  if( ! file.exists(dir_path)){
+    if(utils::menu(choices = c("Yes","No"),title = paste0("No file path found for chosen directory, create? (",dir_path,")"))==1){
+      dir.create(file.path(dir_path))
+    }
+    if ( ! file.exists(dir_path)) {
+      stop("Path not found. Use absolute path or choose one within R project working directory.")
+    }
+  }
+  for(folder in internal_dir_folders){
+    if ( ! file.exists(file.path(dir_path,folder))) {
+      dir.create(file.path(dir_path,folder),showWarnings = F)
+    }
+  }
+  return(validate_dir(dir_path,silent=F))
+}
+#' @noRd
 internal_dir_folders <- c("R_objects","output","scripts","input","REDCap")
+#' @noRd
 validate_dir <- function(dir_path,silent=T){
   #param check
   dir_path <- clean_dir_path(dir_path)
@@ -88,6 +90,7 @@ validate_dir <- function(dir_path,silent=T){
   if( ! silent) bullet_in_console("Directory is Valid!",url=dir_path,bullet_type = "v")
   dir_path
 }
+#' @noRd
 clean_dir_path <- function(dir_path){
   if ( ! is.character(dir_path)) stop("dir must be a character string")
   dir_path <- dir_path %>% trimws(whitespace = "[\\h\\v]") %>% normalizePath( winslash = "/",mustWork = F)

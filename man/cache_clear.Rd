@@ -7,8 +7,6 @@
 cache_clear()
 }
 \value{
-The file path of your RosyREDCap cache
-
 messages confirming deleted cache
 }
 \description{
@@ -16,14 +14,7 @@ Included for transparency and confirmation/testing.
 }
 \details{
 This function checks the location of the cache established by \code{\link[hoardr]{hoard}} and deletes it!
-This will not delete project data, just the packages "memory" of it.
-}
-\examples{
-
-\dontrun{
-#warning this will delete the packages cache of project locations
-cache_clear()
-}
+This will not delete project data, just the packages stored "memory" of it.
 }
 \seealso{
 Other Project Cache Functions: 

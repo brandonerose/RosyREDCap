@@ -553,11 +553,13 @@ untransform_DB <- function(DB,allow_partial = F){
   bullet_in_console(paste0(DB$short_name," untransformed according to `DB$transformation`"),bullet_type = "v")
   return(DB)
 }
+#' @noRd
 missing_form_names <- function(DB){
   form_names <- names(DB$data)
   form_names <- form_names[which(!form_names%in% DB$metadata$forms$form_name)]
   return(form_names)
 }
+#' @noRd
 missing_field_names <- function(DB){
   md <- data.frame(
     field_name = DB$metadata$fields$field_name,

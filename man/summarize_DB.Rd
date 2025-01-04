@@ -58,7 +58,6 @@ This function filters the REDCap database based on the provided parameters and g
 \link{update_DB} for updating the `DB` object.
 
 Other db_functions: 
-\code{\link{get_REDCap_raw_data}()},
 \code{\link{rmarkdown_DB}()},
 \code{\link{transform_DB}()},
 \code{\link{update_DB}()}

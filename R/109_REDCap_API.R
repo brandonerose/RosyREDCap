@@ -71,30 +71,6 @@ run_redcap_api_method <- function(DB,url,token,method,error_action = "warn",addi
   }
   redcap_api_request(url=url,token = token,additional_args=additional_args) %>% process_redcap_response(error_action=error_action,method=method,show_method_help = show_method_help) %>% return()
 }
-#' @rdname redcap_api
-#' @title REDCap API Method Wrapper
-#' @description
-#' A wrapper function for interacting with the REDCap API. This function allows you to execute various REDCap API methods and return results in the form of a `DB` object.
-#' It is designed to simplify access to the REDCap API by abstracting common method invocation patterns.
-#'
-#' @inheritParams save_DB
-#' @param method Character. The name of the REDCap API method to be called (e.g., 'exportRecords', 'importRecords', etc.).
-#' @param error_action Character. The action to take when an error occurs during the API call. Default is `"warn"`, which generates a warning. You can also specify `"stop"` to stop execution, or `"ignore"` to ignore errors.
-#' @param additional_args List. Additional arguments to pass to the API method (if any). Default is `NULL`.
-#' @param show_method_help Logical. If `TRUE`, the function will display method-specific help information. Default is `TRUE`.
-#' @param include_users Logical. Whether to include user information in the data. Default is FALSE.
-#' @param labelled Logical. Whether to include labelled data (e.g., with labels instead of raw codes). Default is FALSE.
-#' @param records Character vector of record identifiers. Used in methods that filter by specific records. Default is NULL.
-#' @param batch_size Numeric. The batch size for uploading or processing data. Default is 2,000.
-#' @param original_file_names Logical. Whether to use the original uploaded filenames or system-defined filenames. Default is TRUE.
-#' @param overwrite Logical. Whether to overwrite existing records when uploading data. Default is FALSE.
-#'
-#' @return A `DB` object with the results from the REDCap API method. The object may contain data or metadata depending on the method invoked.
-#'
-#' @details
-#' This function calls a specified REDCap API method using the provided database (`DB`) object, token, and additional arguments. The function then returns the results in the form of a `DB` object. If an error occurs, the behavior is determined by the `error_action` parameter. By default, warnings will be issued for errors.
-#'
-#' @keywords internal
 get_REDCap_method <- function(DB,method,error_action = "warn",additional_args=NULL,show_method_help = T){
   return(
     run_redcap_api_method(
@@ -108,8 +84,6 @@ get_REDCap_method <- function(DB,method,error_action = "warn",additional_args=NU
     )
   )
 }
-#' @rdname redcap_api
-#' @keywords internal
 get_REDCap_metadata <- function(DB,include_users = T){
   DB$internals$last_metadata_update <- Sys.time()
   DB$metadata <- list()
@@ -261,8 +235,6 @@ get_REDCap_metadata <- function(DB,include_users = T){
   DB$links$redcap_API_playground <- paste0(DB$links$redcap_base,"redcap_v",DB$redcap$version,"/API/playground.php?pid=",DB$redcap$project_id)
   return(DB)
 }
-#' @rdname redcap_api
-#' @keywords internal
 get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   forms <- get_original_forms(DB)
   data_list <- list()
@@ -275,8 +247,6 @@ get_REDCap_data <- function(DB,labelled=T,records=NULL,batch_size=2000){
   data_list <- raw %>% raw_process_redcap(DB=DB,labelled=labelled)
   return(data_list)
 }
-#' @rdname redcap_api
-#' @keywords internal
 get_REDCap_version <- function(DB,show_method_help = T){
   return(
     get_REDCap_method(
@@ -286,8 +256,6 @@ get_REDCap_version <- function(DB,show_method_help = T){
     )
   )
 }
-#' @rdname redcap_api
-#' @keywords internal
 get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
   file_rows <- which(DB$metadata$fields$field_type=="file")
   out_dir <- file.path(DB$dir_path,"REDCap",DB$short_name,"files")
@@ -331,8 +299,6 @@ get_REDCap_files <- function(DB,original_file_names = F,overwrite = F){
   }
   bullet_in_console("Checked for files! Stored at ...",file = out_dir,bullet_type = "v")
 }
-#' @rdname redcap_api
-#' @keywords internal
 get_REDCap_users <- function(DB){
   users  <- get_REDCap_method(DB,method = "exp_users")
   userRole  <- get_REDCap_method(DB,method = "exp_user_roles") %>% dplyr::select("unique_role_name","role_label")
@@ -340,30 +306,9 @@ get_REDCap_users <- function(DB){
   final <- merge(merge(userRole,userRoleMapping,by="unique_role_name"),users, by="username",all.y = T)
   return(final)
 }
-#' @rdname redcap_api
-#' @keywords internal
 get_REDCap_structure <- function(DB){
   get_REDCap_metadata(DB,include_users = F)
 }
-#' @title Check the REDCap Log
-#' @description
-#' Retrieve and analyze the REDCap log to monitor recent activity or filter for specific users and time ranges.
-#'
-#' @details
-#' This function queries the REDCap project log to retrieve recent activity based on the specified time range, user, or starting timestamp.
-#' It optionally cleans the raw API data and adds summary columns to enhance log readability and analysis.
-#'
-#' @inheritParams save_DB
-#' @param last Numeric. Specifies the time range paired with `units` to filter the log. Default is `24`.
-#' @param user Character. Optional user filter to retrieve log entries associated with a specific username. Default is an empty string (`""`), which includes all users.
-#' @param units Character. Units paired with `last` to define the time range. Options are `"mins"`, `"hours"`, `"days"`. Default is `"hours"`.
-#' @param begin_time Character. A specific timestamp (e.g., "2023-07-11 13:15:06") to define the start of the log retrieval. Overrides `last` and `units` if provided. Default is an empty string (`""`).
-#' @param clean Logical. If `TRUE`, cleans the API data and adds extra summary columns to the log. Default is `TRUE`.
-#' @param record Character. Optional record filter for retrieving log entries associated with a specific record. Default is an empty string (`""`).
-#' @return A `data.frame` containing the cleaned and summarized REDCap log.
-#' @seealso
-#' \code{\link[RosyREDCap]{update_DB}} for updating the `DB` object, including the log.
-#' @keywords internal
 get_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clean = T,record = ""){
   if(units=="days"){
     x <- (Sys.time()-lubridate::days(last)) %>% format( "%Y-%m-%d %H:%M") %>% as.character()
@@ -386,28 +331,6 @@ get_REDCap_log <- function(DB,last=24,user = "",units="hours",begin_time="",clea
   }
   log # deal with if NA if user does not have log privelages.
 }
-#' @title Check the REDCap log
-#' @description
-#' Retrieves raw or labeled data from a REDCap database based on the provided parameters.
-#' The function connects to a REDCap project using the REDCap API, fetches the raw or labeled data
-#' (depending on the `labelled` parameter), and returns the data as a `data.frame`. Optionally,
-#' specific records can be retrieved.
-#'
-#' @details
-#' This function uses the \code{\link[REDCapR]{redcap_read}} function to fetch data from a REDCap project.
-#' The function allows for batch retrieval, and the `labelled` argument determines whether the
-#' data is returned with raw values or with labels. By default, the function retrieves raw data.
-#' It also supports filtering for specific records if provided.
-#'
-#' @inheritParams save_DB
-#' @param labelled Logical. If `TRUE`, the function retrieves labeled data; if `FALSE`, it retrieves raw data. Default is `FALSE`.
-#' @param records Optional character vector of record IDs to retrieve. If `NULL`, all records are fetched.
-#' @param batch_size Numeric. The batch size for the retrieval process. Default is `1000`.
-#' @return A `data.frame` containing the raw or labeled REDCap data.
-#' @seealso
-#' \code{\link[REDCapR]{redcap_read}} for details on the REDCap API function used to fetch data.
-#' @family db_functions
-#' @keywords internal
 get_REDCap_raw_data <- function(DB,labelled=F,records=NULL,batch_size = 1000){
   raw <- REDCapR::redcap_read(
     redcap_uri = DB$links$redcap_uri,
@@ -452,13 +375,9 @@ delete_REDCap_records <- function(DB, records){
   }
   message("Records deleted!")
 }
-#' @rdname redcap_api
-#' @keywords internal
 show_REDCap_API_methods <- function(){
   show_REDCap_API_methods_table()[["method_short_name"]] %>% sort()
 }
-#' @rdname redcap_api
-#' @keywords internal
 show_REDCap_API_methods_table <- function(){
   return(REDCap_API$methods)
 }
