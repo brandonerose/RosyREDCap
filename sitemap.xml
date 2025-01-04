@@ -34,7 +34,6 @@
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/check_folder_for_projects.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/clean_DB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/deidentify_DB.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/delete_DB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/delete_file_from_redcap.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/delete_redcap_file.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/delete_redcap_records.html</loc></url>
@@ -57,7 +56,7 @@
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/rmarkdown_DB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/run_RosyREDCap.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/run_quality_checks.html</loc></url>
-<url><loc>https://brandonerose.github.io/RosyREDCap/reference/save_DB.html</loc></url>
+<url><loc>https://brandonerose.github.io/RosyREDCap/reference/save-deleteDB.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/set_REDCap_token.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/setup-load.html</loc></url>
 <url><loc>https://brandonerose.github.io/RosyREDCap/reference/summarize_DB.html</loc></url>
