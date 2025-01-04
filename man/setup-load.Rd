@@ -74,7 +74,6 @@ DB <- load_DB("TEST")
 \code{\link[RosyREDCap]{get_projects}} for retrieving a list of projects from the directory cache.
 
 Other DB object: 
-\code{\link{delete_DB}()},
 \code{\link{save_DB}()}
 }
 \concept{DB object}

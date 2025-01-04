@@ -148,14 +148,23 @@ load_test_DB <- function(short_name="TEST_repeating",with_data = F){
   }
   return(DB)
 }
+#' @noRd
 is_test_short_name <- function(short_name){
   return(short_name%in%internal_allowed_test_short_names)
 }
+#' @noRd
 is_test_DB <- function(DB){
   return((DB$short_name %in% internal_allowed_test_short_names)&&DB$internals$is_test)
 }
-#' @title Saves DB in the directory
+#' @rdname save-deleteDB
+#' @title Save or Delete DB file from the directory
 #' @param DB A validated `DB` object containing REDCap project data and settings. Generated using \link{load_DB} or \link{setup_DB}
+#' @description
+#' This will save/delete the "<short_name>_RosyREDCap.rdata" file in the given DB directories R_objects folder. These are optional functions given that `save_DB` is a also handled by a default parameter in `update_DB.`
+#'
+#' @inheritParams save_DB
+#' @param dir_path character file path of the directory
+#' @details delete_DB will not delete any other files from that directory. The user must delete any other files manually.
 #' @return Message
 #' @family DB object
 #' @export
@@ -176,14 +185,7 @@ save_DB <- function(DB){
   # nav_to_dir(DB)
   return(invisible())
 }
-#' @title Deletes DB object from directory (solves occasional problems)
-#' @description
-#' This will delete the "PROJ_RosyREDCap.rdata" file in the given DB directories R_objects folder. It will NOT delete any other files from that directory. The user must delete any other files manually.
-#'
-#' @inheritParams save_DB
-#' @param dir_path character file path of the directory
-#' @return message
-#' @family DB object
+#' @rdname save-deleteDB
 #' @export
 delete_DB <- function(DB,dir_path){
   if(!missing(DB)){
@@ -203,6 +205,7 @@ delete_DB <- function(DB,dir_path){
     warning("The DB object you wanted to is not there. Did you delete already? ",delete_this)
   }
 }
+#' @noRd
 validate_DB <- function(DB,silent = T,warn_only = F){
   #param check
   if( ! is.list(DB)) stop("DB must be a list")
@@ -254,6 +257,7 @@ validate_DB <- function(DB,silent = T,warn_only = F){
   }
   return(DB)
 }
+#' @noRd
 internal_allowed_test_short_names <- c("TEST_classic","TEST_repeating","TEST_longitudinal","TEST_multiarm")
 #' @noRd
 internal_TEST_classic_token <- "FAKE32TESTTOKENCLASSIC1111111111"
