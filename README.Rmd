@@ -117,7 +117,7 @@ run_RosyREDCap() # will work with multiple REDCap projects!
 
 -   The RosyREDCap package is at [github.com/brandonerose/RosyREDCap](https://github.com/brandonerose/RosyREDCap "RosyREDCap R package"). See instructions above.
 -   Donate if I helped you out and want more development (anything helps)! [account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
--   For more R coding visit [thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com")
+-   For more R coding visit [TheCodingDocs.com](https://www.thecodingdocs.com/ "TheCodingDocs.com")
 -   For correspondence/feedback/issues, please email [TheCodingDocs\@gmail.com](mailto:TheCodingDocs@gmail.com)!
 -   Follow us on Twitter [twitter.com/TheCodingDocs](https://twitter.com/TheCodingDocs "TheCodingDocs Twitter")
 -   Follow me on Twitter [twitter.com/BRoseMDMPH](https://twitter.com/BRoseMDMPH "BRoseMDMPH Twitter")

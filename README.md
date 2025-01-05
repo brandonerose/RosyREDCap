@@ -63,7 +63,7 @@ collection, monitoring, transformation, and analysis.
 ## Installing RosyREDCap
 
 *Note: The current version of `{RosyREDCap}` used when writing this book
-is 1.0.0.9035, and some of the features presented in this book might not
+is 1.0.0.9038, and some of the features presented in this book might not
 be available if you are using an older version, or be a little bit
 different if you have a newer version. Feel free to browse the package
 NEWS.*
@@ -85,12 +85,12 @@ remotes::install_github("brandonerose/RosyREDCap",build_vignettes = T,build_manu
 ```
 
 Note that the version used at the time of writing this book is
-1.0.0.9035. You can check what version you have installed with the
+1.0.0.9038. You can check what version you have installed with the
 following.
 
 ``` r
 packageVersion("RosyREDCap")
-#> [1] '1.0.0.9035'
+#> [1] '1.0.0.9038'
 ```
 
 If you have any issues, try downloading the most recent version of R at
@@ -134,7 +134,7 @@ run_RosyREDCap() # will work with multiple REDCap projects!
 - Donate if I helped you out and want more development (anything helps)!
   [account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
 - For more R coding visit
-  [thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com")
+  [TheCodingDocs.com](https://www.thecodingdocs.com/ "TheCodingDocs.com")
 - For correspondence/feedback/issues, please email
   <TheCodingDocs@gmail.com>!
 - Follow us on Twitter

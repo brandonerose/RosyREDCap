@@ -79,7 +79,7 @@ view_REDCap_token <- function(DB){
 #' @return Logical. Returns `TRUE` if the API token is valid, otherwise `FALSE`.
 #' @seealso
 #' \href{../articles/Tokens.html}{pkgdown article on tokens}
-#' \href{https://brandonerose.github.io/RosyREDCap/articles/Tokens.htm}{pkgdown article on tokens}
+#' \href{https://brandonerose.github.io/RosyREDCap/articles/Tokens.html}{pkgdown article on tokens}
 #' @family Token Functions
 #' @keywords Token Functions
 #' @export

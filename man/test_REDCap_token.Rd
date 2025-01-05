@@ -25,7 +25,7 @@ If the token is invalid, the function can optionally open the REDCap login page 
 }
 \seealso{
 \href{../articles/Tokens.html}{pkgdown article on tokens}
-\href{https://brandonerose.github.io/RosyREDCap/articles/Tokens.htm}{pkgdown article on tokens}
+\href{https://brandonerose.github.io/RosyREDCap/articles/Tokens.html}{pkgdown article on tokens}
 
 Other Token Functions: 
 \code{\link{set_REDCap_token}()},
