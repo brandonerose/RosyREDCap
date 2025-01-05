@@ -50,7 +50,7 @@ cache_clear <-  function(){
 #' @noRd
 cache_exists <-  function(){
   cache <- get_cache()
-  return(file.exists(cache_path()))
+  return(file.exists(cache$cache_path_get()))
 }
 #' @noRd
 cache_projects_exists <-  function(){

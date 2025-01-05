@@ -191,8 +191,8 @@ delete_DB <- function(DB){
   dir_path  <- validate_dir(dir_path,silent = F)
   delete_this <- file.path(dir_path,"R_objects",paste0(DB$short_name,"_RosyREDCap.rdata"))
   if(file.exists(delete_this)){
-    unlink(delete_this) %>%
-      message("Deleted saved DB")
+    unlink(delete_this)
+    bullet_in_console("Deleted saved DB",bullet_type = "v")
   }else{
     warning("The DB object you wanted to is not there. Did you delete already? ",delete_this)
   }
