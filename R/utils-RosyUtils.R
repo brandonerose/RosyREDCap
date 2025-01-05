@@ -86,7 +86,7 @@ bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = 
       " {cli::col_blue(cli::style_hyperlink('",
       file_names,
       "', 'file:///",
-      gsub("\\\\", "/", normalizePath(file)),
+      normalizePath(gsub("\\\\","/",file)),
       "'))}"
     )
   }
