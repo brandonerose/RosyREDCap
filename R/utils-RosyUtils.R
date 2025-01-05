@@ -82,7 +82,13 @@ bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = 
     }
     if(is.null(file_names))file_names <- file
     if(collapse)file_if <- paste0(file_if,collapse = " and ")
-    file_if <- paste0(" {cli::col_blue(cli::style_hyperlink('", file_names, "', 'file://", normalizePath(file), "'))}")
+    file_if <- paste0(
+      " {cli::col_blue(cli::style_hyperlink('",
+      file_names,
+      "', 'file:///",
+      gsub("\\\\", "/", normalizePath(file)),
+      "'))}"
+    )
   }
   for(i in 1:length(url_if))text[i] <- paste0(text[i],url_if[i])
   for(i in 1:length(file_if))text[i] <- paste0(text[i],file_if[i])
