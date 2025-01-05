@@ -1,12 +1,3 @@
-#' @noRd
-.onLoad <- function(libname, pkgname){
-  cache <- get_cache()
-}
-.onAttach <- function(libname, pkgname) {
-  if (interactive()) {
-    packageStartupMessage("RosyREDCap Loaded! Check available projects with `get_projects()`")
-  }
-}
 #' @title Get your Get Cache Path
 #' @description
 #' Included for transparency and confirmation/testing. This is where the basic information about your projects is cached when you use the RosyREDCap package.

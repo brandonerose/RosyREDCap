@@ -1,4 +1,87 @@
 #' @import RosyApp
+#' @title Generate REDCap Project Diagram
+#' @description
+#' Generates a diagram of the REDCap project structure based on the `DB` object.
+#'
+#' @details
+#' This function generates a visual diagram of the REDCap project structure, including forms, fields, and choices. It supports various options such as rendering the diagram, including fields and choices, and specifying the direction of the diagram.
+#'
+#' @inheritParams save_DB
+#' @param static Logical (TRUE/FALSE). If TRUE, generates a static diagram with `DiagrammeR`. If FALSE, generates an interactive diagram with `visnetwork`. Default is `FALSE`.
+#' @param render Logical (TRUE/FALSE). If TRUE, renders the diagram. Default is `TRUE`.
+#' @param duplicate_forms Logical (TRUE/FALSE). If TRUE, includes duplicate form nodes in the diagram. Default is `TRUE`.
+#' @param clean_names Logical (TRUE/FALSE). If TRUE, cleans the names of the forms and fields in the diagram. Default is `TRUE`.
+#' @param include_fields Logical (TRUE/FALSE). If TRUE, includes fields in the diagram. Default is `FALSE`.
+#' @param include_choices Logical (TRUE/FALSE). If TRUE, includes choices in the diagram. Default is `FALSE`.
+#' @param hierarchical Logical (TRUE/FALSE). If TRUE, generates a hierarchical diagram. Default is `FALSE`.
+#' @param direction Character string specifying the direction of the diagram. Options are "LR" (left to right), "TB" (top to bottom), "RL" (right to left), and "BT" (bottom to top). Default is "LR".
+#' @return A diagram object representing the REDCap project structure.
+#' @seealso
+#' \link{setup_DB} for initializing the `DB` object.
+#' @family Visuals
+#' @export
+REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical = F,direction = "LR"){
+  if(is.null(DB$redcap))DB <- update_DB(DB, metadata_only = T,save_to_dir = F)
+  OUT <- create_node_edge_REDCap(DB,duplicate_forms = duplicate_forms,include_fields = include_fields,include_choices = include_choices)
+  if(!clean_names){OUT$node_df$label <- OUT$node_df$entity_name}
+  OUT$node_df$physics <- T
+  OUT$node_df$physics[which(OUT$node_df$group =="project")] <- F
+  if(static){
+    OUT$node_df$shape[which(OUT$node_df$shape=="box")] <- "rectangle"
+    OUT$node_df$shape[which(OUT$node_df$shape=="ellipse")] <- "circle"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="title")] <- "tooltip"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="group")] <- "type"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="color.border")] <- "color"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="font.color")] <- "fontcolor"
+    OUT$node_df$fillcolor <- OUT$node_df$color.background
+    # node_df$color.highlight <- "gold"
+    OUT$node_df$tooltip <-gsub("<br>","\\\n",OUT$node_df$tooltip) %>% remove_html_tags()
+    if(is_something(OUT$edge_df))colnames(OUT$edge_df)[which(colnames(OUT$edge_df)=="width")] <- "penwidth"
+    graph <- DiagrammeR::create_graph(
+      nodes_df =  OUT$node_df,
+      edges_df = OUT$edge_df
+    )
+    rendered_graph <- DiagrammeR::render_graph(
+      graph,
+      title = DB$redcap$project_info$project_title,
+      output = "graph"
+    )
+  }else{
+    OUT$node_df$type <- OUT$node_df$group
+    rendered_graph <- visNetwork::visNetwork(
+      nodes =  OUT$node_df,
+      edges = OUT$edge_df,
+      main = DB$redcap$project_info$project_title,
+      submain = DB$redcap$project_info$project_notes %>%
+        paste0("<br>Code by Brandon Rose, M.D., M.P.H. at <a href='https://www.thecodingdocs.com/home'>TheCodingDocs.com</a> using <a href='https://github.com/brandonerose/rosyredcap'>RosyREDCap</a> and <a href='https://github.com/datastorm-open/visNetwork'>VisNetwork</a>")
+    ) %>%
+      visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
+      visNetwork::visLegend(main = "Legend") %>%
+      visNetwork::visLayout(hierarchical = hierarchical)
+    if(hierarchical){
+      rendered_graph <- rendered_graph %>% visNetwork::visHierarchicalLayout(direction = direction, levelSeparation = 300)
+    }
+    # if(include_fields){
+    #   groups <- "field"
+    #   if(include_choices) groups <- groups %>% append("choice")
+    #   rendered_graph <- rendered_graph %>% visNetwork::visClusteringByGroup(groups = groups)
+    # }
+    rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
+      list(
+        shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
+        font = list(
+          color = OUT$node_df$font.color[which(OUT$node_df$group==group)[[1]]]
+        ),
+        color = list(
+          background = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]],
+          border = OUT$node_df$color.border[which(OUT$node_df$group==group)[[1]]]
+        )
+      )
+    },simplify = F)
+  }
+  if(render) return(rendered_graph)
+  return(graph)
+}
 #' @noRd
 create_node_edge_REDCap <- function(
     DB,
@@ -314,87 +397,4 @@ create_node_edge_REDCap <- function(
     edge_df = edge_df
   )
   return(OUT)
-}
-#' @title Generate REDCap Project Diagram
-#' @description
-#' Generates a diagram of the REDCap project structure based on the `DB` object.
-#'
-#' @details
-#' This function generates a visual diagram of the REDCap project structure, including forms, fields, and choices. It supports various options such as rendering the diagram, including fields and choices, and specifying the direction of the diagram.
-#'
-#' @inheritParams save_DB
-#' @param static Logical (TRUE/FALSE). If TRUE, generates a static diagram with `DiagrammeR`. If FALSE, generates an interactive diagram with `visnetwork`. Default is `FALSE`.
-#' @param render Logical (TRUE/FALSE). If TRUE, renders the diagram. Default is `TRUE`.
-#' @param duplicate_forms Logical (TRUE/FALSE). If TRUE, includes duplicate form nodes in the diagram. Default is `TRUE`.
-#' @param clean_names Logical (TRUE/FALSE). If TRUE, cleans the names of the forms and fields in the diagram. Default is `TRUE`.
-#' @param include_fields Logical (TRUE/FALSE). If TRUE, includes fields in the diagram. Default is `FALSE`.
-#' @param include_choices Logical (TRUE/FALSE). If TRUE, includes choices in the diagram. Default is `FALSE`.
-#' @param hierarchical Logical (TRUE/FALSE). If TRUE, generates a hierarchical diagram. Default is `FALSE`.
-#' @param direction Character string specifying the direction of the diagram. Options are "LR" (left to right), "TB" (top to bottom), "RL" (right to left), and "BT" (bottom to top). Default is "LR".
-#' @return A diagram object representing the REDCap project structure.
-#' @seealso
-#' \link{setup_DB} for initializing the `DB` object.
-#' @family Visuals
-#' @export
-REDCap_diagram <- function(DB,static = F,render = T,duplicate_forms = T, clean_names = T,include_fields = F,include_choices = F,hierarchical = F,direction = "LR"){
-  if(is.null(DB$redcap))DB <- update_DB(DB, metadata_only = T,save_to_dir = F)
-  OUT <- create_node_edge_REDCap(DB,duplicate_forms = duplicate_forms,include_fields = include_fields,include_choices = include_choices)
-  if(!clean_names){OUT$node_df$label <- OUT$node_df$entity_name}
-  OUT$node_df$physics <- T
-  OUT$node_df$physics[which(OUT$node_df$group =="project")] <- F
-  if(static){
-    OUT$node_df$shape[which(OUT$node_df$shape=="box")] <- "rectangle"
-    OUT$node_df$shape[which(OUT$node_df$shape=="ellipse")] <- "circle"
-    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="title")] <- "tooltip"
-    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="group")] <- "type"
-    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="color.border")] <- "color"
-    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="font.color")] <- "fontcolor"
-    OUT$node_df$fillcolor <- OUT$node_df$color.background
-    # node_df$color.highlight <- "gold"
-    OUT$node_df$tooltip <-gsub("<br>","\\\n",OUT$node_df$tooltip) %>% remove_html_tags()
-    if(is_something(OUT$edge_df))colnames(OUT$edge_df)[which(colnames(OUT$edge_df)=="width")] <- "penwidth"
-    graph <- DiagrammeR::create_graph(
-      nodes_df =  OUT$node_df,
-      edges_df = OUT$edge_df
-    )
-    rendered_graph <- DiagrammeR::render_graph(
-      graph,
-      title = DB$redcap$project_info$project_title,
-      output = "graph"
-    )
-  }else{
-    OUT$node_df$type <- OUT$node_df$group
-    rendered_graph <- visNetwork::visNetwork(
-      nodes =  OUT$node_df,
-      edges = OUT$edge_df,
-      main = DB$redcap$project_info$project_title,
-      submain = DB$redcap$project_info$project_notes %>%
-        paste0("<br>Code by Brandon Rose, M.D., M.P.H. at <a href='https://www.thecodingdocs.com/home'>TheCodingDocs.com</a> using <a href='https://github.com/brandonerose/rosyredcap'>RosyREDCap</a> and <a href='https://github.com/datastorm-open/visNetwork'>VisNetwork</a>")
-    ) %>%
-      visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
-      visNetwork::visLegend(main = "Legend") %>%
-      visNetwork::visLayout(hierarchical = hierarchical)
-    if(hierarchical){
-      rendered_graph <- rendered_graph %>% visNetwork::visHierarchicalLayout(direction = direction, levelSeparation = 300)
-    }
-    # if(include_fields){
-    #   groups <- "field"
-    #   if(include_choices) groups <- groups %>% append("choice")
-    #   rendered_graph <- rendered_graph %>% visNetwork::visClusteringByGroup(groups = groups)
-    # }
-    rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
-      list(
-        shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
-        font = list(
-          color = OUT$node_df$font.color[which(OUT$node_df$group==group)[[1]]]
-        ),
-        color = list(
-          background = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]],
-          border = OUT$node_df$color.border[which(OUT$node_df$group==group)[[1]]]
-        )
-      )
-    },simplify = F)
-  }
-  if(render) return(rendered_graph)
-  return(graph)
 }

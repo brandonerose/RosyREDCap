@@ -165,4 +165,3 @@ split_choices <- function(x){
 redcap_field_types_not_in_data <- c(
   "descriptive", "checkbox"
 )
-

@@ -19,6 +19,44 @@ get_projects <- function(){
   if(!does_exist||!is_ok) return(blank_project())
   return(projects)
 }
+#' @title List File Paths of RosyREDCap Projects in a Folder
+#' @description
+#' Searches a specified folder for files related to RosyREDCap projects and returns their file paths.
+#' Optionally validates the folder to ensure it was previously set up using `setup_DB()`.
+#'
+#' @param file_path Character. The path to the folder to search.
+#' @param validate Logical. If `TRUE`, the function will only accept valid directories previously set up with `setup_DB()`. Default is `TRUE`.
+#'
+#' @return
+#' A character vector of file paths for valid RosyREDCap project files in the folder. Returns an empty character vector if no valid files are found.
+#'
+#' @details
+#' This function checks a folder (and optionally validates its setup) for `.RData` files that correspond to RosyREDCap projects.
+#' It identifies files with the extension `.RData` and names ending in `_RosyREDCap`, filtering out any unrelated files.
+#'
+#' @seealso
+#' \link{setup_DB} for setting up valid directories.
+#'
+#' @export
+check_folder_for_projects <- function(file_path,validate = T){
+  check_path <- file_path
+  if(validate){
+    file_path <- validate_dir(file_path)
+    check_path <- file.path(file_path,"R_objects")
+  }
+  files <- list.files.real(check_path,full.names = T,recursive = T)
+  if(length(file)==0)return(character(0))
+  file_name <- tools::file_path_sans_ext(basename(files))
+  file_ext <- tools::file_ext(files) %>% tolower()
+  df <- data.frame(
+    file_path = files,
+    file_name = file_name,
+    file_ext = file_ext
+  )
+  df <- df[which((df$file_ext == "rdata")&(endsWith(df$file_name,"_RosyREDCap"))),]
+  if(nrow(df)==0)return(character(0))
+  return(df$file_path)
+}
 #' @title project_health_check
 #' @description
 #' Check directory, DB object, and REDCap token. Optional update.
@@ -76,6 +114,7 @@ project_health_check <- function(){
   #   save_projects_to_cache(projects,silent = F)
   # }
 }
+#' @noRd
 internal_blank_project_cols <- c(
   "short_name",
   "dir_path",
@@ -100,11 +139,13 @@ internal_blank_project_cols <- c(
   # "test_DB",
   # "test_RC"
 )
+#' @noRd
 blank_project <- function(){
   x <- matrix(data = character(0),ncol = length(internal_blank_project_cols)) %>% as.data.frame()
   colnames(x) <- internal_blank_project_cols
   return(x)
 }
+#' @noRd
 save_projects_to_cache <- function(projects,silent=T){
   projects <- projects[order(projects$short_name),]
   # projects$test_dir <- projects$test_dir %>% as.logical()
@@ -122,6 +163,7 @@ save_projects_to_cache <- function(projects,silent=T){
     )
   }
 }
+#' @noRd
 extract_project_details <- function(DB){
   OUT <- data.frame(
     short_name = DB$short_name,
@@ -147,6 +189,7 @@ extract_project_details <- function(DB){
   rownames(OUT) <- NULL
   return(OUT)
 }
+#' @noRd
 add_project <- function(DB,silent = T){
   projects <- get_projects()
   projects <- projects[which(projects$short_name!=DB$short_name),]
@@ -156,6 +199,7 @@ add_project <- function(DB,silent = T){
   projects <- projects %>% dplyr::bind_rows(OUT)
   save_projects_to_cache(projects,silent = silent)
 }
+#' @noRd
 delete_project <- function(short_name){
   projects <- get_projects()
   ROW <- which(projects$short_name==short_name)
@@ -166,6 +210,7 @@ delete_project <- function(short_name){
   save_projects_to_cache(projects)
   return(projects)
 }
+#' @noRd
 internal_field_colnames <-c(
   "field_name",
   "form_name",
@@ -186,6 +231,7 @@ internal_field_colnames <-c(
   "matrix_ranking",
   "field_annotation"
 )
+#' @noRd
 form_colnames <- function(type){
   if(missing(type))type<- "default"
   if(type =="default"){
