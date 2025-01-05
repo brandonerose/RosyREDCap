@@ -3,7 +3,7 @@ test_that("hoardr cache exsists",{
   expect_true(cache_exists())
 })
 test_that("fake_cache sets and clears",{
-  test_dir <- local_tempdir() %>% normalizePath()
+  test_dir <- withr::local_tempdir() %>% normalizePath()
   fake_cache_location <- file.path(test_dir,"fake_cache")
   local_mocked_bindings(
     get_cache = function(...){
@@ -27,7 +27,7 @@ test_that("fake_cache sets and clears",{
 })
 ##test-cache_clear
 test_that("cache_projects_exists, cache_clear works",{
-  test_dir <- local_tempdir() %>% normalizePath()
+  test_dir <- withr::local_tempdir() %>% normalizePath()
   fake_cache_location <- file.path(test_dir,"fake_cache")
   local_mocked_bindings(
     get_cache = function(...){
