@@ -8,4 +8,5 @@
 
 library(testthat)
 library(RosyREDCap)
+
 test_check("RosyREDCap")
