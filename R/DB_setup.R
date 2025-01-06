@@ -205,7 +205,7 @@ get_dir <- function(DB){
   dir_path <- DB$dir_path
   stop_mes <- "Did you use `set_dir()`?"
   if ( ! file.exists(dir_path)) {
-    warning("Searched for directory --> '",dir_path,"' ...")
+    bullet_in_console("Searched for directory --> '",file = dir_path, bullet_type = "x")
     stop(paste0("Does not exist. ", stop_mes))
   }
   return(validate_dir(dir_path,silent=T))

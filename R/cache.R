@@ -48,7 +48,7 @@ cache_projects_exists <-  function(){
   if(cache_exists()){
     cache_path() %>% file.path("projects.rds") %>% file.exists() %>% return()
   }else{
-    warning("Cache doesn't exist",immediate. = T)
+    bullet_in_console("Cache doesn't exist",bullet_type = "x")
     return(FALSE)
   }
 }

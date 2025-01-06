@@ -28,6 +28,8 @@ test_that("setup_DB creates a valid DB object and valid directory", {
   expect_no_error(validate_web_link("https://redcap.edu"))
   #test db
   expect_error(validate_DB(internal_blank_DB))
+  expect_error(validate_DB(1))
+  expect_error(validate_DB(data.frame()))
   expect_error(get_dir(DB))
   # Run setup_DB
   DB <- setup_DB(
@@ -52,6 +54,8 @@ test_that("setup_DB creates a valid DB object and valid directory", {
   expect_equal(DB$short_name, short_name)
   test_dir_files <- list.files(test_dir)
   expect_true(all(internal_dir_folders %in% test_dir_files))
+  DB$dir_path <- file.path(test_dir,"another_fake_folder") %>% sanitize_path()
+  expect_error(get_dir(DB))
 })
 ##test-load_test_DB
 test_that("works",{
@@ -115,4 +119,52 @@ test_that("save_DB doesn't save if it's blank but will save and cache if valid, 
   expect_no_warning(delete_DB(DB))
   expect_warning(delete_DB(DB))#warning for deleting twice
   expect_error(load_DB(short_name = short_name)) # wont load deleted project
+})
+test_that("set_dir creates a new directory if it does not exist", {
+  test_dir <- withr::local_tempdir() %>% sanitize_path()
+  dir_path <- file.path(test_dir, "new_dir")
+  # Mock user input to create the directory
+  mockery::stub(set_dir, "utils::menu", 1)
+  expect_message(set_dir(dir_path), "Directory is Valid!")
+  expect_true(file.exists(dir_path))
+  expect_true(all(internal_dir_folders %in% list.files(dir_path)))
+})
+test_that("set_dir handles existing directory correctly", {
+  test_dir <- withr::local_tempdir() %>% sanitize_path()
+  dir_path <- file.path(test_dir, "existing_dir")
+  dir.create(dir_path)
+  expect_message(set_dir(dir_path), "Directory is Valid!")
+  expect_true(file.exists(dir_path))
+  expect_true(all(internal_dir_folders %in% list.files(dir_path)))
+})
+test_that("set_dir throws an error for invalid directory path", {
+  expect_error(set_dir(123), "dir must be a character string")
+})
+test_that("set_dir creates missing internal directories", {
+  test_dir <- withr::local_tempdir() %>% sanitize_path()
+  dir_path <- file.path(test_dir, "partial_dir")
+  dir.create(dir_path)
+  dir.create(file.path(dir_path, "R_objects"))
+  expect_message(set_dir(dir_path), "Directory is Valid!")
+  expect_true(file.exists(dir_path))
+  expect_true(all(internal_dir_folders %in% list.files(dir_path)))
+})
+test_that("set_dir stops if user chooses not to create directory", {
+  test_dir <- withr::local_tempdir() %>% sanitize_path()
+  dir_path <- file.path(test_dir, "no_create_dir")
+  # Mock user input to not create the directory
+  mockery::stub(set_dir, "utils::menu", 2)
+  expect_error(set_dir(dir_path), "Path not found. Use absolute path or choose one within R project working directory.")
+  expect_false(file.exists(dir_path))
+})
+test_that("set_dir validates the directory structure", {
+  test_dir <- withr::local_tempdir() %>% sanitize_path()
+  dir_path <- file.path(test_dir, "valid_dir")
+  dir.create(dir_path)
+  for (folder in internal_dir_folders) {
+    dir.create(file.path(dir_path, folder))
+  }
+  expect_message(set_dir(dir_path), "Directory is Valid!")
+  expect_true(file.exists(dir_path))
+  expect_true(all(internal_dir_folders %in% list.files(dir_path)))
 })

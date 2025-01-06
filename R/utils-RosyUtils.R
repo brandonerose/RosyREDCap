@@ -57,7 +57,8 @@ is_something <- function(thing,row=0){
   }
   return(out)
 }
-bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = T, file = NULL,verbosity=2){
+bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = T, file = NULL,silent=F){
+  if(silent)return(invisible())
   url_if <- ""
   file_if <- ""
   if(length(url)>0){
