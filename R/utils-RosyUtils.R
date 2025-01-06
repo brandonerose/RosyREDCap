@@ -84,9 +84,9 @@ bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = 
     if(collapse)file_if <- paste0(file_if,collapse = " and ")
     file_if <- paste0(
       " {cli::col_blue(cli::style_hyperlink('",
-      file_names,
-      "', 'file:///",
-      normalizePath(gsub("\\\\","/",file)),
+      sanitize_path(file_names),
+      "', '",
+      sanitize_path(paste0("file://",file)),
       "'))}"
     )
   }
@@ -100,6 +100,11 @@ bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = 
   # x = ✖ = danger
   # ! = ! = warning
   # i = ℹ = info
+}
+sanitize_path <- function(path) {
+  sanitized <- gsub("\\\\", "/", path)
+  sanitized <- normalizePath(sanitized, winslash = "/", mustWork = FALSE)
+  return(sanitized)
 }
 find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
   new <- all_character_cols(new)
