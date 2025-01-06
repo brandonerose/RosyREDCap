@@ -101,6 +101,9 @@ bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = 
   # ! = ! = warning
   # i = ℹ = info
 }
+generate_hex <- function(length = 32) {
+  toupper(paste0(sample(c(0:9, letters[1:6]), length, replace = TRUE), collapse = ""))
+}
 sanitize_path <- function(path) {
   sanitized <- gsub("\\\\", "/", path)
   sanitized <- normalizePath(sanitized, winslash = "/", mustWork = FALSE)
