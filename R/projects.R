@@ -159,7 +159,7 @@ save_projects_to_cache <- function(projects,silent=T){
     )
     bullet_in_console(
       text = paste0("The cache is stored in directory on your computer. It can be found with `",pkg_name,"::cache_path()`, and cleared with `",pkg_name,"::cache_clear()`."),
-      url = cache_path()
+      file = cache_path()
     )
   }
 }
@@ -167,7 +167,7 @@ save_projects_to_cache <- function(projects,silent=T){
 extract_project_details <- function(DB){
   OUT <- data.frame(
     short_name = DB$short_name,
-    dir_path = DB$dir_path %>% is.null() %>% ifelse(NA,DB$dir_path),
+    dir_path = DB$dir_path %>% is.null() %>% ifelse(NA,sanitize_path(DB$dir_path)),
     last_save = DB$internals$last_data_dir_save %>% is.null() %>% ifelse(NA,DB$internals$last_data_dir_save) %>% as.POSIXct(),
     last_metadata_update = DB$internals$last_metadata_update,
     last_data_update = DB$internals$last_data_update,

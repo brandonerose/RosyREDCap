@@ -19,7 +19,7 @@
 #' @export
 cache_path <- function(){
   cache <- get_cache()
-  path <- normalizePath(cache$cache_path_get())
+  path <- sanitize_path(cache$cache_path_get())
   return(path)
 }
 #' @title Clear your cached projects

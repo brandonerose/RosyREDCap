@@ -6,7 +6,7 @@
 #' @export
 upload_file_to_REDCap_file_repository <- function(DB,file){
   DB <- validate_DB(DB)
-  file <- normalizePath(file)
+  file <- sanitize_path(file)
   if(!file.exists(file)) stop("File does not exist! --> ",file)
   response <- httr::POST(
     url = DB$links$redcap_uri,
@@ -107,7 +107,7 @@ delete_REDCap_file <- function(DB,doc_id){
 #' @export
 upload_file_to_REDCap <- function(DB,file,record, field,repeat_instance = NULL,event = NULL){
   # DB <- validate_DB(DB)
-  file <- normalizePath(file)
+  file <- sanitize_path(file)
   if(!file.exists(file)) stop("File does not exist! --> ",file)
   body <- list(
     "token"=validate_REDCap_token(DB),

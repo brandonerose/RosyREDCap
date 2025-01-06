@@ -103,7 +103,7 @@ bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = 
 }
 sanitize_path <- function(path) {
   sanitized <- gsub("\\\\", "/", path)
-  sanitized <- normalizePath(sanitized, winslash = "/", mustWork = FALSE)
+  sanitized <- sanitize_path(sanitized, winslash = "/", mustWork = FALSE)
   return(sanitized)
 }
 find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
@@ -335,7 +335,7 @@ excel_to_list <- function(path){
   return(out)
 }
 csv_to_list <- function(paths){
-  paths <- normalizePath(paths)
+  paths <- sanitize_path(paths)
   OUT <- list()
   clean_names <- paths %>% basename() %>% tools::file_path_sans_ext() %>% clean_env_names()
   for (i in 1:length(paths)){
@@ -345,7 +345,7 @@ csv_to_list <- function(paths){
   return(OUT)
 }
 csv_folder_to_list <- function(folder){
-  folder <- normalizePath(folder)
+  folder <- sanitize_path(folder)
   if(!dir.exists(folder))stop("Folder does not exist: ",folder)
   paths <- list.files.real(folder)
   paths <- paths[which(paths %>% endsWith(".csv"))]
@@ -665,7 +665,7 @@ list_to_csv <- function(list,dir,file_name=NULL,overwrite = TRUE, drop_empty = T
 }
 save_wb <- function(wb,dir,file_name,overwrite =TRUE){
   if(!dir.exists(dir))stop("dir doesn't exist")
-  path <- file.path(dir,paste0(file_name,".xlsx"))
+  path <- file.path(dir,paste0(file_name,".xlsx")) %>% sanitize_path()
   openxlsx::saveWorkbook(
     wb = wb,
     file = path,
@@ -675,7 +675,7 @@ save_wb <- function(wb,dir,file_name,overwrite =TRUE){
 }
 save_csv <- function(DF,dir,file_name,overwrite =TRUE){
   if(!dir.exists(dir))stop("dir doesn't exist")
-  path <- file.path(dir,paste0(file_name,".csv"))
+  path <- file.path(dir,paste0(file_name,".csv")) %>% sanitize_path()
   write_it <- T
   if(!overwrite){
     if(file.exists(path)){
@@ -786,7 +786,7 @@ sample1 <- function(x){
   sample(x,1)
 }
 list.files.real <- function(path,full.names = T, recursive = F){
-  grep('~$', normalizePath(list.files(path,full.names = full.names,recursive = recursive)), fixed = TRUE, value = TRUE, invert = TRUE)
+  grep('~$', sanitize_path(list.files(path,full.names = full.names,recursive = recursive)), fixed = TRUE, value = TRUE, invert = TRUE)
 }
 wrap_text <- function(text, max_length = 40, spacer = "\n") {
   words <- unlist(strsplit(text, " "))
