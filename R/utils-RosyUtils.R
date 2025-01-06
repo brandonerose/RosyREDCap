@@ -103,7 +103,7 @@ bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = 
 }
 sanitize_path <- function(path) {
   sanitized <- gsub("\\\\", "/", path)
-  sanitized <- sanitize_path(sanitized, winslash = "/", mustWork = FALSE)
+  sanitized <- normalizePath(sanitized, winslash = "/", mustWork = FALSE)
   return(sanitized)
 }
 find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){

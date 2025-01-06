@@ -1,5 +1,5 @@
 test_that("test_dir works",{
-  test_dir <- withr::local_tempdir() %>% normalizePath()
+  test_dir <- withr::local_tempdir() %>% sanitize_path()
   expect_true(file.exists(test_dir))
   test_file <- file.path(test_dir, "projects.rds")
   expect_false(file.exists(test_file))
@@ -8,7 +8,7 @@ test_that("test_dir works",{
 })
 ##test-setup_DB
 test_that("setup_DB creates a valid DB object and valid directory", {
-  test_dir <- withr::local_tempdir() %>% normalizePath()
+  test_dir <- withr::local_tempdir() %>% sanitize_path()
   expect_error(validate_dir(dir_path = test_dir))
   short_name <- "TEST_PROJECT"
   redcap_base <- "https://redcap.miami.edu/"
@@ -55,11 +55,11 @@ test_that("setup_DB creates a valid DB object and valid directory", {
 })
 ##test-load_test_DB
 test_that("works",{
-  test_dir <- withr::local_tempdir() %>% normalizePath()
+  test_dir <- withr::local_tempdir() %>% sanitize_path()
 })
 ##test-save_DB
 test_that("save_DB doesn't save if it's blank but will save and cache if valid, also loads", {
-  test_dir <- withr::local_tempdir() %>% normalizePath()
+  test_dir <- withr::local_tempdir() %>% sanitize_path()
   fake_cache_location <- file.path(test_dir,"fake_cache")
   local_mocked_bindings(
     get_cache = function(...){
