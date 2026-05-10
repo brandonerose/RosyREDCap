@@ -4,20 +4,32 @@
 \alias{generate_redcap_ids}
 \title{generate_redcap_ids}
 \usage{
-generate_redcap_ids(project, needed, prefix = "", chosen_length = 6L)
+generate_redcap_ids(
+  project,
+  needed,
+  random = TRUE,
+  prefix = "",
+  chosen_length = 6L,
+  start_n = 1L
+)
 }
 \arguments{
 \item{project}{REDCapSync project object}
 
 \item{needed}{integer length of new IDs needed}
 
+\item{random}{T/F for random}
+
 \item{prefix}{character string of ID prefix such as "ID" for "ID001"}
 
 \item{chosen_length}{integer length of padding for IDs}
+
+\item{start_n}{integer 0 or 1}
 }
 \value{
 character string of new REDCap IDs not included in current object
 }
 \description{
-generate_redcap_ids
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+generate redcap record ids
 }

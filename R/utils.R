@@ -1,21 +1,36 @@
 #' @title generate_redcap_ids
+#' @description
+#' `r lifecycle::badge("experimental")`
+#' generate redcap record ids
 #' @param project REDCapSync project object
 #' @param needed integer length of new IDs needed
+#' @param random T/F for random
 #' @param prefix character string of ID prefix such as "ID" for "ID001"
 #' @param chosen_length integer length of padding for IDs
+#' @param start_n integer 0 or 1
 #' @return character string of new REDCap IDs not included in current object
 #' @export
 generate_redcap_ids <- function(project,
                                 needed,
+                                random = TRUE,
                                 prefix = "",
-                                chosen_length = 6L) {
+                                chosen_length = 6L,
+                                start_n = 1L) {
   project <- convert_project(project)
-  chosen_max <- as.integer(paste(rep(9L, chosen_length), collapse = ""))
-  project <- project$.internal
-  all <- paste0(prefix, sprintf(paste0("%0", chosen_length, "d"), 0L:chosen_max))
+  checkmate::assert_logical(random)
+  checkmate::assert_integerish(chosen_length, lower = 1L)
+  checkmate::assert_integerish(needed, lower = 1L)
+  checkmate::assert_integerish(start_n, lower = 1L)
   used <- project$record_summary[[project$metadata$id_col]]
+  chosen_max <- as.integer(paste(rep(9L, chosen_length), collapse = ""))
+  all <- paste0(prefix, sprintf(paste0("%0", chosen_length, "d"), start_n:chosen_max))
   unused <- all[which(!all %in% used)]
-  sample(unused, needed, replace = FALSE)
+  if (random) {
+    new_records <- sample(unused, needed, replace = FALSE)
+  } else{
+    new_records <- unused[1L:needed]
+  }
+  new_records
 }
 #' @noRd
 convert_project <- function(project) {
