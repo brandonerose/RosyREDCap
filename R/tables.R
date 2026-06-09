@@ -61,6 +61,7 @@ make_table1 <- function(DF,
     )
   }
 }
+#' @noRd
 index_na <- function(DF, MARGIN = "col", invert = FALSE) {
   okcols <- c("cols", "col")
   okrows <-  c("row", "rows")
@@ -91,6 +92,7 @@ save_table1 <- function(table1, filepath) {
     flextable::bg(bg = "white", part = "all") |>
     flextable::save_as_image(path = filepath)
 }
+#' @noRd
 clone_attr <- function(to, from) {
   units_vec <- from |>
     lapply(function(col) {
@@ -127,6 +129,7 @@ clone_attr <- function(to, from) {
   }
   to
 }
+#' @noRd
 get_labels <- function(DF) {
   DF |>
     names() |>
@@ -140,6 +143,7 @@ get_labels <- function(DF) {
     unlist() |>
     as.character()
 }
+#' @noRd
 get_field_names_date <- function(data_list) {
   #assert
   the_rows <- which(data_list$metadata$fields$field_type_r == "date")
@@ -148,6 +152,7 @@ get_field_names_date <- function(data_list) {
   }
   data_list$metadata$fields$field_name[the_rows]
 }
+#' @noRd
 make_DT_table <- function(DF,
                           editable = FALSE,
                           selection = "single",
@@ -198,6 +203,7 @@ make_DT_table <- function(DF,
     DT::formatStyle(colnames(DF), color = "#000")
   x
 }
+#' @noRd
 make_DT_table_simple <- function(DF) {
   if (!is_something(DF)) {
     return(h3("No data available to display."))

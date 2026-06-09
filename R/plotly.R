@@ -178,6 +178,7 @@ plotly_parcats <- function(DF,
     plotly::style(hoverinfo = "none")
   fig
 }
+#' @noRd
 numeric_to_cats <- function(vec,
                             method = "quantile",
                             quantiles = 5L,
@@ -325,6 +326,7 @@ numeric_to_cats <- function(vec,
                           ordered = TRUE)
   data_category
 }
+#' @noRd
 adjust_margins <- function(max_label_length,
                            tick_font_size = 12L,
                            base_margin = 20L) {

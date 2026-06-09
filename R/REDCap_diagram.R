@@ -176,10 +176,9 @@ REDCap_diagram <- function(project,
         ),
         font = list(color = bordercolor)
       ) |>
-      visNetwork::visLegend(main = list(
-        text ="Legend",
-        style = "font-size:24px;font-weight:bold;color:black;font-family:Georgia;text-align:center;"
-      )) |>
+      visNetwork::visLegend(
+        main = list(text = "Legend", style = "font-size:24px;font-weight:bold;color:black;font-family:Georgia;text-align:center;")
+      ) |>
       visNetwork::visLayout(hierarchical = hierarchical)
     if (hierarchical) {
       rendered_graph <- rendered_graph |> visNetwork::visHierarchicalLayout(direction = direction, levelSeparation = 300L)

@@ -1,3 +1,4 @@
+#' @noRd
 age <- function(dob,
                 age_day = lubridate::today(),
                 units = "years",
@@ -8,8 +9,8 @@ age <- function(dob,
   }
   calc_age
 }
-process_df_list <- function(list,
-                            drop_empty = TRUE) {
+#' @noRd
+process_df_list <- function(list, drop_empty = TRUE) {
   if (is_something(list)) {
     if (!is_df_list(list)) {
       stop("list must be ...... a list :)")
@@ -36,6 +37,7 @@ process_df_list <- function(list,
   }
   list
 }
+#' @noRd
 is_something <- function(thing, row = 0L) {
   out <- FALSE
   if (is.function(thing)) {
@@ -70,18 +72,23 @@ is_something <- function(thing, row = 0L) {
   }
   out
 }
+#' @noRd
 vec1_in_vec2 <- function(vec1, vec2) {
   vec1[which(vec1 %in% vec2)]
 }
+#' @noRd
 vec1_not_in_vec2 <- function(vec1, vec2) {
   vec1[which(!vec1 %in% vec2)]
 }
+#' @noRd
 drop_nas <- function(x) {
   x[!unlist(lapply(x, is.na))]
 }
+#' @noRd
 is_named_df_list <- function(x, strict = FALSE) {
   is_named_list(x) && is_df_list(x, strict = strict)
 }
+#' @noRd
 is_named_list <- function(x,
                           silent = TRUE,
                           recursive = FALSE) {
@@ -104,15 +111,19 @@ is_named_list <- function(x,
   }
   named_all # Return the result
 }
+#' @noRd
 remove_html_tags <- function(text_vector) {
   gsub(pattern = "<[^>]+>", replacement = "", text_vector)
 }
+#' @noRd
 drop_if <- function(x, drops) {
   x[which(!x %in% drops)]
 }
+#' @noRd
 sample1 <- function(x) {
   sample(x, 1L)
 }
+#' @noRd
 wrap_text <- function(text,
                       max_length = 40L,
                       spacer = "\n") {
@@ -134,6 +145,7 @@ wrap_text <- function(text,
   result <- paste0(result, current_line)
   result
 }
+#' @noRd
 is_df_list <- function(x, strict = FALSE) {
   if (!is.list(x)) {
     return(FALSE)
@@ -150,6 +162,7 @@ is_df_list <- function(x, strict = FALSE) {
   }
   any(out)
 }
+#' @noRd
 is_nested_list <- function(x) {
   if (!is.list(x)) {
     return(FALSE)
@@ -164,6 +177,7 @@ is_nested_list <- function(x) {
   }
   outcome
 }
+#' @noRd
 clean_num <- function(num) {
   formatC(num, format = "d", big.mark = ",")
 }

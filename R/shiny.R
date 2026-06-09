@@ -1,3 +1,4 @@
+#' @noRd
 dbSidebar <- function(...) {
   shinydashboardPlus::dashboardSidebar(
     minified = FALSE,
@@ -7,6 +8,7 @@ dbSidebar <- function(...) {
     TCD_SBF()
   )
 }
+#' @noRd
 backend_menu_item <- function() {
   if (golem::app_prod())
     return(NULL)
@@ -14,6 +16,7 @@ backend_menu_item <- function() {
            tabName = "backend",
            icon = shiny::icon("gear"))
 }
+#' @noRd
 dbBody <- function(...) {
   dashboardBody(tabItems(..., tabItem("backend", fluidRow(
     box(
@@ -28,6 +31,7 @@ dbBody <- function(...) {
     )
   ))))
 }
+#' @noRd
 dbHeader <- function(...) {
   shinydashboardPlus::dashboardHeader(title = tagList(
     span(class = "logo-lg", "RosyREDCap"),
@@ -38,6 +42,7 @@ dbHeader <- function(...) {
     )
   ), ...)
 }
+#' @noRd
 dbControlbar <- function(...) {
   shinydashboardPlus::dashboardControlbar(
     TCD_SBH(),
@@ -59,10 +64,12 @@ dbControlbar <- function(...) {
     ))
   )
 }
+#' @noRd
 mod_list_ui <- function(id) {
   ns <- NS(id)
   tagList(listviewer::jsoneditOutput(ns("values_list")))
 }
+#' @noRd
 mod_list_server <- function(id, values) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -75,6 +82,7 @@ mod_list_server <- function(id, values) {
     })
   })
 }
+#' @noRd
 TCD_SBH <- function() {
   shinydashboard::sidebarMenu(shiny::div(
     style = "text-align:center",
@@ -85,6 +93,7 @@ TCD_SBH <- function() {
     )
   ))
 }
+#' @noRd
 TCD_SBF <- function() {
   shinydashboard::sidebarMenu(
     shinydashboard::menuItem(
@@ -121,6 +130,7 @@ TCD_SBF <- function() {
   # p(paste0('Version: ',pkg_version)) |> shiny::div(style="text-align:center"),
   # p(paste0('Last Update: ',pkg_date)) |> shiny::div(style="text-align:center"),
 }
+#' @noRd
 TCD_NF <- function() {
   shinydashboardPlus::dashboardFooter(left = shiny::div(
     fluidRow(

@@ -19,7 +19,9 @@ app_ui <- function(request) {
   "
       )
     ),
-    tags$script(HTML("
+    tags$script(
+      HTML(
+        "
   $(document).on('input', '#user_adds_project_short_name', function() {
     let val = this.value.toUpperCase();
     // keep only valid chars
@@ -30,8 +32,12 @@ app_ui <- function(request) {
     }
     this.value = val;
   });
-")),
-    tags$script(HTML("
+"
+      )
+    ),
+    tags$script(
+      HTML(
+        "
   $(document).on('keydown', '#user_adds_project_api_token, #user_adds_project_redcap_uri, #user_adds_project_dir_path', function(e) {
     // block space key
     if (e.which === 32 || e.keyCode === 32) {
@@ -39,12 +45,18 @@ app_ui <- function(request) {
       return false;
     }
   });
-")),
-    tags$style(HTML("
+"
+      )
+    ),
+    tags$style(
+      HTML(
+        "
   #user_adds_project_short_name {
     text-transform: uppercase;
   }
-")),
+"
+      )
+    ),
     shinydashboardPlus::dashboardPage(
       options = list(sidebarExpandOnHover = FALSE),
       header = dbHeader(),
@@ -105,9 +117,11 @@ app_ui <- function(request) {
           tabName = "group",
           icon = shiny::icon("users")
         ),
-        menuItem(text = "Record",
-                 tabName = "record",
-                 icon = shiny::icon("user-large")),
+        menuItem(
+          text = "Record",
+          tabName = "record",
+          icon = shiny::icon("user-large")
+        ),
         uiOutput("choose_record_"),
         # conditionalPanel(
         #   "input.sb1 === 'record'",
@@ -131,80 +145,97 @@ app_ui <- function(request) {
           ),
         )),
         # project--------
-        tabItem("project", fluidRow(
-          shinydashboardPlus::box(
-            title = "REDCap Metadata Network",
-            closable = FALSE,
-            width = 12L,
-            height = "800px",
-            solidHeader = TRUE,
-            collapsible = TRUE,
-            sidebar = shinydashboardPlus::boxSidebar(
-              id = "mycardsidebar",
-              width = 25,
-              awesomeCheckbox(inputId = "metadata_graph_duplicate_forms",
-                              label = "Duplicate Forms?",
-                              value = TRUE),
-              awesomeCheckbox(inputId = "metadata_graph_clean_names",
-                              label = "Clean Variable Names",
-                              value = TRUE),
-              awesomeCheckbox(inputId = "metadata_graph_include_fields",
-                              label = "Include Fields?",
-                              value = FALSE),
-              awesomeCheckbox(inputId = "metadata_graph_include_choices",
-                              label = "Include Choices?",
-                              value = FALSE),
-              awesomeCheckbox(inputId = "metadata_graph_hierarchical",
-                              label = "Hierarchical?",
-                              value = FALSE),
-              selectizeInput(inputId = "metadata_graph_direction",
-                             label = "Graph Direction (if hierarchical)",
-                             choices = c("LR", "UD", "RL", "DU"),
-                             selected = "LR"),
-              awesomeCheckbox(inputId = "metadata_graph_allow_zoom",
-                              label = "Allow Zoom?",
-                              value = TRUE)
-            ),
-            tabBox(
-              id = "metadata_graph_tabs",
+        tabItem(
+          "project",
+          fluidRow(
+            shinydashboardPlus::box(
+              title = "REDCap Metadata Network",
+              closable = FALSE,
               width = 12L,
               height = "800px",
-              tabPanel(
-                "visNetwork",
-                visNetwork::visNetworkOutput("REDCap_diagram_vis", width = "100%", height = "600px")
+              solidHeader = TRUE,
+              collapsible = TRUE,
+              sidebar = shinydashboardPlus::boxSidebar(
+                id = "mycardsidebar",
+                width = 25,
+                awesomeCheckbox(
+                  inputId = "metadata_graph_duplicate_forms",
+                  label = "Duplicate Forms?",
+                  value = TRUE
+                ),
+                awesomeCheckbox(
+                  inputId = "metadata_graph_clean_names",
+                  label = "Clean Variable Names",
+                  value = TRUE
+                ),
+                awesomeCheckbox(
+                  inputId = "metadata_graph_include_fields",
+                  label = "Include Fields?",
+                  value = FALSE
+                ),
+                awesomeCheckbox(
+                  inputId = "metadata_graph_include_choices",
+                  label = "Include Choices?",
+                  value = FALSE
+                ),
+                awesomeCheckbox(
+                  inputId = "metadata_graph_hierarchical",
+                  label = "Hierarchical?",
+                  value = FALSE
+                ),
+                selectizeInput(
+                  inputId = "metadata_graph_direction",
+                  label = "Graph Direction (if hierarchical)",
+                  choices = c("LR", "UD", "RL", "DU"),
+                  selected = "LR"
+                ),
+                awesomeCheckbox(
+                  inputId = "metadata_graph_allow_zoom",
+                  label = "Allow Zoom?",
+                  value = TRUE
+                )
               ),
-              tabPanel(
-                "DiagrammeR",
-                DiagrammeR::grVizOutput("REDCap_diagram_dia")
+              tabBox(
+                id = "metadata_graph_tabs",
+                width = 12L,
+                height = "800px",
+                tabPanel(
+                  "visNetwork",
+                  visNetwork::visNetworkOutput("REDCap_diagram_vis", width = "100%", height = "600px")
+                ),
+                tabPanel(
+                  "DiagrammeR",
+                  DiagrammeR::grVizOutput("REDCap_diagram_dia")
+                )
               )
+            ),
+            box(
+              title = h1("Instruments"),
+              width = 12L,
+              DT::DTOutput("forms_table")
+            ),
+            box(
+              title = h1("Metadata"),
+              width = 12L,
+              DT::DTOutput("metadata_table")
+            ),
+            box(
+              title = h1("Codebook"),
+              width = 12L,
+              DT::DTOutput("codebook_table")
+            ),
+            box(
+              title = h1("Users"),
+              width = 12L,
+              DT::DTOutput("user_table")
+            ),
+            box(
+              title = h1("Log"),
+              width = 12L,
+              DT::DTOutput("log_table")
             )
-          ),
-          box(
-            title = h1("Instruments"),
-            width = 12L,
-            DT::DTOutput("forms_table")
-          ),
-          box(
-            title = h1("Metadata"),
-            width = 12L,
-            DT::DTOutput("metadata_table")
-          ),
-          box(
-            title = h1("Codebook"),
-            width = 12L,
-            DT::DTOutput("codebook_table")
-          ),
-          box(
-            title = h1("Users"),
-            width = 12L,
-            DT::DTOutput("user_table")
-          ),
-          box(
-            title = h1("Log"),
-            width = 12L,
-            DT::DTOutput("log_table")
           )
-        )),
+        ),
         # data --------
         tabItem("data", fluidRow(box(
           title = h1("Data Tables"),
@@ -214,18 +245,18 @@ app_ui <- function(request) {
         # group--------
         tabItem(
           "group",
-          fluidRow(
-            box(width = 6L, uiOutput("choose_split_")),
-            box(width = 6L, uiOutput("choose_fields_cat_"))
-          ),
-          fluidRow(
-            box(
-              title = "Other Options",
-              width = 12L,
-              awesomeCheckbox(inputId = "render_missing",
-                              label = "Include Missing/Unkown",
-                              value = FALSE))
-          ),
+          fluidRow(box(width = 6L, uiOutput("choose_split_")), box(
+            width = 6L, uiOutput("choose_fields_cat_")
+          )),
+          fluidRow(box(
+            title = "Other Options",
+            width = 12L,
+            awesomeCheckbox(
+              inputId = "render_missing",
+              label = "Include Missing/Unkown",
+              value = FALSE
+            )
+          )),
           shinydashboardPlus::box(
             title = "Parallel Categories",
             closable = FALSE,
@@ -261,10 +292,12 @@ app_ui <- function(request) {
               uiOutput("choose_survival_end_col_"),
               uiOutput("choose_survival_status_col_"),
               uiOutput("choose_survival_status_choice_"),
-              selectInput(inputId = "survival_units",
-                          label = "Units",
-                          choices = c("days", "months", "years"),
-                          selected = "years"),
+              selectInput(
+                inputId = "survival_units",
+                label = "Units",
+                choices = c("days", "months", "years"),
+                selected = "years"
+              ),
               uiOutput("choose_survival_xlim_")
             ),
             box(
@@ -305,46 +338,44 @@ app_ui <- function(request) {
           )
         ),
         # record--------
-        tabItem(
-          "record",
-          fluidRow(
-            box(
-              title = h1("View"),
-              width = 4L,
-              switchInput(
-                inputId = "view_switch_text",
-                onLabel = "Text",
-                offLabel = "Tables",
-                value = TRUE
-              ),
-              awesomeCheckbox(inputId = "sidebar_choice_radio",
-                              label = "Dropdown instead of radio",
-                              value = FALSE),
-              actionButton("ab_random_record", "Random Record!"),
-              actionButton("ab_next_record", "Next Record!"),
-              uiOutput("choose_fields_view_"),
-              uiOutput("dt_tables_view_records")
+        tabItem("record", fluidRow(
+          box(
+            title = h1("View"),
+            width = 4L,
+            switchInput(
+              inputId = "view_switch_text",
+              onLabel = "Text",
+              offLabel = "Tables",
+              value = TRUE
             ),
-            box(
-              width = 8L,
-              title = "Change",
-              uiOutput("choose_fields_change_"),
-              uiOutput("fields_to_change_dynamic_inputs"),
-              uiOutput("add_input_instance_ui_"),
-              actionButton("reset_data_values", "Reset Data"),
-              actionButton("submit_data_values", "Pend For Upload")
-            )
+            awesomeCheckbox(
+              inputId = "sidebar_choice_radio",
+              label = "Dropdown instead of radio",
+              value = FALSE
+            ),
+            actionButton("ab_random_record", "Random Record!"),
+            actionButton("ab_next_record", "Next Record!"),
+            uiOutput("choose_fields_view_"),
+            uiOutput("dt_tables_view_records")
           ),
-          fluidRow(
-            box(
-              width = 12L,
-              title = "Upload",
-              h3("Below is what will be uploaded to REDCap!"),
-              DT::DTOutput("the_uploading_table"),
-              actionButton("submit_data_values2", "Upload to REDCap")
-            )
+          box(
+            width = 8L,
+            title = "Change",
+            uiOutput("choose_fields_change_"),
+            uiOutput("fields_to_change_dynamic_inputs"),
+            uiOutput("add_input_instance_ui_"),
+            actionButton("reset_data_values", "Reset Data"),
+            actionButton("submit_data_values", "Pend For Upload")
           )
-        )
+        ), fluidRow(
+          box(
+            width = 12L,
+            title = "Upload",
+            h3("Below is what will be uploaded to REDCap!"),
+            DT::DTOutput("the_uploading_table"),
+            actionButton("submit_data_values2", "Upload to REDCap")
+          )
+        ))
       ),
       controlbar = dbControlbar(
         awesomeCheckbox(

@@ -32,12 +32,15 @@ app_server <- function(input, output, session) {
     }
   })
   # files ----------
-  shinyFiles::shinyDirChoose(input, 'dir', roots = c(home = '~'), filetypes = c(''))
+  shinyFiles::shinyDirChoose(input,
+                             "dir",
+                             roots = c(home = "~"),
+                             filetypes = c(""))
   dir <- reactive(input$dir)
   output$dir <- renderPrint(dir())
   # path
   path <- reactive({
-    if(!"path" %in% names(dir())){
+    if (!"path" %in% names(dir())) {
       return(NULL)
     }
     x  <- unlist(dir()$path[-1])
@@ -75,22 +78,20 @@ app_server <- function(input, output, session) {
   })
   # user input project -------
   observeEvent(dir(), {
-    updateTextInput(
-      session = session,
-      inputId = "user_adds_project_dir_path",
-      value = path()
-    )
+    updateTextInput(session = session,
+                    inputId = "user_adds_project_dir_path",
+                    value = path())
   })
   # only store the information if the user clicks submit
   observeEvent(input$user_adds_project_submit, {
     dir_path <- NULL
-    if(dir.exists(input$user_adds_project_dir_path)){
+    if (dir.exists(input$user_adds_project_dir_path)) {
       dir_path <- input$user_adds_project_dir_path
     }
-    if(!is_something(input$user_adds_project_api_token)){
+    if (!is_something(input$user_adds_project_api_token)) {
       return()
     }
-    if(!is_something(input$user_adds_project_redcap_uri)){
+    if (!is_something(input$user_adds_project_redcap_uri)) {
       return()
     }
     project <- setup_project(
@@ -99,24 +100,22 @@ app_server <- function(input, output, session) {
       redcap_uri = input$user_adds_project_redcap_uri
     )
     project$print()
-    keyring::key_set_with_value(service = config$keyring.service(),
-                                username = project$project_name,
-                                password = input$user_adds_project_api_token,
-                                keyring = config$keyring())
-    showModal(
-      modalDialog(
-        tags$h3("Syncing with REDCap..."),
-        tags$p("Please wait while the project is being created."),
-        footer = NULL,
-        easyClose = FALSE
-      )
+    keyring::key_set_with_value(
+      service = config$keyring.service(),
+      username = project$project_name,
+      password = input$user_adds_project_api_token,
+      keyring = config$keyring()
     )
+    showModal(modalDialog(
+      tags$h3("Syncing with REDCap..."),
+      tags$p("Please wait while the project is being created."),
+      footer = NULL,
+      easyClose = FALSE
+    ))
     project$sync()
-    updateSwitchInput(
-      session = session,
-      inputId = "test_mode",
-      value = FALSE
-    )
+    updateSwitchInput(session = session,
+                      inputId = "test_mode",
+                      value = FALSE)
     removeModal()
     values$projects <- REDCapSync::projects$df() # get list of cached projects
   })
@@ -277,7 +276,7 @@ app_server <- function(input, output, session) {
               REDCapSync:::clean_form(
                 fields = values$dataset$metadata$fields,
                 labelled = input$labelled
-                ) |>
+              ) |>
               make_DT_table()
           })
         })
@@ -974,11 +973,11 @@ app_server <- function(input, output, session) {
               skip <- FALSE
               if (!is.null(input[[paste0("table___home__", form, "_rows_selected")]])) {
                 message_dev("ident ",
-                        identical(ROWS, input[[paste0("table___home__", form, "_rows_selected")]]),
-                        " ",
-                        ROWS,
-                        " ",
-                        input[[paste0("table___home__", form, "_rows_selected")]])
+                            identical(ROWS, input[[paste0("table___home__", form, "_rows_selected")]]),
+                            " ",
+                            ROWS,
+                            " ",
+                            input[[paste0("table___home__", form, "_rows_selected")]])
                 skip <- identical(ROWS, input[[paste0("table___home__", form, "_rows_selected")]])
                 message_dev("SKIP: ", skip)
               }
@@ -1272,10 +1271,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$ab_update_redcap, {
     # values$project <- values$project$sync() # save_datasets no
     values$project <- tryCatch({
-      load_project(project_name = input$choose_project)$
-        sync(save_datasets = FALSE)$
-        save()$
-        .internal
+      load_project(project_name = input$choose_project)$sync(save_datasets = FALSE)$save()$.internal
     }, error = function(e) {
       NULL
     })
@@ -1341,19 +1337,23 @@ app_server <- function(input, output, session) {
     if (length(input$choose_fields_cat) > 0L) {
       cols <- input$choose_fields_cat |> vec1_in_vec2(colnames(DF))
       x <- DF[, cols, drop = FALSE] |>
-        REDCapSync:::clean_form(fields = values$dataset$metadata$fields,
-                                labelled = input$labelled,
-                                drop_blanks = TRUE) |>
+        REDCapSync:::clean_form(
+          fields = values$dataset$metadata$fields,
+          labelled = input$labelled,
+          drop_blanks = TRUE
+        ) |>
         plotly_parcats(remove_missing = !input$render_missing)
       return(x)
     }
   })
   output$survival <- renderPlot({
     if (is_something(input$choose_form)) {
-      DF <- values$dataset$data[[input$choose_form]]|>
-        REDCapSync:::clean_form(fields = values$dataset$metadata$fields,
-                                labelled = input$labelled,
-                                drop_blanks = TRUE)
+      DF <- values$dataset$data[[input$choose_form]] |>
+        REDCapSync:::clean_form(
+          fields = values$dataset$metadata$fields,
+          labelled = input$labelled,
+          drop_blanks = TRUE
+        )
     }
     date_fields <- get_field_names_date(values$dataset)
     if (length(date_fields) > 0L) {
