@@ -1,6 +1,6 @@
 Package: RosyREDCap
 Title: Standardized REDCap Shiny Application
-Version: 0.0.0.9005
+Version: 0.1.0
 Authors@R: c(
     person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"),
            comment = c(ORCID = "0009-0009-7813-1960")),
@@ -53,8 +53,6 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
-Remotes: 
-    github::thecodingdocs/REDCapSync
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
