@@ -480,7 +480,7 @@ app_server <- function(input, output, session) {
   })
   output$choose_survival_status_choice_ <- renderUI({
     choice_df <- values$project$metadata$fields |>
-      dplyr::filter(field_name == input$choose_survival_status_col) |>
+      dplyr::filter("field_name" == input$choose_survival_status_col) |>
       REDCapSync:::fields_to_choices()
     selectizeInput(
       inputId = "choose_survival_status_choice",

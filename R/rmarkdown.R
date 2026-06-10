@@ -56,5 +56,5 @@ rmarkdown_project <- function(project, dir_other) {
   file.copy(from = final_file_temp,
             to = final_file,
             overwrite = TRUE)
-  REDCapSync:::cli_alert_wrap("Saved! ", file = REDCapSync:::sanitize_path(final_file))
+  # REDCapSync:::cli_alert_wrap("Saved! ", file = REDCapSync:::sanitize_path(final_file))
 }
